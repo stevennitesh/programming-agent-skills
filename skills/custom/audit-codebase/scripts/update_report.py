@@ -1334,9 +1334,6 @@ def _normalize_close_manifest(raw: dict[str, Any]) -> dict[str, Any]:
         "current_source_result",
         "accepted_proof",
         "skipped_checks",
-        "formal_review_decision",
-        "formal_review_provenance",
-        "repair_generations_used",
         "changed_scope",
         "change_closure",
         "residual_risk",
@@ -1354,7 +1351,9 @@ def _normalize_close_manifest(raw: dict[str, Any]) -> dict[str, Any]:
         "tracker_completion_sha256",
         "direct_implementation_authority",
     }
-    _strict(raw, required, route_fields, "Close manifest")
+    review_fields = {"formal_review_decision", "formal_review_provenance"}
+    legacy_fields = {"repair_generations_used"}
+    _strict(raw, required, route_fields | review_fields | legacy_fields, "Close manifest")
     if raw["version"] != MANIFEST_VERSION:
         raise ReportError(f"Close manifest requires version {MANIFEST_VERSION}")
     route = _text(raw["completion_route"], "Close completion_route")
@@ -1418,11 +1417,27 @@ def _normalize_close_manifest(raw: dict[str, Any]) -> dict[str, Any]:
         raise ReportError("Close completion_route is unsupported")
     if raw["implementation_outcome"] != "complete":
         raise ReportError("Close requires implementation_outcome complete")
-    if raw["formal_review_decision"] != "accepted" or raw["change_closure"] != "complete":
-        raise ReportError("Close requires accepted review and complete Change Closure")
-    repairs = raw["repair_generations_used"]
-    if not isinstance(repairs, int) or isinstance(repairs, bool) or repairs < 0:
-        raise ReportError("Close repair_generations_used must be a non-negative integer")
+    if raw["change_closure"] != "complete":
+        raise ReportError("Close requires complete Change Closure")
+    supplied_review_fields = set(raw) & review_fields
+    if supplied_review_fields and supplied_review_fields != review_fields:
+        raise ReportError("Close review decision and provenance must be supplied together")
+    review_packet: dict[str, str] = {}
+    if supplied_review_fields:
+        if raw["formal_review_decision"] != "accepted":
+            raise ReportError("Close supplied review must be accepted")
+        review_packet = {
+            "formal_review_decision": "accepted",
+            "formal_review_provenance": _text(
+                raw["formal_review_provenance"], "Close formal_review_provenance"
+            ),
+        }
+    if "repair_generations_used" in raw:
+        repairs = raw["repair_generations_used"]
+        if not isinstance(repairs, int) or isinstance(repairs, bool) or repairs < 0:
+            raise ReportError(
+                "Close legacy repair_generations_used must be a non-negative integer"
+            )
     transitions = _normalize_finding_transitions(
         raw["finding_transitions"], "Close finding_transitions"
     )
@@ -1447,11 +1462,6 @@ def _normalize_close_manifest(raw: dict[str, Any]) -> dict[str, Any]:
         "current_source_result": current,
         "accepted_proof": _text(raw["accepted_proof"], "Close accepted_proof"),
         "skipped_checks": _text(raw["skipped_checks"], "Close skipped_checks"),
-        "formal_review_decision": "accepted",
-        "formal_review_provenance": _text(
-            raw["formal_review_provenance"], "Close formal_review_provenance"
-        ),
-        "repair_generations_used": repairs,
         "changed_scope": _text(raw["changed_scope"], "Close changed_scope"),
         "change_closure": "complete",
         "residual_risk": _text(raw["residual_risk"], "Close residual_risk"),
@@ -1460,7 +1470,7 @@ def _normalize_close_manifest(raw: dict[str, Any]) -> dict[str, Any]:
             raw["candidate_bundle_sha256"], "Close candidate_bundle_sha256"
         ),
         "finding_transitions": transitions,
-    } | route_packet
+    } | review_packet | route_packet
 
 
 def _validate_state(state: dict[str, Any]) -> None:
@@ -1606,13 +1616,12 @@ def _validate_state(state: dict[str, Any]) -> None:
         "current_source_result",
         "accepted_proof",
         "skipped_checks",
-        "formal_review_decision",
-        "formal_review_provenance",
-        "repair_generations_used",
         "changed_scope",
         "residual_risk",
         "last_verified_identity",
     }
+    review_fields = {"formal_review_decision", "formal_review_provenance"}
+    legacy_fields = {"repair_generations_used"}
     for index, candidate in enumerate(state["candidates"]):
         item = _object(candidate, f"report candidate[{index}]")
         _strict(
@@ -1646,7 +1655,12 @@ def _validate_state(state: dict[str, Any]) -> None:
             _strict(
                 implementation,
                 implementation_fields,
-                {"direct_implementation_authority", "tracker_completion_sha256"},
+                {
+                    "direct_implementation_authority",
+                    "tracker_completion_sha256",
+                }
+                | review_fields
+                | legacy_fields,
                 f"report candidate[{index}].implementation",
             )
             if item["state"] != "implemented" or item["pickup"]:
@@ -1688,15 +1702,27 @@ def _validate_state(state: dict[str, Any]) -> None:
             )
             if source_result not in {"current", "reachable"}:
                 raise ReportError("report implementation has invalid current-source result")
-            if implementation["formal_review_decision"] != "accepted":
-                raise ReportError("report implementation requires accepted review")
-            repairs = implementation["repair_generations_used"]
-            if not isinstance(repairs, int) or isinstance(repairs, bool) or repairs < 0:
-                raise ReportError("report implementation has invalid repair count")
+            supplied_review_fields = set(implementation) & review_fields
+            if supplied_review_fields and supplied_review_fields != review_fields:
+                raise ReportError(
+                    "report implementation review decision and provenance must be supplied together"
+                )
+            if supplied_review_fields:
+                if implementation["formal_review_decision"] != "accepted":
+                    raise ReportError("report implementation supplied review must be accepted")
+                _text(
+                    implementation["formal_review_provenance"],
+                    "report implementation.formal_review_provenance",
+                )
+            if "repair_generations_used" in implementation:
+                repairs = implementation["repair_generations_used"]
+                if not isinstance(repairs, int) or isinstance(repairs, bool) or repairs < 0:
+                    raise ReportError(
+                        "report implementation has invalid legacy repair count"
+                    )
             for field in (
                 "accepted_proof",
                 "skipped_checks",
-                "formal_review_provenance",
                 "changed_scope",
                 "residual_risk",
                 "last_verified_identity",
@@ -2258,7 +2284,7 @@ def _reduce_analyze(
             "run, subsystem, and candidate identities; "
             "implementation outcome; candidate-bundle digest; tracker mutation identity and Ready "
             "tracker item identity; commit and tree identities; current-source result; accepted proof and "
-            "skipped checks; formal-review decision and provenance; Repair generations used; "
+            "skipped checks; formal-review decision and provenance when activated; "
             "changed scope; Change Closure; residual risk; last verified identity; and one proposed "
             "state-and-reason transition for every active member finding."
         )
@@ -2435,14 +2461,14 @@ def _reduce_close(
             "current_source_result",
             "accepted_proof",
             "skipped_checks",
-            "formal_review_decision",
-            "formal_review_provenance",
-            "repair_generations_used",
             "changed_scope",
             "residual_risk",
             "last_verified_identity",
         )
     }
+    for key in ("formal_review_decision", "formal_review_provenance"):
+        if key in packet:
+            candidate["implementation"][key] = packet[key]
     if packet["completion_route"] == "authorized-direct-recovery":
         candidate["implementation"]["direct_implementation_authority"] = packet[
             "direct_implementation_authority"
@@ -2869,11 +2895,14 @@ def _schema(
     objective: str,
     completion_route: str | None = None,
     tracker_provider: str | None = None,
+    reviewed: bool = False,
 ) -> dict[str, Any]:
     if objective != "close" and completion_route is not None:
         raise ReportError("completion_route applies only to Close schema")
     if objective not in {"analyze", "close"} and tracker_provider is not None:
         raise ReportError("tracker_provider applies only to Analyze or Close schema")
+    if objective != "close" and reviewed:
+        raise ReportError("reviewed applies only to Close schema")
     common = {"version": MANIFEST_VERSION, "expected_report_sha256": "<sha256>"}
     if objective == "map":
         template = common | {
@@ -3015,9 +3044,6 @@ def _schema(
             "current_source_result": "current",
             "accepted_proof": "",
             "skipped_checks": "none",
-            "formal_review_decision": "accepted",
-            "formal_review_provenance": "",
-            "repair_generations_used": 0,
             "changed_scope": "",
             "change_closure": "complete",
             "residual_risk": "",
@@ -3025,6 +3051,11 @@ def _schema(
             "candidate_bundle_sha256": "",
             "finding_transitions": [],
         }
+        if reviewed:
+            template |= {
+                "formal_review_decision": "accepted",
+                "formal_review_provenance": "",
+            }
         if completion_route == "tracker-frontier":
             if tracker_provider not in {None, "local-markdown"}:
                 raise ReportError("tracker-frontier schema provider is unsupported")
@@ -3087,6 +3118,7 @@ def _parser() -> argparse.ArgumentParser:
         ),
     )
     schema.add_argument("--tracker-provider", choices=("local-markdown",))
+    schema.add_argument("--reviewed", action="store_true")
 
     def report_args(command: argparse.ArgumentParser) -> None:
         command.add_argument("--repo-root", type=Path, required=True)
@@ -3125,6 +3157,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 args.objective,
                 args.completion_route,
                 args.tracker_provider,
+                args.reviewed,
             )
         elif command == "inspect":
             result = inspect_report(

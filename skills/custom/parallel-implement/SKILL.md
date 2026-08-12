@@ -1,11 +1,11 @@
 ---
 name: parallel-implement
-description: Deliver one explicitly requested parent through its exhaustive ready ticket graph using plain delegated workers, isolated concurrent lanes, adaptive serial execution, one fresh Change Review, and child-first closeout. Root-only.
+description: Deliver one explicitly requested parent through its exhaustive ready ticket graph using plain delegated workers, isolated concurrent lanes only when worthwhile, adaptive serial execution, focused integrated proof, condition-triggered review, and child-first closeout. Root-only.
 ---
 
 # Parallel Implement
 
-**Admit -> Wave -> Integrate -> Review -> Close**
+**Admit -> Wave -> Integrate -> Check -> Close**
 
 Deliver one parent-backed graph. Parallelism is an optimization, not a goal.
 Use it only where independent work saves time without increasing total
@@ -22,15 +22,14 @@ the parent campaign through serial or concurrent frontiers until every child is
 accepted or has an exact blocker.
 
 The root owns campaign scope, live concurrency decisions, claims, dispatch,
-acceptance, serial landing, integration judgment, formal review, Repair
+acceptance, serial landing, integration judgment, conditional review, Repair
 admission, tracker closeout, and completion. Workers own their assigned
 implementation and tests. Workers never widen scope or dispatch successors.
 The root does not author implementation or Repair code.
 
 Freeze only the facts needed to run: parent outcome, ordered children,
 dependencies, acceptance, source, fixed point, ticket scopes and expected
-writes, proof owners, known overlap, closeout rule, and a graph-level Repair
-budget. Preserve an explicit budget or default to `2`. Refetch current tracker
+writes, proof owners, known overlap, and closeout rule. Refetch current tracker
 and Git state; consequential drift returns one factual repair or authority
 packet. Use that live state directly; create no campaign ledger.
 
@@ -38,23 +37,18 @@ Claim the parent and read the claim back before dispatch; a losing race returns
 `blocked`. Retain that campaign claim through final closeout or a verified
 repair handoff.
 
-One Repair generation is one admitted complete blocker set, one bounded repair
-batch with proof, and one fresh successor review. Increment once per batch, not
-per finding or worker. Transport retry and proof-only rerun do not consume a
-generation.
-
 ## Wave
 
 Repeat until every child has an accepted landing or an exact blocker.
 
 Derive the dependency-ready frontier from the verified graph and current landed
-state. For each frontier item, compare semantic ownership, expected production
+state. For each frontier item, compare semantic ownership, expected runtime
 writes, proof owners, scarce resources, and known serial tripwires. Run items
 concurrently only when they are independently bounded and the expected time
 saving exceeds coordination and integration cost. Uncertain or overlapping
 items run serially. Protected data, permissions, trust boundaries, migrations,
 cutovers, and irreversible state start with one tracer bullet through the
-production path.
+real runtime path.
 
 Choose the first matching capable profile using the ordered conditions in
 [Runtime Profiles](references/RUNTIME-PROFILES.md).
@@ -74,7 +68,7 @@ preflight.
 
 Before choosing an implementation seam, each worker traces every assigned
 acceptance commitment to its proof seam. When a commitment depends on
-integration, the worker follows the canonical production caller to the
+integration, the worker follows the real caller or runtime entry path to the
 observable output and proof. Existing code or component tests count only when
 that path reaches them. Do this directly; create no matrix or artifact.
 
@@ -84,7 +78,7 @@ changed scope, proof, skips, and blockers. The root verifies the actual lane,
 base, commit, diff, scope, and proof. Prose is evidence, not trusted state.
 Do not accept a lane merely because its first component seam is green. Require
 evidence that each acceptance commitment reaches its proof seam and, when
-integration-dependent, that the canonical production caller reaches the
+integration-dependent, that the real caller or runtime entry path reaches the
 observable output. If an in-scope gap remains safely actionable, resume the
 same worker before accepting the landing.
 Retry only after an observed blocking condition changes; never duplicate an
@@ -122,39 +116,51 @@ remove duplicated campaign-created proof, run the smallest final proof set that
 covers current integrated behavior and material interactions, and complete
 Change Closure.
 
-## Review And Repair
+## Final Check, Conditional Review, And Repair
 
-Pin one immutable candidate only when every writer is idle, the integration
-checkout is clean, every child is accepted and landed, no blocker remains, and
-final proof passes. An exact child blocker returns under the terminal classifier
-before final proof and review.
+After every writer is idle and every child is accepted and landed, inspect the
+complete integrated diff and repository state. Run the smallest final proof set
+covering graph acceptance, real callers, material interactions, and Change
+Closure, and correct an accepted in-scope integration defect. Required proof
+must pass before review; missing proof returns under the terminal classifier.
 
-Launch exactly one fresh `integration-reviewer` using `$change-review`, with an
-actor, task, and context distinct from every implementation actor and from the
-root integration actor. Supply the parent Charter, source, fixed point,
-immutable integrated candidate, implementation and integration actor and task
-identities, proof, skips, supported risks, contradictory evidence, and
-`Spec required: yes`.
-Supported risk expands
-coverage; it does not change the automatic review system.
-`$high-assurance-review` runs only when the user explicitly invokes it.
+Invoke `$change-review` when the candidate contains mutations from two or more
+independent authors; the user or repository explicitly requires independent
+review; or focused proof establishes behavior but a material shared-contract
+or irreversible-migration acceptance judgment still warrants fresh independent
+judgment and review is the lowest-burden way to obtain it. Parallel Implement
+itself, multiple tickets or files, serial execution by one author, concurrency
+availability, release packaging, generic or supported risk, and security or
+production adjacency do not trigger review.
 
-Accept only a complete Review Return bound to the candidate. Never self-certify.
-Automatically repair only when every blocker is Charter-preserving, in scope,
-and within the graph Repair budget. Send localized findings to the responsible
-worker when safely resumable; otherwise dispatch one fresh capable worker.
-Land and prove the correction, then use a new fresh integration reviewer.
-Decision-required, scope-changing, speculative, mixed, or over-budget findings
-return to the caller intact.
+When review triggers, pin one immutable candidate only after final proof passes
+and the integration checkout is clean. Use one fresh `integration-reviewer`
+through `$change-review`, with an actor, task, and context distinct from every
+implementation actor and the root integration actor. Supply the accepted
+parent commitments, source, fixed point, immutable candidate, implementation
+and integration identities, proof, material skips, supported facts,
+contradictory evidence, and `Spec required: yes`.
 
-A review transport failure before candidate judgment may be retried once with
-a fresh reviewer. After a second failure, preserve the candidate and return
-`partial`.
+Accept only a complete Review Return bound to the candidate. Review grants no
+mutation. Repair only admitted `automatic-in-scope` blockers through the
+responsible resumable worker or one fresh capable worker; land the correction,
+rerun invalidated proof, and repeat review only while the original trigger
+still applies. One review invocation authorizes at most one automatic repair
+successor; any blocker in that successor review returns to the caller rather
+than opening another automatic repair cycle. Return decision-required,
+scope-changing, speculative, mixed,
+or unsupported findings to the caller unchanged. If the same blocker recurs
+without a new authorized in-scope repair path, stop under the terminal
+classifier.
+
+A pre-judgment review transport failure may be retried once while the candidate
+remains unchanged. Otherwise preserve the candidate and return `partial`.
 
 ## Close
 
-Open closeout only when reviewed `HEAD` still equals current integration
-`HEAD`, required final proof passes, and any residual risk has caller acceptance.
+Open closeout only when current `HEAD` equals the final checked candidate and,
+when review ran, the reviewed candidate; required final proof passes; and any
+decision-bearing residual risk has caller acceptance.
 
 Close children in dependency order using the configured tracker rules. Retain
 each claim through verified non-dispatchable closeout and read-back, then
@@ -168,11 +174,11 @@ limit is reached earlier, remove the oldest safe completed worktree first.
 Never remove a dirty, active, uncertain, or unintegrated lane.
 
 Return `complete` only when the graph is drained; every accepted change is in
-reviewed current `HEAD`; focused final proof, proof ownership, Change Closure,
-and one independent Change Review pass; children and parent close child-first
+current `HEAD`; focused final proof, proof ownership, Change Closure, and every
+triggered independent Change Review pass; children and parent close child-first
 with read-back; claims are released; and lanes are safe. Otherwise return
 `partial` or `blocked` with the exact retained state, custody, blocker, and
-safest resume action plus Repair generations used and remaining. `blocked`
+safest resume action. `blocked`
 means no authorized in-scope progress is possible until a named authority or
 external-state change. `partial` means accepted progress is preserved while an
 internal execution, proof, review, or cleanup gate remains safely resumable.

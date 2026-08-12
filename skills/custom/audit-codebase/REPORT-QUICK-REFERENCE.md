@@ -16,8 +16,10 @@ schema --objective analyze
 schema --objective close
   --completion-route tracker-frontier
   [--tracker-provider local-markdown]
+  [--reviewed]
 schema --objective close
   --completion-route local-markdown-recovery|authorized-direct-recovery
+  [--reviewed]
 inventory --repo-root <repo>
 source-identity --repo-root <repo> --path-list <paths.txt>
 inspect --repo-root <repo> --report <report>
@@ -35,6 +37,11 @@ Use the projection for routing, admission, work, and read-back. `schema`
 returns the exact manifest template for the selected objective and Close
 route; copy only its `template` object into an invocation-owned JSON file.
 Unknown manifest fields are rejected.
+
+For Close, add `--reviewed` only when condition-triggered Change Review ran and
+returned accepted. The resulting exact template includes the paired review
+decision and provenance fields. Without it, the template contains no review
+fields or dormant placeholders.
 
 ## Publish Once
 

@@ -1,6 +1,6 @@
 # Automatic Implementation Review Uses One Change Review Path
 
-**Status**: accepted
+**Status**: superseded by ADR-0015
 
 ## Context
 

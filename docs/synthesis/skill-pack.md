@@ -67,6 +67,14 @@ Tickets invocation admits the exact packet; that invocation releases the
 transferred claims only after repaired graph read-back. The active canonical skills and
 `skill-context-relationships.md` are the executable projections of this
 amendment and agree with the revised JSON below.
+Revision 17 materializes machine contract revision 5: ADR-0015 makes
+independent Change Review condition-triggered. Ordinary implementation closes
+through claim-matched proof plus final diff and state read-back. Explicit user
+or repository review requirements, proved material acceptance judgments that
+still need independent judgment, and final candidates containing mutations
+from multiple independent authors retain the existing Change Review path.
+Missing proof stops rather than routing to review. High-Assurance Review and
+specialist security or production/SRE work remain explicit-only.
 It binds the complete fingerprinted pre-discovery fixed point, then freezes the
 tested environment, finite research order, capability
 owners, roles, relationships, exclusions, resolved collisions, acceptance
@@ -424,7 +432,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "completion_return": "One terminal ordinary review report",
       "disposition": "selected",
       "entry_conditions": [
-        "A branch, WIP, staged, since-X diff, local PR, release candidate, or supported-risk implementation candidate needs read-only judgment"
+        "A caller admits a branch, WIP, staged, since-X diff, local PR, release candidate, or implementation candidate for read-only judgment"
       ],
       "essential": true,
       "exclusions": [
@@ -609,7 +617,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "completion_return": "A complete, partial, or blocked single-item delivery packet",
       "disposition": "selected",
       "entry_conditions": [
-        "One caller-selected item has settled commitments, readiness, proof lane, write scope, and finite repair budget"
+        "One caller-selected item has settled commitments, readiness, proof, and write scope"
       ],
       "essential": true,
       "exclusions": [
@@ -617,11 +625,11 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Unbounded foreign procedure loading",
         "Automated semantic acceptance"
       ],
-      "observable_outcome": "Deliver one caller-selected ready item through proof, review, Lock, and branch-applicable Git or tracker closeout",
+      "observable_outcome": "Deliver one caller-selected ready item through focused proof, final read-back, condition-triggered review, and branch-applicable Git or tracker closeout",
       "primary_owner_skill_id": "SK-022",
       "proof_class": "fresh behavioral proof plus structural identity and boundary proof",
       "required_authority_mutation": [
-        "Single-item Charter, technique routing, integration, proof, Change Review admission, Lock, and branch-applicable Git or tracker closeout"
+        "Single-item technique routing, integration, proof, conditional Change Review admission, and branch-applicable Git or tracker closeout"
       ]
     },
     {
@@ -650,7 +658,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "primary_owner_skill_id": "SK-023",
       "proof_class": "fresh behavioral proof plus structural identity and boundary proof",
       "required_authority_mutation": [
-        "Wave qualification, isolated lanes, serial integration, proof budget, review, child-first closeout, and final Lock"
+        "Wave qualification, isolated lanes, serial integration, focused proof, conditional review, and child-first closeout"
       ]
     },
     {
@@ -786,7 +794,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "scenario_id": "PS-021"
       },
       {
-        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for implement: Deliver one caller-selected ready item through proof, review, Lock, and branch-applicable Git or tracker closeout",
+        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for implement: Deliver one caller-selected ready item through focused proof, final read-back, condition-triggered review, and branch-applicable Git or tracker closeout",
         "expected_owner_skill_id": "SK-022",
         "scenario_id": "PS-022"
       },
@@ -972,7 +980,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       }
     ],
     "composition_epoch_id": "FCE-20260727-01",
-    "contract_revision": 4,
+    "contract_revision": 5,
     "epoch_lock": null,
     "exclusions": [
       "Per-skill H1 or candidate wording",
@@ -1650,7 +1658,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [
         "change-review caller-facing interface and branch-required reference only"
       ],
-      "entry_condition": "Every accepted Implement candidate or bounded Repair generation, including release and supported-risk candidates, needs one fresh independent fixed-snapshot review.",
+      "entry_condition": "The user or repository explicitly requires independent review; the final candidate contains mutations from two or more independent authors; or focused proof establishes behavior but a material shared-contract or irreversible-migration acceptance judgment still warrants fresh independent judgment and Change Review is the lowest-burden way to obtain it.",
       "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
       "input_packet": "Caller-owned bounded Source Trace for implement, implementation actor and task identities, factual candidate evidence, and the declared change-review input",
       "ordering_impact": "callee-before-caller",
@@ -1662,7 +1670,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "return_packet": "The declared change-review Return packet plus review actor and fresh-task provenance, exact candidate evidence, limits, and residual state",
       "target_skill_id": "SK-015",
       "verb": "Invoke",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
+      "wrong_condition": "No explicit review requirement exists, the candidate has one mutation author, focused proof establishes its material claims without a remaining independent acceptance judgment, or required proof is missing and must stop rather than route to review."
     },
     {
       "affected_capability_ids": [
@@ -1932,7 +1940,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "to-tickets caller-facing interface and configured issue-tracker owner"
       ],
       "explicit_target_authority": "exact-user-approved-packet",
-      "entry_condition": "The generated candidate Analyze prompt includes To Tickets and the candidate is implementation-ready with settled execution source, proof, Change Closure, and finite Repair budget.",
+      "entry_condition": "The generated candidate Analyze prompt includes To Tickets and the candidate is implementation-ready with settled execution source, proof, and Change Closure.",
       "failure_behavior": "Return ready/reused or recovery state; recovery produces no Implement prompt",
       "input_packet": "Generated To Tickets invocation plus report, run, subsystem, candidate, current-source, and candidate-bundle digest identities; settled execution source; proof; Change Closure; and one-item constraint when applicable",
       "ordering_impact": "callee-before-caller",
@@ -2061,7 +2069,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [
         "change-review caller-facing interface and branch-required reference only"
       ],
-      "entry_condition": "Every drained proved Parallel Implement candidate or repaired successor, including release and supported-risk candidates, needs one fresh independent fixed-snapshot Spec and Standards review.",
+      "entry_condition": "The user or repository explicitly requires independent review; the final candidate contains mutations from two or more independent authors; or focused proof establishes behavior but a material shared-contract or irreversible-migration acceptance judgment still warrants fresh independent judgment and Change Review is the lowest-burden way to obtain it.",
       "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
       "input_packet": "Caller-owned bounded Source Trace for parallel-implement, implementation and integration actor identities, factual candidate evidence, and the declared change-review input",
       "ordering_impact": "callee-before-caller",
@@ -2073,7 +2081,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "return_packet": "The declared change-review Return packet plus review actor and fresh-task provenance, exact candidate evidence, limits, and residual state",
       "target_skill_id": "SK-015",
       "verb": "Invoke",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
+      "wrong_condition": "The candidate has one mutation author, no explicit review requirement exists, focused proof establishes its material claims without a remaining independent acceptance judgment, or required proof is missing and must stop rather than route to review."
     },
     {
       "affected_capability_ids": [
@@ -2438,7 +2446,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-025",
       "combined_exit_owner_skill_id": "SK-025",
       "context_loaded": [],
-      "entry_condition": "The situation satisfies one caller-selected item has settled commitments, readiness, proof lane, write scope, and finite repair budget; return that route and leave it unstarted.",
+      "entry_condition": "The situation satisfies one caller-selected item has settled commitments, readiness, proof, and write scope; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
       "input_packet": "Caller-owned bounded Source Trace for skill-router and the declared implement input",
       "ordering_impact": "callee-before-caller",
@@ -2588,7 +2596,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-025",
       "combined_exit_owner_skill_id": "SK-025",
       "context_loaded": [],
-      "entry_condition": "The situation satisfies a branch, WIP, staged, since-X diff, local PR, release candidate, or supported-risk implementation candidate needs read-only judgment; return that route and leave it unstarted.",
+      "entry_condition": "The caller requests read-only judgment of a branch, WIP, staged, since-X diff, local PR, release candidate, or implementation candidate; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
       "input_packet": "Caller-owned bounded Source Trace for skill-router and the declared change-review input",
       "ordering_impact": "callee-before-caller",
@@ -4075,7 +4083,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "invocation_mode": "implicit",
       "load_budget_class": "conditional-leaf",
       "negative_exclusion_predicates": [
-        "The request does not satisfy: A branch, WIP, staged, since-X diff, local PR, release candidate, or supported-risk implementation candidate needs read-only judgment",
+        "The request does not satisfy: A caller admits a branch, WIP, staged, since-X diff, local PR, release candidate, or implementation candidate for read-only judgment",
         "Another selected skill owns the requested outcome",
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
@@ -4085,7 +4093,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "owned_capability_ids": [
         "CAP-015"
       ],
-      "positive_entry_predicate": "A branch, WIP, staged, since-X diff, local PR, release candidate, or supported-risk implementation candidate needs read-only judgment",
+      "positive_entry_predicate": "A caller admits a branch, WIP, staged, since-X diff, local PR, release candidate, or implementation candidate for read-only judgment",
       "primary_role": "leaf",
       "prohibited_ownership": [
         "Another selected skill's semantic decision, local mutation, proof judgment, Return, or completion",
@@ -4337,24 +4345,24 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "PS-022"
       ],
       "canonical_name": "implement",
-      "completion_condition": "The exact accepted tree is reviewed and locked, with every branch-applicable Git and tracker closeout verified",
+      "completion_condition": "The exact accepted tree has focused proof and final read-back, every triggered review passes, and every branch-applicable Git and tracker closeout is verified",
       "contract_order": 22,
-      "essential_outcome": "Deliver one caller-selected ready item through proof, review, Lock, and branch-applicable Git or tracker closeout",
+      "essential_outcome": "Deliver one caller-selected ready item through focused proof, final read-back, condition-triggered review, and branch-applicable Git or tracker closeout",
       "failure_return": "Return the failed gate, retained state, evidence, authority need, and safest recovery",
       "invocation_mode": "explicit-only",
       "load_budget_class": "conditional-aggregate",
       "negative_exclusion_predicates": [
-        "The request does not satisfy: One caller-selected item has settled commitments, readiness, proof lane, write scope, and finite repair budget",
+        "The request does not satisfy: One caller-selected item has settled commitments, readiness, proof, and write scope",
         "Another selected skill owns the requested outcome",
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
       "owned_authority_mutation_surfaces": [
-        "Single-item Charter, technique routing, integration, proof, Change Review admission, Lock, and branch-applicable Git or tracker closeout"
+        "Single-item technique routing, integration, proof, conditional Change Review admission, and branch-applicable Git or tracker closeout"
       ],
       "owned_capability_ids": [
         "CAP-022"
       ],
-      "positive_entry_predicate": "One caller-selected item has settled commitments, readiness, proof lane, write scope, and finite repair budget",
+      "positive_entry_predicate": "One caller-selected item has settled commitments, readiness, proof, and write scope",
       "primary_role": "executable-aggregate",
       "prohibited_ownership": [
         "Another selected skill's semantic decision, local mutation, proof judgment, Return, or completion",
@@ -4377,10 +4385,10 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "PS-023"
       ],
       "canonical_name": "parallel-implement",
-      "completion_condition": "Every in-scope child is integrated and reviewed before parent closeout",
+      "completion_condition": "Every in-scope child is integrated and proved, and every triggered review passes before parent closeout",
       "contract_order": 23,
       "essential_outcome": "Deliver one explicitly requested parent through its exhaustive Ready-for-agent graph",
-      "failure_return": "Return the exact frontier, lane, integration, review, tracker, or capacity blocker",
+      "failure_return": "Return the exact frontier, lane, integration, proof, triggered-review, tracker, or capacity blocker",
       "invocation_mode": "explicit-only",
       "load_budget_class": "conditional-aggregate",
       "negative_exclusion_predicates": [
@@ -4389,7 +4397,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
       "owned_authority_mutation_surfaces": [
-        "Wave qualification, isolated lanes, serial integration, proof budget, review, child-first closeout, and final Lock"
+        "Wave qualification, isolated lanes, serial integration, focused proof, conditional review, and child-first closeout"
       ],
       "owned_capability_ids": [
         "CAP-023"

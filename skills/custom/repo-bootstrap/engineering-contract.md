@@ -103,6 +103,9 @@ Make no claim broader than fresh, relevant evidence supports. A focused check
 proves only its covered slice. Tie behavioral claims to an observable proof
 seam and a proof lane that actually exercises the claimed meaning.
 
+When a behavioral claim could self-confirm, use an oracle independent of the
+implementation logic. The oracle need not be a separate reviewer.
+
 Mocks, generated artifacts, structural inspection, and plausible narration do
 not establish live behavior by themselves. When direct execution is unsafe or
 unavailable, use the strongest safe proxy and identify it as a proxy.

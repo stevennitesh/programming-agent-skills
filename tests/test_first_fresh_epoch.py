@@ -127,7 +127,7 @@ def test_first_epoch_contract_freezes_complete_h1_free_composition() -> None:
 
     assert pack_contract.validate_contract(contract) == []
     assert contract["epoch_header"]["composition_epoch_id"] == EPOCH
-    assert contract["epoch_header"]["contract_revision"] == 4
+    assert contract["epoch_header"]["contract_revision"] == 5
     assert contract["epoch_header"]["status"] == "frozen"
     assert contract["epoch_header"]["integration_result"] == {
         "decision": None,
@@ -178,7 +178,7 @@ def test_first_epoch_contract_freezes_complete_h1_free_composition() -> None:
     }
 
 
-def test_first_epoch_revision_preserves_r2_and_derives_r3_blueprints() -> None:
+def test_first_epoch_revision_preserves_history_and_derives_r5_blueprints() -> None:
     contract = pack_contract.parse_contract(
         (ROOT / "docs/synthesis/skill-pack.md").read_text(encoding="utf-8")
     )
@@ -213,7 +213,7 @@ def test_first_epoch_revision_preserves_r2_and_derives_r3_blueprints() -> None:
             skill_id,
         )
         assert projected["slice"]["slice_id"].startswith(
-            f"{EPOCH}:r4:"
+            f"{EPOCH}:r5:"
         )
         assert projected["slice"]["skill"] == skill_by_id[skill_id]
     assert {
@@ -230,12 +230,12 @@ def test_current_topology_materializes_the_post_freeze_amendment() -> None:
         skill["canonical_name"]: skill for skill in contract["selected_skills"]
     }
     assert contract["epoch_header"]["status"] == "frozen"
-    assert contract["epoch_header"]["contract_revision"] == 4
+    assert contract["epoch_header"]["contract_revision"] == 5
     assert skill_by_name["high-assurance-review"]["invocation_mode"] == "explicit-only"
     assert "user explicitly invokes" in (
         skill_by_name["high-assurance-review"]["positive_entry_predicate"]
     )
-    assert "release candidate, or supported-risk" in (
+    assert "A caller admits a branch" in (
         skill_by_name["change-review"]["positive_entry_predicate"]
     )
     assert "REL-013" not in skill_by_name["implement"]["relationship_ids"]
@@ -252,17 +252,31 @@ def test_current_topology_materializes_the_post_freeze_amendment() -> None:
     }
     assert not any(predecessor == "SK-014" for predecessor, _ in graph_edges)
 
+    relationship_by_id = {
+        relationship["relationship_id"]: relationship
+        for relationship in contract["relationships"]
+    }
+    for relationship_id in ("REL-016", "REL-034"):
+        relationship = relationship_by_id[relationship_id]
+        assert "explicitly requires independent review" in relationship["entry_condition"]
+        assert "focused proof establishes behavior" in relationship["entry_condition"]
+        assert "missing" in relationship["wrong_condition"].lower()
+    assert "two or more independent authors" in (
+        relationship_by_id["REL-034"]["entry_condition"]
+    )
+    assert {("SK-015", "SK-022"), ("SK-015", "SK-023")} <= graph_edges
+
     contract_text = (
         ROOT / "docs/synthesis/skill-pack.md"
     ).read_text(encoding="utf-8")
-    amendment = contract_text.split("Revision 16", 1)[1].split(
+    amendment = contract_text.split("Revision 17", 1)[1].split(
         "It binds the complete fingerprinted", 1
     )[0]
     amendment_flat = " ".join(amendment.split())
-    assert "machine contract revision 4" in amendment_flat
-    assert "High-Assurance Review explicit" in amendment
-    assert "Direct Implement requires a commit only" in amendment
-    assert "dispatch economics change concurrency, not campaign custody" in amendment_flat
+    assert "machine contract revision 5" in amendment_flat
+    assert "condition-triggered" in amendment
+    assert "Missing proof stops" in amendment
+    assert "explicit-only" in amendment
 
     metadata = yaml.safe_load(
         (
@@ -272,12 +286,17 @@ def test_current_topology_materializes_the_post_freeze_amendment() -> None:
     )
     assert metadata["policy"]["allow_implicit_invocation"] is False
 
-    adr = (
+    superseded = (
         ROOT
         / "docs/adr/0013-automatic-implementation-review-uses-one-change-review-path.md"
     ).read_text(encoding="utf-8")
+    adr = (
+        ROOT
+        / "docs/adr/0015-independent-change-review-is-condition-triggered.md"
+    ).read_text(encoding="utf-8")
+    assert "**Status**: superseded by ADR-0015" in superseded
     assert "**Status**: accepted" in adr
-    assert "High-Assurance Review is explicit-only" in adr
+    assert "High-Assurance Review remains explicit-only" in adr
 
     relationships = (
         ROOT / "docs/synthesis/skill-context-relationships.md"

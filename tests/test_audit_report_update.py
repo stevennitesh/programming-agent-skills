@@ -305,6 +305,7 @@ def _close_values(
     tree: str,
     *,
     completion_route: str = "tracker-frontier",
+    reviewed: bool = False,
 ) -> dict[str, object]:
     values: dict[str, object] = {
         "version": MODULE.MANIFEST_VERSION,
@@ -320,9 +321,6 @@ def _close_values(
         "current_source_result": "current",
         "accepted_proof": "focused and contract suites passed",
         "skipped_checks": "none",
-        "formal_review_decision": "accepted",
-        "formal_review_provenance": "change-review accepted the pinned diff",
-        "repair_generations_used": 0,
         "changed_scope": "src/alpha.py",
         "change_closure": "complete",
         "residual_risk": "none",
@@ -341,6 +339,11 @@ def _close_values(
             },
         ],
     }
+    if reviewed:
+        values |= {
+            "formal_review_decision": "accepted",
+            "formal_review_provenance": "change-review accepted the pinned diff",
+        }
     if completion_route == "tracker-frontier":
         values |= {
             "tracker_mutation_identity": "issue-17-readback",
@@ -833,7 +836,8 @@ def test_public_cli_runs_the_same_two_phase_transaction_for_all_objectives(
     source = report.read_text(encoding="utf-8")
     assert source.count('data-candidate-id="alpha-fix"') == 1
     assert 'data-state="implemented"' in source
-    assert "Repair Generations Used</dt><dd>0" in source
+    assert "Formal Review Decision" not in source
+    assert "Repair Generations Used" not in source
 
 
 def test_audit_requires_complete_six_lens_coverage(tmp_path: Path) -> None:
@@ -1477,7 +1481,7 @@ def test_public_inspect_rejects_retired_or_invalid_canonical_state(
             lambda candidate: candidate["implementation"].update(
                 {"formal_review_decision": "rejected"}
             ),
-            "requires accepted review",
+            "supplied review must be accepted",
         ),
         (
             lambda candidate: candidate["implementation"].update(
@@ -1496,7 +1500,14 @@ def test_public_inspect_rejects_invalid_implementation_state(
     report = _published_analysis(tmp_path)
     manifest = _write(
         tmp_path / "close.json",
-        _close_values(tmp_path, report, commit, tree),
+        _close_values(
+            tmp_path,
+            report,
+            commit,
+            tree,
+            # Exercise persisted validation of the activated review branch.
+            reviewed=True,
+        ),
     )
     _prepare_and_publish("close-candidate", tmp_path, report, manifest)
     state = MODULE._load_report(tmp_path, report)[3]
@@ -1547,6 +1558,9 @@ def test_schema_and_cli_errors_are_one_json_document(tmp_path: Path) -> None:
     assert MODULE.STATE_VERSION == 2
     assert len(schema["template"]["lenses"]) == 6
     tracker_close = MODULE._schema("close", "tracker-frontier")["template"]
+    reviewed_tracker_close = MODULE._schema(
+        "close", "tracker-frontier", reviewed=True
+    )["template"]
     local_analyze = MODULE._schema("analyze", tracker_provider="local-markdown")[
         "template"
     ]
@@ -1558,6 +1572,11 @@ def test_schema_and_cli_errors_are_one_json_document(tmp_path: Path) -> None:
     assert tracker_close["completion_route"] == "tracker-frontier"
     assert "tracker_mutation_identity" in tracker_close
     assert "direct_implementation_authority" not in tracker_close
+    assert "formal_review_decision" not in tracker_close
+    assert "formal_review_provenance" not in tracker_close
+    assert reviewed_tracker_close["formal_review_decision"] == "accepted"
+    assert reviewed_tracker_close["formal_review_provenance"] == ""
+    assert "repair_generations_used" not in reviewed_tracker_close
     assert local_analyze["tracker"]["provider"] == "local-markdown"
     assert "ready_issue_ref" in local_analyze["tracker"]
     assert local_close["tracker_provider"] == "local-markdown"
@@ -1574,6 +1593,15 @@ def test_schema_and_cli_errors_are_one_json_document(tmp_path: Path) -> None:
         "--objective",
         "close",
         "--completion-route",
+        "tracker-frontier",
+        "--reviewed",
+        cwd=tmp_path,
+    )["template"] == reviewed_tracker_close
+    assert _cli(
+        "schema",
+        "--objective",
+        "close",
+        "--completion-route",
         "authorized-direct-recovery",
         cwd=tmp_path,
     )["template"] == direct_close
@@ -1585,6 +1613,66 @@ def test_schema_and_cli_errors_are_one_json_document(tmp_path: Path) -> None:
         "local-markdown",
         cwd=tmp_path,
     )["template"] == local_analyze
+
+    process = subprocess.run(
+        [
+            sys.executable,
+            str(MODULE_PATH),
+            "schema",
+            "--objective",
+            "analyze",
+            "--reviewed",
+        ],
+        cwd=tmp_path,
+        capture_output=True,
+        text=True,
+    )
+    assert process.returncode == 2
+    assert process.stderr == ""
+    assert json.loads(process.stdout)["error"] == "reviewed applies only to Close schema"
+
+
+def test_close_accepts_legacy_manifest_repair_count_without_persisting_it(
+    tmp_path: Path,
+) -> None:
+    commit, tree = _init_repo(tmp_path)
+    report = _published_analysis(tmp_path)
+    values = _close_values(tmp_path, report, commit, tree)
+    values["repair_generations_used"] = 1
+    manifest = _write(tmp_path / "close-legacy.json", values)
+
+    _prepare_and_publish("close-candidate", tmp_path, report, manifest)
+
+    candidate = MODULE.inspect_report(
+        repo_root=tmp_path,
+        report=report,
+        objective="map",
+    )["state"]["candidates"][0]
+    assert candidate["state"] == "implemented"
+    assert "repair_generations_used" not in candidate["implementation"]
+
+
+def test_inspect_accepts_legacy_report_repair_count(tmp_path: Path) -> None:
+    commit, tree = _init_repo(tmp_path)
+    report = _published_analysis(tmp_path)
+    manifest = _write(
+        tmp_path / "close.json",
+        _close_values(tmp_path, report, commit, tree),
+    )
+    _prepare_and_publish("close-candidate", tmp_path, report, manifest)
+    state = MODULE._load_report(tmp_path, report)[3]
+    state["candidates"][0]["implementation"]["repair_generations_used"] = 1
+    _write_invalid_canonical_state(report, state)
+
+    inspected = MODULE.inspect_report(
+        repo_root=tmp_path,
+        report=report,
+        objective="map",
+    )
+
+    assert inspected["state"]["candidates"][0]["implementation"][
+        "repair_generations_used"
+    ] == 1
     with pytest.raises(MODULE.ReportError, match="applies only to Analyze or Close"):
         MODULE._schema("map", tracker_provider="local-markdown")
     with pytest.raises(MODULE.ReportError, match="requires one completion_route"):
@@ -1692,6 +1780,20 @@ def test_authorized_direct_recovery_closes_without_a_tracker_frontier(
         (
             "authorized-direct-recovery",
             "authority-required",
+            lambda values: values.update({"formal_review_decision": "accepted"}),
+            "review decision and provenance must be supplied together",
+        ),
+        (
+            "authorized-direct-recovery",
+            "authority-required",
+            lambda values: values.update(
+                {"formal_review_provenance": "change-review accepted the pinned diff"}
+            ),
+            "review decision and provenance must be supplied together",
+        ),
+        (
+            "authorized-direct-recovery",
+            "authority-required",
             lambda values: values.update(
                 {
                     "tracker_mutation_identity": "fabricated",
@@ -1729,8 +1831,19 @@ def test_authorized_direct_recovery_closes_without_a_tracker_frontier(
         (
             "authorized-direct-recovery",
             "authority-required",
-            lambda values: values.update({"formal_review_decision": "rejected"}),
-            "accepted review",
+            lambda values: values.update(
+                {
+                    "formal_review_decision": "rejected",
+                    "formal_review_provenance": "change-review rejected the pinned diff",
+                }
+            ),
+            "supplied review must be accepted",
+        ),
+        (
+            "authorized-direct-recovery",
+            "authority-required",
+            lambda values: values.update({"repair_generations_used": -1}),
+            "legacy repair_generations_used must be a non-negative integer",
         ),
         (
             "authorized-direct-recovery",

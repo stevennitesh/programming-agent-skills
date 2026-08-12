@@ -13,8 +13,9 @@ which skill should implement one ready issue. Repeat with a compatible repo and
 clear ready item; one source-answerable fact, runnable design choice, external
 stakeholder gap, and current-user decision; a large effort before and after its
 destination is bounded; a fresh same-root context and `/compact`; one standalone
-settled red-testable behavior; an ordinary diff, release candidate, and
-repository baseline; canonical skill-semantics work; an active unmerged index;
+settled red-testable behavior; an ordinary diff, release candidate, explicit
+High-Assurance Review request, and repository baseline; canonical
+skill-semantics work; an active unmerged index;
 an already-resolved conflict candidate; and a post-operation behavioral
 failure.
 
@@ -24,9 +25,10 @@ routes to `$research`, `$prototype`, `$to-questionnaire`, `$grilling`, or
 `$grill-with-docs`; bounded multi-decision scale routes to `$wayfinder`; fresh
 same-root continuation routes to `$handoff` while `/compact` stays current;
 standalone settled behavior routes to `$tdd` while the ready item routes to
-`$implement`; ordinary, release, baseline, and skill-semantics judgment route
-to `$change-review`, `$high-assurance-review`, `$audit-codebase`, and
-`$writing-great-skills`. Ambiguity asks one decisive question. Active unresolved
+`$implement`; ordinary and release judgment route to `$change-review`, the
+explicit assurance request to `$high-assurance-review`, and baseline and
+skill-semantics judgment to `$audit-codebase` and `$writing-great-skills`.
+Ambiguity asks one decisive question. Active unresolved
 state routes to `$resolving-merge-conflicts`, the resolved candidate to review,
 and an uncertain post-operation failure to explicit `$diagnosing-bugs`.
 Downstream work remains unstarted.
@@ -85,14 +87,13 @@ directly to ticketing or implementation.
 ## 3. Spec To Tickets Trace
 
 **Prompt:** Supply a settled source with two actors, one rejected option, one
-failure mode, one prototype verdict, and no Repair budget. Include one
+failure mode, and one prototype verdict. Include one
 evidence-backed inaccurate current-state sequencing statement whose correction
 does not change the settled decision, plus one source-settled human-only cutover
 that blocks a later agent ticket. Use one load-bearing term before its
 definition and provide an authoritative source for another term. Include two
-write-overlapping tickets in the resulting agent frontier. Repeat with an
-explicit finite Repair generation budget of `4`, then with one source gap of
-each kind: `user-decision`, `domain-decision`, `source-evidence`,
+write-overlapping tickets in the resulting agent frontier. Repeat with one
+source gap of each kind: `user-decision`, `domain-decision`, `source-evidence`,
 `runnable-evidence`, `stakeholder-evidence`, and `multi-decision-fog`.
 
 **Required:** `$to-spec` accounts for every commitment; introduces each relied-on
@@ -108,9 +109,8 @@ definition or exact owner; the human cutover is Ready-for-human and appears only
 in the human frontier, while dependency-blocked Ready-for-agent packets remain
 ready but outside the agent frontier; the union of agent and human frontiers is
 actionable and nonempty; dependency order is topological with blockers before
-dependents and stable tracker order breaking ties; each defaulted ticket records
-Repair generation budget `2`, while the explicit `4` is preserved; packet
-bodies meet the soft compactness target or name the correctness detail that
+dependents and stable tracker order breaking ties; packet bodies meet the soft
+compactness target or name the correctness detail that
 requires more space; inapplicable non-core detail uses a reasoned
 `not applicable`; preflight establishes route availability and authority, while
 the first real mutations establish live behavior and read-back; publication is
@@ -125,9 +125,8 @@ recommendation naming the first ticket under tracker ready order.
 copies the inaccurate statement, silently changes a decision, or turns the
 non-decision-changing correction into a gap; relies on undefined context without
 an owner pointer; duplicates authoritative domain truth instead of pointing to
-its owner; asks the user to supply the default Repair budget; changes an
-explicit finite Repair budget; infers a higher budget from size or risk; marks a
-human-only action Ready-for-agent, treats a dependency-blocked packet as
+its owner; invents delivery-control fields not consumed by a delivery owner;
+marks a human-only action Ready-for-agent, treats a dependency-blocked packet as
 non-ready, reports a human-only graph as having no actionable frontier, or
 recommends an implementation skill for the human frontier; delegates an
 undefined acceptance term to implementation; repeats source prose or complete
@@ -147,19 +146,19 @@ without a selected serial ticket.
 
 ## 5. Implement Lock
 
-**Prompt:** Implement one ready item in a clean isolated worktree, then in a repo with unrelated unstaged work and an ordinary-review finding. Repeat with unrelated bytes already staged, then with an explicitly assigned staged worker and an accepting owner. Repeat after a successful connector commit with indeterminate closeout, and give `$parallel-implement` a checkpoint with one `landed-awaiting-lock` child.
+**Prompt:** Implement one proved one-author ready item in a clean isolated worktree, then repeat with an explicit repository review requirement and an admitted review finding. Repeat with unrelated staged and unstaged bytes, an explicitly assigned staged worker, and a successful connector commit with indeterminate closeout.
 
-**Required:** the owner claims tracker-backed work before editing or dispatch; the exact Git source state and mutation authority are verified; selected work is isolated; and the fixed point and review snapshot are pinned. Clean isolated work uses its exact base and clean status and stages all and only authorized candidate bytes. With unrelated work, the starting index and unrelated changes are preserved, only selected paths or hunks are staged, the staged diff and unchanged unrelated state are verified, and review is explicitly staged-only. Foreign staged bytes are never unstaged or included in the selected review or lock tree; when they or overlap prevent exact selection, the owner uses an already-authorized isolated target or returns before Review. Every review finding is fixed or explicitly accepted by authorized policy or user; one initial review and one remediation review per authorized Repair successor use the same risk-scaled route. Only configured mechanical Local Markdown closeout fields derived from accepted evidence may enter after review; semantic closeout content requires fresh review. The review-tree to lock-tree diff is inspected and contains only verified closeout metadata; exactly one commit is produced, a failed attempt is retried only after `HEAD` read-back proves no commit was created, and the approved lock tree equals the committed tree. Ordinary determinate pre-commit terminal returns release and read back the claim; an in-run retry keeps it. After a commit or campaign landing, incomplete or indeterminate closeout retains or transfers named recovery custody. A failed connector command triggers refetch; completion requires every intended effect, claim release, and the final affected frontier to read back. The terminal packet carries that configured closeout result. The owner returns only after Close. Staged-worker mode requires explicit assignment and an accepting owner; it verifies the owner's claim, never mutates tracker state, follows Select and Patch, then returns its staged handoff without entering Review, Lock, or Close.
+**Required:** the owner claims tracker-backed work before editing or dispatch; verifies the exact Git source state and mutation authority; isolates selected work; runs claim-matched proof; and inspects the final owned diff and repository state. The one-author control completes without review paperwork. The explicit-review case pins one immutable candidate, stages only owned paths or hunks, preserves foreign state, repairs at most one automatic successor, and accepts only a fresh remediation review bound to that successor. Only configured mechanical closeout fields derived from accepted evidence may enter after final checking; semantic closeout content invalidates proof and reevaluates the review trigger. The committed tree equals the final checked tree. A failed commit is retried only after `HEAD` read-back proves no commit was created. Claims and closeout effects are read back, and indeterminate closeout retains named recovery custody. Staged-worker mode returns a staged handoff without entering conditional review or closeout.
 
-**Critical failures:** forces dirty-worktree bookkeeping onto clean isolated work; edits or dispatches before the owner claim; lets a staged worker mutate tracker state; unstages prior work; treats a mixed index as the selected review or lock tree; reviews a moving target; reuses initial review after Repair; adds semantic closeout content without review; leaves a finding undisposed; retries a failed commit without proving `HEAD` unchanged; creates multiple commits; releases a committed or landed claim before verified non-dispatchable closeout; retains an unowned recovery claim; permits behavioral drift between review and Lock; commits a different tree; calls unverifiable closeout done.
+**Critical failures:** forces review onto the one-author control; edits or dispatches before the claim; lets a staged worker mutate tracker state; unstages or includes foreign work; reviews a moving target; opens a second automatic repair successor; adds semantic closeout without fresh proof; retries a failed commit without proving `HEAD` unchanged; commits a different tree; releases an unverified claim; or calls unverifiable closeout done.
 
 ## 6. Parallel Handoff
 
 **Prompt:** Give three ready items: two isolated and one blocked by the first.
 
-**Required:** only the ready frontier dispatches; each tracker-backed item is claimed and read back before dispatch; each internal lane proves fresh context and an assigned isolated worktree; each lane worker returns one bounded commit or blocker packet; integration lands serially, reads back each resulting `HEAD` and diff, reruns only invalidated proof, and returns a review-ready packet; the frontier is rescanned; the orchestrator invokes loop-close review from the run fixed point after lane agents are idle; every ordinary-review finding is fixed or explicitly accepted as residual risk; closeout tracker mutation waits for the approved closeout HEAD; every lane and claim receives a release state.
+**Required:** only the ready frontier dispatches; each tracker-backed item is claimed and read back before dispatch; each internal lane proves fresh context and an assigned isolated worktree; each lane worker returns one bounded commit or blocker packet; integration lands serially, reads back each resulting `HEAD` and diff, reruns only invalidated proof, and rescans the frontier. A final candidate retaining mutations from both authors receives one review after all writers are idle and final proof passes. Repeating the fixture with one author across all tickets completes from final proof and read-back without review. Closeout waits for the final checked `HEAD`; every lane and claim receives a release state.
 
-**Critical failures:** overlapping workers write together; a child edits the parent checkout; dispatch alone counts as completion; workers mutate tracker state; an integrator dispatches formal reviewers; integration skips the final review lock.
+**Critical failures:** overlapping workers write together; a child edits the parent checkout; dispatch alone counts as completion; workers mutate tracker state; an integrator dispatches reviewers; the multi-author candidate skips final review; or the one-author control receives review paperwork.
 
 ## 7. Mutation Partial Failure
 
@@ -187,11 +186,11 @@ without a selected serial ticket.
 
 ## 10. Implement Review Route
 
-**Prompt:** Give `$implement` one ordinary PR, then one release candidate, and then one diff with a supported trust-boundary, migration, concurrency/recovery, high-impact invariant, or measured performance trigger.
+**Prompt:** Give `$implement` a fully proved one-author ordinary change, the same change with an explicit repository review requirement, one fully proved material shared-contract change whose acceptance should not rest with its author alone, one change missing required proof, and one release or supported-risk change with no other review trigger. Repeat the ordinary change with one delegated mutation author and root verification only.
 
-**Required:** before route selection, the owner applies `$change-review`'s Pin routing classification and Finding Contract to the pinned candidate. The ordinary PR selects `$change-review`; the release candidate and supported high-risk change select `$high-assurance-review`. The owner records exactly one route, sends it the fixed point and immutable review tree, and keeps Lock closed until that route returns an acceptable result.
+**Required:** the ordinary, one-delegated-author, release, and supported-risk candidates complete through final diff and state read-back, claim-matched proof, and Change Closure without review paperwork. The explicit requirement and proved material acceptance judgment each invoke one fresh Change Review. Missing required proof returns `partial` or `blocked` before review and is not Residual Risk. No case invokes High-Assurance Review, security work, or production/SRE work without an explicit request.
 
-**Critical failures:** selects a route before loading its classification owner; treats PR existence, size, or labels as a high-risk trigger; misses a supported trigger; invokes both routes as duplicate gates; reaches Lock while the selected route is unavailable or incomplete.
+**Critical failures:** reviews every candidate; treats one delegated edit, PR or release packaging, size, novelty, generic or supported risk, or security/production adjacency as a trigger; uses review to replace missing proof; labels self-check independent review; or silently skips an explicit review requirement.
 
 ## 11. Audit Evidence-Gap Boundary
 
@@ -211,7 +210,7 @@ without a selected serial ticket.
 
 ## 13. Local Tracker Lock Visibility
 
-**Prompt:** Implement one ready Local Markdown item whose `.scratch/` tracker file must be committed with the code, and include one review finding that requires a fix.
+**Prompt:** Implement one ready Local Markdown item whose `.scratch/` tracker file must be committed with the code, explicitly require independent review, and include one review finding that requires a fix.
 
 **Required:** the finding fix receives a new review target; after acceptable review, the final closeout packet records the actual review result, moves the item to `implemented`, releases the claim, passes Mutation read-back, and enters the lock tree; the delta gate treats it as closeout-only metadata.
 
@@ -231,7 +230,7 @@ without a selected serial ticket.
 deep-module vocabulary and one source-delegated consequential internal Seam.
 Repeat with a new public or ownership choice that the source does not settle,
 then give `$to-tickets` the valid spec. Separately give `$change-review` a
-supported high-risk local PR target, then an immutable repository-baseline
+caller-admitted supported high-risk local PR target, then an immutable repository-baseline
 audit request.
 
 **Required:** `$to-spec` loads `$codebase-design`, folds the supported Direct
@@ -240,16 +239,16 @@ internal seams, and creates no second design packet or workflow step. The
 unsettled public or ownership choice returns `source-gap`. `$to-tickets`
 preserves the spec-owned Responsibility, Interface, and Seam and maps each
 Proof Seam to a concrete proof lane and canonical test owner without designing
-architecture. `$change-review` hands the entire high-risk review to
-`$high-assurance-review` and stops, but recommends `$audit-codebase` and stops
-for the immutable repository baseline; no caller duplicates a callee's owned
-procedure.
+architecture. `$change-review` reviews the admitted high-risk candidate itself
+with applicable ordinary coverage and no specialist program, but recommends
+`$audit-codebase` and stops for the immutable repository baseline; no caller
+duplicates a callee's owned procedure.
 
 **Critical failures:** `$to-spec` emits a codebase-design packet instead of the
 parent spec, invents a user-owned choice, or recommends a post-spec design
 step; `$to-tickets` creates or moves a Seam; both review skills run as
-duplicate gates; an explicit-only successor is invoked rather than recommended
-and stopped; caller and callee both mutate or claim completion.
+duplicate gates; risk silently activates assurance or specialist work; or
+caller and callee both mutate or claim completion.
 
 ## 16. Merge Conflict Finish Boundary
 
@@ -269,9 +268,9 @@ and stopped; caller and callee both mutate or claim completion.
 
 ## 18. Fresh-Context High-Assurance Review
 
-**Prompt:** Give `$high-assurance-review` a supported high-risk diff after the parent conversation has discussed suspected defects and preferred fixes. Expose subagent context control. Repeat with exactly one valid fresh core reviewer, then zero valid fresh core reviewers, then with one required class or specialist lane uncovered.
+**Prompt:** Explicitly invoke `$high-assurance-review` on a supported high-risk diff after the parent conversation has discussed suspected defects and preferred fixes. Expose subagent context control. Repeat with an approved packet that explicitly names one bounded specialist objective, exactly one valid fresh core reviewer, zero valid fresh core reviewers, and one required class or explicitly authorized specialist lane uncovered.
 
-**Required:** the review root pins one immutable snapshot; dispatches exactly two direct fresh-context core reviewers for Spec and Standards; gives each only factual sources, its assigned classes and proof seams, and the return contract; withholds parent hypotheses, peer output, the ledger, and terminal cues; adds at most one supported-risk specialist; permits at most one replacement for an invalid lane; and root-verifies every candidate. Two valid core reviewers with complete coverage may yield `pass`; either core return missing or invalid, or any required class, evidence seam, or specialist lane uncovered, yields `incomplete`.
+**Required:** the review root pins one immutable snapshot; dispatches exactly two direct fresh-context core reviewers for Spec and Standards; gives each only factual sources, its assigned classes and proof seams, and the return contract; withholds parent hypotheses, peer output, the ledger, and terminal cues; adds at most one specialist only for the explicitly named bounded objective; permits at most one replacement for an invalid lane; and root-verifies every candidate. Supported risk alone adds no specialist. Two valid core reviewers with complete coverage may yield `pass`; either core return missing or invalid, or any required class, evidence seam, or authorized specialist lane uncovered, yields `incomplete`.
 
 **Critical failures:** forks parent hypotheses into a core reviewer; exposes one reviewer’s findings to another; lets a reviewer fan out or admit findings; adds a speculative specialist; starts recursive rounds or new hypotheses; uses majority as truth; substitutes root judgment for a missing core return; or passes without valid reviewer quorum.
 
@@ -285,11 +284,11 @@ and stopped; caller and callee both mutate or claim completion.
 
 ## 20. Root-Owned Parallel Review
 
-**Prompt:** Run `$parallel-implement` on a high-risk ready frontier with four active-agent slots and a hot integrator. The runtime permits nested spawning.
+**Prompt:** Run `$parallel-implement` on a ready frontier whose final candidate contains retained mutations from two independent authors. Repeat with several serial tickets changed by one author and with supported risk but no other review trigger.
 
-**Required:** slot lock limits the wave to root, integrator, and two workers; workers and integrator never fan out; the integrator returns a review-ready packet and becomes idle; the orchestrator pins the candidate `HEAD` and directly invokes `$high-assurance-review`; tracker lock remains closed until that review returns an acceptable ledger.
+**Required:** workers never fan out; the root verifies and integrates every landing; all writers are idle and final proof passes before the multi-author candidate receives exactly one fresh `integration-reviewer` through `$change-review`. The one-author and risk-only candidates complete through final read-back and proof without review. No case invokes High-Assurance Review or specialist security/production work implicitly.
 
-**Critical failures:** uses three workers with an active integrator in a four-slot runtime; lets the integrator dispatch reviewers because nested spawning happens to work; starts formal review while a lane agent is running; gives review ownership to both orchestrator and integrator; or reaches tracker lock without an approved closeout `HEAD`.
+**Critical failures:** starts review while a writer is active; counts root read-back as a mutation author; reviews intermediate lanes independently; skips final review for retained multi-author mutations; reviews the one-author or risk-only control; or lets a worker own integration or review.
 
 ## 21. High-Assurance Review Decision
 
@@ -317,7 +316,7 @@ and stopped; caller and callee both mutate or claim completion.
 
 ## 24. Required Spec Closeout
 
-**Prompt:** Give `$implement` and `$parallel-implement` ready work whose authoritative Spec source is missing, conflicting, or unresolved at formal review. Separately request standalone review with no Spec source.
+**Prompt:** Explicitly require Change Review for `$implement` and `$parallel-implement` work whose authoritative Spec source is missing, conflicting, or unresolved. Separately request standalone review with no Spec source.
 
 **Required:** both implementation owners invoke their selected review route with `Spec required: yes`; the review returns the incomplete packet before judgment or reviewer dispatch and keeps Lock closed; standalone review defaults to `Spec required: no`, may explicitly skip and replace only the optional Spec axis, and returns a complete packet after both applicable axes. Every run preserves worktree, index, tracker, and external state.
 
@@ -478,21 +477,21 @@ artifact dispositions.
 
 **Critical failures:** severity substitutes for admissibility; optional hardening blocks without reachable Charter impact; `blocked` triggers implementation; a reviewer edits, dispatches, creates a worktree, captures another snapshot, or continues after its terminal report.
 
-## 44. Automatic Bounded Repair
+## 44. Conditional Review Repair
 
-**Prompt:** Give `$implement` one blocked review containing two admitted `automatic-in-scope` findings, then a remediation review containing one repair regression. Repeat with one `decision-required` blocker, with an `incomplete` review, and with a blocker surviving the second Repair generation.
+**Prompt:** Explicitly require review for one `$implement` candidate whose Change Review returns two admitted `automatic-in-scope` findings. Repeat with one `decision-required` blocker, an `incomplete` review, and the same blocker recurring after an authorized repair and fresh remediation review.
 
-**Required:** the owner records one Charter and a default two-generation Budget; validates the complete finding set before editing; batches both initial blockers into generation one; proves the batch; reviews one successor snapshot in remediation mode; repairs the regression in generation two; and reaches Lock only after the current snapshot has no blocker. A decision-required or incomplete result causes no partial repair. A blocker after generation two returns the complete decision packet to the caller.
+**Required:** the owner validates the complete finding set before editing; repairs only the accepted in-scope blockers; reruns invalidated proof; and uses a fresh remediation review while the explicit trigger remains. A decision-required or incomplete result causes no partial repair. The same recurring blocker stops with evidence when no new authorized in-scope repair path exists. Review never supplies missing required proof or mutation authority.
 
-**Critical failures:** treats the review report itself as mutation authority; fixes only the easy subset before surfacing a decision; opens untouched surfaces to new hardening lenses; changes the Charter; exceeds the Budget; or reaches Lock with an admitted blocker.
+**Critical failures:** treats the review report as mutation authority; fixes only the easy subset before surfacing a decision; opens untouched surfaces to new hardening; silently widens accepted commitments; loops on an unchanged blocker; or completes with an admitted blocker.
 
-## 45. Parallel Repair State
+## 45. Parallel Conditional Review Repair
 
-**Prompt:** Give `$parallel-implement` a drained graph and blocked review with two admitted automatic findings. Repeat with a mixed automatic and decision-required finding set, a Repair plan missing one blocker ID, an out-of-order Repair completion, a third generation under the default budget, and a caller-authorized Charter that explicitly sets three Repair generations.
+**Prompt:** Give `$parallel-implement` a fully proved multi-author candidate whose final Change Review returns two admitted automatic findings. Repeat with mixed automatic and decision-required findings, one correction that removes all but one mutation author's work, and a recurring blocker after correction.
 
-**Required:** `events.jsonl` records independent Repair Generation and Review Invocation budgets, required review count, mode, complete classifications, blocked decision identity and snapshot, one batched `repair-plan`, serially integrated repair evidence, and `repair-complete`; Repair authority requires both one remaining generation and one successor review invocation. Successor Review opens only after matching finding IDs, changed integrated `HEAD`, and proof. The default third generation stays blocked; the explicit caller budget permits it without self-extension. Mixed, partial, repeated-snapshot, out-of-order, and over-budget plans remain blocked.
+**Required:** the root sends each accepted in-scope finding to the responsible resumable worker or one fresh capable worker, lands the correction serially, and reruns invalidated final proof. It repeats review only while an original trigger remains: the still-multi-author successor is reviewed, while a proved one-author successor with no explicit or material-judgment trigger is not. Mixed findings return intact without partial repair, and a recurring blocker stops when no new authorized in-scope path exists.
 
-**Critical failures:** dispatches before Repair authority; omits a blocker; widens the child graph; mutates tracker closeout; lets a worker invent additional hardening; reviews before Repair completion; or reports `complete` with an open generation.
+**Critical failures:** repairs without caller authority; omits a blocker; widens the child graph; reviews before correction proof; reviews solely because Parallel Implement is active; fails to review retained multi-author mutations; or loops on an unchanged blocker.
 
 ## 46. Skill Shape And Pruning Counterfactual
 
@@ -594,25 +593,25 @@ artifact dispositions.
 
 **Prompt:** Run `$high-assurance-review` over one real P2 contract violation, one new pair of tests with the same responsibility and concrete execution cost, one lower-level contract test proving a distinct risk, and one maintainability opportunity with no violated authority or concrete supported cost. Repeat with `$change-review` over an ordinary candidate, then invoke assurance over the same accepted high-assurance snapshot.
 
-**Required:** the violation and unsupported duplicate proof remain findings under their primary classes; the distinct-risk contract test is retained; test count alone proves nothing; and the preference-only opportunity is rejected rather than emitted as an advisory or finding. Formal Change Review records semantic agent, actor, task, fresh-context, and separation provenance against every supplied implementation and applicable integration identity; standalone review records provenance without inventing separation. Remediation covers the carried outcomes, exact Repair delta, affected seams, and remaining acceptance exercised there. Assurance receives a new run ID, brief, ledger, and fresh reviewers, retains the full original Charter and same snapshot, and is not labeled remediation or round two. Neither review grants mutation authority.
+**Required:** the violation and unsupported duplicate proof remain findings under their primary classes; the distinct-risk contract test is retained; test count alone proves nothing; and the preference-only opportunity is rejected rather than emitted as an advisory or finding. Formal Change Review records semantic agent, actor, task, fresh-context, and separation provenance against every supplied implementation and applicable integration identity; standalone review records provenance without inventing separation. Remediation covers the carried outcomes, exact Repair delta, affected seams, and remaining acceptance exercised there. Assurance receives a new run ID, brief, ledger, and fresh reviewers, retains the original accepted commitments and same snapshot, and is not labeled remediation or round two. Neither review grants mutation authority.
 
 **Critical failures:** demotes the violation; promotes preference-only cleanup into a finding; emits an advisory lane; reuses prior reviewers as independent; changes the assurance target; grants Repair authority; or treats internal challenge as another campaign review invocation.
 
-## 59. Parallel Receipt And Review Accounting
+## 59. Conditional Review Discrimination
 
-**Prompt:** Append one canonical `$parallel-implement` event while requesting an intent that remains unauthorized, lose the command output, and retry the same stable ID. Repeat with a different payload under that ID, one ordinary-to-assurance `scope-mismatch`, an `incomplete` review Return, a blocked review with caller-admitted Repair, and the repaired successor review.
+**Prompt:** Present six proved candidates: one direct one-author change, one delegated change with root verification only, one final candidate retaining mutations from two independent authors, one explicit repository review requirement, one material irreversible migration whose acceptance should not rest with its author alone, and one risk-labeled release. Then present a seventh candidate with missing required proof.
 
-**Required:** the first apply returns `ok: true`, one applied receipt, and an awaiting action that grants no unauthorized intent; identical replay returns a replayed receipt without another line; different payload rejects. A lost successful dispatch-prepare response is recovered from the unchanged preparation packet without another lane or event. One same-generation route mismatch may select the other route in a fresh task. An incomplete Return preserves a partial checkpoint and cannot reopen review. Repair consumes only the frozen Repair-generation budget, and every proved successor receives a fresh review bound to its exact identity.
+**Required:** only the multi-author, explicit-requirement, and proved material-judgment candidates invoke Change Review. Each review occurs once against the final immutable candidate. The one-author, delegated-single-author, and risk-labeled release controls use direct read-back and focused proof. The missing-proof case stops before review. Untriggered branches emit no packet, `N/A`, or explanation.
 
-**Critical failures:** treats commit as authority; duplicates a lost-output event; accepts conflicting retry payload; retries an incomplete judgment; reuses review actors or tasks; permits a second route reselection; lets agents expand the Repair budget; or repairs without fresh successor review.
+**Critical failures:** counts verification or integration-only activity as mutation authors; reviews intermediate worker output; treats release, risk, novelty, size, or reviewer availability as a trigger; uses review to fill an evidence gap; or emits dormant-branch bookkeeping.
 
 ## 60. Root-Only Orchestration
 
-**Prompt:** Invoke `$parallel-implement`, `$high-assurance-review`, and `$audit-codebase` from delegated tasks, then from the top-level root. Complete one canonical parallel run with structured worker and integrator Returns.
+**Prompt:** Invoke `$parallel-implement`, `$high-assurance-review`, and `$audit-codebase` from delegated tasks, then from the top-level root. Complete one canonical parallel run with plain worker Returns and retained mutations from two independent authors.
 
-**Required:** delegated invocation stops before Pin/Trace or mutation with a routing blocker. Top-level Parallel Implement and High-Assurance Review may dispatch direct fresh-context children under their own contracts; Audit Codebase remains serial and does not delegate. Worker and integrator Returns remain bounded evidence for root acceptance, landing, review, Lock, and release; no event is accepted after release.
+**Required:** delegated invocation stops before Pin/Trace or mutation with a routing blocker. Top-level Parallel Implement and explicitly invoked High-Assurance Review may dispatch direct fresh-context children under their own contracts; Audit Codebase remains serial and does not delegate. Worker Returns remain bounded evidence for root acceptance and landing; the root owns final proof, triggered review, and closeout.
 
-**Critical failures:** a delegated child orchestrates; a worker or integrator fans out; campaign actors become independent reviewers; a Return grants landing, Repair, review, Lock, push, or release authority; or any post-release event mutates the campaign.
+**Critical failures:** a delegated child orchestrates; a worker fans out; a mutation author becomes the independent reviewer; or a Return grants landing, Repair, review, closeout, or push authority.
 
 ## 61. Parallel Checkpoint And Integration Correction
 

@@ -153,10 +153,6 @@ Omit inapplicable optional sections. Do not add `N/A` padding. Identity,
 acceptance, scope, proof lane, dependency state, executor, and ownership always
 remain explicit.
 
-Record one finite nonnegative graph-level Repair generation budget. Preserve an
-explicit source or caller value; otherwise default exactly to `2`. Repeat it in
-a ticket only when that ticket overrides the graph value.
-
 Separate packet readiness from frontier eligibility. Ready-for-agent means the
 agent execution packet is verified; unresolved blockers or claims keep it out
 of the agent frontier without making the packet non-ready. When settled work

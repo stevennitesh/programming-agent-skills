@@ -121,8 +121,8 @@ material Seam belongs in the spec when it affects caller contracts, cross-ticket
 ownership, compatibility or migration, or test strategy. Paths are evidence, not
 an implementation plan. Leave bounded repository grounding, ticket slices,
 expected writes, concrete proof lanes and test owners, dependency graph and
-ready frontier, static execution facts, live concurrency decisions, implementation
-technique, and default Repair budgets to `$to-tickets` and delivery owners.
+ready frontier, static execution facts, live concurrency decisions, and
+implementation technique to `$to-tickets` and delivery owners.
 
 ### 4. Publish, verify, and reconcile
 

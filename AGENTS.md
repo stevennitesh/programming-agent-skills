@@ -1,6 +1,6 @@
 # Repository Instructions
 
-<!-- programming-agent-skills setup-schema: 1:4ad200ae7e6e -->
+<!-- programming-agent-skills setup-schema: 1:0f720f32e3c8 -->
 
 Explore imaginatively. Converge under proof. Simplify ruthlessly.
 

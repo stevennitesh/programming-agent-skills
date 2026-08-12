@@ -21,7 +21,9 @@ duplicating the finding.
 | **Standards** | **Stewardship** | Retained complexity has an owner and reason, unrelated work is preserved, and changed code remains maintainable. |
 
 Behavior is evidence used by both axes, not another axis. Risk is a
-cross-cutting modifier. A **supported high-risk trigger** identifies a changed
+cross-cutting modifier after review is admitted. It never invokes Change
+Review, High-Assurance Review, security work, production/SRE work, or a
+specialist. A **supported high-risk trigger** identifies a changed
 surface, supported scenario, reachable behavior or failure path, and concrete
 impact involving a trust boundary, irreversible effect or migration,
 concurrency or recovery, high-impact domain or model invariant, or measured
@@ -35,7 +37,7 @@ Admit a finding only when all five gates close:
 | Gate | Required evidence |
 | --- | --- |
 | **Anchor** | Governing acceptance, repository Standard, required validation, or reachable behavior changed or promised by the candidate |
-| **Reach** | A supported scenario inside the Charter or requested slice |
+| **Reach** | A supported scenario inside the accepted request or requested slice |
 | **Evidence** | Direct evidence from the immutable snapshot and safe read-only verification |
 | **Impact** | Concrete correctness, security, privacy, data, proof, operability, or maintainability failure |
 | **Proportion** | A required outcome with a remedy proportionate to the anchored contract |
@@ -84,7 +86,7 @@ the smallest semantic proof that can close the Repair.
 ## Remediation Review
 
 A fresh remediation review receives `Invocation: formal-delivery` and
-`Review mode: remediation`, plus the original Charter, prior snapshot identity,
+`Review mode: remediation`, plus the original accepted commitments, prior snapshot identity,
 stable carried IDs, caller-owned Repair delta, remaining acceptance, fixed
 point, and successor candidate. Judge only the carried outcomes, Repair delta,
 affected surfaces, and remaining acceptance exercised there; leave untouched
@@ -98,9 +100,9 @@ scope closed.
   operator risk.
 - `P3`: lower-risk actionable correctness or maintainability.
 
-`P0` and `P1` block. `P2` and `P3` follow the Charter or repository policy.
+`P0` and `P1` block. `P2` and `P3` follow the accepted commitments or repository policy.
 
-- `automatic-in-scope` preserves the Charter with bounded proof.
+- `automatic-in-scope` preserves the accepted commitments with bounded proof.
 - `decision-required` changes an accepted commitment or authority.
 - `residual-hardening` identifies a directly evidenced reachable risk outside
   automatic acceptance.

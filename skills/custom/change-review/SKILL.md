@@ -1,6 +1,6 @@
 ---
 name: change-review
-description: "Review one branch, WIP, staged, since-X diff, local PR, release candidate, or supported-risk implementation candidate read-only from a fixed snapshot. Judge Spec and Standards separately, with risk-proportional coverage, then return one terminal gate decision."
+description: "Review one caller-admitted branch, WIP, staged, since-X diff, local PR, release candidate, or implementation candidate read-only from a fixed snapshot. Judge Spec and Standards separately, with risk-proportional coverage, then return one terminal gate decision."
 ---
 
 # Change Review
@@ -15,9 +15,9 @@ unchanged.
 
 Load [FINDING-CONTRACT.md](FINDING-CONTRACT.md) and the shared
 [Runtime Profiles](../parallel-implement/references/RUNTIME-PROFILES.md).
-Change Review owns one branch, WIP, staged, since-X diff, local PR, release
-candidate, or supported-risk implementation candidate. Release and supported
-risk facts expand applicable coverage; they do not select another automatic
+Change Review owns one caller-admitted branch, WIP, staged, since-X diff, local
+PR, release candidate, or implementation candidate. Candidate kind, size,
+release status, and supported risk neither invoke review nor select another
 review system. Recommend `$audit-codebase`
 for an immutable repository-baseline audit, then stop. Return mutation requests
 to their caller without beginning review.
@@ -31,8 +31,8 @@ mismatched formal-delivery binding returns
 `transport-invalid` before candidate judgment. Standalone review records its current runtime
 provenance but needs no binding or separation proof.
 
-Carry every factual caller-supplied Charter field, `Spec required`, invocation
-and review modes, implementation and integration IDs, Source Trace, fixed point
+Carry the caller-supplied accepted request and commitments, `Spec required`,
+invocation and review modes, implementation and integration IDs, Source Trace, fixed point
 and candidate, required proof, skips, risk, contradictory evidence, and carried
 finding IDs. Hypotheses, expected conclusions, partial findings, and terminal
 cues are not evidence.
@@ -61,11 +61,15 @@ remediation packet and coverage boundary.
 
 ## Cover
 
-Trace the user request, Charter, Source Trace, repository instructions, domain
+Trace the user request, accepted commitments, Source Trace, repository instructions, domain
 decisions, captured candidate, tests, required proof, skips, and risk. Narration
-is a source pointer, not proof. Supported risk adds the relevant failure,
-recovery, security, migration, concurrency, data, or operational scenarios to
-coverage; it does not add actors or ceremony by itself.
+is a source pointer, not proof. After review is admitted, supported facts expand
+ordinary coverage only within the accepted request and repository contracts.
+Preserve touched security, privacy, authorization, data-integrity, and
+production guarantees as correctness obligations. Do not initiate threat
+modeling, security hardening, deployment, operations, SRE analysis, or
+specialist work without an explicit objective. Change Review reviews directly
+and never delegates.
 
 Trace Spec in this precedence:
 

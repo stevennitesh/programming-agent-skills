@@ -11,9 +11,11 @@ description: Explicit-only review of one immutable caller-selected candidate thr
 
 Load the `change-review` skill's `FINDING-CONTRACT.md` and the shared
 [Runtime Profiles](../parallel-implement/references/RUNTIME-PROFILES.md).
-Accept only when the user explicitly invokes High Assurance Review for one
-caller-bounded immutable candidate. Release status and supported-risk triggers
-may shape coverage but are neither required nor sufficient for invocation.
+Accept only when the user explicitly names High Assurance Review or approves
+one exact caller-owned invocation packet for one immutable candidate. That
+admission authorizes the two core lanes only. Release status, supported risk,
+security or production adjacency, and uncertainty are neither required nor
+sufficient for invocation.
 Recommend `$audit-codebase` for an immutable
 repository-baseline audit, then stop.
 
@@ -29,7 +31,7 @@ Hold a read-only boundary through Gate. Leave repository, dependency, tracker,
 PR, external, Repair, and successor state unchanged. If required evidence needs
 mutation, return `incomplete` with the blocker and verified partial evidence.
 
-Freeze the caller's Charter, commitment boundary, fixed point, candidate,
+Freeze the caller's accepted request and commitments, commitment boundary, fixed point, candidate,
 `Spec required: yes | no`, Source Trace, required proof, skips, supported-risk
 facts, carried IDs, coordinator actor and task IDs, and mode.
 
@@ -98,10 +100,14 @@ Both lanes intentionally overlap on supported risk, failure and recovery paths,
 Change Closure, and evidence completeness while retaining their primary axis
 and classes.
 
-Add at most one `har-specialist` when a frozen supported risk requires a distinct
-security, migration, concurrency, model, data, or performance evidence lane the
-two core lanes cannot responsibly cover. The specialist covers only its
-assigned classes and risk; Risk never becomes a third axis.
+Add at most one `har-specialist` only when the user or approved invocation
+packet explicitly names one bounded specialist objective and its coverage.
+Security and production/SRE specialist coverage require those objectives to
+be explicit. Supported risk alone never selects a specialist. Without explicit
+specialist authority, the two core lanes cover the admitted general scope or
+return `incomplete` when required specialist evidence cannot be obtained. The
+specialist covers only its assigned classes and risk; Risk never becomes a
+third axis.
 
 Record each lane's semantic agent ID, runtime agent type, actor ID, task ID,
 requested and observed-or-unavailable model and reasoning, accepted-request or telemetry

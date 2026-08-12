@@ -137,8 +137,8 @@ Representative routes:
   `$skill-router`.
 - Whole-repository correctness, robustness, or quality discovery -> `$audit-codebase` builds, continues, or refreshes one linked HTML map, audits one user-selected subsystem, then can analyze one user-selected improvement candidate or returned evidence
 - Existing behavior in one bounded region -> `$simplify-code` for one proved reduction, a finite `until-clean` campaign, or a no-safe-cut verdict
-- Any ordinary, release, or supported-risk implementation candidate ->
-  `$change-review`; an explicitly selected two-lane assurance review ->
+- An explicit read-only change judgment or implementation candidate whose
+  independent-review trigger applies -> `$change-review`; an explicitly selected two-lane assurance review ->
   `$high-assurance-review`
 - Bounded correctness, domain robustness, performance, structural, or simplification discovery over an immutable repository baseline -> `$audit-codebase`, with repo-backed candidate decisions returned through `$grill-with-docs`
 
@@ -159,7 +159,7 @@ Build faster without making the repository harder to trust. Move quickly through
 
 [`$repo-bootstrap`](skills/custom/repo-bootstrap/SKILL.md) installs a small `docs/agents/engineering-contract.md` in each target repository. The contract owns engineering taste, preventive code-quality defaults, shared vocabulary, and cross-skill discipline while leaving implementation technique flexible.
 
-The shared spine is `Explore -> Choose -> Prove -> Expand -> Simplify -> Lock`. Explore grounds the work while opening credible alternatives. Choose selects the strongest evidence-backed design. Proof establishes one real tracer bullet. Expand covers requirements and applicable failure, state, trust, compatibility, and performance paths while letting evidence improve the design. Simplify reduces the proved shape without erasing its capability. **Lock** closes only after whole-diff Spec / Standards review, canonical evidence, cleanup, and named residual risk.
+The shared spine is `Explore -> Choose -> Prove -> Expand -> Simplify -> Lock`. Explore grounds the work while opening credible alternatives. Choose selects the strongest evidence-backed design. Proof establishes one real tracer bullet. Expand covers requirements and applicable failure, state, trust, compatibility, and performance paths while letting evidence improve the design. Simplify reduces the proved shape without erasing its capability. **Lock** closes only after final diff and state read-back, canonical evidence, cleanup, named residual risk, and Spec / Standards review when its trigger applies.
 
 For the same core behavior without installing skills, use [`AGENTS_PORTABLE_FALLBACK.md`](AGENTS_PORTABLE_FALLBACK.md) as a standalone repository-level `AGENTS.md`.
 

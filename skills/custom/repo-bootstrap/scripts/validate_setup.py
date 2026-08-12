@@ -17,7 +17,7 @@ REQUIRED_FILES = (
     "docs/agents/engineering-contract.md",
 )
 
-SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:4ad200ae7e6e -->"
+SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:0f720f32e3c8 -->"
 ENGINEERING_PRIMER_TOKEN = (
     "Explore imaginatively. Converge under proof. Simplify ruthlessly."
 )
@@ -37,7 +37,7 @@ PORTABLE_SECTION_HEADINGS = (
     "## Hard Gates",
     "## Shape Before Build",
     "## Implementation Taste",
-    "## Review And Report",
+    "## Check, Conditional Review, And Report",
 )
 
 PORTABLE_SECTION_SIGNATURES = (
@@ -54,8 +54,8 @@ PORTABLE_SECTION_SIGNATURES = (
     ("## Shape Before Build", "**Interview:** when intent is unsettled"),
     ("## Implementation Taste", "Order tracer-bullet slices by dependency."),
     (
-        "## Review And Report",
-        "Review every nontrivial diff from a fixed point on separate axes:",
+        "## Check, Conditional Review, And Report",
+        "Inspect every owned diff and final repository state.",
     ),
 )
 

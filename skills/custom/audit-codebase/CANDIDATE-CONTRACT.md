@@ -125,7 +125,9 @@ When `SKILL.md` admits its conditional follow-up branch, apply
 Close is a separately user-selected `$audit-codebase` objective for exactly one
 analyzed candidate. Select the route returned by `inspect --objective close`
 and use `schema --objective close --completion-route <route>`. Add
-`--tracker-provider local-markdown` for a Local Markdown `tracker-frontier`:
+`--tracker-provider local-markdown` for a Local Markdown `tracker-frontier`.
+Add `--reviewed` only when condition-triggered Change Review ran and returned
+accepted:
 
 - **`tracker-frontier`:** only for `ready-graph|reused`; require the candidate
   digest, tracker mutation/read-back identity, and provider-native Ready tracker
@@ -143,17 +145,17 @@ and use `schema --objective close --completion-route <route>`. Add
   tracker identities. This route repairs the atlas only; never create,
   reconstruct, or imply a retrospective ticket.
 
-Before constructing any packet, the root verifies that the accepted proof
-and review bind to the supplied commit/tree, the commit is current or
-reachable, Change Closure is complete, no implementation blocker remains,
+Before constructing any packet, the root verifies that the accepted proof and,
+when review ran, the accepted review bind to the supplied commit/tree; the
+commit is current or reachable; Change Closure is complete; no implementation blocker remains;
 the report/run/subsystem/candidate, candidate digest, and last Analyze identity
 match, and every active candidate finding has one state-and-reason transition.
 For direct recovery, the root also verifies the supplied implementation
 authority granted that exact direct change before it landed.
 
 The helper enforces the exact packet schema and Git commit/tree relationship;
-it does not independently prove the supplied authority, proof, or review
-claims. A mismatched, partial, blocked, or failing Return changes no candidate
+it does not independently prove the supplied authority, proof, or conditional
+review claims. A mismatched, partial, blocked, or failing Return changes no candidate
 state.
 Successful implementation is distinct from `disproved`.
 Each transition changes only current state and reason; original evidence

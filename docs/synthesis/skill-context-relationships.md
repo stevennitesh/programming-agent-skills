@@ -85,7 +85,7 @@ flowchart TD
   Ready --> Implement["implement"]
   Ready --> Parallel["parallel-implement"]
   Implement --> Contract
-  Implement --> Review["change-review"]
+  Implement -. "review trigger" .-> Review["change-review"]
   Implement --> FindingContract["FINDING-CONTRACT.md<br/>admission + remediation interface"]
   Implement --> Tracker
   Implement -. "unsettled work" .-> Shape
@@ -95,7 +95,7 @@ flowchart TD
   Parallel --> Tracker
   Parallel --> DomainRouter
   Parallel --> AgentLanes["AGENT-LANES.md<br/>worktree prepare + cleanup"]
-  Parallel --> Review
+  Parallel -. "review trigger or independent authors" .-> Review
   Parallel --> FindingContract
   Parallel -. "conflicted landing" .-> Conflict
   Review --> Tracker
@@ -240,12 +240,12 @@ Return.
 | `triage` | Recommend and stop | `$to-tickets` | Settled source requires several independently completable implementation slices; leave readiness unchanged and pass the intact source for user-selected graph creation. |
 | `triage` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `implement` | Invoke | `$tdd` | New behavior is settled and red-testable, or expected behavior, the exact symptom, the cause, and a trusted red-capable reproduction are known. |
-| `implement` | Invoke | `$change-review` | Every accepted candidate or Repair generation gets one fresh `ordinary-reviewer`; supported risk changes coverage, and the decision returns to Implement before final delivery commit or closeout. A worker-created candidate commit may already exist and remains provisional until accepted. |
+| `implement` | Invoke | `$change-review` | The user or repository explicitly requires independent review; the candidate contains mutations from two or more independent authors; or focused proof establishes behavior but a material shared-contract or irreversible-migration acceptance judgment still warrants fresh independent judgment and review is the lowest-burden way to obtain it. Missing proof stops instead of invoking review. A repaired successor is reviewed only while the original trigger still applies. |
 | `implement` | Hand off | `$resolving-merge-conflicts` | Admission finds an existing conflict-only state rather than the selected ready item; supply the exact operation, goal, state, scope, authorities, proof expectation, and Return owner, then stop. |
 | `implement` | Recommend and stop | `$to-tickets` | A verified landed predecessor or post-publication implementation change invalidated the selected ticket's commitments or graph facts; return the implementation identity, before-and-after evidence, invalidated fields, and affected ticket. Ordinary malformed or unsettled source returns to its caller, source, or triage owner. |
 | `implement` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `parallel-implement` | Invoke | `$tdd` | A lane worker has red-testable new behavior, or a bug whose expected behavior, exact symptom, cause, and trusted red-capable reproduction are known. |
-| `parallel-implement` | Invoke | `$change-review` | Every drained proved integrated candidate or repaired successor gets one fresh `integration-reviewer`; supported risk changes coverage, and the decision returns to the root. |
+| `parallel-implement` | Invoke | `$change-review` | The integrated candidate contains mutations from two or more independent authors, or either other Change Review trigger applies. Several tickets or files authored by one mutation actor do not trigger review. Missing proof stops instead of invoking review. |
 | `parallel-implement` | Invoke | `$resolving-merge-conflicts` | Serial landing enters preserved conflict or partial Git state; supply operation identity and goal, exact state, scope, both authorities, unrelated state, proof expectation, and root Return owner. Resume only from the resolver's fresh exact-state Return. |
 | `parallel-implement` | Recommend and stop | `$to-tickets` | Admission finds an actually incomplete or contradictory graph, or verified implementation invalidates remaining graph semantics; return one exhaustive evidence-backed repair packet and retain campaign claims. Only a later explicit To Tickets invocation can admit the exact packet and transfer its named claims; To Tickets releases those claims only after repaired graph read-back, then returns outcome custody. Ordinary blockers, regressions, conflicts, and review findings remain in Parallel Implement. |
 | `parallel-implement` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
@@ -295,7 +295,7 @@ every terminal result directly to its current caller or the user.
 | `research` | Claim-owning source legwork and one authorized cited note or verified inline evidence | `skill-router`, `grilling`, `wayfinder` |
 | `to-questionnaire` | One recipient-ready async discovery artifact for one external stakeholder and downstream decision | `skill-router`, `grilling`, `wayfinder`, humans collecting stakeholder evidence |
 | `resolving-merge-conflicts` | Read-only three-way inspection, authorized reconciliation, and the separate finish boundary | Git operations and implementation or integration work that enters a conflicted state |
-| `change-review` | Single automatic fixed-snapshot Standards/Spec review with risk-proportional coverage | `implement`, `parallel-implement` |
+| `change-review` | Conditional fixed-snapshot Standards/Spec review with risk-proportional coverage after caller admission | `implement`, `parallel-implement`, direct callers |
 | `audit-codebase` | Deterministic JSON-state HTML repository atlas plus current-source, user-selected subsystem Audit, candidate Analyze, and explicit one-candidate Close through a tracker frontier or authorized already-landed direct recovery; mandatory six-class coverage loads detailed owners on observable triggers, and implementation-ready Analyze prompts invoke `to-tickets` without starting implementation or making a release decision | `skill-router`, `change-review`, `high-assurance-review`, `diagnosing-bugs`, `simplify-code`, `$grill-with-docs` decision returns, and humans explicitly invoking repository audits |
 | `simplify-code` | One unstaged, behavior-preserving simplification patch, an explicit finite and bounded `until-clean` campaign, or a proved no-safe-cut verdict | `skill-router`, `audit-codebase`, humans invoking bounded cleanup |
 
@@ -350,15 +350,15 @@ every terminal result directly to its current caller or the user.
   the AI disclaimer; `$to-tickets` owns execution packets, slicing, dependency
   order, proof-responsibility mapping, and graph readiness. Do not re-triage
   valid `$to-tickets` output.
-- `implement` owns one standalone selected item and its bounded Repair campaign, with Git delivery only when the selected branch requires it; `parallel-implement` owns one explicitly requested parent-backed exhaustive Ready-for-agent graph through concurrent and serial frontiers, bounded Repair generations, serial integration, and verified child-first then parent-last closeout.
+- `implement` owns one standalone selected item and its in-scope correction path, with Git delivery only when the selected branch requires it; `parallel-implement` owns one explicitly requested parent-backed exhaustive Ready-for-agent graph through concurrent and serial frontiers, serial integration, bounded in-scope correction, and verified child-first then parent-last closeout.
 - The `parallel-implement` root is the sole dispatcher, serial landing,
-  integration-judgment, and formal-review owner. Workers never fan out. There
+  integration-judgment, and conditional-review owner. Workers never fan out. There
   is no warm general integrator or machine-validated worker capsule.
-- `implement` and `parallel-implement` automatically use exactly one fresh
-  `$change-review`; supported risk changes coverage. `$high-assurance-review`
-  runs only when the user explicitly invokes it and is never automatically
-  routed or recommended.
-- `change-review` and `high-assurance-review` return terminal read-only evidence. Their reports grant no mutation or successor-snapshot authority; the implementation caller's pre-recorded Charter and Repair Budget govern continuation.
+- `implement` and `parallel-implement` complete through direct final read-back
+  and focused proof unless a Change Review trigger applies. Supported risk
+  modifies coverage only after review admission. `$high-assurance-review` and
+  security or production/SRE specialist work are explicit-only.
+- `change-review` and `high-assurance-review` return terminal read-only evidence. Their reports grant no mutation or successor-snapshot authority; the implementation caller's accepted commitments and scope govern continuation.
 - `high-assurance-review` may run its own bounded read-only reviewer passes only when explicitly invoked; it is not a second implementation orchestrator.
 - `audit-codebase` owns the exhaustive system/subsystem map and exactly one user-selected Audit, Analyze, or one-candidate Close objective per invocation over current-source identity. Close admits a tracker frontier or an explicitly authorized already-landed direct recovery and never fabricates a retrospective ticket. Audit accumulates verified items, retained complexity, candidate strength, decisions, implementation evidence, and history in one deterministic offline HTML report backed by canonical JSON state. It ranks candidates only inside an audited subsystem, ranks no subsystem, starts no implementation, and returns selection authority to the user.
 - `simplify-code` owns one standalone cleanup patch or an explicitly bounded serial `until-clean` campaign with a finite cut budget, strict net-reduction ledger, and terminal stop condition under before-and-after proof gates. It does not own feature work, bug diagnosis, public-contract decisions, wide improvement surveys, staging, commits, or tracker closeout.

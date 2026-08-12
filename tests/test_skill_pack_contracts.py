@@ -6,6 +6,8 @@ import re
 import runpy
 from pathlib import Path
 
+import yaml
+
 from scripts import (
     pack_contract,
     skill_pack_contract,
@@ -530,7 +532,7 @@ def assert_repo_bootstrap_semantic_contract(
 def test_repo_bootstrap_reconciles_existing_setup_without_reset() -> None:
     assert_repo_bootstrap_semantic_contract(
         CUSTOM / "repo-bootstrap",
-        "4dbce0d7f08f08536a147b4d2774b910eeade4cd71581cdaba8a94c88266884d",
+        "c914dc0bb12d0724af2ecc5ae18f6e9506f89cb4d5a6371c1c6a54b5e576d942",
         profile="incumbent",
     )
 
@@ -1368,12 +1370,9 @@ def test_review_baselines_are_discovered_and_independence_is_honest() -> None:
     assert "$change-review" not in convergent.split("## 1. Admit", 1)[1].split(
         "## 2. Pin", 1
     )[0]
-    assert "Release and supported risk facts expand applicable coverage" in (
-        " ".join(review.split())
-    )
-    assert "Accept only when the user explicitly invokes" in convergent
-    assert "supported-risk implementation candidate" in review_summary
-    assert "every accepted candidate" in " ".join(review_summary.split())
+    review_flat = " ".join(review.split())
+    assert "Candidate kind, size, release status, and supported risk neither invoke review" in review_flat
+    assert "Accept only when the user explicitly names" in convergent
     assert "explicitly user-selected immutable candidate" in assurance_summary
     assert "No workflow selects High-Assurance Review automatically" in assurance_summary
     assert "only when documented repo standards" in " ".join(baseline.split())
@@ -1508,7 +1507,7 @@ def test_review_finding_interface_and_return_boundary_are_shared() -> None:
     for field in (
         "`Invocation: formal-delivery`",
         "`Review mode: remediation`",
-        "original Charter",
+        "original accepted commitments",
         "prior snapshot identity",
         "stable carried IDs",
         "caller-owned Repair delta",
@@ -1547,7 +1546,8 @@ def test_review_family_shares_one_bounded_quality_and_risk_model() -> None:
     ):
         assert finding.count(f"**{class_name}**") == 1
     assert "Behavior is evidence used by both axes, not another axis." in finding_flat
-    assert "Risk is a cross-cutting modifier." in finding_flat
+    assert "Risk is a cross-cutting modifier after review is admitted." in finding_flat
+    assert "It never invokes Change Review" in finding_flat
     assert "PR existence, size, labels, and hypothetical cases do not qualify." in finding_flat
     assert "not a blind Cartesian product" in review
     assert "not a blind Cartesian product" in convergent_flat
@@ -1555,7 +1555,7 @@ def test_review_family_shares_one_bounded_quality_and_risk_model() -> None:
     assert "inapplicable classes `N/A`" not in convergent_flat
     assert "Reuse proof tied to the exact snapshot" in review
     assert "Reuse exact-snapshot proof" in convergent_flat
-    assert "release candidate, or supported-risk implementation candidate" in review
+    assert "release candidate, or implementation candidate" in review
     assert "FINDING-CONTRACT.md" in convergent
     assert "neither required nor sufficient for invocation" in convergent_flat
     assert "supported-risk candidate needs read-only judgment" in router
@@ -1565,7 +1565,7 @@ def test_review_family_shares_one_bounded_quality_and_risk_model() -> None:
 def test_review_assurance_route_has_one_domain_decision() -> None:
     context = (ROOT / "CONTEXT.md").read_text(encoding="utf-8")
     adr = (
-        ROOT / "docs/adr/0013-automatic-implementation-review-uses-one-change-review-path.md"
+        ROOT / "docs/adr/0015-independent-change-review-is-condition-triggered.md"
     ).read_text(encoding="utf-8")
     normalized_adr = " ".join(adr.split())
 
@@ -1575,11 +1575,12 @@ def test_review_assurance_route_has_one_domain_decision() -> None:
         "**Supported high-risk trigger**",
     ):
         assert context.count(term) == 1
-    assert "ADR-0013" in context
+    assert "ADR-0015" in context
     assert "**Status**: accepted" in adr
-    assert "Supported risk changes" in normalized_adr
-    assert "Every Implement candidate uses one fresh" in normalized_adr
-    assert "High-Assurance Review is explicit-only" in normalized_adr
+    assert "Supported facts expand ordinary candidate-scoped coverage" in normalized_adr
+    assert "Candidate size, PR or release packaging" in normalized_adr
+    assert "Missing required proof stops the work" in normalized_adr
+    assert "High-Assurance Review remains explicit-only" in normalized_adr
     superseded = (
         ROOT / "docs/adr/0011-review-assurance-follows-release-risk.md"
     ).read_text(encoding="utf-8")
@@ -1631,6 +1632,8 @@ def test_high_assurance_review_has_root_guard_bounded_capacity_and_risk() -> Non
     assert "coordinator never substitutes for a reviewer" in convergent
     assert "no Repair, Lock, or residual-risk acceptance authority" in convergent_flat
     assert "at most one `har-specialist`" in convergent
+    assert "explicitly names one bounded specialist objective" in convergent_flat
+    assert "Supported risk alone never selects a specialist" in convergent_flat
     assert "at most one fresh unbiased replacement per invalid lane" in convergent
     for agent_id in (
         "har-spec-reviewer",
@@ -1830,21 +1833,50 @@ def test_high_assurance_review_checks_snapshot_drift_not_baseline_drift() -> Non
     assert "Do not recapture" in verify
 
 
-def test_implement_uses_one_risk_proportional_change_review_path() -> None:
+def test_implement_uses_condition_triggered_change_review() -> None:
     implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
-    review = implement.split("## Review And Repair", 1)[1].split(
+    review = implement.split("## Check, Conditional Review, And Repair", 1)[1].split(
         "## Lock And Return", 1
     )[0]
     flat = " ".join(review.split())
 
-    assert "exactly one fresh `ordinary-reviewer` using `$change-review`" in flat
-    assert "Supported risk changes review coverage" in flat
-    assert "`$high-assurance-review` runs only when the user explicitly invokes it" in flat
+    assert "user or repository explicitly requires independent review" in flat
+    assert "two or more independent authors" in flat
+    assert "focused proof establishes behavior" in flat
+    assert "One delegated edit" in flat
+    assert "do not trigger review" in flat
+    assert "missing proof returns `partial` or `blocked`" in flat
+    assert "one fresh `ordinary-reviewer` through `$change-review`" in flat
     assert "distinct from every implementation actor" in flat
-    assert "new fresh Change Review" in flat
-    assert "Never self-certify" in flat
+    assert "repeat Change Review only while the original trigger still applies" in flat
+    assert "Do not describe direct self-check as independent review" in flat
     assert "stage only owned paths or hunks" in flat
     assert "never unstage foreign work" in flat.lower()
+
+
+def test_review_policy_is_consistent_across_delivery_metadata() -> None:
+    implement = yaml.safe_load(
+        (CUSTOM / "implement/agents/openai.yaml").read_text(encoding="utf-8")
+    )
+    parallel = yaml.safe_load(
+        (CUSTOM / "parallel-implement/agents/openai.yaml").read_text(
+            encoding="utf-8"
+        )
+    )
+    assurance = yaml.safe_load(
+        (CUSTOM / "high-assurance-review/agents/openai.yaml").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    assert "Change Review only when its trigger applies" in (
+        implement["interface"]["default_prompt"]
+    )
+    assert "Change Review only when its trigger applies" in (
+        parallel["interface"]["default_prompt"]
+    )
+    assert assurance["policy"]["allow_implicit_invocation"] is False
+    assert assurance["interface"]["default_prompt"].startswith("Explicitly use")
 
 
 def test_tdd_discloses_test_reference_only_for_an_evidence_gap() -> None:
@@ -2073,7 +2105,6 @@ def test_to_spec_handoff_keeps_ticket_design_downstream() -> None:
         "static execution facts",
         "live concurrency decisions",
         "implementation technique",
-        "default Repair budgets",
     ):
         assert downstream_concept.lower() in spec_lower
     for ticket_owner in (
@@ -2205,7 +2236,7 @@ def test_ticket_and_delivery_packets_are_compact_and_preserve_repairs() -> None:
     for field in ("**Intent:**", "**Grounding:**", "**Scope and proof:**", "**Delivery:**"):
         assert field in tickets
     assert "Omit inapplicable optional sections" in tickets_flat
-    assert "graph-level Repair generation budget" in tickets_flat
+    assert "graph-level Repair generation budget" not in tickets_flat
     assert "Create no graph or tracker state" in tickets_flat
     assert "smallest acceptance-complete path" in implement_flat
     assert "plain ticket-specific handoff" in implement_flat
@@ -2585,7 +2616,7 @@ def test_to_tickets_is_proportional_and_preserves_ready_frontiers() -> None:
     assert "Create no graph or tracker state" in flat
     assert "smallest execution packet" in flat
     assert "Omit inapplicable optional sections" in flat
-    assert "graph-level Repair generation budget" in flat
+    assert "graph-level Repair generation budget" not in flat
     assert "Use a matrix only when it is clearer than prose" in flat
     assert "`$parallel-implement` decides live concurrency" in flat
     assert "Separate packet readiness from frontier eligibility" in flat
@@ -2630,6 +2661,8 @@ def test_git_and_parallel_delivery_roles_stay_out_of_the_shared_contract() -> No
 
     for shared in (contract, seed):
         normalized = " ".join(shared.split())
+        assert "use an oracle independent of the implementation logic" in normalized
+        assert "need not be a separate reviewer" in normalized
         assert "Git mutation owners" not in normalized
         assert "starting index" not in normalized
         assert "registered worktrees" not in normalized
@@ -2645,11 +2678,14 @@ def test_parallel_implement_separates_plain_context_checkout_and_review() -> Non
     flat = " ".join(parallel.split())
 
     assert re.findall(r"(?m)^## (.+)$", parallel) == [
-        "Admit", "Wave", "Integrate", "Review And Repair", "Close"
+        "Admit", "Wave", "Integrate", "Final Check, Conditional Review, And Repair", "Close"
     ]
     for profile in ("clear-worker", "adaptive-worker", "fast-adaptive-worker", "demanding-worker"):
         assert f"`{profile}`" in profiles
-    assert "one fresh `integration-reviewer` using `$change-review`" in flat
+    assert "one fresh `integration-reviewer` through `$change-review`" in flat
+    assert "two or more independent authors" in flat
+    assert "serial execution by one author" in flat
+    assert "do not trigger review" in flat
     assert "The root judges integration" in flat
     assert "warm general integrator" in flat
     assert "plain task context" in flat and "not a schema" in flat
@@ -2678,8 +2714,8 @@ def test_parallel_implement_owns_recovery_authority_and_outcome_gates() -> None:
     assert "An admitted transferred claim remains expected custody" in tickets
     assert "release transferred claims, verify the assignee state, and derive" in tickets
     assert "use `$resolving-merge-conflicts`" in flat
-    assert "one admitted complete blocker set" in flat
-    assert "Transport retry and proof-only rerun do not consume" in flat
+    assert "If the same blocker recurs" in flat
+    assert "without a new authorized in-scope repair path" in flat
     assert "`blocked` means no authorized in-scope progress" in flat
     assert "`partial` means accepted progress is preserved" in flat
     assert "Retain each claim through verified non-dispatchable closeout" in flat
@@ -2786,21 +2822,21 @@ def test_implement_closeout_locks_exact_candidate_and_preserves_custody() -> Non
     implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
     flat = " ".join(implement.split())
 
-    assert "Pin the exact candidate" in flat
+    assert "pin the exact candidate" in flat.lower()
     assert "stage only owned paths or hunks" in flat
     assert "never unstage foreign work" in flat.lower()
-    assert "Lock the reviewed tree plus only applicable closeout" in flat
+    assert "Lock the final checked tree" in flat
     assert "Do not rewrite an exact accepted commit" in flat
     assert "proving `HEAD` unchanged" in flat
-    assert "Otherwise preserve the reviewed locked candidate and stop before commit" in flat
+    assert "Otherwise preserve the final checked candidate and stop before commit" in flat
     assert "retain the claim through commit and configured closeout" in flat
     assert "read back non-dispatchability" in flat
     assert "release the claim and verify the frontier" in flat
     assert "exclusive mutation custody of the reconciled checkout until Return" in flat
     assert "caller did not request root execution" in flat
-    assert "keep repair mutation with the root" in flat
-    assert "one admitted complete blocker set" in flat
-    assert "used and remaining" in flat
+    assert "keep repair with the root" in flat
+    assert "every triggered Change Review" in flat
+    assert "Repair generations" not in flat
 
 
 def test_current_relationships_preserve_candidate_commit_and_repair_claim_custody() -> None:
@@ -2817,7 +2853,7 @@ def test_current_relationships_preserve_candidate_commit_and_repair_claim_custod
         if relationship["relationship_id"] == "REL-036"
     )
 
-    assert "worker-created candidate commit may already exist" in flat
+    assert "A repaired successor is reviewed only while the original trigger still applies" in flat
     assert "retain campaign claims" in flat
     assert "Only a later explicit To Tickets invocation" in flat
     assert "releases those claims only after repaired graph read-back" in flat
@@ -2904,6 +2940,7 @@ def test_runtime_composition_edges_respect_lean_review_and_planning_policy() -> 
         relationships,
     )
     edges = set(rows)
+    relationships_flat = " ".join(relationships.split())
 
     for edge in (
         ("wayfinder", "Recommend and stop", "implement"),
@@ -2926,6 +2963,9 @@ def test_runtime_composition_edges_respect_lean_review_and_planning_policy() -> 
         {caller, callee} == {"implement", "parallel-implement"}
         for caller, _, callee in edges
     )
+    assert "mutations from two or more independent authors" in relationships_flat
+    assert "Missing proof stops instead of invoking review" in relationships_flat
+    assert "Supported risk modifies coverage only after review admission" in relationships_flat
     assert not implicit_policy(CUSTOM / "high-assurance-review")
 
 

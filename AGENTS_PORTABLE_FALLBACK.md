@@ -125,14 +125,22 @@ disjoint write/proof scopes; integrate serially.
 - Measure performance like-for-like before claiming improvement. Simplify only
 after proof and keep proof green.
 
-## Review And Report
+## Check, Conditional Review, And Report
 
-Review every nontrivial diff from a fixed point on separate axes:
+Inspect every owned diff and final repository state. Run the smallest
+claim-matched check at a real caller or observable boundary, using an oracle
+independent of implementation logic when the claim could otherwise
+self-confirm. Missing required proof stops; it is not Residual Risk.
 
-- **Standards:** conventions, engineering contract, maintainability, locality,
-naming, tests, and operability.
-- **Spec:** request or spec, acceptance, semantic correctness, behavior, and
-residual risk.
+Use independent Change Review only when the user or repository requires it,
+the candidate contains mutations from two or more independent authors, or
+proved behavior still leaves a material shared-contract or irreversible-
+migration acceptance judgment that warrants fresh independent judgment and
+review is the lowest-burden way to obtain it.
+Candidate size, PR or release packaging, novelty, one delegated edit, generic
+risk, and security or production adjacency do not activate review. When review
+activates, judge Spec and Standards separately. High-assurance, security, and
+production/SRE work are explicit-only.
 
 Bound risk to a supported scenario, reachable path, and concrete impact. Do
 not invent speculative edge cases or review indefinitely.
@@ -140,11 +148,12 @@ not invent speculative edge cases or review indefinitely.
 Command lists do not set proof scope. Use the smallest proof; widen only
 for source, policy, shared behavior, release, or concrete risk.
 
-Lock only when canonical checks ran or skips are named; the complete diff was
-inspected; Change Closure resolved every superseded or redundant path; `.tmp/`
-was cleaned or preserved; in-scope `.scratch/` entered review and authorized
-staging; Git state, evidence, risk, and follow-ups were recorded; remaining work
-was handed off at the authorized boundary.
+Complete only when canonical checks ran or material skips are named; the
+complete diff and state were inspected; Change Closure resolved every
+superseded or redundant path; `.tmp/` was cleaned or preserved; in-scope
+`.scratch/` was inspected and authorized for staging; Git state, evidence,
+risk, and follow-ups were recorded; and remaining work was handed off at the
+authorized boundary.
 
 Lead with outcome, evidence, uncertainty, and next action; keep narration
 secondary.

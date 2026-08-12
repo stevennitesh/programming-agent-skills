@@ -38,8 +38,14 @@ This repository packages a shared engineering discipline as skills, setup contra
   callers, and relevant constraints, then selects and simplifies the smallest
   repository-native path through that owner and its real callers. Novelty and
   familiarity are neutral.
-- Automatic implementation review uses Change Review. Supported risk changes
-  coverage, not the review skill. High-Assurance Review is explicit-only.
+- Ordinary implementation completes through final diff and state read-back,
+  claim-matched proof, and Change Closure. Change Review activates only for an
+  explicit user or repository requirement, mutations from two or more
+  independent authors, or a proved material shared-contract or irreversible-
+  migration acceptance judgment that still warrants fresh independent
+  judgment and for which review is the lowest-burden way to obtain it. Missing
+  proof stops rather than activating review. High-Assurance
+  Review, security specialist work, and production/SRE work are explicit-only.
 
 ## Context Trace
 
@@ -208,9 +214,10 @@ _Avoid_: worker runtime, scheduler, execution ledger
 
 **Change review candidate**
 
-A fixed-snapshot implementation diff or PR, including release and supported-risk
-candidates. `$change-review` owns its separate Spec and Standards gate and
-scales coverage to the candidate's supported facts.
+A caller-admitted fixed-snapshot implementation diff or PR. `$change-review`
+owns its separate Spec and Standards gate and scales coverage to supported
+facts after review activates. Candidate kind, size, release status, and risk do
+not activate it.
 _Avoid_: low-priority review, risk-free review
 
 **High-assurance review candidate**
@@ -225,8 +232,10 @@ _Avoid_: automatic escalation, every risky change
 A changed surface with a supported scenario, reachable behavior or failure
 path, and concrete impact involving a trust boundary, irreversible effect or
 migration, concurrency or recovery, high-impact domain or model invariant, or
-measured performance obligation. It modifies Change Review coverage and proof;
-PR existence, size, and labels do not qualify.
+measured performance obligation. It modifies coverage only after review is
+admitted. It never invokes Change Review, High-Assurance Review, security work,
+production/SRE work, or a specialist; PR existence, size, and labels do not
+qualify.
 _Avoid_: hypothetical edge case, risk label, PR route
 
 **Router skill**
@@ -276,7 +285,7 @@ _Avoid_: pack manual, copied route map
   remains the controllerless proof-ordering decision.
 - Change review candidate, High-assurance review candidate, and Supported
   high-risk trigger belong to this context and
-  [ADR-0013](docs/adr/0013-automatic-implementation-review-uses-one-change-review-path.md).
+  [ADR-0015](docs/adr/0015-independent-change-review-is-condition-triggered.md).
 - Skill-authoring vocabulary—leading words, invocation, reference loading,
   skill splitting, transfer gates, and derived views—belongs to
   [`skills/custom/writing-great-skills/GLOSSARY.md`](skills/custom/writing-great-skills/GLOSSARY.md);
