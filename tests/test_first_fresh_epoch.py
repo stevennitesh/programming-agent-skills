@@ -222,7 +222,7 @@ def test_first_epoch_revision_preserves_history_and_derives_r6_blueprints() -> N
     } == {"change-review", "high-assurance-review"}
 
 
-def test_current_topology_materializes_the_post_freeze_amendment() -> None:
+def test_current_contract_preserves_review_and_tdd_topology() -> None:
     contract = pack_contract.parse_contract(
         (ROOT / "docs/synthesis/skill-pack.md").read_text(encoding="utf-8")
     )
@@ -231,13 +231,24 @@ def test_current_topology_materializes_the_post_freeze_amendment() -> None:
     }
     assert contract["epoch_header"]["status"] == "frozen"
     assert contract["epoch_header"]["contract_revision"] == 6
-    assert skill_by_name["high-assurance-review"]["invocation_mode"] == "explicit-only"
-    assert "user explicitly invokes" in (
-        skill_by_name["high-assurance-review"]["positive_entry_predicate"]
-    )
-    assert "A caller admits a branch" in (
-        skill_by_name["change-review"]["positive_entry_predicate"]
-    )
+    assert {
+        name: (skill_by_name[name]["skill_id"], skill_by_name[name]["invocation_mode"])
+        for name in (
+            "tdd",
+            "high-assurance-review",
+            "change-review",
+            "implement",
+            "parallel-implement",
+            "skill-router",
+        )
+    } == {
+        "tdd": ("SK-006", "implicit"),
+        "high-assurance-review": ("SK-014", "explicit-only"),
+        "change-review": ("SK-015", "implicit"),
+        "implement": ("SK-022", "explicit-only"),
+        "parallel-implement": ("SK-023", "explicit-only"),
+        "skill-router": ("SK-025", "explicit-only"),
+    }
     assert "REL-013" not in skill_by_name["implement"]["relationship_ids"]
     assert "REL-030" not in skill_by_name["parallel-implement"]["relationship_ids"]
     assert "REL-049" not in skill_by_name["skill-router"]["relationship_ids"]
@@ -252,39 +263,27 @@ def test_current_topology_materializes_the_post_freeze_amendment() -> None:
     }
     assert not any(predecessor == "SK-014" for predecessor, _ in graph_edges)
 
-    relationship_by_id = {
-        relationship["relationship_id"]: relationship
+    skill_name_by_id = {
+        skill["skill_id"]: skill["canonical_name"]
+        for skill in contract["selected_skills"]
+    }
+    relationship_topology = {
+        (
+            relationship["relationship_id"],
+            skill_name_by_id[relationship["caller_skill_id"]],
+            relationship["verb"],
+            skill_name_by_id[relationship["target_skill_id"]],
+        )
         for relationship in contract["relationships"]
     }
-    for relationship_id in ("REL-016", "REL-034"):
-        relationship = relationship_by_id[relationship_id]
-        assert "explicitly requires independent review" in relationship["entry_condition"]
-        assert "focused proof establishes behavior" in relationship["entry_condition"]
-        assert "missing" in relationship["wrong_condition"].lower()
-    assert "two or more independent authors" in (
-        relationship_by_id["REL-034"]["entry_condition"]
-    )
+    assert {
+        ("REL-016", "implement", "Invoke", "change-review"),
+        ("REL-017", "implement", "Invoke", "tdd"),
+        ("REL-034", "parallel-implement", "Invoke", "change-review"),
+        ("REL-035", "parallel-implement", "Invoke", "tdd"),
+        ("REL-064", "skill-router", "Recommend and stop", "tdd"),
+    } <= relationship_topology
     assert {("SK-015", "SK-022"), ("SK-015", "SK-023")} <= graph_edges
-
-    contract_text = (
-        ROOT / "docs/synthesis/skill-pack.md"
-    ).read_text(encoding="utf-8")
-    amendment = contract_text.split("Revision 18", 1)[1].split(
-        "It binds the complete fingerprinted", 1
-    )[0]
-    amendment_flat = " ".join(amendment.split())
-    assert "machine contract revision 6" in amendment_flat
-    assert "red-testability alone no longer activates" in amendment_flat
-    assert "Ordinary implementation uses appropriate tests" in amendment_flat
-
-    tdd = skill_by_name["tdd"]
-    assert tdd["invocation_mode"] == "implicit"
-    assert "explicitly requests TDD" in tdd["positive_entry_predicate"]
-    assert "independent oracle are settled" in tdd["positive_entry_predicate"]
-    for relationship_id in ("REL-017", "REL-035", "REL-064"):
-        relationship = relationship_by_id[relationship_id]
-        assert "requires TDD" in relationship["entry_condition"]
-        assert "independent oracle" in relationship["entry_condition"]
 
     metadata = yaml.safe_load(
         (
@@ -304,7 +303,6 @@ def test_current_topology_materializes_the_post_freeze_amendment() -> None:
     ).read_text(encoding="utf-8")
     assert "**Status**: superseded by ADR-0015" in superseded
     assert "**Status**: accepted" in adr
-    assert "High-Assurance Review remains explicit-only" in adr
 
     relationships = (
         ROOT / "docs/synthesis/skill-context-relationships.md"

@@ -78,10 +78,13 @@ characterization test as TDD evidence.
 ## Property-Based Testing
 
 Use property-based testing only when a stable property and independent oracle
-range over a broad or combinatorial domain, credible generators and shrinking
-exist, and generation discriminates better than examples or a small exhaustive
-table. Define the valid input domain, property, generator constraints, and how
-shrinking preserves valid cases. Otherwise prefer focused examples or an
+range over a broad or combinatorial domain, a credible generator covers the
+valid input domain, and generation discriminates better than examples or a
+small exhaustive table. Define the valid input domain, property, and generator
+constraints. If a failing case is reduced, accept the reduction only when it
+remains generator-producible and still satisfies an interestingness test that
+reproduces the target failure. Generator-producible implies valid only when the
+generator enforces the valid domain. Otherwise prefer focused examples or an
 exhaustive small table.
 
 ## Test Portfolio

@@ -1,5 +1,7 @@
 # Global Codex Instructions
 
+<!-- programming-agent-skills portable-contract-owner: 1 -->
+
 Use this as your global `AGENTS.md` when the skill pack is not installed. Give
 each repository its own short `AGENTS.md` with verified commands, local
 invariants, and source-of-truth pointers.

@@ -109,11 +109,11 @@ Return:
 - **GREEN:** command and passing result;
 - **Test portfolio:** reused, extended, added, consolidated, or removed proof,
   with its distinct responsibility;
-- **Coverage:** relevant validation or skipped reason;
+- **Coverage:** relevant verification or skipped reason;
 - **Refactor:** material cleanup or `none`;
 - **Residual risk:** remaining uncertainty or blocker.
 
 Complete only when every implemented behavior crossed observed RED before its
 implementation, crossed GREEN through its chosen seam, stayed GREEN
-through refactoring, received relevant validation, has an accounted test
+through refactoring, received relevant verification, has an accounted test
 responsibility, and appears in the proof packet.

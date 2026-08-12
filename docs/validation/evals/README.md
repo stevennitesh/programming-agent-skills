@@ -32,3 +32,7 @@ behavioral proof instead of treating that local archive as authority.
 - [`core-workflows.md`](core-workflows.md): historical pack-level routing,
   handoff, proof, mutation, and reconciliation evidence. It remains here
   without a fabricated composition epoch.
+- [`2026-08-12-source-vocabulary-quality-lift.md`](2026-08-12-source-vocabulary-quality-lift.md):
+  frozen cross-skill quality-lift evidence for source-vocabulary choices across
+  design, testing, diagnosis, and simplification. It remains here without a
+  fabricated per-skill evaluation identity or composition epoch.

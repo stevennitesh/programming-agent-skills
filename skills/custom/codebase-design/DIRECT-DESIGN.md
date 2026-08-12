@@ -79,7 +79,7 @@ allowed caller, a forbidden caller, and a red-capable check that accepts the
 first and rejects the second.
 
 Read [DEEPENING.md](DEEPENING.md) when dependency shape changes the seam,
-substitute, test migration, or validation strategy.
+substitute, test migration, or verification strategy.
 
 ## 4. Compare
 
@@ -95,7 +95,7 @@ meaningful.
 Choose one design, retain the current shape, or return the unresolved decision
 or evidence gap. For a recommendation, explain why it wins, why credible
 alternatives lose, the first bounded change step, applicable migration,
-validation proof, risks, and follow-ups.
+verification evidence, risks, and follow-ups.
 
 Evidence settles current behavior and constraints. The user or caller settles
 public-contract changes and accepted trade-offs.
@@ -113,7 +113,7 @@ Return:
 - Depth, information hiding, complexity symptoms, and test responsibilities;
 - credible alternatives and recommendation when applicable;
 - first bounded change step when change is recommended, plus applicable
-  migration, validation, Change Closure, and stop boundary, including boundary
+  migration, verification, Change Closure, and stop boundary, including boundary
   proof when applicable;
 - for replacement, parity seam, migration, cutover, and rollback evidence;
 - risks, residual gaps, follow-ups, and any domain or ADR candidate; and

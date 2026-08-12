@@ -8,7 +8,7 @@ Frame -> Diverge -> Compare -> Recommend.
 Use [`SKILL.md`](SKILL.md) for vocabulary and
 [DIRECT-DESIGN.md](DIRECT-DESIGN.md) for the design packet. Read
 [DEEPENING.md](DEEPENING.md) only when dependency shape changes the seam,
-substitute, test migration, or validation strategy; it owns those mechanics,
+substitute, test migration, or verification strategy; it owns those mechanics,
 while this branch compares migration implications across alternatives.
 
 ## 1. Frame
@@ -59,7 +59,7 @@ For each alternative, show:
 - candidate shape, caller-facing interface, and caller experience;
 - behavior and decisions hidden or deliberately left with callers;
 - any earned seam and relevant dependencies, adapters, or substitutes;
-- caller-facing test surface and validation proof;
+- caller-facing test surface and verification evidence;
 - first change step, applicable migration, trade-offs, and risks.
 
 ## 3. Compare
@@ -74,8 +74,8 @@ with a genuinely different design.
 ## 4. Recommend
 
 Recommend one design. Explain why it wins, why credible alternatives lose, any
-useful hybrid, the first bounded change step, applicable migration, validation
-proof, risks, and follow-ups. Name behavior-preserving prerequisites as support
+useful hybrid, the first bounded change step, applicable migration, verification
+evidence, risks, and follow-ups. Name behavior-preserving prerequisites as support
 slices.
 
 ## Completion

@@ -4,10 +4,6 @@ This file routes current work. Keep it short; put long procedures in the
 owning runbook or method doc, and leave historical run logs where they were
 created.
 
-## Current Work
-
-- [Lean engineering defaults and source vocabulary](engineering-vocabulary-reconciliation.md)
-
 ## Current Runbooks
 
 | Work | Route |

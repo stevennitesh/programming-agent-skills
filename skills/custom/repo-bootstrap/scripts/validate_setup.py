@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import re
 import subprocess
 import tomllib
@@ -17,56 +18,16 @@ REQUIRED_FILES = (
     "docs/agents/engineering-contract.md",
 )
 
-SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:9caab4908050 -->"
-ENGINEERING_PRIMER_TOKEN = (
-    "Explore imaginatively. Converge under proof. Simplify ruthlessly."
-)
+SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:cdb31b54c586 -->"
 SETUP_SCHEMA_MARKER_RE = re.compile(
     r"<!-- programming-agent-skills setup-schema: \d+:[0-9a-f]{12} -->"
 )
-
-PORTABLE_OWNER_TOKENS = (
-    "# Portable Engineering Contract",
-    "Use this as your global `AGENTS.md` when the skill pack is not installed.",
+SETUP_FILE_MARKER_RE = re.compile(
+    r"<!-- programming-agent-skills setup-file: engineering-contract\.md:[0-9a-f]{12} -->"
 )
 
-PORTABLE_LEGACY_SECTION_SIGNATURES = (
-    (
-        "## North Star",
-        "Explore imaginatively. Converge under proof. Simplify ruthlessly.",
-    ),
-    ("## Engineering Taste", "**Imagination before commitment.**"),
-    (
-        "## Working Loop",
-        "Explore -> Choose -> Prove -> Expand -> Simplify -> Lock",
-    ),
-    ("## Hard Gates", "**No evidence, no done.**"),
-    ("## Shape Before Build", "**Interview:** when intent is unsettled"),
-    ("## Implementation Taste", "Order tracer-bullet slices by dependency."),
-    (
-        "## Check, Conditional Review, And Report",
-        "Inspect every owned diff and final repository state.",
-    ),
-)
-
-PORTABLE_CURRENT_SECTION_SIGNATURES = (
-    (
-        "## Authority And State",
-        "Diagnosis, research, design, explanation, and review are read-only unless",
-    ),
-    ("## Ground Or Route", "If expected behavior, symptom, or cause is uncertain"),
-    (
-        "## Implement The Smallest Integrated Change",
-        "Trace each acceptance commitment through the real caller or entry path",
-    ),
-    (
-        "## Activate Heavier Methods Only When Triggered",
-        "Use RED-GREEN-REFACTOR only when the user or repository explicitly requires",
-    ),
-    (
-        "## Prove, Close, And Report",
-        "Run the smallest fresh check capable of disproving each claim",
-    ),
+PORTABLE_OWNER_MARKER = (
+    "<!-- programming-agent-skills portable-contract-owner: 1 -->"
 )
 
 AGENT_POINTERS = (
@@ -77,42 +38,11 @@ AGENT_POINTERS = (
 )
 
 DOMAIN_TOKENS = (
-    "## Route",
-    "## Preserve The Model",
     "**single-context:**",
     "**multi-context:**",
     "CONTEXT-MAP.md",
     "<context-root>/docs/adr/",
     "$domain-modeling",
-)
-
-DOMAIN_PROSE_TOKENS = (
-    "Missing records are not setup gaps.",
-    "setup neither creates nor recommends them.",
-    "invariants",
-    "Do not flatten different meanings across contexts.",
-    "return the exact gap",
-    "never silently override them",
-    "decision owner",
-)
-
-CONTRACT_STRUCTURAL_TOKENS = (
-    ENGINEERING_PRIMER_TOKEN,
-    "# Engineering Contract",
-)
-
-CONTRACT_LEVEL_TWO_HEADINGS = (
-    "Correctness And Evidence — Must",
-    "Design Defaults — Prefer",
-    "Methods When The Condition Applies",
-)
-
-CONTRACT_METHOD_HEADINGS = (
-    "Reason Across State And Lifecycle Boundaries",
-    "Use A Negative Control",
-    "Prove Durable Artifacts Proportionally",
-    "Measure Consequential Claims",
-    "Invoke Heavier Owners Only From Their Trigger",
 )
 
 WORK_ITEM_TOKENS = (
@@ -126,14 +56,6 @@ WORK_ITEM_TOKENS = (
     "**Closeout:**",
     "## Mutation read-back",
 )
-WORK_ITEM_PROSE_TOKENS = (
-    "navigation metadata",
-    "agent and human frontiers separately",
-    "false-ready",
-    "do not retry blindly",
-    "unverified partial mutation",
-)
-
 WAYFINDER_TOKENS = (
     "Participation:",
     "Resolution owner:",
@@ -148,7 +70,6 @@ WAYFINDER_TOKENS = (
 HOSTED_WAYFINDER_TOKENS = (
     "docs/agents/triage-labels.md",
     "Blocked: waiting - <gist>",
-    "exact return record",
 )
 LOCAL_WAYFINDER_TOKENS = (
     "Status: Pending | In Progress | Resolved | Blocked | Waiting | Out Of Scope",
@@ -210,15 +131,6 @@ def require_tokens(
             failures.append(f"{relative} is missing {token}")
 
 
-def require_prose_tokens(
-    text: str, relative: str, tokens: tuple[str, ...], failures: list[str]
-) -> None:
-    normalized_text = " ".join(text.split())
-    for token in tokens:
-        if " ".join(token.split()) not in normalized_text:
-            failures.append(f"{relative} is missing {token}")
-
-
 def wayfinder_contract_failures(text: str, relative: str) -> list[str]:
     failures: list[str] = []
     provider_tokens = (
@@ -238,7 +150,6 @@ def wayfinder_contract_failures(text: str, relative: str) -> list[str]:
 def domain_contract_failures(text: str, relative: str) -> list[str]:
     failures: list[str] = []
     require_tokens(text, relative, DOMAIN_TOKENS, failures)
-    require_prose_tokens(text, relative, DOMAIN_PROSE_TOKENS, failures)
     return failures
 
 
@@ -331,37 +242,64 @@ def markdown_headings(text: str, level: int) -> list[str]:
     return headings
 
 
+def unfenced_markdown(text: str) -> str:
+    lines: list[str] = []
+    fence_char = ""
+    fence_length = 0
+
+    for line in text.splitlines(keepends=True):
+        stripped = line.rstrip("\r\n")
+        if fence_char:
+            if re.fullmatch(
+                rf"[ \t]{{0,3}}{re.escape(fence_char)}{{{fence_length},}}[ \t]*",
+                stripped,
+            ):
+                fence_char = ""
+                fence_length = 0
+            continue
+        opening = re.match(r"[ \t]{0,3}(`{3,}|~{3,})", stripped)
+        if opening:
+            fence_char = opening.group(1)[0]
+            fence_length = len(opening.group(1))
+            continue
+        lines.append(line)
+    return "".join(lines)
+
+
 def engineering_contract_failures(text: str, relative: str) -> list[str]:
     failures: list[str] = []
-    require_tokens(text, relative, CONTRACT_STRUCTURAL_TOKENS, failures)
     if markdown_headings(text, 1) != ["Engineering Contract"]:
         failures.append(f"{relative} must contain one top-level Engineering Contract heading")
-    if markdown_headings(text, 2) != list(CONTRACT_LEVEL_TWO_HEADINGS):
+    source = Path(__file__).resolve().parents[1] / "engineering-contract.md"
+    digest = hashlib.sha256(source.read_bytes()).hexdigest()[:12]
+    expected_marker = (
+        "<!-- programming-agent-skills setup-file: "
+        f"engineering-contract.md:{digest} -->"
+    )
+    if SETUP_FILE_MARKER_RE.findall(unfenced_markdown(text)) != [expected_marker]:
         failures.append(
-            f"{relative} must contain the exact engineering-contract section outline"
+            f"{relative} must contain exactly one current engineering-contract source marker: "
+            f"{expected_marker}"
         )
-    if markdown_headings(text, 3) != list(CONTRACT_METHOD_HEADINGS):
+    level_two = markdown_headings(text, 2)
+    has_content = any(
+        re.sub(
+            r"(?s)<!--.*?-->",
+            "",
+            unfenced_markdown(markdown_section(text, f"## {heading}") or ""),
+        ).strip()
+        for heading in level_two
+    )
+    if not has_content:
         failures.append(
-            f"{relative} must contain the exact condition-triggered method outline"
-        )
-    methods = markdown_section(text, "## Methods When The Condition Applies")
-    if methods is None or markdown_headings(methods, 3) != list(
-        CONTRACT_METHOD_HEADINGS
-    ):
-        failures.append(
-            f"{relative} must own every condition-triggered method under its method section"
+            f"{relative} must contain at least one unfenced level-two section "
+            "with non-comment content"
         )
     return failures
 
 
 def portable_owner_failures(agents: str) -> list[str]:
-    portable_section_remains = any(
-        signature in (markdown_section(agents, heading) or "")
-        for heading, signature in (
-            PORTABLE_LEGACY_SECTION_SIGNATURES + PORTABLE_CURRENT_SECTION_SIGNATURES
-        )
-    )
-    if any(token in agents for token in PORTABLE_OWNER_TOKENS) or portable_section_remains:
+    if PORTABLE_OWNER_MARKER in agents:
         return [
             "AGENTS.md still declares the portable engineering-contract owner; "
             "complete portable-fallback adoption through $repo-bootstrap."
@@ -370,7 +308,7 @@ def portable_owner_failures(agents: str) -> list[str]:
 
 
 def setup_schema_marker_failures(agents: str) -> list[str]:
-    if SETUP_SCHEMA_MARKER_RE.findall(agents) == [SETUP_SCHEMA_TOKEN]:
+    if SETUP_SCHEMA_MARKER_RE.findall(unfenced_markdown(agents)) == [SETUP_SCHEMA_TOKEN]:
         return []
     return [
         "AGENTS.md must contain exactly one current programming-agent-skills "
@@ -378,19 +316,10 @@ def setup_schema_marker_failures(agents: str) -> list[str]:
     ]
 
 
-def engineering_primer_failures(agents: str) -> list[str]:
-    pattern = re.compile(
-        rf"(?m)\A# Repository Instructions[ \t]*\r?\n"
-        rf"(?:[ \t]*\r?\n)*{re.escape(SETUP_SCHEMA_TOKEN)}[ \t]*\r?\n"
-        rf"(?:[ \t]*\r?\n)*{re.escape(ENGINEERING_PRIMER_TOKEN)}[ \t]*\r?\n"
-        rf"(?:[ \t]*\r?\n)*## Commands[ \t]*$"
-    )
-    if pattern.search(agents):
+def agents_commands_failures(agents: str) -> list[str]:
+    if markdown_section(agents, "## Commands") is not None:
         return []
-    return [
-        "AGENTS.md must place the engineering primer between the current "
-        "setup-schema marker and ## Commands"
-    ]
+    return ["AGENTS.md must contain one unfenced ## Commands heading"]
 
 
 def github_relationship_mode_failures(tracker: str) -> list[str]:
@@ -527,29 +456,13 @@ def main() -> int:
     agents = texts["AGENTS.md"]
     if agents:
         failures.extend(portable_owner_failures(agents))
-        if not re.search(r"(?m)^## Commands\s*$", agents):
-            failures.append("AGENTS.md is missing a ## Commands primer")
+        failures.extend(agents_commands_failures(agents))
         failures.extend(setup_schema_marker_failures(agents))
-        failures.extend(engineering_primer_failures(agents))
         require_tokens(agents, "AGENTS.md", AGENT_POINTERS, failures)
-        if not re.search(
-            r"(?im)^(?:[-*]\s*)?(?:before|for)\s+nontrivial coding[^\n]*"
-            r"docs/agents/engineering-contract\.md[^\n]*$",
-            agents,
-        ):
-            failures.append(
-                "AGENTS.md must tell agents to read the engineering contract before nontrivial coding"
-            )
 
     tracker = texts["docs/agents/issue-tracker.md"]
     if tracker:
         require_tokens(tracker, "docs/agents/issue-tracker.md", WORK_ITEM_TOKENS, failures)
-        require_prose_tokens(
-            tracker,
-            "docs/agents/issue-tracker.md",
-            WORK_ITEM_PROSE_TOKENS,
-            failures,
-        )
         failures.extend(
             wayfinder_contract_failures(tracker, "docs/agents/issue-tracker.md")
         )

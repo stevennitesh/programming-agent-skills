@@ -22,10 +22,10 @@ Map precedes judgment. Never choose the next subsystem or candidate.
 ## Authority
 
 The top-level root owns scope, admission, lens coverage, findings, candidates,
-tracker-publication admission, report publication, and Return. Optional
-read-only delegates use `fork_turns="none"` to gather evidence in fresh context;
-root repeats decisive checks. A delegated invocation of this skill returns a
-root-only blocker.
+tracker-publication admission, report publication, and Return. When the user
+explicitly requests subagents, read-only delegates use `fork_turns="none"` to
+gather evidence in fresh context; root repeats decisive checks. Otherwise work
+directly. A delegated invocation of this skill returns a root-only blocker.
 
 The only durable Audit-owned artifact is
 `.scratch/audit-codebase/<run-id>/report.html`. Use only

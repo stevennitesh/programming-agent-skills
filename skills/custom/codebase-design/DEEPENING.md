@@ -1,7 +1,7 @@
 # Deepening
 
 Use this branch when dependency shape changes the seam, substitute, test
-migration, or validation strategy.
+migration, or verification strategy.
 
 [`SKILL.md`](SKILL.md) owns vocabulary and taste.
 [DIRECT-DESIGN.md](DIRECT-DESIGN.md) owns the direct pass and design packet.
@@ -68,7 +68,7 @@ Responsibilities.
 
 ## 5. Migrate
 
-Name the first behavior-preserving migration step, validation proof, applicable
+Name the first behavior-preserving migration step, verification evidence, applicable
 Change Closure, stop boundary, and follow-ups. Account for displaced
 Implementation, callers, registrations, exports, flags, tests, configuration,
 docs, and migrations. A retained compatibility path needs an owner, reason,
@@ -78,12 +78,12 @@ proof, and removal condition. Keep migration inside the bounded slice.
 
 Return the dependency classifications; Seam, Adapters, and substitutes;
 canonical test owners, test disposition, and coverage-parity evidence; bounded
-migration and Change Closure; validation proof; and stop boundary.
+migration and Change Closure; verification evidence; and stop boundary.
 
 ## Completion
 
 Complete when every relevant dependency is classified; Seam and substitute
 choices match those categories; the proposed Interface is smaller and useful;
 coverage parity and canonical ownership account for every affected test;
-Change Closure accounts for every displaced path; validation proof is named;
+Change Closure accounts for every displaced path; verification evidence is named;
 and migration stops at the bounded-slice edge.

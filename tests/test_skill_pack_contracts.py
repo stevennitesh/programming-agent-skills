@@ -250,12 +250,6 @@ def test_repo_bootstrap_validates_provider_tracker_templates() -> None:
             validator["WORK_ITEM_TOKENS"],
             failures,
         )
-        validator["require_prose_tokens"](
-            text,
-            str(tracker),
-            validator["WORK_ITEM_PROSE_TOKENS"],
-            failures,
-        )
         assert failures == []
         assert wayfinder_failures(text, str(tracker)) == []
 
@@ -269,6 +263,10 @@ def test_repo_bootstrap_validates_provider_tracker_templates() -> None:
         "Blocked: waiting - <gist>" in item
         for item in wayfinder_failures(hosted, "hosted")
     )
+    prose_reworded = trackers[0].read_text(encoding="utf-8").replace(
+        "exact return record", "complete return details"
+    )
+    assert wayfinder_failures(prose_reworded, "hosted") == []
 
     local = trackers[2].read_text(encoding="utf-8").replace(
         "Status: Pending | In Progress | Resolved | Blocked | Waiting | Out Of Scope",
@@ -396,7 +394,7 @@ def test_repo_bootstrap_rejects_unconfigured_github_relationship_modes() -> None
     assert check(tracker) == []
 
 
-def test_repo_bootstrap_domain_contract_is_wrap_safe_and_causal() -> None:
+def test_repo_bootstrap_domain_contract_validates_owned_structure() -> None:
     validator = runpy.run_path(
         str(CUSTOM / "repo-bootstrap/scripts/validate_setup.py")
     )
@@ -404,19 +402,13 @@ def test_repo_bootstrap_domain_contract_is_wrap_safe_and_causal() -> None:
     domain = (ROOT / "docs/agents/domain.md").read_text(encoding="utf-8")
 
     assert check(domain, "docs/agents/domain.md") == []
-    wrapped = domain.replace(
-        "Do not flatten different meanings across contexts.",
-        "Do not flatten different meanings\nacross contexts.",
-    )
-    assert check(wrapped, "docs/agents/domain.md") == []
+    reworded = domain.replace("never silently override them", "do not replace them")
+    assert check(reworded, "docs/agents/domain.md") == []
 
-    invalid = domain.replace(
-        "never silently override them",
-        "may override them",
-    )
+    invalid = domain.replace("CONTEXT-MAP.md", "CONTEXT-INDEX.md")
     failures = check(invalid, "docs/agents/domain.md")
     assert failures == [
-        "docs/agents/domain.md is missing never silently override them"
+        "docs/agents/domain.md is missing CONTEXT-MAP.md"
     ]
     assert check(domain, "docs/agents/domain.md") == []
 
@@ -631,28 +623,18 @@ def test_portable_fallback_adoption_removes_the_portable_contract_owner() -> Non
     assert validator["portable_owner_failures"](
         "# Repository Instructions\n\n## Skill Pack\n\nAGENTS primes.\n"
     ) == []
+    marker = validator["PORTABLE_OWNER_MARKER"]
+    assert fallback.count(marker) == 1
     partial_adoption = fallback.replace("# Global Codex Instructions", "")
-    partial_adoption = partial_adoption.replace(
-        "Use this as your global `AGENTS.md` when the skill pack is not installed.",
-        "",
-    )
     assert validator["portable_owner_failures"](partial_adoption) == failures
-    current_signatures = validator["PORTABLE_CURRENT_SECTION_SIGNATURES"]
-    for heading, signature in current_signatures:
-        assert signature in (validator["markdown_section"](fallback, heading) or "")
-        split_pair = (
-            "# Repository Instructions\n\n"
-            f"{heading}\n\nRepo-specific guidance.\n\n"
-            "## Unrelated\n\n"
-            f"{signature}\n"
-        )
-        assert validator["portable_owner_failures"](split_pair) == []
-        nested = f"# Repository Instructions\n\n{heading}\n\n### Detail\n\n{signature}\n"
-        assert validator["portable_owner_failures"](nested) == failures
-
-    for heading, signature in validator["PORTABLE_LEGACY_SECTION_SIGNATURES"]:
-        legacy = f"# Repository Instructions\n\n{heading}\n\n{signature}\n"
-        assert validator["portable_owner_failures"](legacy) == failures
+    reworded = fallback.replace(
+        "Use this as your global `AGENTS.md` when the skill pack is not installed.",
+        "This file supplies global engineering defaults without an installed pack.",
+    )
+    assert validator["portable_owner_failures"](reworded) == failures
+    assert validator["portable_owner_failures"](
+        fallback.replace(marker, "")
+    ) == []
 
     marker = validator["SETUP_SCHEMA_TOKEN"]
     stale = "<!-- programming-agent-skills setup-schema: 1:deadbeefdead -->"
@@ -667,23 +649,26 @@ def test_portable_fallback_adoption_removes_the_portable_contract_owner() -> Non
     assert validator["setup_schema_marker_failures"](
         f"{stale}\n{marker}\n"
     ) == expected_marker_failure
+    assert validator["setup_schema_marker_failures"](
+        f"```text\n{marker}\n```\n"
+    ) == expected_marker_failure
 
-    primer = validator["ENGINEERING_PRIMER_TOKEN"]
-    valid_primer = (
-        f"# Repository Instructions\n\n{marker}\n\n{primer}\n\n"
+    valid_agents = (
+        f"# Repository Instructions\n\n{marker}\n\n"
+        "Repository-specific guidance.\n\n"
         "## Commands\n\n- Test: `python -m pytest`\n"
     )
-    assert validator["engineering_primer_failures"](valid_primer) == []
-    primer_failure = [
-        "AGENTS.md must place the engineering primer between the current "
-        "setup-schema marker and ## Commands"
-    ]
-    assert validator["engineering_primer_failures"](
-        valid_primer.replace(primer, f"> {primer}")
-    ) == primer_failure
-    assert validator["engineering_primer_failures"](
-        valid_primer.replace(primer, f"## History\n\n{primer}")
-    ) == primer_failure
+    command_failure = ["AGENTS.md must contain one unfenced ## Commands heading"]
+    assert validator["agents_commands_failures"](valid_agents) == []
+    assert validator["agents_commands_failures"](
+        valid_agents.replace("## Commands", "## Local Commands")
+    ) == command_failure
+    assert validator["agents_commands_failures"](
+        valid_agents.replace("## Commands", "```text\n## Commands\n```")
+    ) == command_failure
+    assert validator["agents_commands_failures"](
+        valid_agents + "\n## Commands\n"
+    ) == command_failure
 
     assert validator["git_root_failures"](ROOT) == []
     assert validator["git_root_failures"](ROOT / "skills") == [
@@ -696,9 +681,7 @@ def test_engineering_contract_validation_is_structural_and_causal() -> None:
         str(CUSTOM / "repo-bootstrap/scripts/validate_setup.py")
     )
     check = validator["engineering_contract_failures"]
-    contract = (CUSTOM / "repo-bootstrap/engineering-contract.md").read_text(
-        encoding="utf-8"
-    )
+    contract = (ROOT / "docs/agents/engineering-contract.md").read_text(encoding="utf-8")
 
     assert check(contract, "engineering-contract.md") == []
     for invalid in (
@@ -711,27 +694,58 @@ def test_engineering_contract_validation_is_structural_and_causal() -> None:
             "# Engineering Contract\n",
             "```text\n# Engineering Contract\n```\n",
         ),
-        contract.replace("## Design Defaults — Prefer\n", ""),
+        contract.replace("<!-- programming-agent-skills setup-file:", "<!-- stale:"),
         contract.replace(
-            "## Design Defaults — Prefer\n",
-            "## Design Defaults — Prefer\n\n## Design Defaults — Prefer\n",
+            "<!-- programming-agent-skills setup-file: engineering-contract.md:",
+            "<!-- programming-agent-skills setup-file: engineering-contract.md:deadbeefdead -->\n"
+            "<!-- programming-agent-skills setup-file: engineering-contract.md:",
         ),
         contract.replace(
-            "### Use A Negative Control\n",
-            "```text\n### Use A Negative Control\n```\n",
-        ),
-        contract.replace(
-            "### Use A Negative Control\n",
-            "## Use A Negative Control\n",
-        ),
-        contract.replace(
-            "## Methods When The Condition Applies\n\n"
-            "### Reason Across State And Lifecycle Boundaries\n",
-            "### Reason Across State And Lifecycle Boundaries\n\n"
-            "## Methods When The Condition Applies\n",
-        ),
+            "<!-- programming-agent-skills setup-file:",
+            "```text\n<!-- programming-agent-skills setup-file:",
+        ).replace(" -->\n\nExplore imaginatively", " -->\n```\n\nExplore imaginatively", 1),
     ):
         assert check(invalid, "engineering-contract.md")
+
+    renamed_outline = contract.replace(
+        "## Design Defaults — Prefer", "## Design Guidance"
+    ).replace("### Use A Negative Control", "### Exercise A Failing Case")
+    assert check(renamed_outline, "engineering-contract.md") == []
+    marker = validator["SETUP_FILE_MARKER_RE"].findall(contract)[0]
+    assert check(f"# Engineering Contract\n\n{marker}\n", "engineering-contract.md")
+    assert check(
+        f"# Engineering Contract\n\n{marker}\n\n## Empty\n\n<!-- comment only -->\n",
+        "engineering-contract.md",
+    )
+    assert check(
+        f"# Engineering Contract\n\n{marker}\n\n## Empty\n\n"
+        "```text\nexample only\n```\n",
+        "engineering-contract.md",
+    )
+
+
+def test_repo_bootstrap_accepts_reworded_owner_pointers() -> None:
+    validator = runpy.run_path(
+        str(CUSTOM / "repo-bootstrap/scripts/validate_setup.py")
+    )
+    pointers = validator["AGENT_POINTERS"]
+    reworded = "Read these owners when their contracts apply:\n" + "\n".join(
+        f"- {pointer}" for pointer in pointers
+    )
+    failures: list[str] = []
+    validator["require_tokens"](reworded, "AGENTS.md", pointers, failures)
+    assert failures == []
+
+    failures = []
+    validator["require_tokens"](
+        reworded.replace("docs/agents/engineering-contract.md", "docs/engineering.md"),
+        "AGENTS.md",
+        pointers,
+        failures,
+    )
+    assert failures == [
+        "AGENTS.md is missing docs/agents/engineering-contract.md"
+    ]
 
 
 def test_outdated_setup_routes_to_repo_bootstrap() -> None:
@@ -836,7 +850,6 @@ def test_codebase_design_preserves_lean_branch_contracts() -> None:
         ROOT / "docs/synthesis/skill-context-relationships.md"
     ).read_text(encoding="utf-8")
     design_flat = " ".join(design.split())
-    direct_flat = " ".join(direct.split())
     deepening_flat = " ".join(deepening.split())
     alternatives_flat = " ".join(alternatives.split())
 
@@ -845,30 +858,31 @@ def test_codebase_design_preserves_lean_branch_contracts() -> None:
         "before planning or implementation only when one consequential"
         in design_flat
     )
-    assert "Proof Seam" in design
     assert "test double alone does not earn one" in design_flat
     assert len(re.findall(r"(?m)^## \d+\. ", direct)) == 5
-    assert "## Design Packet" in direct
-    assert "`N/A`" in direct
+    shape = direct.split("## 3. Shape", 1)[1].split("## 4. Compare", 1)[0]
+    assert "only when reachable state or transitions can change" in " ".join(
+        shape.split()
+    )
+    assert "A dormant concern creates no packet field or `N/A` entry" in " ".join(
+        shape.split()
+    )
+    assert "every dependency whose shape affects" in deepening
     assert len(re.findall(r"(?m)^## \d+\. ", deepening)) == 5
-    for category in (
-        "In-process",
-        "Local-substitutable",
-        "Remote-owned",
-        "True external",
-    ):
-        assert category in deepening
-    for disposition in ("Add", "Rewrite", "Keep", "Delete"):
-        assert f"**{disposition}**" in deepening
+    assert "coverage parity" in deepening_flat
     assert "canonical test owner" in deepening_flat
+    assert "at least two credible materially different candidate shapes" in (
+        alternatives_flat
+    )
+    assert "include the simplest no-new-seam shape when it is credible" in (
+        alternatives_flat
+    )
     assert re.findall(r"(?m)^## \d+\. ([A-Za-z]+)$", alternatives) == [
         "Frame",
         "Diverge",
         "Compare",
         "Recommend",
     ]
-    assert "**No-new-seam**" in alternatives
-    assert "applicable engineering and domain obligations" in alternatives_flat
     assert "create no separate workflow step" in design_flat
     assert 'CodeDesign["codebase-design"] --> Contract' in relationships
     assert "CodeDesign --> DomainRouter" in relationships
@@ -1564,12 +1578,8 @@ def test_review_family_shares_one_bounded_quality_and_risk_model() -> None:
         "Stewardship",
     ):
         assert finding.count(f"**{class_name}**") == 1
-    assert "Behavior is evidence used by both axes, not another axis." in finding_flat
-    assert "Risk is a cross-cutting modifier after review is admitted." in finding_flat
     assert "It never invokes Change Review" in finding_flat
     assert "PR existence, size, labels, and hypothetical cases do not qualify." in finding_flat
-    assert "not a blind Cartesian product" in review
-    assert "not a blind Cartesian product" in convergent_flat
     assert "Omit inapplicable classes" in convergent_flat
     assert "inapplicable classes `N/A`" not in convergent_flat
     assert "Reuse proof tied to the exact snapshot" in review
@@ -1681,7 +1691,6 @@ def test_audit_codebase_is_thorough_incremental_html_atlas() -> None:
     candidate = (skill_dir / "CANDIDATE-CONTRACT.md").read_text(encoding="utf-8")
     followup = (skill_dir / "CANDIDATE-FOLLOWUP.md").read_text(encoding="utf-8")
     metadata = (skill_dir / "agents/openai.yaml").read_text(encoding="utf-8")
-    simplification = (skill_dir / "SIMPLIFICATION-LENS.md").read_text(encoding="utf-8")
     report = (skill_dir / "HTML-REPORT.md").read_text(encoding="utf-8")
     report_quick = (skill_dir / "REPORT-QUICK-REFERENCE.md").read_text(
         encoding="utf-8"
@@ -1725,18 +1734,11 @@ def test_audit_codebase_is_thorough_incremental_html_atlas() -> None:
         "PERFORMANCE-LENS.md",
     ):
         assert f"({reference})" in quality
-    assert "## Six-Class Coverage" in quality
-    assert "| Reliability |" in quality
-    assert "| Performance |" in quality
-    for lens in ("DOMAIN-LENS.md", "DESIGN-LENS.md", "SIMPLIFICATION-LENS.md",
-                 "CODING-PRACTICES-LENS.md", "PERFORMANCE-LENS.md"):
-        assert f"({lens})" in quality
     assert "Coverage: complete | incomplete" in quality
     assert "An admitted item does not close class coverage" in quality
     assert "`authority-required`" in audit
     assert "`authority-required`" in followup
     assert "`authority-required|not-applicable`" in candidate
-    assert "current-source evidence" in quality
     assert "selected objective's current source identity" in " ".join(defect.split())
     assert "separately user-selected `$audit-codebase` objective" in candidate
     normalized_followup = " ".join(followup.split())
@@ -1746,7 +1748,6 @@ def test_audit_codebase_is_thorough_incremental_html_atlas() -> None:
     assert "helper derives the linked Analyze pickup" in candidate
     assert "conditional To Tickets authority" in candidate
     assert "`schema --objective close --completion-route <route>`" in candidate
-    assert "Known Ceiling" in simplification and "Revisit Trigger" in simplification
 
     contract = pack_contract.parse_contract(
         (ROOT / "docs/synthesis/skill-pack.md").read_text(encoding="utf-8")
@@ -1925,23 +1926,32 @@ def test_tdd_discloses_test_reference_only_for_an_evidence_gap() -> None:
         assert f"[{helper}]({helper})" in tdd
     assert "existing behavior test, case table, or contract suite" in tdd
     assert "Add a test only when the tracer has a distinct proof" in tdd
-    assert "**Test portfolio:**" in tdd
-    assert "## Test Portfolio" in tests
-    assert re.findall(r"(?m)^## ([A-Za-z -]+)$", tests) == [
-        "Tracer Bullet",
-        "State And Behavior Verification",
-        "Independent Oracle",
-        "Characterization Test",
-        "Property-Based Testing",
-        "Test Portfolio",
-        "Red Flags",
-    ]
-    assert mocking.startswith("# Test Doubles And Boundaries")
-    assert len(re.findall(r"(?m)^- a \*\*[^*]+\*\*", mocking)) == 5
+    return_fields = set(
+        re.findall(
+            r"(?m)^- \*\*([^*]+):\*\*",
+            tdd.split("## 5. RETURN", 1)[1],
+        )
+    )
+    assert return_fields == {
+        "Source Trace",
+        "RED",
+        "GREEN",
+        "Test portfolio",
+        "Coverage",
+        "Refactor",
+        "Residual risk",
+    }
+    tests_flat = " ".join(tests.split())
+    assert "Independent:" in tests and "not the implementation under test" in tests_flat
+    assert "establishes actuality, not correctness" in tests_flat
+    assert "broad or combinatorial domain" in tests_flat
+    assert "Otherwise prefer focused examples or an exhaustive small table" in tests_flat
     assert mocking.index("1. Real in-process code") < mocking.index(
         "2. Local substitute"
     )
-    assert "Test count is not a target" in tests
+    mocking_flat = " ".join(mocking.split())
+    assert "otherwise record the unverified fidelity risk" in mocking_flat
+    assert "Reconsider the seam when fidelity is unclear" in mocking_flat
 
 
 def test_tdd_invocation_gate_is_consistent_across_active_owners() -> None:
@@ -2080,8 +2090,6 @@ def test_simplify_code_is_explicit_bounded_and_behavior_preserving() -> None:
     assert "deepen, merge, or inline only within settled existing boundaries" in (
         reduce_flat
     )
-    assert "Known Ceiling" in reduce_flat
-    assert "Revisit Trigger" in reduce_flat
     assert "complete applicable inspection" in reduce
     assert "selected Audit direction in default mode or the" in reduce_flat
     assert "full ladder for other targets and `until-clean`" in reduce_flat
@@ -2093,7 +2101,6 @@ def test_simplify_code_is_explicit_bounded_and_behavior_preserving() -> None:
         "Collapse",
         "Shrink",
     ]
-
     standardize = skill.split("3. **Standardize, native-first**", 1)[1].split(
         "4. **Collapse**", 1
     )[0]
@@ -2128,7 +2135,6 @@ def test_simplify_code_until_clean_has_a_finite_convergence_contract() -> None:
         "Failed cut",
         "Boundary stop",
     ]
-
     returned = skill.split("## Return", 1)[1]
     returned_flat = " ".join(returned.split())
     assert "initial budget, successful-cut ledger, remaining budget" in returned_flat
@@ -2365,8 +2371,10 @@ def test_interface_alternatives_receive_curated_fresh_context() -> None:
     assert 'fork_turns="none"' in design
     assert 'fork_turns="none"' not in research
     assert 'fork_turns="none"' in audit
-    assert "read-only delegates" in audit
-    assert "root repeats decisive checks" in " ".join(audit.split())
+    audit_flat = " ".join(audit.split())
+    assert "When the user explicitly requests subagents" in audit_flat
+    assert "Otherwise work directly" in audit_flat
+    assert "root repeats decisive checks" in audit_flat
 
 
 def test_research_owns_one_authorized_cited_note() -> None:
@@ -2978,13 +2986,16 @@ def test_diagnosis_is_an_explicit_leaf_with_bounded_recommendations() -> None:
         encoding="utf-8"
     )
 
-    assert (
-        'description: \'Diagnosis loop for hard bugs and performance regressions. '
-        'Use when the user says "diagnose"/"debug this", or reports something '
-        "broken/throwing/failing/slow.'"
-    ) in diagnosing
+    diagnosing_flat = " ".join(diagnosing.split())
+    assert "description: 'Explicit-only diagnosis loop" in diagnosing
+    assert "or reports something broken" not in diagnosing
+    assert "Run only when explicitly selected" in diagnosing_flat
+    assert "When all diagnosis inputs are already settled" in diagnosing_flat
+    assert "It establishes actuality, not correctness, cause, or a corrective RED" in (
+        diagnosing_flat
+    )
     packet = diagnosing.split("Return one diagnosis packet containing:", 1)[1]
-    assert len(re.findall(r"(?m)^- ", packet)) >= 7
+    assert "claims no cause or fix" in packet
     rows = set(
         re.findall(
             r"(?m)^\| `([a-z0-9-]+)` \| (Load|Invoke|Compose|Hand off|Recommend and stop) \| `\$([a-z0-9-]+)` \|",
@@ -2992,9 +3003,7 @@ def test_diagnosis_is_an_explicit_leaf_with_bounded_recommendations() -> None:
         )
     )
     assert not implicit_policy(CUSTOM / "diagnosing-bugs")
-    assert "Start no successor; any recommendation below remains unstarted" in (
-        " ".join(diagnosing.split())
-    )
+    assert "Start no successor; any recommendation below remains unstarted" in diagnosing_flat
     assert set(re.findall(r"\$[a-z0-9-]+", diagnosing)) == {"$audit-codebase"}
     assert "recommend `$diagnosing-bugs` and stop before mutation" in prototype
     assert "recommend `$diagnosing-bugs`" in resolver

@@ -79,7 +79,7 @@ preserved additions, conflicts or blockers, and proof plan. For selected
 parallel support, show one explicit external writable lane root, its permission
 delta, and the exact Luna template. The `AGENTS.md` result includes:
 
-`<!-- programming-agent-skills setup-schema: 1:9caab4908050 -->`
+`<!-- programming-agent-skills setup-schema: 1:cdb31b54c586 -->`
 
 With zero delta, mutate nothing and continue to Verify. Otherwise wait for
 approval. Narrowing requires a new exact proposal; refusal or deferral returns
@@ -100,7 +100,8 @@ Apply only the approved delta:
   preamble with this primer;
 - create or reconcile the selected tracker guide,
   [triage-labels.md](triage-labels.md), resolved [domain.md](domain.md), and
-  [engineering-contract.md](engineering-contract.md) into `docs/agents/`;
+  [engineering-contract.md](engineering-contract.md) with its current source
+  marker into `docs/agents/`, preserving repository additions;
 - keep `.tmp/` ignored and `.scratch/` trackable without replacing unrelated
   ignore rules;
 - when selected, create or reconcile `.codex/config.toml` and

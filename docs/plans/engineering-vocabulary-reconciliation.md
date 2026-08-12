@@ -1,12 +1,18 @@
 # Lean Engineering Defaults And Source Vocabulary
 
-Status: active
+Status: complete; installation synchronization and Git delivery deferred
 
 Baseline: clean repository HEAD
 `5d5705eea1827fa7627d74e0621a050e7125ad02` on 2026-08-11. That commit
 partially projected source vocabulary, but left contradictory prose checks,
 duplicated doctrine, and universal workflow expansion. Re-read each target
 before editing and preserve unrelated work.
+
+Implementation milestones: condition-triggered review through `9ff20fd`, the
+compact shared contract through `96b7d0f`, and source-vocabulary plus TDD
+routing work through `9200a97`. Final validator, evidence-ownership, shrinking,
+and plan-closure changes remain in the bounded worktree candidate until Git
+delivery is separately authorized.
 
 ## Objective
 
@@ -16,9 +22,8 @@ it preserves the repository's meaning and recruits useful prior practice. Use
 plain descriptive language when no established term fits. Retain a local term
 only when it names an exact behavior-bearing protocol or artifact.
 
-This plan records future implementation work. This edit performs no
-installed-mirror synchronization, staging, commit, push, publication,
-historical rewrite, or machine-schema migration.
+This plan records the implemented reconciliation and its proof. It authorizes
+no installed-mirror synchronization, staging, commit, push, or publication.
 
 ## User Policy
 
@@ -98,7 +103,7 @@ positive evidence. Untriggered branches stay silent.
 | Delegation | The user explicitly requests subagents, or an explicitly invoked skill owns required fanout. | Multiple files, spare agents, possible parallelism, or an independently ownable subtask. Work directly. |
 | State and lifecycle reasoning | Requested behavior materially depends on reachable states, transitions, ordering, retry, resume, cancellation, persistence, or concurrency. | Asynchronous syntax or hypothetical combinations. Test the enumerable behavior directly. |
 | Formal methods | The user or repository explicitly requires a formal specification, model checker, solver, or formal verification. | Stateful, concurrent, mathematical, high-risk, or invariant-bearing code by itself. Ordinary state reasoning remains available without formal machinery. |
-| Property-based testing | A stable property and independent oracle range over a broad or combinatorial domain, credible generators and shrinking exist, and generation discriminates better than a small example table. | Many edge cases, a regression, or desire for more coverage. Prefer examples or an exhaustive small table. |
+| Property-based testing | A stable property and independent oracle range over a broad or combinatorial domain, a credible generator covers the valid input domain, and generation discriminates better than a small example table. If a failing case is reduced, it remains generator-producible and reproduces the target failure. | Many edge cases, a regression, or desire for more coverage. Prefer examples or an exhaustive small table. |
 | Test doubles | A real dependency cannot provide deterministic, fast, or safe proof and the double has an explicit fidelity contract. | Convenience or difficult setup alone. Prefer real in-process behavior. |
 | Characterization test | Actual legacy behavior must be recorded while intended behavior is unavailable. | Settled expected behavior. A characterization test establishes actuality, not correctness, cause, or a corrective RED. |
 | Negative control | A validator, hook, policy check, dependency rule, or other enforcement boundary changes. | Ordinary behavior code. One representative failing violation is sufficient unless mutable state can contaminate later checks. |
@@ -161,8 +166,13 @@ author-by-author runtime checklist:
 - Meszaros, [Test Double Patterns](https://ptgmedia.pearsoncmg.com/images/9780131495050/samplechapter/0131495054_CH23.pdf):
   Test Double taxonomy.
 - Claessen and Hughes, [QuickCheck](https://doi.org/10.1145/351240.351266):
-  properties and generated cases; the canonical TDD reference must also source
-  any adopted shrinking semantics.
+  properties and generated cases.
+- MacIver and Donaldson,
+  [Test-Case Reduction via Test-Case Generation](https://doi.org/10.4230/LIPIcs.ECOOP.2020.13):
+  property-based testing calls test-case reduction shrinking; an accepted
+  reduction remains interesting by reproducing the target failure. Internal
+  reduction keeps reduced cases generator-producible, while validity still
+  depends on the generator enforcing the valid input domain.
 - The Pragmatic Programmer, [DRY extract](https://media.pragprog.com/titles/tpp20/dry.pdf):
   knowledge-level DRY.
 - Hyrum Wright, [Hyrum's Law](https://www.hyrumslaw.com/): observable behavior
@@ -201,14 +211,14 @@ author-by-author runtime checklist:
 | --- | --- | --- |
 | Active context | `AGENTS.md`, `CONTEXT.md`, `docs/plans/README.md` | Keep boot text small; route this plan while active; remove universal deployment/review language from shared context. |
 | Shared core | `docs/agents/engineering-contract.md`, `skills/custom/repo-bootstrap/engineering-contract.md`, `AGENTS_PORTABLE_FALLBACK.md` | Replace the 256-line mixed contract with the compact quality core plus short trigger pointers; update both managed copies atomically. Make the portable fallback a standalone global `AGENTS.md` for users without installed skills; repositories still own local commands, invariants, and sources. |
-| Review decision | `docs/adr/0015-lean-quality-defaults-and-conditional-workflow-expansion.md` | Supersede ADR-0013's universal Implement review and narrow ADR-0014's incomplete nomenclature migration; preserve both historical ADRs. |
+| Review decision | `docs/adr/0015-independent-change-review-is-condition-triggered.md` | Supersede ADR-0013's universal Implement review; preserve accepted ADR-0014 and both historical records. |
 | Ordinary implementation | `skills/custom/implement/SKILL.md`, its metadata and handoff reference | Remove default Charter, Repair budget, mandatory reviewer, repeated Hyrum prose, and production-caller wording. Require current owner, real callers, focused proof, diff/read-back check, obsolete-path cleanup, and honest Residual Risk. |
 | Parallel implementation | `skills/custom/parallel-implement/SKILL.md` and metadata | Keep lane isolation and one final independent review for genuinely independently authored integration; use runtime-path language; do not imply production/SRE scope. |
 | Design | `skills/custom/codebase-design/{SKILL.md,DIRECT-DESIGN.md,DEEPENING.md,DESIGN-IT-TWICE.md}` | Keep the ordinary interface packet small; load substitution, migration, state, security, production, and performance concerns only through their predicates. Use the source vocabulary above. |
 | Testing | `skills/custom/tdd/{SKILL.md,tests.md,mocking.md,refactoring.md}` and metadata | Keep TDD invocation conditional; correct Fowler/Meszaros terms; add bounded characterization, Test Double, and property-testing branches without new phases or Return fields. |
 | Diagnosis, simplification, audit, review | Directly affected canonical skills and existing references | Remove duplicated doctrine and slogans; preserve their gates and Returns; activate specialist coverage only from the table. |
-| Relationship owners | `docs/synthesis/skill-context-relationships.md`, applicable runtime profiles and core-workflow evals | Make Implement-to-Change-Review conditional; preserve final review for independently authored integration and explicit-only High Assurance. |
-| Pack composition owner | `docs/synthesis/skill-pack.md`, `tests/test_first_fresh_epoch.py`, and affected composition proof | Add one revision-plus-one amendment for the behavioral review-routing change and regenerate only affected fingerprints and integration evidence. Do not amend the baseline for prose-only vocabulary changes. |
+| Relationship owners | `docs/synthesis/skill-context-relationships.md` and applicable runtime profiles | Make Implement-to-Change-Review conditional; preserve final review for independently authored integration and explicit-only High Assurance. |
+| Pack composition owner | `docs/synthesis/skill-pack.md`, `tests/test_first_fresh_epoch.py`, and affected composition proof | Record revision 17 / machine revision 5 for review routing and revision 18 / machine revision 6 for TDD routing. Regenerate only affected fingerprints and integration evidence; do not amend the baseline for prose-only vocabulary changes. |
 | Active vocabulary callers | `skills/custom/to-spec/SKILL.md`, `skills/custom/to-tickets/SKILL.md`, `skills/custom/triage/AGENT-BRIEF.md`, `skills/custom/writing-great-skills/SKILL.md`, `docs/synthesis/methods/deploy-prompts.md`, and directly asserting tests | Remove only the retired human-facing labels and production-caller wording named above; preserve behavior and machine identities. |
 | Mechanical projection | `skills/custom/repo-bootstrap/scripts/validate_setup.py`, `skills/custom/repo-bootstrap/setup-schema.json`, `scripts/validate_skills.py`, `tests/test_skill_pack_contracts.py` | Delete source-phrase policing and broad vocabulary-projection tests. Validate owners, managed identity, pointers, and observable activation contracts. Refresh digests only after wording freezes. |
 
@@ -239,8 +249,35 @@ cannot remain readable without it.
    authorized.
 
 Do not revise the Pack Composition Baseline or regenerate semantic fingerprints
-merely to rename human-facing prose. The Implement review-routing change is
-behavioral, so its one revision-plus-one amendment is required for coherence.
+merely to rename human-facing prose. Pack Composition revision 17 / machine
+revision 5 records condition-triggered Change Review; revision 18 / machine
+revision 6 records explicit-request-or-repository-policy TDD routing.
+Historical revision-2 FCE slices remain frozen evidence rather than being
+rewritten.
+
+## Execution Record
+
+1. Completed: classified the planned core and branch instructions as Keep,
+   Collapse, Disclose, or Delete.
+2. Completed in `9ff20fd`: accepted ADR-0015, condition-triggered review, Audit
+   Close compatibility, and Pack Composition revision 17 / machine revision 5.
+3. Completed in `96b7d0f`: compact shared and managed engineering contracts
+   plus the standalone portable global fallback.
+4. Completed through `9ff20fd`: lean Implement, Parallel Implement, and
+   High-Assurance routing with conditional review and explicit-only specialist
+   work.
+5. Completed through `9200a97`: Codebase Design, TDD, Diagnosis, Simplify,
+   Audit, Review, and relationship vocabulary; Pack Composition revision 18 /
+   machine revision 6 records conditional TDD routing.
+6. Completed in the closure candidate: prose-copy validation was removed while
+   owner, identity, topology, activation, Return, and behavior-bearing protocol
+   assertions were preserved.
+7. Completed in the closure candidate: managed markers and the setup digest
+   were refreshed after wording froze.
+8. Completed: accepted behavioral evaluations and the final repository proof
+   recorded below.
+9. Installation synchronization and Git delivery remain outside this plan and
+   require separate authority.
 
 ## Proof And Behavioral Evaluation
 
@@ -281,6 +318,21 @@ Candidate pairs, selected only for behavior changed by the final delta:
 - one-owner edit / independently owned parallel work;
 - repeated syntax with distinct meaning / duplicated policy knowledge.
 
+Accepted evidence:
+
+- [condition-triggered Implement review](../validation/skills/implement/evals/EV-implement-condition-triggered-review-20260811-01/evidence/2026-08-11-condition-triggered-review.md):
+  accepted with 25/25 initial candidate, 17/17 successor, and 6/6 protected
+  judgments;
+- [cross-skill source-vocabulary quality lift](../validation/evals/2026-08-12-source-vocabulary-quality-lift.md):
+  accepted with 30/30 entry-positive and 12/12 candidate wrong-condition
+  judgments; its compatibility-lane placement is explicitly indexed rather
+  than fabricated as per-skill or FCE evidence;
+- [TDD routing](../validation/skills/tdd/evals/EV-tdd-routing-20260812-01/decision.md):
+  accepted with 40/40 final entry and custody judgments; and
+- [TDD shrinking selection](../validation/skills/tdd/evals/EV-tdd-shrinking-selection-20260812-01/decision.md):
+  accepted with 25/25 candidate judgments and 6/6 candidate wrong-condition
+  judgments.
+
 Run:
 
 - `python -m scripts.pytest_focused`
@@ -302,15 +354,39 @@ Run:
 - No source-vocabulary enforcement in validators.
 - No new branded phases, fields, ledgers, locks, portfolios, or artifacts.
 - No rewrite of historical ADRs, synthesis, research, validation, or run logs.
-- No machine identity or frozen-baseline migration solely for prose; the one
-  review-routing successor is behavior, not nomenclature.
+- No machine identity or frozen-baseline migration solely for prose; the review
+  and TDD routing amendments record behavior, not nomenclature.
 - No installed-mirror synchronization, staging, commit, push, or publication.
 
 ## Completion
 
-The work is complete when ordinary engineering uses the compact quality core,
-each changed heavier branch has an observable activation condition, security
-programs and production/SRE are explicit-only, ordinary trust/data correctness
-remains active, source vocabulary is precise without phrase projection,
-obsolete universal ceremony is removed, accepted behavioral evaluation
-supports judgment changes, and repository checks pass.
+Complete on 2026-08-12. Ordinary engineering uses the compact quality core;
+heavier methods have observable activation conditions; security programs and
+production/SRE remain explicit-only; ordinary trust/data correctness remains
+active; source vocabulary is predicate-bound without phrase projection; and
+obsolete universal ceremony is removed.
+
+Final proof on the closure candidate:
+
+- focused contract suite: 79 passed;
+- full suite: 493 passed, 5 skipped;
+- skill validation and setup validation: passed;
+- managed install dry-run: passed;
+- worktree and index diff checks: passed; and
+- the default focused wrapper reached 77 passes before the known Windows
+  system-temp ACL blocked one fixture setup; the same complete focused file
+  passed serially with a repository-local `--basetemp`.
+
+Historical `core-workflows.md` was restored byte-for-byte to its parent state.
+The cross-skill source-vocabulary evaluation remains explicitly indexed in the
+historical compatibility lane rather than receiving a fabricated per-skill or
+composition identity. No installed mirror was synchronized and no files were
+staged, committed, pushed, or published by this closure.
+
+The final all-skill sweep also aligned Audit delegation with the shared
+explicit-request gate, aligned Diagnosis metadata with its existing
+explicit-only route, reserved verification for conformance evidence, and made
+Repo Bootstrap validate engineering-contract identity without policing prose.
+Five fresh pre-change Audit controls already obeyed the shared delegation gate,
+so its bounded evaluation stopped at `reject-no-control-deficit` before candidate
+sampling; the local edit removes a contradiction and claims no behavioral lift.
