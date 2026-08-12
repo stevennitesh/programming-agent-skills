@@ -1,8 +1,8 @@
 # Valuation Run Feedback
 
-Use this branch only under the exact loading condition in `SKILL.md`. It
-evaluates one valuation run; it is not another valuation gate, a user
-satisfaction survey, or authority to revise the skill.
+Use this branch only under the exact loading condition in
+`analyst-runbook.md`. It evaluates one valuation run; it is not another
+valuation gate, a user satisfaction survey, or authority to revise the skill.
 
 ## Bind The Run
 

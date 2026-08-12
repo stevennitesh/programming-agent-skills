@@ -23,11 +23,11 @@ def test_confirmed_order_reserves_inventory_and_exposes_receipt():
 This proves one acceptance behavior through its observable effects rather than
 splitting pricing, reservation, persistence, and receipt into horizontal tests.
 
-## State Testing
+## State And Behavior Verification
 
-Treat a test as the first user of an interface. Prefer state testing through
-stable caller-facing behavior; use interaction testing only when the
-interaction itself is contractual or provides necessary failure isolation.
+Prefer state verification through stable caller-facing behavior; use behavior
+verification only when the interaction itself is contractual or provides
+necessary failure isolation.
 
 Implementation-coupled:
 
@@ -64,7 +64,25 @@ assert calculate_total([{"price": 10}, {"price": 5}]) == 15
 ```
 
 Trace expectations to a specification, known-good literal, fixture, or worked
-result—not the production implementation.
+result—not the implementation under test.
+
+## Characterization Test
+
+Use a characterization test only when actual legacy behavior must be recorded
+while intended behavior is unavailable. It establishes actuality, not
+correctness, cause, or a corrective RED. Keep it bounded to the behavior needed
+for the current slice. When intended behavior is required to proceed, return
+the unresolved decision through [SKILL.md](SKILL.md) instead of treating the
+characterization test as TDD evidence.
+
+## Property-Based Testing
+
+Use property-based testing only when a stable property and independent oracle
+range over a broad or combinatorial domain, credible generators and shrinking
+exist, and generation discriminates better than examples or a small exhaustive
+table. Define the valid input domain, property, generator constraints, and how
+shrinking preserves valid cases. Otherwise prefer focused examples or an
+exhaustive small table.
 
 ## Test Portfolio
 

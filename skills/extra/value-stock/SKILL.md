@@ -9,9 +9,14 @@ Estimate a defensible value range, expose the expectations behind it, and show
 what evidence would change the conclusion. Treat the agent as a research
 analyst, not an oracle or investment adviser.
 
-Read [analyst-runbook.md](references/analyst-runbook.md) completely at the start
-of every valuation run. It owns the chronological procedure and routes the
-conditional references. This file owns the invariant valuation contract.
+Keep this invariant contract active for every run. Read only the matching
+section or conditional subsection of
+[analyst-runbook.md](references/analyst-runbook.md) when its named operation is
+reached: start and identity before company-specific evidence; evidence and
+method before collection or selection; forecast, freeze, and calculate only for
+an admitted numerical method; a conditional branch only when its stated
+condition is true; reporting before composition; and the terminal checklist
+before return. Do not preload the whole runbook or a branch-only reference.
 
 ## Authority And Safety
 
@@ -100,10 +105,14 @@ scenarios unless the stated business scenario itself changes them.
 
 ## Calculation And Output Firewall
 
-For supported FCFF and residual-income work, send the frozen Model Lock through
-the typed calculator described by the runbook. Its receipt is authoritative for
-normalized inputs, arithmetic, assertions, and reproducibility. Markdown is a
-view of that receipt, not an alternate calculation path.
+For an admitted numerical method, use exactly one declared public deterministic
+path. Resolve capability for the requested calculator operation, not merely the
+method name; a caller-owned path takes precedence over the bundled fallback. If
+that calculation is unsupported or its current contract cannot be resolved,
+expose a capability gap with its unlock condition instead of improvising
+material arithmetic. The receipt is authoritative for normalized inputs,
+arithmetic, assertions, and reproducibility. Markdown is its view, not another
+calculation path.
 
 `mechanical_status: fail` excludes the affected result. A
 `mechanical_status: pass` result proves only the deterministic calculation; it

@@ -61,10 +61,9 @@ terms for architecture claims:
   domain ownership, supported variation, a real external boundary, or
   caller-facing testability unavailable more directly. An Adapter count or
   test double alone does not earn one.
-- **Prove.** Treat a test as the first user of the Interface. Use the
-  caller-facing Interface as the Proof Seam, prefer state testing through
-  observable outcomes, and use interaction testing only when the interaction
-  is contractual or isolates a necessary failure.
+- **Prove.** Use the caller-facing Interface as the Proof Seam. Prefer state
+  verification through observable outcomes, and use behavior verification only
+  when the interaction is contractual or isolates a necessary failure.
 
 ## Direct Design
 

@@ -18,10 +18,10 @@ independently evidenced clarity or provability item in the same subsystem.
   duplicate syntax and drift from behavior?
 - **Error expression:** After Reliability establishes required semantics, do
   names and structure preserve cause and caller-useful context?
-- **Test portfolio:** As a first user of the Interface, does each test prefer
-  state testing through the Proof Seam and own a distinct supported behavior,
-  invariant, branch, risk, or diagnostic responsibility? Is interaction
-  testing limited to contractual interactions or necessary failure isolation?
+- **Test portfolio:** Does each test prefer state verification through the
+  Proof Seam and own a distinct supported behavior, invariant, branch, risk,
+  or diagnostic responsibility? Is behavior verification limited to
+  contractual interactions or necessary failure isolation?
 
 For suspected test sprawl, map every relevant test to behavior, seam, oracle,
 distinct risk, and observed cost. Admit consolidation only when overlap has no

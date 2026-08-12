@@ -72,6 +72,18 @@ integration, the worker follows the real caller or runtime entry path to the
 observable output and proof. Existing code or component tests count only when
 that path reaches them. Do this directly; create no matrix or artifact.
 
+For a bug whose expected behavior, exact symptom, cause, or trusted reproduction
+is uncertain, the worker returns `diagnosis-required` to the root and stops
+before mutation. Otherwise, when the accepted parent or selected ticket
+explicitly requires TDD, test-first work, or RED-GREEN-REFACTOR, or applicable
+repository policy requires TDD, the mutation-owning worker invokes `$tdd` after
+intended behavior and its independent oracle are settled. The worker resumes
+implementation only from a complete TDD proof. TDD owns harness readiness; any
+meaning, support, authority, or incomplete-proof Return goes to the root and
+stops that lane before behavior mutation. When TDD is inactive, the worker
+implements directly and runs appropriate tests without claiming TDD. The root
+never runs a second TDD loop.
+
 Each worker implements the smallest acceptance-complete solution, runs focused
 proof, commits its bounded work, and returns concise prose naming the commit,
 changed scope, proof, skips, and blockers. The root verifies the actual lane,

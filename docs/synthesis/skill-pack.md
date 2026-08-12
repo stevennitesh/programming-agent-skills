@@ -75,6 +75,13 @@ still need independent judgment, and final candidates containing mutations
 from multiple independent authors retain the existing Change Review path.
 Missing proof stops rather than routing to review. High-Assurance Review and
 specialist security or production/SRE work remain explicit-only.
+Revision 18 materializes machine contract revision 6 by reconciling TDD
+admission with the shared engineering contract. TDD remains implicitly
+discoverable from an explicit natural-language test-first request or an
+applicable repository requirement, but red-testability alone no longer
+activates it. Ordinary implementation uses appropriate tests without a TDD
+packet. Implement retains delivery, lane workers retain mutation custody, and
+Skill Router continues to recommend one route without starting it.
 It binds the complete fingerprinted pre-discovery fixed point, then freezes the
 tested environment, finite research order, capability
 owners, roles, relationships, exclusions, resolved collisions, acceptance
@@ -214,7 +221,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "completion_return": "A complete TDD proof packet or a typed handoff",
       "disposition": "selected",
       "entry_conditions": [
-        "Behavior and a useful red-capable proof seam are settled"
+        "The user explicitly requests TDD, test-first work, or RED-GREEN-REFACTOR, or applicable repository policy requires TDD; intended behavior and its independent oracle are settled"
       ],
       "essential": true,
       "exclusions": [
@@ -980,7 +987,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       }
     ],
     "composition_epoch_id": "FCE-20260727-01",
-    "contract_revision": 5,
+    "contract_revision": 6,
     "epoch_lock": null,
     "exclusions": [
       "Per-skill H1 or candidate wording",
@@ -1685,7 +1692,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [
         "tdd caller-facing interface and branch-required reference only"
       ],
-      "entry_condition": "New behavior is settled and red-testable, or expected behavior, the exact symptom, the cause, and a trusted red-capable reproduction are known.",
+      "entry_condition": "The selected work explicitly requires TDD, test-first work, or RED-GREEN-REFACTOR, or applicable repository policy requires TDD; intended behavior and its independent oracle are settled, and a bug also has known expected behavior, exact symptom, cause, and trusted red-capable reproduction. TDD TRACE owns harness readiness.",
       "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
       "input_packet": "Caller-owned bounded Source Trace for implement and the declared tdd input",
       "ordering_impact": "callee-before-caller",
@@ -1697,7 +1704,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "return_packet": "The declared tdd Return packet plus evidence, limits, and residual state",
       "target_skill_id": "SK-006",
       "verb": "Invoke",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
+      "wrong_condition": "The request asks only for tests, integration tests, regression tests, coverage, or ordinary implementation; the TDD requirement or readiness gate is absent or ambiguous; or another selected owner has the bounded outcome."
     },
     {
       "affected_capability_ids": [
@@ -2096,7 +2103,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [
         "tdd caller-facing interface and branch-required reference only"
       ],
-      "entry_condition": "A lane worker has red-testable new behavior, or a bug whose expected behavior, exact symptom, cause, and trusted red-capable reproduction are known.",
+      "entry_condition": "The accepted parent or selected ticket explicitly requires TDD, test-first work, or RED-GREEN-REFACTOR, or applicable repository policy requires TDD; the mutation-owning lane worker has settled intended behavior and its independent oracle, and a bug also has known expected behavior, exact symptom, cause, and trusted red-capable reproduction. TDD TRACE owns harness readiness.",
       "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
       "input_packet": "Caller-owned bounded Source Trace for parallel-implement and the declared tdd input",
       "ordering_impact": "callee-before-caller",
@@ -2108,7 +2115,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "return_packet": "The declared tdd Return packet plus evidence, limits, and residual state",
       "target_skill_id": "SK-006",
       "verb": "Invoke",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
+      "wrong_condition": "The accepted work asks only for tests, integration tests, regression tests, coverage, or ordinary implementation; the TDD requirement or readiness gate is absent or ambiguous; or another selected owner has the bounded outcome."
     },
     {
       "affected_capability_ids": [
@@ -2646,7 +2653,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-025",
       "combined_exit_owner_skill_id": "SK-025",
       "context_loaded": [],
-      "entry_condition": "The situation satisfies behavior and a useful red-capable proof seam are settled; return that route and leave it unstarted.",
+      "entry_condition": "The user explicitly requests TDD, test-first work, or RED-GREEN-REFACTOR, or applicable repository policy requires TDD; intended behavior and its independent oracle are settled; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
       "input_packet": "Caller-owned bounded Source Trace for skill-router and the declared tdd input",
       "ordering_impact": "callee-before-caller",
@@ -2658,7 +2665,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "return_packet": "One named target and reason with downstream work unstarted",
       "target_skill_id": "SK-006",
       "verb": "Recommend and stop",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
+      "wrong_condition": "The request asks only for tests, integration tests, regression tests, coverage, or ordinary implementation; the TDD requirement or readiness gate is absent or ambiguous; or another selected owner has the bounded outcome."
     },
     {
       "affected_capability_ids": [
@@ -3745,7 +3752,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "invocation_mode": "implicit",
       "load_budget_class": "conditional-leaf",
       "negative_exclusion_predicates": [
-        "The request does not satisfy: Behavior and a useful red-capable proof seam are settled",
+        "The request does not explicitly require TDD, test-first work, or RED-GREEN-REFACTOR and no applicable repository policy requires TDD, or intended behavior and its independent oracle are not settled",
         "Another selected skill owns the requested outcome",
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
@@ -3755,7 +3762,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "owned_capability_ids": [
         "CAP-006"
       ],
-      "positive_entry_predicate": "Behavior and a useful red-capable proof seam are settled",
+      "positive_entry_predicate": "The user explicitly requests TDD, test-first work, or RED-GREEN-REFACTOR, or applicable repository policy requires TDD; intended behavior and its independent oracle are settled",
       "primary_role": "leaf",
       "prohibited_ownership": [
         "Another selected skill's semantic decision, local mutation, proof judgment, Return, or completion",
@@ -3763,7 +3770,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Pack integration acceptance, epoch Lock, cleanup, installation, or Git delivery unless explicitly owned"
       ],
       "relationship_ids": [],
-      "required_input": "A bounded caller-owned Source Trace and authority for: Deliver one red-green-refactor tracer for settled red-testable behavior",
+      "required_input": "A bounded caller-owned Source Trace, the applicable explicit user or repository TDD requirement, settled intended behavior and independent oracle, and mutation authority; TDD TRACE owns harness readiness",
       "return_packet": "A complete TDD proof packet or a typed caller return",
       "skill_id": "SK-006"
     },

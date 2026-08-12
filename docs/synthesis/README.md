@@ -85,7 +85,7 @@ uses real disposable state for effect claims. Release promotes only the exact
 tested candidate after a cheap cut scan.
 
 Exact evidence is reusable only when bytes, claim, task, model, host, protocol,
-configuration, tools, authority, environment, rubric, and proof lane match.
+configuration, tools, authority, environment, rubric, and proof check identity match.
 Research, behavioral sampling, pruning, installation, and Git delivery remain
 conditional and retain their existing authorities.
 
@@ -113,7 +113,7 @@ A whole-skill synthesis note should contain:
 - current, upstream-observed, independently supported, contested,
   pack-specific, unverified, and locally experimental dispositions;
 - selected changes with origin, owner, wrong condition, and proof;
-- prior-evidence dispositions and exact reusable proof lanes;
+- prior-evidence dispositions and exact reusable proof check identities;
 - decision trace, rejected and deferred alternatives, affected-surface map,
   and deliberate non-changes;
 - proof map separating deterministic, behavioral, real-state, integration, and

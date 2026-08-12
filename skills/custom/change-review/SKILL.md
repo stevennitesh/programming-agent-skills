@@ -102,10 +102,11 @@ interactions, not a blind Cartesian product. Close each row as `inspected`,
 `proved`, `skipped-nonmaterial`, or `blocked`; any material skip or block makes
 coverage `incomplete`.
 
-When the candidate supersedes or makes behavior redundant, apply Hyrum's Law by
-distinguishing the intended contract from actual dependence while extending
-coverage to every displaced implementation, caller, registration, export,
-flag, test, configuration, document, and migration required by Change Closure.
+When observable behavior changes, use Hyrum's Law to distinguish actual
+dependence from the intended contract as compatibility or migration evidence.
+When the candidate supersedes or makes behavior redundant, extend coverage to
+every displaced implementation, caller, registration, export, flag, test,
+configuration, document, and migration required by Change Closure.
 
 ## Judge
 
@@ -177,5 +178,5 @@ Successor snapshot authority: none
 Completion requires every applicable coverage row and axis to close, the axis
 reset to occur, every finding candidate and carried ID to be disposed, drift
 read-back to pass, and the packet to be internally consistent. The decision is review
-judgment, not mutation, Lock, or Release authority. Return control to the caller
-and stop.
+judgment and grants no mutation or release authority. Return control to the
+caller and stop.

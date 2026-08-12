@@ -81,7 +81,7 @@ list.
 Authorized behavior and coupled surfaces; adjacent work returned.
 
 **Proof responsibility:**
-- Proof Seam and concrete proof lane
+- Proof Seam and concrete check
 - Canonical test owner or proof surface
 - Reuse / extend / add; a new test requires a distinct responsibility
 
@@ -101,7 +101,7 @@ Authorized behavior and coupled surfaces; adjacent work returned.
 test, configuration, documentation, or migration made obsolete; otherwise
 `not applicable`.
 
-**Retained compatibility:** path, owner, reason, proof, and Removal Trigger;
+**Retained compatibility:** path, owner, reason, proof, and removal condition;
 otherwise `not applicable`.
 ```
 
@@ -112,7 +112,7 @@ Commitment Boundary and Source Trace are settled; observation status and
 readiness authority are honest; applicable correctness obligations and
 prohibited behavior are explicit; acceptance is operational and observable;
 grounding, dependencies, expected write scope, parallel safety, scope fence,
-Proof Seam, proof lane, and proof responsibility are usable; Change Closure is
+Proof Seam, concrete check, and proof responsibility are usable; Change Closure is
 accounted for; and a human brief names the required human act and completion
 evidence.
 

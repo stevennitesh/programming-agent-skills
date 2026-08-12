@@ -72,14 +72,15 @@ def test_candidate_lock_blocks_before_behavioral_dispatch_or_promotion() -> None
     deploy = _normalized(DEPLOY)
     candidate = _section(deploy, "## Candidate Lock", "## Behavioral Proof")
 
-    deterministic = candidate.index(
-        "structural, relationship, compatibility, canonical-production-caller, "
-        "and integration proof"
-    )
+    check_kinds = [
+        candidate.index(kind)
+        for kind in ("structural", "relationship", "compatibility", "integration")
+    ]
+    real_caller = candidate.index("checks at the real caller")
     failure = candidate.index("A failed applicable check stops the campaign")
     zero_dispatch = candidate.index("zero behavioral dispatch")
     zero_promotion = candidate.index("zero promotion")
-    assert deterministic < failure < zero_dispatch < zero_promotion
+    assert max(check_kinds) < real_caller < failure < zero_dispatch < zero_promotion
     assert "Freeze the exact candidate bytes" in candidate
 
 

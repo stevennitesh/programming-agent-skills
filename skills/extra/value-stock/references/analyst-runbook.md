@@ -1,9 +1,10 @@
 # Analyst Runbook
 
-Use this procedure for each `$value-stock` run. The canonical contract remains
-in `SKILL.md`; this runbook orders the work and routes detail to the existing
-reference owners. Do not turn the runbook into a second evidence ledger or copy
-method formulas into it.
+Read only the section selected by the operation router in `SKILL.md`. A selected
+section may route another reference only under its stated condition. The
+canonical invariant contract remains in `SKILL.md`; this runbook orders
+operation-specific work and must not become a second evidence ledger or formula
+owner.
 
 ## 1. Start The Run And Lock The Mandate
 
@@ -42,20 +43,21 @@ or delay an ordinary valuation with grilling questions.
 
 ## 2. Build The Evidence Foundation
 
-Read [source-protocol.md](source-protocol.md) before evidence collection. Apply
-its source hierarchy and minimum evidence packet at both depths; apply its Full
-expansion only for Full or a material issue. Keep reported facts, guidance,
-third-party estimates, assumptions, and calculations distinct in the evidence
-ledger.
+When live evidence collection begins, read Source Hierarchy, Minimum Evidence
+Packet, Evidence Ledger, and Freshness And Stopping in
+[source-protocol.md](source-protocol.md). Read its market-price section only for
+a price-dependent output; structured-data, transformed-issuer, guidance, news,
+and Full-expansion sections only when their named condition applies. Keep facts,
+guidance, estimates, assumptions, and calculations distinct.
 
-Read Method Principles, the selected method sections, Margin Of Safety, and
-Calculation Artifact And Assertions in
-[valuation-methods.md](valuation-methods.md). Read Future-Date Valuation only
-when requested. Read [company-types.md](company-types.md) when initial
-inspection leaves multiple materially plausible primary methods, the issuer is
-a sector, lifecycle, or accounting exception, or material financing,
-underwriting, custody, or asset-linked activity could change the cash-flow
-definition, claim bridge, or method.
+Read Method Principles and only the selected or still-plausible method sections
+in [valuation-methods.md](valuation-methods.md). Read Future-Date Valuation only
+for a future-date output, Margin Of Safety only for a price, attractiveness, or
+hurdle comparison, and Calculation Artifact And Assertions only when a
+supported deterministic lane is used. Read
+[company-types.md](company-types.md) only when multiple methods remain
+materially plausible or exception economics could change the cash-flow,
+claim-bridge, or method identity.
 
 Choose the primary method from the business economics and target claim. Use an
 intrinsic or asset-based method when supportable and a reverse valuation when
@@ -75,21 +77,13 @@ pending.
 | **4. Economics-And-Reproduction** | Source-tagged anchors; causal drivers and scenarios; acquired versus organic growth when material; coherent growth, margins, reinvestment, returns, and competitive duration; exact rate definitions; terminal or realization economics; useful sensitivities; independently reproduced typed artifact and assertions. |
 | **5. Horizon-And-Decision** | Present value separate from future-date value; future-state roll-forward or subordinate required-return shortcut; authoritative price for price-dependent outputs; named discount formula; only user-supplied hurdle for pass/fail or entry price; precision and status no stronger than the weakest load-bearing input. |
 
+If one exact source-answerable question remains after collection and candidate
+screening, run **Conditional Research Resolution** before marking the forecast
+foundation ready.
+
 Run Gates 1-3 before forecasting. Record `forecast foundation: ready` only when
 all applicable requirements pass or have an owning full-effect bound. Any later
 change to their content resets the marker and invalidates dependent work.
-
-After normal primary-source collection and candidate screening, make at most
-one `$research` handoff only when one remaining bounded, source-answerable
-question could change a candidate disposition, enable a primary result, or
-materially change the model or conclusion, and no owning conservative bound
-covers the full effect. Do not delegate a forecast, valuation judgment, broad
-survey, multiple gaps, or ownership of the ledger or conclusion. Pass the exact
-question and exclusions, candidate and claim, identity, issuer state, cutoff,
-jurisdiction when relevant, disposition at stake, and observable answer
-condition; set note and write authority to `none`, with `$value-stock` as return
-owner. On return, disposition each load-bearing claim as `admit`, `reject`, or
-`preserve-conflict`, then rescreen the affected candidate once.
 
 ## 3. Forecast, Freeze, And Calculate
 
@@ -111,57 +105,104 @@ Model Lock version. Bind forecasts, calculation artifacts, assertions, gates,
 and any review packet to it. An uncertain but explicit analyst assumption is
 not automatically an unresolved evidence gap.
 
-For nontrivial supported FCFF or residual-income work, start from the
+At the calculation boundary, resolve the caller repository's valuation
+methodology, selected method contract, and public interface. Record the owner,
+method, requested calculation, contract version, and capability state. Require
+the selected path to declare the calculation it will perform. If a caller-owned
+path exists, use only it. If none exists, use the
+[bundled valuation gateway](../scripts/valuation_gateway.py) only for its
+declared FCFF or residual-income `validate`, `calculate`, or explicit reverse
+solve route. Never use both paths for one material result. An absent,
+conflicting, or unverified calculation is a capability gap with an exact unlock
+condition, not authority for manual arithmetic.
+
+When the selected caller path uses a method-specific lock, bind it to the
+run-level security, valuation date, cutoff, currency, and upstream evidence
+identities. The method lock is not another analyst ledger or authority to mix
+run versions.
+
+For supported bundled FCFF or residual-income work, use the matching
 [FCFF example](../examples/fcff-model-lock.json) or
-[residual-income example](../examples/residual-income-model-lock.json), replace
-the example with the frozen Model Lock, and run from the repository root:
+[residual-income example](../examples/residual-income-model-lock.json) only as a
+schema starter. Replace every example value with the frozen Model Lock and run
+only the operation selected under the `SKILL.md` calculation firewall. Never
+treat an example as live evidence or as the operation choice.
 
-```text
-python skills/extra/value-stock/scripts/valuation_gateway.py calculate skills/extra/value-stock/examples/fcff-model-lock.json
-python skills/extra/value-stock/scripts/valuation_gateway.py calculate skills/extra/value-stock/examples/residual-income-model-lock.json
-```
-
-Use `validate` instead of `calculate` for normalization and contract validation
-only. Treat receipt JSON as authoritative; Markdown is its readable view.
-Interpret objective diagnostics without allowing them to alter assumptions,
-confidence, range, or status. Repair deterministic identity, timing, sign, unit,
+Treat receipt JSON as authoritative; Markdown is its readable view. Interpret
+objective diagnostics without allowing them to alter assumptions, confidence,
+range, or status. Repair deterministic identity, timing, sign, unit,
 source-definition, or reproduction failures before using the affected result.
-For unsupported methods, expose a capability gap.
 
 After the Model Lock is frozen, run Gates 4 and 5. Keep causal operating
 scenarios separate from parameter or convention sensitivities. For a
-price-dependent conclusion, name the formula:
-
-```text
-observed price discount = (estimated value - market price) / estimated value
-```
+price-dependent conclusion, use the named convention from Margin Of Safety in
+`valuation-methods.md`.
 
 ## 4. Trigger Conditional Branches
 
-| Condition | Action |
-| --- | --- |
-| Forward P/E or PEG is requested or could materially challenge the primary result | Load the caller-owned forward-multiple contract only when its public calculation path is implemented. Otherwise report the live capability state and do not invent a command or manual parallel calculation. |
-| Independent validation requested, or complex claims, conventions, methods, or alternatives could materially change the conclusion | Read [model-review.md](model-review.md). First repair root-owned reproduction failures. |
-| Compact output | Read [compact-report.md](compact-report.md) before composing. |
-| Full output | Read [report-contract.md](report-contract.md) before composing. |
-| Caller explicitly requests process evaluation, reusable fixture, or evidence for improving `$value-stock` | Complete the valuation and applicable review, then read [run-feedback.md](run-feedback.md). |
-| One exact methodology, provider, event, or empirical question remains after identity and method screening, and the caller repository declares a valuation research catalog | Search only that catalog's metadata, exclude wrong-scope, countercondition, retired, superseded, stale, and conflicted entries, then open exactly one best eligible note. Record its disposition in the existing ledger and stop the branch. No match, equal eligible matches, staleness, or unresolved conflict returns a routing gap; a catalog row cannot satisfy a Model Lock requirement. |
+### Conditional Research Resolution
 
-Before review, derive one Review Readiness receipt from the existing gate and
-assertion results. Include Model Lock version, calculation artifact identity,
-scope, dependency-closed evidence packet status, security and target-claim
-identity, price evidence when applicable, selected basis, filed reconciliation,
-claim-bridge timing, intervening-event sweep, and root reproduction. Dispatch
-only when all applicable items pass and no deterministic discrepancy remains.
-A bound is ready only when its full valuation effect is visible and review does
-not require the reviewer to obtain missing evidence. Otherwise repair or return
-the dependent status with `review: not run - candidate not ready`.
+Use this subsection only for the unresolved question routed from Section 2. If
+the caller declares a valuation research catalog, search only its metadata.
+Exclude wrong-scope, countercondition, retired, superseded, stale, and
+conflicted entries; open exactly one best eligible note and disposition its
+answer in the existing ledger. A catalog row cannot satisfy a Model Lock
+requirement. Equal eligible matches or no eligible note return a routing gap,
+not permission to load the archive.
 
-Reviewers challenge judgment and one reproduces the model. They do not replace
-the gates, construct the candidate, vote on value, or average targets. Review
-Readiness is not a sixth gate and cannot upgrade status.
+Only after the catalog is unavailable or returns no eligible answer, make at
+most one `$research` handoff when the bounded question could change a candidate
+disposition, enable a primary result, or materially change the model or
+conclusion, and no owning full-effect bound exists. Do not delegate a forecast,
+valuation judgment, broad survey, multiple gaps, or ownership of the ledger or
+conclusion. Pass the exact question and exclusions, candidate and claim,
+identity, issuer state, cutoff, jurisdiction when relevant, disposition at
+stake, observable answer condition, no note or write authority, and
+`$value-stock` as return owner. On return, disposition each load-bearing claim
+as `admit`, `reject`, or `preserve-conflict`, then rescreen the candidate once.
+
+### Forward P/E Or PEG
+
+Use this subsection only when Forward P/E or PEG is requested or could
+materially challenge the primary result. Resolve the caller-owned
+forward-multiple calculation and contract under Section 3. If unavailable,
+report the capability gap and do not invent a command or manual parallel
+calculation.
+
+### Independent Review
+
+Use this subsection only when independent validation is requested or complex
+claims, conventions, methods, or alternatives could materially change the
+conclusion. First derive one Review Readiness receipt from the existing gate and
+assertion results.
+Include Model Lock version, calculation artifact identity, scope,
+dependency-closed evidence packet status, security and target-claim identity,
+price evidence when applicable, selected basis, filed reconciliation,
+claim-bridge timing, intervening-event sweep, and root reproduction. A bound is
+ready only when its full valuation effect is visible and review does not require
+the reviewer to obtain missing evidence. If any applicable item fails, repair
+it or return `review: not run - candidate not ready` without loading the review
+procedure.
+
+When the matching receipt is `ready: yes`, read
+[model-review.md](model-review.md). Repair any later root-owned reproduction
+failure before review. Reviewers challenge judgment and one reproduces the
+model. They do not replace the gates, construct the candidate, vote on value,
+or average targets. Review Readiness is not a sixth gate and cannot upgrade
+status.
+
+### Run Feedback
+
+Use this subsection only when the caller explicitly requests process
+evaluation, a reusable fixture, or evidence for improving `$value-stock`.
+Complete the valuation and applicable review before reading
+[run-feedback.md](run-feedback.md).
 
 ## 5. Interpret, Report, And Persist
+
+When the output is ready to compose, read exactly one return contract:
+[compact-report.md](compact-report.md) for Compact or
+[report-contract.md](report-contract.md) for Full.
 
 Lead with the value range, supported price-implied expectations, confidence,
 valuation status, and the two or three assumptions dominating value. Explain

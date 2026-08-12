@@ -110,8 +110,8 @@ For a claim that exact wording changes invocation, judgment, action, context
 loading, Return, or completion, load
 [BEHAVIOR-EVALS.md](BEHAVIOR-EVALS.md).
 
-**Author Lock:** after authorized edits, read back mutations and current work
-state, preserve unrelated work, run proportionate canonical proof, and stop
+After authorized edits, read back mutations and current work state, preserve
+unrelated work, run proportionate canonical proof, and stop
 before installation, publishing, synchronization, staging, commit, push, or
 other delivery.
 
@@ -126,7 +126,7 @@ incomplete.
   behavior at risk, and material evidence limits are reported.
 - **Author complete:** affected contracts have one owner; required differences
   are implemented; exact mutations, proof, preserved unrelated state,
-  deliberate non-changes, and residual risk are reported; Author Lock holds.
+  deliberate non-changes, residual risk, and the delivery boundary are reported.
 
 Name skipped proof or unchanged foreign state only when its omission could be
 mistaken for completed scope.

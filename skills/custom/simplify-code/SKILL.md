@@ -9,6 +9,9 @@ Return exactly one outcome: `simplified`, `no-safe-simplification`, or
 `blocked`. Default to one unstaged, behavior-preserving cut. Run multiple cuts
 only in an explicitly requested finite serial `until-clean` campaign.
 
+Each admitted cut is refactoring: change code structure without changing
+observable behavior.
+
 **Bound -> Baseline -> Reduce -> Prove -> Return.**
 
 ## Bound
@@ -46,8 +49,13 @@ Record the starting ref, status, relevant diff, and staged-state shape without
 disturbing existing work. Run the smallest trusted proof that can detect a
 behavior change against the exact starting state. A failing, ambiguous, or
 semantically inadequate baseline returns `blocked` with the exact proof gap and
-no production mutation. An adequate baseline is required for a
+no source mutation. An adequate baseline is required for a
 `no-safe-simplification` verdict.
+
+When intended behavior is unavailable, an otherwise adequate baseline may use
+a characterization test to record actual legacy behavior at the bounded Proof
+Seam. It establishes actuality, not correctness or a wider preservation
+contract; the same adequacy gate and `blocked` outcome apply.
 
 ## Reduce
 
@@ -58,16 +66,18 @@ default mode. For other targets and each `until-clean` cycle, inspect the region
 in this order. The first safe rung wins:
 
 1. **Delete** behavior, configuration, compatibility, or abstraction proved
-   unreachable, expired, or unsupported within preserved contracts. Apply
-   Hyrum's Law as a compatibility-risk heuristic when observable behavior may
-   have actual dependents; dependence informs migration without automatically
+   unreachable, expired, or unsupported within preserved contracts. When
+   observable behavior has evidenced actual dependents, treat it as a
+   compatibility risk; dependence informs migration without automatically
    expanding the intended contract.
 2. **Reuse** an existing project-owned semantic match.
 3. **Standardize, native-first** through standard/runtime, platform/framework,
    then already-installed dependency capability.
-4. **Collapse** an unearned abstraction or duplicated decision that creates
-   accidental complexity at its narrowest existing owner; deepen, merge, or
-   inline only within settled existing boundaries.
+4. **Collapse** an unearned abstraction or duplicated decision at its narrowest
+   existing owner. When one shared abstraction forces distinct meanings, treat
+   it as a wrong abstraction: unshare it by restoring bounded duplication at
+   those narrow owners before seeking another abstraction. Otherwise deepen,
+   merge, or inline only within settled existing boundaries.
 5. **Shrink** branching or data movement with ordinary readable constructs.
 
 An earlier rung yields when its semantics, compatibility, edge behavior,
@@ -105,10 +115,10 @@ Rerun the same focused proof, then the nearest relevant tests and proportionate
 repository checks. Establish a strict net reduction across concepts, branch
 families, coordination, indirection, file responsibilities, dependencies,
 callers, tests, configuration, and operations. When relevant, explain the net
-reduction as lower change amplification or cognitive load, or as an unknown
-unknown made discoverable. Counts are receipts, not correctness or productivity
-proof; a shorter patch that merely relocates accidental complexity, exposes
-essential complexity to callers, or transfers equivalent burden is not simpler.
+reduction as lower change amplification or cognitive load. Counts are receipts,
+not correctness or productivity proof; a shorter patch that merely relocates
+maintenance burden, exposes required complexity to callers, or transfers
+equivalent burden is not simpler.
 
 Refresh changed paths and work state after proof. Confirm the patch preserves
 commitments, changes only the admitted cut and its created fallout, keeps the

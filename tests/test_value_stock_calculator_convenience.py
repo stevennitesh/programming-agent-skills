@@ -96,31 +96,52 @@ def test_cli_has_obvious_validate_and_calculate_routes_with_copyable_help() -> N
     assert json.loads(residual_income_run.stdout)["method"] == "residual_income"
 
 
-def test_skill_routes_one_runbook_to_the_tested_examples_and_method_owner() -> None:
+def test_skill_routes_operations_to_conditional_references_and_calculators() -> None:
     skill = SKILL.read_text(encoding="utf-8")
     runbook = RUNBOOK.read_text(encoding="utf-8")
     methods = METHODS.read_text(encoding="utf-8")
+    normalized_skill = " ".join(skill.split())
+    normalized_runbook = " ".join(runbook.split())
+    normalized_runbook_lower = normalized_runbook.lower()
 
     assert skill.count("[analyst-runbook.md](references/analyst-runbook.md)") == 1
+    assert "completely at the start of every valuation run" not in skill
+    assert (
+        "Do not preload the whole runbook or a branch-only reference"
+        in normalized_skill
+    )
+    assert (
+        "Resolve capability for the requested calculator operation" in normalized_skill
+    )
+    assert (
+        "caller-owned path takes precedence over the bundled fallback"
+        in normalized_skill
+    )
     assert runbook.count("## 3. Forecast, Freeze, And Calculate") == 1
     assert "[FCFF example](../examples/fcff-model-lock.json)" in runbook
-    assert "[residual-income example](../examples/residual-income-model-lock.json)" in runbook
+    assert (
+        "[residual-income example](../examples/residual-income-model-lock.json)"
+        in runbook
+    )
     assert "[valuation-methods.md](valuation-methods.md)" in runbook
-    assert runbook.count("caller repository declares a valuation research catalog") == 1
-    assert "open exactly one best eligible note" in runbook
-    assert "a catalog row cannot satisfy a Model Lock requirement" in runbook
-    assert "report the live capability state" in runbook
-    assert "do not invent a command or manual parallel calculation" in runbook
+    assert runbook.count("### Conditional Research Resolution") == 1
+    assert normalized_runbook.count("caller declares a valuation research catalog") == 1
     assert (
-        "python skills/extra/value-stock/scripts/valuation_gateway.py calculate "
-        "skills/extra/value-stock/examples/fcff-model-lock.json" in runbook
+        "a catalog row cannot satisfy a model lock requirement"
+        in normalized_runbook_lower
     )
+    assert "### Independent Review" in runbook
+    assert "### Run Feedback" in runbook
+    assert "If a caller-owned path exists, use only it" in normalized_runbook
+    assert "Never use both paths for one material result" in normalized_runbook
     assert (
-        "python skills/extra/value-stock/scripts/valuation_gateway.py calculate "
-        "skills/extra/value-stock/examples/residual-income-model-lock.json" in runbook
+        "do not invent a command or manual parallel calculation" in normalized_runbook
     )
+    assert "[bundled valuation gateway](../scripts/valuation_gateway.py)" in runbook
+    assert "[compact-report.md](compact-report.md) for Compact" in normalized_runbook
+    assert "[report-contract.md](report-contract.md) for Full" in normalized_runbook
     assert "`mechanical_status: fail` excludes the affected result" in skill
-    assert "expose a capability gap" in runbook
+    assert "capability gap with an exact unlock condition" in normalized_runbook
     normalized_methods = " ".join(methods.split())
     assert (
         "receipt supplies the deterministic arithmetic and assertions represented "

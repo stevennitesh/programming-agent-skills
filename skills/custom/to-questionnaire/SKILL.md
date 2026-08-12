@@ -22,7 +22,7 @@ facts, judgment, or decision authority unavailable from inspectable sources and
 the current user. When sources can answer, recommend `$research` and stop. When
 the current user owns the decision, recommend `$grilling` and stop.
 
-**Lock.** Trace supplied context. Lock one recipient; their role, expertise, and
+**Define.** Trace supplied context. Define one recipient; their role, expertise, and
 relationship to the sender; the downstream decision; the origin owner and
 identity; where attributable answers return; what must be learned; how answers
 will be used; any applicable deadline; the recipient effort budget or a
@@ -104,7 +104,7 @@ proof and reports any file state honestly. Stop before delivery or downstream
 synthesis.
 
 Complete only when Admit passes; one recipient, downstream decision, and
-answer-return destination are locked; every needed-back item has an atomic,
+answer-return destination are defined; every needed-back item has an atomic,
 recipient-answerable question; the questionnaire fits the effort budget; the
 complete render passes its pre-Save gates; the artifact passes reread; only the
 authorized file changed; and typed Return reports its exact path, state,

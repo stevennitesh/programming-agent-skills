@@ -1,6 +1,6 @@
 <h1 align="center">Programming Agent Skills</h1>
 
-<p align="center"><strong>Give Codex the habits of a senior engineer: shape intent, work in bounded slices, prove behavior, and lock with evidence.</strong></p>
+<p align="center"><strong>Give Codex the habits of a senior engineer: shape intent, work in bounded slices, prove behavior, and close with evidence.</strong></p>
 
 <p align="center">
   <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-blue.svg"></a>
@@ -17,7 +17,7 @@ flowchart LR
     B --> C["Source trace<br/>+ bounded slice"]
     C --> D["Tracer-bullet<br/>implementation"]
     D --> E["Semantic proof<br/>+ Spec / Standards review"]
-    E --> F["Lock<br/>evidence + residual risk"]
+    E --> F["Close<br/>evidence + residual risk"]
 ```
 
 The diagram shows the common path, not a mandatory sequence. Each skill owns one engineering job, and `$skill-router` recommends exactly one next skill when route choice is the work.
@@ -33,7 +33,7 @@ Fast agents fail in predictable ways. The pack turns those failure modes into ex
 | Broad horizontal implementation | Tracer-bullet vertical slices |
 | Output exists but its meaning is wrong | Semantic proof through a useful seam |
 | Review trusts the agent's summary | Fixed-point Spec / Standards review |
-| Work ends without durable state | Lock with evidence and residual risk |
+| Work ends without durable state | Close with evidence and residual risk |
 
 The payoff is visible uncertainty, inspectable proof, and named residual risk before work is accepted.
 
@@ -140,7 +140,8 @@ Representative routes:
 - Incoming issue or configured external PR -> `$triage`; ready-for-agent item -> `$implement`
 - Bounded multi-session fog -> `$wayfinder` until the map closes -> terminal
   decision or settled source for `$to-spec`
-- Settled red-testable behavior -> `$tdd`; route uncertain bugs through
+- Explicit test-first, TDD, or RED-GREEN-REFACTOR work -> `$tdd`; ordinary
+  implementation with tests -> `$implement`; route uncertain bugs through
   `$skill-router`.
 - Whole-repository correctness, robustness, or quality discovery -> `$audit-codebase` builds, continues, or refreshes one linked HTML map, audits one user-selected subsystem, then can analyze one user-selected improvement candidate or returned evidence
 - Existing behavior in one bounded region -> `$simplify-code` for one proved reduction, a finite `until-clean` campaign, or a no-safe-cut verdict

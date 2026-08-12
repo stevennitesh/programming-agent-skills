@@ -14,11 +14,11 @@ description: 'Diagnosis loop for hard bugs and performance regressions. Use when
 Own uncertain diagnosis through causal proof and regression evidence.
 
 - **Diagnosis mode:** prove the cause and recommend the smallest fix; leave
-  production behavior unchanged.
+  source and runtime behavior unchanged.
 - **Fix mode:** only with user or caller implementation authority; apply the
   smallest causal fix.
 - **Caller:** owns scope, review, staging, commit, tracker or external mutation,
-  push, release, Lock, and architecture follow-up.
+  push, release, final read-back, and architecture follow-up.
 
 Run only when explicitly selected. Return to the user or named caller. Start no
 successor; any recommendation below remains unstarted. When all diagnosis
@@ -35,8 +35,12 @@ Record the Source Trace, including expected and actual behavior, exact evidence,
 reproducer and environment, known-good baseline, contradictions, and missing
 evidence. Broken output is not the expected-behavior oracle.
 
+Use a characterization test only when actual legacy behavior must be recorded
+while intended behavior is unavailable. It establishes actuality, not
+correctness, cause, or a corrective RED.
+
 When expected behavior remains unresolved, return a decision-needed packet to
-the caller. Make no causal claim or production change.
+the caller. Make no causal claim or source or runtime behavior change.
 
 Before instrumentation, record the fixed point, worktree state, and pre-existing
 changes. Existing evidence satisfies a later gate only when its source and
@@ -44,8 +48,8 @@ result are recorded.
 
 ## 2. Loop
 
-**Relentless diagnosis:** build and run one repeatable harness, normally a
-single command, that catches the exact reported symptom.
+Build and run one repeatable harness, normally a single command, that catches
+the exact reported symptom.
 
 Start at the nearest automated seam; escalate through replay, a throwaway
 harness, fuzzing, bisection, differential comparison, then structured HITL. When
@@ -53,7 +57,7 @@ automation is impossible, use a shell-appropriate HITL harness that captures the
 exact symptom, expected and actual behavior, steps, attempts, failures,
 environment, and observations.
 
-The **Loop** must provide fast, high-quality feedback by being:
+The **Loop** must be:
 
 - **sharp:** asserts the exact symptom;
 - **repeatable:** deterministic or measured by reproduction rate;
@@ -103,13 +107,13 @@ Otherwise rerank and continue probing.
 
 ## 6. Prove
 
-In diagnosis mode, record the recommended causal fix and retain no production
-behavior change.
+In diagnosis mode, record the recommended causal fix and retain no source or
+runtime behavior change.
 
 In fix mode, when a correct regression seam reproduces the real bug pattern:
 
 1. place the minimised repro under its canonical test owner by reusing or
-   extending an existing Behavior Test, case table, or contract suite when it
+   extending an existing regression test, case table, or contract suite when it
    can express the responsibility; add a separate test only for a distinct
    proof responsibility or necessary failure isolation;
 2. observe RED for the expected reason;
@@ -142,7 +146,7 @@ Return one diagnosis packet containing:
 - hypothesis ledger and cause-gate evidence;
 - applied or recommended fix;
 - regression target and, in fix mode, either its canonical test owner and
-  test-portfolio delta or the seam gap;
+  regression-test change or the seam gap;
 - original-scenario result;
 - Change Closure, cleanup, validation, residual risk, and skipped checks.
 

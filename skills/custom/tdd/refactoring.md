@@ -18,11 +18,12 @@ Prefer moves that increase **depth** or **information hiding** and reduce
 
 Make one meaningful move at a time. Rerun the focused test after each move and
 the nearest relevant test group before leaving the tracer bullet. Preserve
-correct behavior tests and keep test-only hooks out of production interfaces.
+correct behavior tests and keep test-only hooks out of public runtime
+interfaces.
 
-Remove or consolidate a test only after the surviving portfolio proves its
-distinct responsibility. Leave pre-existing portfolio cleanup outside the
-tracer bullet as follow-up evidence.
+Remove or consolidate a test only after the surviving tests prove its distinct
+responsibility. Leave pre-existing test cleanup outside the tracer bullet as
+follow-up evidence.
 
 Stop when the intended material cleanup is complete and the focused plus nearest
 relevant tests are GREEN, or when the next improvement would expand scope.

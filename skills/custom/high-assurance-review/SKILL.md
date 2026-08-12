@@ -180,8 +180,8 @@ sources, coordinator provenance, core and specialist requested and
 observed-or-unavailable runtime bindings plus their proof, coverage by axis and
 class, admitted findings, carried dispositions, closed finding-candidate
 states, skipped checks, residual risk, drift, decision, and blockers. The decision
-grants no Repair, Lock, or residual-risk acceptance authority; those remain
-with the caller. End with:
+grants no Repair, candidate acceptance or closeout, or residual-risk acceptance
+authority; those remain with the caller. End with:
 
 ```text
 Return boundary: caller

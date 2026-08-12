@@ -75,7 +75,7 @@ commitment back to source authority. Use a detailed bidirectional crosswalk only
 for numerous, conflicting, or multi-source commitments. Do not invent product
 choices, implementation results, or a ready child-ticket graph. When the source
 supersedes behavior, carry each displaced surface and retained compatibility
-path with its owner, reason, proof, and Removal Trigger.
+path with its owner, reason, proof, and removal condition.
 
 ### 3. Freeze, compare, and draft when needed
 
@@ -120,7 +120,7 @@ binding source decision, supported design result, or evidence pointer. A
 material Seam belongs in the spec when it affects caller contracts, cross-ticket
 ownership, compatibility or migration, or test strategy. Paths are evidence, not
 an implementation plan. Leave bounded repository grounding, ticket slices,
-expected writes, concrete proof lanes and test owners, dependency graph and
+expected writes, concrete checks and test owners, dependency graph and
 ready frontier, static execution facts, live concurrency decisions, and
 implementation technique to `$to-tickets` and delivery owners.
 

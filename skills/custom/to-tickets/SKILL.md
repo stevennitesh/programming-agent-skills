@@ -90,14 +90,14 @@ Proof Seams, tests, configuration, Repository Reuse, and repository constraints.
 Treat paths as evidence, not ticket boundaries or implementation technique.
 
 Treat source-owned Responsibilities, Interfaces, and Seams as fixed. Map each
-applicable Proof Seam to its concrete proof lane and canonical test owner; do
+applicable Proof Seam to its concrete check and canonical test owner; do
 not create or move a Seam, or turn a ticket boundary into architecture. A
 missing consequential design decision returns `source-gap`.
 
 Account exactly once for every in-scope
 requirement, exclusion, deferral, dependency, risk, and proof obligation. Map
 each proof obligation to one canonical responsibility: its existing test surface
-or proof lane, one owning ticket or graph-level fence, and every dependent
+or concrete check, one owning ticket or graph-level fence, and every dependent
 consumer. Shared proof may serve several tickets, but shared test mutation needs
 one owner or explicit serialization. The result must contain one or more
 implementation tickets; omitted, duplicated, contradictory, or ownerless
@@ -130,14 +130,14 @@ act correctly:
   environmental constraints, observability or measured-claim obligations,
   and prohibited behavior with negative proof.
 - **Scope and proof:** expected durable writes, scope fence, required authority
-  prerequisites, source-owned Proof Seam, concrete proof lane, canonical proof
+  prerequisites, source-owned Proof Seam, concrete check, canonical proof
   responsibility and current test owner, and verification authority and
   evidence. State whether the ticket should reuse, extend, or add proof;
   adding a test requires a distinct responsibility.
 - **Delivery:** dependency state, true blockers or `none`, stable tracker
   order, executor role, and known overlap or serial tripwires.
 - **Closure, when material:** displaced surfaces and each retained compatibility path's owner,
-  reason, proof, and Removal Trigger.
+  reason, proof, and removal condition.
 
 Before readiness, test every acceptance term governing a calculation,
 threshold, comparison, equivalence, or state. Record its operational definition
@@ -150,7 +150,7 @@ at most about 5,500 characters as a soft target. Exceed it only when required
 authority, state, edge, proof, migration, or recovery detail cannot remain
 implementation-ready when shorter.
 Omit inapplicable optional sections. Do not add `N/A` padding. Identity,
-acceptance, scope, proof lane, dependency state, executor, and ownership always
+acceptance, scope, concrete check, dependency state, executor, and ownership always
 remain explicit.
 
 Separate packet readiness from frontier eligibility. Ready-for-agent means the
@@ -188,7 +188,7 @@ checkout state. Treat uncertain independence conservatively as serial; never
 infer it from filenames alone.
 
 For protected data, permissions, trust boundaries, irreversible state,
-migrations, or cutovers, put one tracer bullet through the production path
+migrations, or cutovers, put one tracer bullet through the runtime path
 before dependent work
 and require retry, rollback, and partial-state proof. For a non-atomic
 interface, schema, client, or data change, use expand-migrate-contract and

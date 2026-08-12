@@ -28,11 +28,11 @@ delivery authority, and explicit exclusions. When a Fresh Composition Epoch
 supplies an applicable frozen contract slice, treat it as an authority record,
 not as campaign state.
 
-Trace every acceptance commitment through the canonical production caller to
+Trace every acceptance commitment through the real caller to
 an observable proof seam before choosing an edit. Reuse prior evidence only
 when its complete candidate, claim, inputs, model, host, reasoning
-configuration, tools, authority, environment, rubric, and proof-lane identity
-still match.
+configuration, tools, authority, environment, rubric, and identity of each
+proof check still match.
 
 Research is conditional. Run one bounded `$research` inquiry only when Contract
 Lock identifies a decision-relevant source, method, concept, or hypothesis gap
@@ -48,8 +48,8 @@ candidate root. Freeze the exact candidate bytes and affected dependency
 identities. Do not mutate the installed mirror to obtain proof.
 
 Before any behavioral dispatch, canonical promotion, or installation, run
-every applicable structural, relationship, compatibility,
-canonical-production-caller, and integration proof against those exact bytes.
+every applicable structural, relationship, compatibility, and integration
+check against those exact bytes, including checks at the real caller.
 Prefer an existing parameterized proof seam that accepts the candidate root;
 a check that silently resolves current canonical bytes proves only current
 canonical behavior.

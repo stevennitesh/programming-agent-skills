@@ -5,8 +5,8 @@ migration, or validation strategy.
 
 [`SKILL.md`](SKILL.md) owns vocabulary and taste.
 [DIRECT-DESIGN.md](DIRECT-DESIGN.md) owns the direct pass and design packet.
-This file owns dependency classification, Seam placement, the
-Test Portfolio, coverage parity, Change Closure, and bounded migration.
+This file owns dependency classification, Seam placement, test
+responsibilities, coverage parity, Change Closure, and bounded migration.
 
 Classify -> Place -> Substitute -> Replace -> Migrate.
 
@@ -19,7 +19,7 @@ substitute, migration, or proof:
 | --- | --- |
 | **In-process** | Keep computation and memory inside the module. Add no adapter; prove behavior through the deeper interface. Test an internal rule directly only when it is independently meaningful. |
 | **Local-substitutable** | Use a realistic local substitute such as memory, an isolated filesystem, an emulator, SQLite, or a deterministic queue. Inject it only at a real caller concern or I/O edge. |
-| **Remote-owned** | Put an interface where transport varies. Keep domain decisions in the module; use the production transport adapter and a fake or in-memory adapter. Add contract proof when the remote contract carries risk. |
+| **Remote-owned** | Put an interface where transport varies. Keep domain decisions in the module; use the supported transport adapter and a fake or in-memory adapter. Add contract proof when the remote contract carries risk. |
 | **True external** | Put an adapter at the third-party seam. Keep vendor translation in the adapter and domain decisions in the module. Use the smallest fake, stub, or mock that proves the risk. |
 
 ## 2. Place
@@ -30,11 +30,19 @@ emulator, or second integration can demonstrate variation; a test double alone
 cannot. Keep internal Seams private and treat a test-only patch point as
 Interface pressure.
 
+When a required Seam is absent in legacy code, use the smallest
+behavior-preserving enabling point that exposes it. Do not widen the public
+Interface merely to make testing convenient.
+
 ## 3. Substitute
 
 Choose substitutes by behavior risk, not convenience. Prove domain behavior
-through the deeper interface. Add separate substitute or production-adapter
+through the deeper interface. Add separate substitute or supported-adapter
 contract tests only when their fidelity or translation carries independent risk.
+
+When callers rely on implementations interchangeably, require behavioral
+subtyping: substitutes must preserve applicable public preconditions,
+postconditions, and class invariants. Do not require implementation matching.
 
 ## 4. Replace, Don't Layer
 
@@ -51,11 +59,11 @@ isolation. Classify every affected test as **add, rewrite, keep, or delete**:
 - **Delete** pass-through, call-order, or implementation-detail assertions
   superseded by stronger behavior proof.
 
-Treat a test as the first user of the Interface. Prefer state testing through
-observable outcomes; use interaction testing only when the interaction is the
-contract or provides necessary failure isolation. A test that changes only
-because Implementation moved is testing past the Interface.
-Remove shallow production and test paths only after stronger proof owns their
+Prefer state verification through observable outcomes; use behavior
+verification only when the interaction is the contract or provides necessary
+failure isolation. A test that changes only because Implementation moved is
+testing past the Interface.
+Remove shallow implementation and test paths only after stronger proof owns their
 Responsibilities.
 
 ## 5. Migrate
@@ -64,7 +72,7 @@ Name the first behavior-preserving migration step, validation proof, applicable
 Change Closure, stop boundary, and follow-ups. Account for displaced
 Implementation, callers, registrations, exports, flags, tests, configuration,
 docs, and migrations. A retained compatibility path needs an owner, reason,
-proof, and Removal Trigger. Keep migration inside the bounded slice.
+proof, and removal condition. Keep migration inside the bounded slice.
 
 ## Contribution To The Design Packet
 

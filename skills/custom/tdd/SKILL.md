@@ -1,18 +1,22 @@
 ---
 name: tdd
-description: 'Test-driven development. Use when the user wants to build features or fix bugs test-first, mentions "red-green-refactor", or wants integration tests.'
+description: 'Test-driven development. Use only when the user explicitly requests TDD, test-first work, or RED-GREEN-REFACTOR, or applicable repository policy requires TDD. Requests for tests, integration tests, regression tests, or coverage alone do not trigger it.'
 ---
 
 # Test-Driven Development
 
 Own one inner loop:
 
-Optimize it for fast, high-quality feedback.
-
 **TRACE -> RED -> GREEN -> REFACTOR -> RETURN**
 
 **No observed RED, no TDD.** After-the-fact proof may supplement RED evidence;
 it cannot replace it.
+
+Admit only under the description's explicit user or repository-policy trigger.
+Requests for ordinary tests alone use ordinary implementation without a TDD
+packet. Do not require an existing harness before admission: TRACE owns finding
+or creating the smallest authorized red-capable check, and returns any meaning,
+oracle, support, or authority gap before behavior mutation.
 
 The caller owns bounded scope, review, staging, commit, tracker or external
 mutation, publishing, and closeout.
@@ -21,11 +25,11 @@ When a bug's expected behavior, exact symptom, cause, or trusted red-capable
 reproduction is uncertain, return `diagnosis-required` with the intact facts to
 the caller and stop. Return `design-evidence-required` with the intact facts
 to the caller and stop when the question needs design evidence rather than
-production proof.
+implementation proof.
 
 Read [tests.md](tests.md) only when test shape, oracle, or seam remains unclear
 after inspecting nearby tests. Read [mocking.md](mocking.md) before adding a
-test double. Read [refactoring.md](refactoring.md) only while GREEN.
+Test Double. Read [refactoring.md](refactoring.md) only while GREEN.
 
 ## 1. TRACE
 
@@ -36,7 +40,7 @@ Apply the caller-loaded engineering contract when supplied; otherwise read
 Reuse the caller's **Source Trace** or trace the behavior to its request,
 acceptance criterion, public contract, and independent oracle.
 
-Lock one **tracer bullet**:
+Choose one **tracer bullet**:
 
 - one observable behavior;
 - its source or acceptance criterion;
@@ -57,8 +61,8 @@ existing behavior; otherwise return the gap as support work.
 
 ## 2. RED
 
-Create one focused RED before production implementation. Extend the narrowest
-existing Behavior Test, case table, or contract suite when it can express the
+Create one focused RED before implementation. Extend the narrowest
+existing behavior test, case table, or contract suite when it can express the
 tracer clearly. Add a test only when the tracer has a distinct proof
 responsibility; do not overload unrelated behavior.
 
@@ -74,7 +78,7 @@ after-the-fact proof and do not claim TDD.
 
 ## 3. GREEN
 
-Make the smallest production change that satisfies the tracer bullet.
+Make the smallest implementation change that satisfies the tracer bullet.
 
 Run the focused test, then the nearest relevant test group. GREEN requires the
 focused behavior through the chosen seam and passing nearby tests.
@@ -109,7 +113,7 @@ Return:
 - **Refactor:** material cleanup or `none`;
 - **Residual risk:** remaining uncertainty or blocker.
 
-Complete only when every implemented behavior crossed observed RED before
-production implementation, crossed GREEN through its chosen seam, stayed GREEN
+Complete only when every implemented behavior crossed observed RED before its
+implementation, crossed GREEN through its chosen seam, stayed GREEN
 through refactoring, received relevant validation, has an accounted test
 responsibility, and appears in the proof packet.

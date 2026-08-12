@@ -61,7 +61,7 @@ Implement decides whether each frontier runs serially or concurrently.
 | --- | --- |
 | Raw tracker issues or configured external PR/MR requests need sorting and readiness verification | `$triage` |
 | Expected behavior, symptom, cause, reproduction, environment, or performance mechanism is uncertain | `$diagnosing-bugs` |
-| One bounded behavior and a useful red-capable proof seam are settled | `$tdd` |
+| The user explicitly requests TDD, test-first work, or RED-GREEN-REFACTOR, or applicable repository policy requires TDD, and one bounded behavior and independent oracle are settled | `$tdd` |
 | An active merge, rebase, cherry-pick, or revert is conflicted, an index is unmerged, or plausible markers need inspection | `$resolving-merge-conflicts` |
 | A branch, WIP, staged, since-X diff, PR, release candidate, or supported-risk candidate needs read-only judgment | `$change-review` |
 | A repository needs a whole-system map, one selected subsystem audit, one selected audit-candidate analysis, or one selected analyzed-candidate closeout | `$audit-codebase` |
@@ -70,9 +70,12 @@ Implement decides whether each frontier runs serially or concurrently.
 **Existing-code tie-breaker:** route repository-wide discovery or baseline
 judgment to `$audit-codebase`; one bounded behavior-preserving reduction to
 `$simplify-code`; and one module, interface, or seam decision to
-`$codebase-design`. Route a selected ready item to `$implement`, one standalone
-settled red-testable behavior to `$tdd`, uncertain broken behavior to
-`$diagnosing-bugs`, and an existing diff needing judgment to `$change-review`.
+`$codebase-design`. Route a selected ready item to `$implement`, which invokes
+TDD only under an explicit user or repository-policy requirement. Route one
+standalone explicitly test-first behavior to `$tdd`, ordinary test,
+integration-test, regression-test, or coverage work to `$implement`, uncertain
+broken behavior to `$diagnosing-bugs`, and an existing diff needing judgment to
+`$change-review`.
 High Assurance Review is an explicit user-selected alternative, never an
 automatic route.
 

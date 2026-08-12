@@ -16,8 +16,8 @@ duplicating the finding.
 | **Spec** | **Acceptance and Change Closure** | Required acceptance is proved and displaced or redundant paths are removed or supported. |
 | **Standards** | **Semantic Correctness** | Actual behavior preserves applicable meaning, invariants, state, and data. |
 | **Standards** | **Robustness and Operability** | Failure, recovery, idempotency, concurrency, environmental, and operational behavior are safe where applicable. |
-| **Standards** | **Code Quality and Design** | Ownership, information hiding, cohesion, depth, clarity, duplication, coupling, essential and accidental complexity, change amplification, cognitive load, unknown unknowns, and simplification have a concrete supported shape. |
-| **Standards** | **Proof Discipline** | Required proof exercises the meaningful seam and applicable branches; tests act as first users and prefer state testing; each new or changed test has a distinct responsibility or justified failure isolation; interaction testing is reserved for contractual interactions or necessary failure isolation. |
+| **Standards** | **Code Quality and Design** | Ownership, cohesion, clarity, duplication, coupling, complexity, and simplification have a concrete supported shape. |
+| **Standards** | **Proof Discipline** | Required proof exercises the meaningful seam and applicable branches; each new or changed test has a distinct responsibility or justified failure isolation; prefer state verification and use behavior verification only when the interaction is itself a responsibility or is needed for failure isolation. |
 | **Standards** | **Stewardship** | Retained complexity has an owner and reason, unrelated work is preserved, and changed code remains maintainable. |
 
 Behavior is evidence used by both axes, not another axis. Risk is a

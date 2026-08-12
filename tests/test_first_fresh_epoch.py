@@ -127,7 +127,7 @@ def test_first_epoch_contract_freezes_complete_h1_free_composition() -> None:
 
     assert pack_contract.validate_contract(contract) == []
     assert contract["epoch_header"]["composition_epoch_id"] == EPOCH
-    assert contract["epoch_header"]["contract_revision"] == 5
+    assert contract["epoch_header"]["contract_revision"] == 6
     assert contract["epoch_header"]["status"] == "frozen"
     assert contract["epoch_header"]["integration_result"] == {
         "decision": None,
@@ -178,7 +178,7 @@ def test_first_epoch_contract_freezes_complete_h1_free_composition() -> None:
     }
 
 
-def test_first_epoch_revision_preserves_history_and_derives_r5_blueprints() -> None:
+def test_first_epoch_revision_preserves_history_and_derives_r6_blueprints() -> None:
     contract = pack_contract.parse_contract(
         (ROOT / "docs/synthesis/skill-pack.md").read_text(encoding="utf-8")
     )
@@ -213,7 +213,7 @@ def test_first_epoch_revision_preserves_history_and_derives_r5_blueprints() -> N
             skill_id,
         )
         assert projected["slice"]["slice_id"].startswith(
-            f"{EPOCH}:r5:"
+            f"{EPOCH}:r6:"
         )
         assert projected["slice"]["skill"] == skill_by_id[skill_id]
     assert {
@@ -230,7 +230,7 @@ def test_current_topology_materializes_the_post_freeze_amendment() -> None:
         skill["canonical_name"]: skill for skill in contract["selected_skills"]
     }
     assert contract["epoch_header"]["status"] == "frozen"
-    assert contract["epoch_header"]["contract_revision"] == 5
+    assert contract["epoch_header"]["contract_revision"] == 6
     assert skill_by_name["high-assurance-review"]["invocation_mode"] == "explicit-only"
     assert "user explicitly invokes" in (
         skill_by_name["high-assurance-review"]["positive_entry_predicate"]
@@ -269,14 +269,22 @@ def test_current_topology_materializes_the_post_freeze_amendment() -> None:
     contract_text = (
         ROOT / "docs/synthesis/skill-pack.md"
     ).read_text(encoding="utf-8")
-    amendment = contract_text.split("Revision 17", 1)[1].split(
+    amendment = contract_text.split("Revision 18", 1)[1].split(
         "It binds the complete fingerprinted", 1
     )[0]
     amendment_flat = " ".join(amendment.split())
-    assert "machine contract revision 5" in amendment_flat
-    assert "condition-triggered" in amendment
-    assert "Missing proof stops" in amendment
-    assert "explicit-only" in amendment
+    assert "machine contract revision 6" in amendment_flat
+    assert "red-testability alone no longer activates" in amendment_flat
+    assert "Ordinary implementation uses appropriate tests" in amendment_flat
+
+    tdd = skill_by_name["tdd"]
+    assert tdd["invocation_mode"] == "implicit"
+    assert "explicitly requests TDD" in tdd["positive_entry_predicate"]
+    assert "independent oracle are settled" in tdd["positive_entry_predicate"]
+    for relationship_id in ("REL-017", "REL-035", "REL-064"):
+        relationship = relationship_by_id[relationship_id]
+        assert "requires TDD" in relationship["entry_condition"]
+        assert "independent oracle" in relationship["entry_condition"]
 
     metadata = yaml.safe_load(
         (

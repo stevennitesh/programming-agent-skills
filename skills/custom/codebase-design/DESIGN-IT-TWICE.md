@@ -26,8 +26,9 @@ make its caller-facing interface explicit; include the simplest no-new-seam
 shape when it is credible. Add a third shape only when it tests a distinct
 consequential pressure that could change the decision.
 
-Use a direct fresh-context scout only when independent judgment on a distinct
-consequential pressure could change the decision. Start each
+Use a direct fresh-context scout only when the user explicitly requested
+subagents and independent judgment on a distinct consequential pressure could
+change the decision. Start each
 with `fork_turns="none"` when supported. Give every scout the same
 self-contained factual brief: objective, settled constraints, applicable
 engineering and domain obligations, scope, source pointers, one distinct design
@@ -38,9 +39,10 @@ Scouts inspect and propose only; they never edit files, mutate external state,
 or spawn. Keep alternatives private until every scout returns. The main agent
 owns comparison, recommendation, and completion.
 
-When continuity matters more than independence, fork only the minimum necessary
-recent context and do not call the result independent. When delegation is
-unavailable, produce alternatives sequentially under different pressures.
+When the user requested subagents but continuity matters more than independence,
+fork only the minimum necessary recent context and do not call the result
+independent. Without that request, produce alternatives sequentially under
+different pressures.
 
 Use pressures that force structural variety:
 
@@ -58,27 +60,28 @@ For each alternative, show:
 - behavior and decisions hidden or deliberately left with callers;
 - any earned seam and relevant dependencies, adapters, or substitutes;
 - caller-facing test surface and validation proof;
-- first migration step, trade-offs, and risks.
+- first change step, applicable migration, trade-offs, and risks.
 
 ## 3. Compare
 
 Compare Depth, information hiding, change amplification, cognitive load,
 unknown unknowns, caller ergonomics, Seam placement, dependency strategy,
-Semantic Correctness, Robustness, test portfolio, Change Closure, migration
-cost, and risk under the same obligations. Merge alternatives that differ only
+Semantic Correctness, Robustness, test responsibilities, Change Closure,
+applicable migration cost, and risk under the same obligations. Merge alternatives that differ only
 by names, parameter reshuffling, or cosmetic layering; replace fake variety
 with a genuinely different design.
 
 ## 4. Recommend
 
 Recommend one design. Explain why it wins, why credible alternatives lose, any
-useful hybrid, the first bounded migration step, validation proof, risks, and
-follow-ups. Name behavior-preserving prerequisites as support slices.
+useful hybrid, the first bounded change step, applicable migration, validation
+proof, risks, and follow-ups. Name behavior-preserving prerequisites as support
+slices.
 
 ## Completion
 
 Complete when the frame is source-traced; at least two credible materially
 different candidate shapes exist; fake variety was removed; every alternative covers
-callers, hidden behavior, any earned seam, dependencies, tests, migration,
-trade-offs, and risk; one design was recommended; and the bounded first step and
-proof were returned.
+callers, hidden behavior, any earned seam, dependencies, tests, applicable
+migration, trade-offs, and risk; one design was recommended; and the bounded
+first step, applicable migration, and proof were returned.

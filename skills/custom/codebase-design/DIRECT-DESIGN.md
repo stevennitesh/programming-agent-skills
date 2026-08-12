@@ -16,11 +16,12 @@ sufficient. Apply the caller-loaded engineering contract; otherwise read
 Trace the request or caller artifact, Commitment Boundary, accepted domain
 terms and ADRs, current Interface and Implementation, material
 Responsibilities and owners, representative callers and tests, dependencies,
-operational constraints, and first migration edge. Inspect bounded history
-only when repeated change, churn, or compatibility supports a design claim.
-Apply Hyrum's Law as a compatibility-risk heuristic when observable behavior
-may have actual dependents; dependence informs migration without automatically
-expanding the intended contract.
+operational constraints, and, when an existing path may be displaced, the first
+migration edge. Inspect bounded history only when repeated change, churn, or
+compatibility supports a design claim.
+When observable behavior may have actual dependents, distinguish actual
+dependence from the intended contract; dependence informs migration without
+automatically expanding that contract.
 
 If material behavior, ownership, authority, or compatibility cannot be
 established, return `decision-needed` or `evidence-gap` with the exact missing
@@ -41,19 +42,29 @@ when no material problem is proved.
 Choose the strongest shape: deepen, merge, inline, retain, replace, or introduce
 no new seam. Describe its caller-facing contract, hidden behavior and decisions,
 any earned seam, adapters or substitutes, caller and test surfaces, and first
-bounded migration step.
+bounded change step plus migration when applicable.
 
 For an already-needed Module, keep capabilities within current needs while
 making the Interface somewhat general-purpose: remove caller-specific special
 cases without adding speculative capability.
 
-For each material Interface concern, state Responsibility and exclusions;
-operations, inputs, outputs, and effects; Invariants and State Lifecycle;
-ordering, Concurrency, and Idempotency; errors, Failure Atomicity, and
-Recovery; Trust Boundaries and configuration; Compatibility, Observability,
-and authoritative or measured performance constraints; and the Proof Seam.
-Mark a concern not applicable only with evidence. A Proof Seam establishes
-meaning; it does not by itself earn a design Seam or Adapter.
+State the ordinary caller-facing contract: Responsibility and exclusions;
+operations, inputs, outputs, and effects; governing Invariants and failure
+policy; and the Proof Seam. A Proof Seam establishes meaning; it does not by
+itself earn a design Seam or Adapter.
+
+Add state lifecycle, ordering, Concurrency, Idempotency, Failure Atomicity, and
+Recovery only when reachable state or transitions can change the requested
+behavior. Add Trust Boundaries and configuration only when the design changes
+or must preserve an accepted boundary. Add Observability or performance
+constraints only when the accepted contract or supported measurement makes
+them consequential. Add Compatibility and migration only when observable
+behavior may have dependents or the design displaces an existing path. A
+dormant concern creates no packet field or `N/A` entry.
+
+When an existing shared abstraction binds different meanings, owners, change
+rates, or failure modes, treat it as a wrong abstraction. Compare unsharing and
+bounded duplication before adding another layer.
 
 Where commitments permit, define errors out of existence before adding
 caller-handled failure cases.
@@ -83,8 +94,8 @@ meaningful.
 
 Choose one design, retain the current shape, or return the unresolved decision
 or evidence gap. For a recommendation, explain why it wins, why credible
-alternatives lose, the first safe migration step, validation proof, risks, and
-follow-ups.
+alternatives lose, the first bounded change step, applicable migration,
+validation proof, risks, and follow-ups.
 
 Evidence settles current behavior and constraints. The user or caller settles
 public-contract changes and accepted trade-offs.
@@ -99,10 +110,11 @@ Return:
 - recommended or retained shape, material Interface contract, hidden behavior,
   and caller-retained Responsibilities;
 - earned Seams, dependencies, Adapters, substitutes, and Proof Seams;
-- Depth, information hiding, complexity symptoms, and Test Portfolio;
+- Depth, information hiding, complexity symptoms, and test responsibilities;
 - credible alternatives and recommendation when applicable;
-- first bounded migration step when change is recommended, validation,
-  Change Closure, and stop boundary, including boundary proof when applicable;
+- first bounded change step when change is recommended, plus applicable
+  migration, validation, Change Closure, and stop boundary, including boundary
+  proof when applicable;
 - for replacement, parity seam, migration, cutover, and rollback evidence;
 - risks, residual gaps, follow-ups, and any domain or ADR candidate; and
 - caller ownership of acceptance, implementation, and downstream mutation.
@@ -114,6 +126,7 @@ names the exact missing owner or fact and makes no recommendation.
 `recommended` or `retain` requires a sufficient Source Trace, explicit material
 Interfaces, any Seams and Adapters to be earned, caller-facing proof, current
 and no-new-seam comparison, and triggered alternatives. A recommendation also
-requires a bounded first migration step with applicable Change Closure.
+requires a bounded first change step with applicable Change Closure and, when
+an existing path is displaced, a bounded migration step.
 Replacement additionally requires parity, migration, cutover, and rollback
 evidence. Downstream acceptance and mutation remain caller-owned.

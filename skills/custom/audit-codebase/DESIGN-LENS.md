@@ -30,12 +30,11 @@ terms for business concepts.
   preserving supported behavior. If the same necessary complexity spreads
   into callers, the Module earns its keep. If behavior and proof become
   simpler at an existing owner, the boundary may be pass-through.
-- **State Testing:** treat a test as the first user of an Interface. Callers and
-  caller-facing tests should observe state through the same Interface. Use
-  interaction testing only for contractual interactions or necessary failure
-  isolation. A need to bypass the Interface is evidence of a possible
-  ownership or information-hiding gap. Focused tests of hidden algorithms are
-  not independently such evidence.
+- **State verification:** callers and caller-facing tests should observe state
+  through the same Interface. Use behavior verification only for contractual
+  interactions or necessary failure isolation. A need to bypass the Interface
+  may indicate an ownership or information-hiding gap. Focused tests of hidden
+  algorithms are not independently such evidence.
 - **Variation Test:** a Seam is earned by supported variation or required
   substitution at a real external boundary. A fake created only because the
   Seam exists is not independent evidence.

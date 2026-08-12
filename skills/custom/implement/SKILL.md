@@ -72,9 +72,13 @@ the real caller or runtime entry path to the observable output and proof. Existi
 code or component tests count only when that path reaches them. Do this
 directly; create no matrix or artifact.
 
-Use `$tdd` for settled red-testable behavior. For a bug whose expected behavior,
-cause, or trusted reproduction is uncertain, return `diagnosis-required` with
-the observed evidence rather than guessing.
+For a bug whose expected behavior, cause, or trusted reproduction is uncertain,
+return `diagnosis-required` with the observed evidence rather than guessing.
+Otherwise invoke `$tdd` only when the selected work explicitly requires TDD,
+test-first work, or RED-GREEN-REFACTOR, or applicable repository policy requires
+TDD. TDD owns harness readiness and returns any support or authority gap before
+behavior mutation. When inactive, implement directly and run appropriate tests
+without claiming TDD.
 
 Choose the lowest-total-burden solution across callers, maintenance,
 migration, operation, coordination, and proof. Reuse the existing behavior owner when it
@@ -83,10 +87,9 @@ ownership, and a concrete reason to exist now. Validate machine-consumed
 actionable input once at its trust boundary; do not validate ordinary prose
 handoffs or Returns.
 
-Apply Hyrum's Law as a compatibility-risk heuristic when changing observable
-behavior: distinguish the intended contract from actual dependence, and treat
-demonstrated dependence as migration evidence rather than automatically as a
-new commitment.
+When changing observable behavior, distinguish the intended contract from
+actual dependence. Treat demonstrated dependence as compatibility and migration
+evidence rather than automatically as a new commitment.
 
 Bind proof to the exact candidate and inputs. Run focused checks that prove the
 change, plus broader checks only when repository policy or shared impact makes
@@ -138,13 +141,13 @@ A pre-judgment review transport failure may be retried once while the candidate
 remains unchanged. Otherwise preserve the candidate and return `partial`. Do
 not describe direct self-check as independent review.
 
-## Lock And Return
+## Final Read-Back And Return
 
-Lock the final checked tree, and when review ran the reviewed tree, plus only
-applicable closeout. Any other delta requires new proof and reevaluation of the
-review trigger. Reuse valid proof. When the delivery branch requires a commit,
-require its tree to equal the locked tree and run only commit-boundary
-checks that policy or invalidation requires.
+Read back the final checked tree and, when review ran, confirm it is the reviewed
+tree before applicable closeout. Any other delta requires new proof and
+reevaluation of the review trigger. Reuse valid proof. When the delivery branch
+requires a commit, require its tree to equal the final checked tree and run only
+commit-boundary checks that policy or invalidation requires.
 
 When a delivery commit is required, create it if the accepted candidate is not
 already exactly committed. Do not rewrite an exact accepted commit merely to

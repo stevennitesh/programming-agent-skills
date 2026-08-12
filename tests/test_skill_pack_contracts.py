@@ -107,7 +107,7 @@ def test_to_questionnaire_owns_one_safe_recipient_artifact() -> None:
     assert re.findall(r"(?m)^\*\*([A-Za-z]+)\.\*\*", questionnaire) == [
         "Boundary",
         "Admit",
-        "Lock",
+        "Define",
         "Gap",
         "Draft",
         "Cover",
@@ -145,7 +145,7 @@ def test_to_questionnaire_owns_one_safe_recipient_artifact() -> None:
         assert rejected not in questionnaire
     assert policy.endswith("policy:\n  allow_implicit_invocation: false\n")
     assert skill_pack_contract.tree_hash(skill_dir) == (
-        "18fb2f5e88ac8764092605e198c1bb002a7a84a7bdd184592bac18c6a7637ed7"
+        "70b6caeb6b8f26815cbbe4c4b4ad43bf3f0ebfb6bea87535f01aa260c8f0802d"
     )
     assert (
         "| One external stakeholder holds missing knowledge and needs an async "
@@ -793,7 +793,8 @@ def test_router_returns_exactly_one_next_skill() -> None:
     )
     for contract in (
         "selected ready item to `$implement`",
-        "standalone settled red-testable behavior to `$tdd`",
+        "standalone explicitly test-first behavior to `$tdd`",
+        "ordinary test, integration-test, regression-test, or coverage work to `$implement`",
         "uncertain broken behavior to `$diagnosing-bugs`",
         "existing diff needing judgment",
     ):
@@ -846,29 +847,9 @@ def test_codebase_design_preserves_lean_branch_contracts() -> None:
     )
     assert "Proof Seam" in design
     assert "test double alone does not earn one" in design_flat
-    for source_term in (
-        "deep modules",
-        "information hiding",
-        "change amplification",
-        "cognitive load",
-        "unknown unknowns",
-        "somewhat general-purpose interfaces",
-        "a test as the first user",
-        "state testing",
-        "interaction testing",
-    ):
-        assert source_term in design_flat.lower()
     assert len(re.findall(r"(?m)^## \d+\. ", direct)) == 5
-    for required in (
-        "decision-needed",
-        "evidence-gap",
-        "Failure Atomicity",
-        "Trust Boundaries",
-        "Proof Seam establishes meaning",
-        "Test Portfolio",
-        "Change Closure",
-    ):
-        assert required in direct_flat
+    assert "## Design Packet" in direct
+    assert "`N/A`" in direct
     assert len(re.findall(r"(?m)^## \d+\. ", deepening)) == 5
     for category in (
         "In-process",
@@ -880,7 +861,6 @@ def test_codebase_design_preserves_lean_branch_contracts() -> None:
     for disposition in ("Add", "Rewrite", "Keep", "Delete"):
         assert f"**{disposition}**" in deepening
     assert "canonical test owner" in deepening_flat
-    assert "Removal Trigger" in deepening_flat
     assert re.findall(r"(?m)^## \d+\. ([A-Za-z]+)$", alternatives) == [
         "Frame",
         "Diverge",
@@ -1669,7 +1649,10 @@ def test_high_assurance_review_has_root_guard_bounded_capacity_and_risk() -> Non
     assert "valid reviewer quorum" in convergent
     assert "exactly two valid fresh core returns" in convergent
     assert "coordinator never substitutes for a reviewer" in convergent
-    assert "no Repair, Lock, or residual-risk acceptance authority" in convergent_flat
+    assert (
+        "no Repair, candidate acceptance or closeout, or residual-risk acceptance authority"
+        in convergent_flat
+    )
     assert "at most one `har-specialist`" in convergent
     assert "explicitly names one bounded specialist objective" in convergent_flat
     assert "Supported risk alone never selects a specialist" in convergent_flat
@@ -1831,7 +1814,7 @@ def test_audit_codebase_is_thorough_incremental_html_atlas() -> None:
         router,
     )
 
-def test_high_assurance_review_returns_a_lock_usable_decision() -> None:
+def test_high_assurance_review_returns_a_caller_usable_decision() -> None:
     convergent = (CUSTOM / "high-assurance-review/SKILL.md").read_text(
         encoding="utf-8"
     )
@@ -1875,7 +1858,7 @@ def test_high_assurance_review_checks_snapshot_drift_not_baseline_drift() -> Non
 def test_implement_uses_condition_triggered_change_review() -> None:
     implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
     review = implement.split("## Check, Conditional Review, And Repair", 1)[1].split(
-        "## Lock And Return", 1
+        "## Final Read-Back And Return", 1
     )[0]
     flat = " ".join(review.split())
 
@@ -1921,12 +1904,13 @@ def test_review_policy_is_consistent_across_delivery_metadata() -> None:
 def test_tdd_discloses_test_reference_only_for_an_evidence_gap() -> None:
     tdd = (CUSTOM / "tdd/SKILL.md").read_text(encoding="utf-8")
     tests = (CUSTOM / "tdd/tests.md").read_text(encoding="utf-8")
+    mocking = (CUSTOM / "tdd/mocking.md").read_text(encoding="utf-8")
 
-    assert (
-        'description: \'Test-driven development. Use when the user wants to build '
-        'features or fix bugs test-first, mentions "red-green-refactor", or wants '
-        "integration tests.'"
-    ) in tdd
+    description = tdd.split("---", 2)[1]
+    assert "explicitly requests TDD" in description
+    assert "repository policy requires TDD" in description
+    assert "integration tests" in description
+    assert "alone do not trigger it" in description
     assert "Own one inner loop:" in tdd
     assert "The caller owns bounded scope" in tdd
     assert re.findall(r"(?m)^## \d+\. ([A-Z]+)$", tdd) == [
@@ -1939,13 +1923,98 @@ def test_tdd_discloses_test_reference_only_for_an_evidence_gap() -> None:
     for helper in ("tests.md", "mocking.md", "refactoring.md"):
         assert (CUSTOM / "tdd" / helper).is_file()
         assert f"[{helper}]({helper})" in tdd
-    assert "existing Behavior Test, case table, or contract suite" in tdd
+    assert "existing behavior test, case table, or contract suite" in tdd
     assert "Add a test only when the tracer has a distinct proof" in tdd
+    assert "**Test portfolio:**" in tdd
     assert "## Test Portfolio" in tests
-    assert "a test as the first user" in tests
-    assert "state testing" in tests
-    assert "interaction testing" in tests
+    assert re.findall(r"(?m)^## ([A-Za-z -]+)$", tests) == [
+        "Tracer Bullet",
+        "State And Behavior Verification",
+        "Independent Oracle",
+        "Characterization Test",
+        "Property-Based Testing",
+        "Test Portfolio",
+        "Red Flags",
+    ]
+    assert mocking.startswith("# Test Doubles And Boundaries")
+    assert len(re.findall(r"(?m)^- a \*\*[^*]+\*\*", mocking)) == 5
+    assert mocking.index("1. Real in-process code") < mocking.index(
+        "2. Local substitute"
+    )
     assert "Test count is not a target" in tests
+
+
+def test_tdd_invocation_gate_is_consistent_across_active_owners() -> None:
+    tdd = (CUSTOM / "tdd/SKILL.md").read_text(encoding="utf-8")
+    implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
+    parallel = (CUSTOM / "parallel-implement/SKILL.md").read_text(
+        encoding="utf-8"
+    )
+    router = (CUSTOM / "skill-router/SKILL.md").read_text(encoding="utf-8")
+    relationships = (
+        ROOT / "docs/synthesis/skill-context-relationships.md"
+    ).read_text(encoding="utf-8")
+    contract = pack_contract.parse_contract(
+        (ROOT / "docs/synthesis/skill-pack.md").read_text(encoding="utf-8")
+    )
+    engineering = (
+        ROOT / "docs/agents/engineering-contract.md"
+    ).read_text(encoding="utf-8")
+    projected = (
+        CUSTOM / "repo-bootstrap/engineering-contract.md"
+    ).read_text(encoding="utf-8")
+    portable = (ROOT / "AGENTS_PORTABLE_FALLBACK.md").read_text(encoding="utf-8")
+
+    assert implicit_policy(CUSTOM / "tdd")
+    for owner in (tdd, implement, parallel, router, relationships):
+        assert "explicit" in owner.lower()
+        assert "repository policy" in owner.lower()
+    assert "integration tests, regression tests, or coverage alone do not trigger" in tdd
+    assert "TRACE owns finding or creating" in " ".join(tdd.split())
+    assert "When inactive, implement directly and run appropriate tests" in " ".join(
+        implement.split()
+    )
+    assert "never runs a second TDD loop" in " ".join(parallel.split())
+    assert "returns `diagnosis-required` to the root" in parallel
+    assert "resumes implementation only from a complete TDD proof" in " ".join(
+        parallel.split()
+    )
+    assert "stops that lane before behavior mutation" in " ".join(parallel.split())
+    assert (
+        "ordinary test, integration-test, regression-test, or coverage work to "
+        "`$implement`"
+    ) in " ".join(router.split())
+    assert "TDD only when the user explicitly requests" in engineering
+    assert "TDD only when the user explicitly requests" in projected
+    assert "only when the user or repository explicitly requires" in portable
+
+    skill = next(
+        row for row in contract["selected_skills"] if row["canonical_name"] == "tdd"
+    )
+    assert skill["invocation_mode"] == "implicit"
+    assert "explicitly requests TDD" in skill["positive_entry_predicate"]
+    assert "independent oracle are settled" in skill["positive_entry_predicate"]
+    assert "does not explicitly require TDD" in skill["negative_exclusion_predicates"][0]
+
+    names = {
+        row["skill_id"]: row["canonical_name"] for row in contract["selected_skills"]
+    }
+    inbound = {
+        (row["relationship_id"], names[row["caller_skill_id"]], row["verb"]): row
+        for row in contract["relationships"]
+        if names[row["target_skill_id"]] == "tdd"
+    }
+    assert set(inbound) == {
+        ("REL-017", "implement", "Invoke"),
+        ("REL-035", "parallel-implement", "Invoke"),
+        ("REL-064", "skill-router", "Recommend and stop"),
+    }
+    for relationship in inbound.values():
+        assert "requires TDD" in relationship["entry_condition"]
+        assert "independent oracle" in relationship["entry_condition"]
+        if relationship["verb"] == "Invoke":
+            assert "TRACE owns harness readiness" in relationship["entry_condition"]
+        assert "asks only for tests" in relationship["wrong_condition"]
 
 
 def test_tdd_returns_every_outbound_gap_to_its_caller() -> None:
@@ -2097,7 +2166,7 @@ def test_bug_routing_is_disjoint_and_non_bouncing() -> None:
     assert (
         "distinct proof responsibility or necessary failure isolation" in diagnosing_flat
     )
-    assert "test-portfolio delta" in diagnosing_flat
+    assert "regression-test change" in diagnosing_flat
     assert "applicable Change Closure" in diagnosing_flat
     assert "intact facts" in tdd_flat
 
@@ -2132,14 +2201,14 @@ def test_to_spec_handoff_keeps_ticket_design_downstream() -> None:
         "required behavioral",
         "acceptance objectives",
         "Source Trace",
-        "Removal Trigger",
+        "removal condition",
     ):
         assert owned_concept.lower() in spec_lower
     for downstream_concept in (
         "bounded repository grounding",
         "ticket slices",
         "expected writes",
-        "concrete proof lanes",
+        "concrete checks and test owners",
         "dependency graph and ready frontier",
         "static execution facts",
         "live concurrency decisions",
@@ -2306,7 +2375,7 @@ def test_research_owns_one_authorized_cited_note() -> None:
 
     assert implicit_policy(skill_dir)
     assert re.findall(r"(?m)^## (.+)$", research) == [
-        "Admission And Lock",
+        "Admission And Scope",
         "Evidence",
         "Output",
         "Verify And Return",
@@ -2360,7 +2429,7 @@ def test_research_owns_one_authorized_cited_note() -> None:
         "never block solely on a preference",
         "Use discovery results to refine vocabulary and locate direct sources",
         "Put only public information or caller-approved search terms",
-        "use it only within the locked audience, destination, and tool authority",
+        "use it only within the defined audience, destination, and tool authority",
         "Judge independence against the challenged failure mode",
         "sharing the claim's subject alone does not defeat independence",
         "For a direct admitted request, lead with the answer when `answered`",
@@ -2589,7 +2658,7 @@ def test_triage_branches_share_the_authoritative_brief_schema() -> None:
     assert "a new test requires a distinct responsibility" in brief
     assert "acceptance is operational and observable" in " ".join(brief.split())
     assert "### Change Closure" in brief
-    assert "Removal Trigger" in brief
+    assert "removal condition" in brief
     assert "## Branch Emphasis" in brief
     for branch in ("Bug tracer", "Enhancement tracer", "Support slice", "PR finish"):
         assert f"| {branch} |" in brief
@@ -2863,7 +2932,7 @@ def test_implement_closeout_locks_exact_candidate_and_preserves_custody() -> Non
     assert "pin the exact candidate" in flat.lower()
     assert "stage only owned paths or hunks" in flat
     assert "never unstage foreign work" in flat.lower()
-    assert "Lock the final checked tree" in flat
+    assert "Read back the final checked tree" in flat
     assert "Do not rewrite an exact accepted commit" in flat
     assert "proving `HEAD` unchanged" in flat
     assert "Otherwise preserve the final checked candidate and stop before commit" in flat

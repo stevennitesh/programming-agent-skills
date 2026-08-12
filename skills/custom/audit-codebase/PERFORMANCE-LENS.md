@@ -26,7 +26,7 @@ establish impact.
 ## Measure
 
 Prefer a repository-owned benchmark, profiler, production trace, deterministic
-resource count, or representative end-to-end proof lane. Record one
+resource count, or representative end-to-end check at the Proof Seam. Record one
 reproducible evidence packet. Complete applicable fields and give a reason for
 inapplicable ones; an authoritative existing trace needs provenance and
 comparability, not a forced rerun.
