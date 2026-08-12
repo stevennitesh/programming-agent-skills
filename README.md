@@ -39,16 +39,19 @@ The payoff is visible uncertainty, inspectable proof, and named residual risk be
 
 ## Setup
 
-Choose one adoption path per repository:
+Choose one global adoption path:
 
 | Full Skill Pack | Portable Contract |
 | --- | --- |
-| Composable workflows, routing, setup, trackers, and templates | Core engineering behavior in one `AGENTS.md` |
+| Composable workflows, routing, setup, trackers, and templates | Core engineering behavior in one global `AGENTS.md` |
 | Managed installation and upgrades | Manual copy and maintenance |
 | Best for recurring, multi-session engineering work | Best for lightweight adoption |
 | [Install the full pack](#full-skill-pack) | [Use the portable contract](AGENTS_PORTABLE_FALLBACK.md) |
 
-Choose one engineering-contract owner per repository: either the full pack's installed `AGENTS.md` plus `docs/agents/*` surface, or the portable contract.
+The full pack installs a minimal global bootstrap and gives each repository its
+own setup surface. The portable path instead supplies the engineering defaults
+globally while each repository supplies only its commands, invariants, and
+source-of-truth pointers.
 
 ### Full Skill Pack
 
@@ -99,13 +102,17 @@ Use `python -m scripts.install_skills --dry-run` to preview skill deltas and the
 
 ### Portable Contract Only
 
-No installer or Python runtime is required. Copy [`AGENTS_PORTABLE_FALLBACK.md`](AGENTS_PORTABLE_FALLBACK.md) into the target repository as `AGENTS.md`, then add verified repo commands, local invariants, and source-of-truth pointers.
+No installer or Python runtime is required. Copy
+[`AGENTS_PORTABLE_FALLBACK.md`](AGENTS_PORTABLE_FALLBACK.md) to
+`$HOME/.codex/AGENTS.md`, then give each target repository a short local
+`AGENTS.md` with verified commands, local invariants, and source-of-truth
+pointers.
 
-The portable contract carries the convergence loop, commitment boundaries,
-shaping, grounded implementation, root-cause robustness, behavior-owned tests,
-state proof, simplification, fixed-point review, and Lock. It intentionally
-omits skill routing, specialized workflow procedures, tracker and domain setup,
-templates, and managed updates.
+The portable contract carries authority boundaries, grounded routing, lean
+implementation, Root Cause correction, claim-matched proof, condition-triggered
+review and specialist work, Change Closure, and truthful completion. It
+intentionally omits skill routing, specialized procedures, tracker and domain
+setup, templates, and managed updates.
 
 ## What's Included
 
@@ -159,9 +166,14 @@ Build faster without making the repository harder to trust. Move quickly through
 
 [`$repo-bootstrap`](skills/custom/repo-bootstrap/SKILL.md) installs a small `docs/agents/engineering-contract.md` in each target repository. The contract owns engineering taste, preventive code-quality defaults, shared vocabulary, and cross-skill discipline while leaving implementation technique flexible.
 
-The shared spine is `Explore -> Choose -> Prove -> Expand -> Simplify -> Lock`. Explore grounds the work while opening credible alternatives. Choose selects the strongest evidence-backed design. Proof establishes one real tracer bullet. Expand covers requirements and applicable failure, state, trust, compatibility, and performance paths while letting evidence improve the design. Simplify reduces the proved shape without erasing its capability. **Lock** closes only after final diff and state read-back, canonical evidence, cleanup, named residual risk, and Spec / Standards review when its trigger applies.
+The shared default is to ground the request, change the smallest path through
+the current behavior owner and real callers, run the smallest check capable of
+disproving the claim, close displaced paths, and report only what the evidence
+supports. Heavier methods activate only from their stated conditions.
 
-For the same core behavior without installing skills, use [`AGENTS_PORTABLE_FALLBACK.md`](AGENTS_PORTABLE_FALLBACK.md) as a standalone repository-level `AGENTS.md`.
+For the same core behavior without installing skills, use
+[`AGENTS_PORTABLE_FALLBACK.md`](AGENTS_PORTABLE_FALLBACK.md) as a standalone
+global `AGENTS.md`.
 
 ## Inspiration
 
@@ -176,7 +188,7 @@ It keeps the upstream emphasis on strong leading words, then extends it with rep
 - `skills/extra/`: optional extra skills
 - `skills/.archive/`: retired historical skills
 - `GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md`: minimal global Codex bootstrap
-- `AGENTS_PORTABLE_FALLBACK.md`: standalone repository-level engineering contract for use without installed skills
+- `AGENTS_PORTABLE_FALLBACK.md`: standalone global engineering contract for use without installed skills
 - `skills/custom/repo-bootstrap/`: target-repository setup workflow and contract templates
 - `CONTEXT.md`: stable vocabulary and maintenance invariants for this repository
 - `docs/synthesis/skill-context-relationships.md`: maintainer map for skill boundaries and context ownership

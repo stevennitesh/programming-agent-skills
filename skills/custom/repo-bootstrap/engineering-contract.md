@@ -2,256 +2,164 @@
 
 Explore imaginatively. Converge under proof. Simplify ruthlessly.
 
-This document states durable engineering philosophy, shared concepts, and
-condition-triggered methods. It is not a workflow, checklist, review gate,
-completion contract, or authority to mutate files, Git state, trackers,
-deployments, or external systems.
+This document states shared engineering defaults and condition-triggered
+methods. It is not a workflow, checklist, review gate, completion contract, or
+authority to mutate files, Git state, trackers, deployments, or external
+systems.
 
 Repository instructions own local commands and boundaries. Domain records own
 product meaning and settled decisions. Skills own procedures, checks, stopping
-conditions, and outputs.
-
-## How To Read This Contract
+conditions, and outputs. No generic rule overrides an explicit request,
+accepted product commitment, or repository contract.
 
 - **Must** marks a correctness, safety, integrity, or honesty floor.
-- **Prefer** marks the default engineering choice. Deviation needs a supported
-  reason; authority is required only when the deviation changes a commitment.
-- **Method** names a practice triggered by a stated condition. Methods are not
-  universal steps. When a condition applies, the outcome is binding; the
-  responsible task or skill owns the procedure and evidence.
+- **Prefer** marks the default engineering choice. Deviate for a supported
+  reason; obtain authority only when the deviation changes a commitment.
+- **Method** names a practice activated by its stated condition. The responsible
+  task or skill owns its procedure and evidence. An inactive method creates no
+  checklist, artifact, reviewer, `N/A`, or explanation obligation.
 
-No generic rule overrides an explicit product commitment or repository
-contract.
+Shared terms:
 
-## Shared Concepts
-
-- **Bounded slice:** the smallest useful scope that preserves commitments and
-  is capable of producing meaningful evidence.
-- **Integrated shape:** the implementation path with the lowest total caller,
-  maintainer, migration, operational, coordination, and proof burden that works
-  through the real behavior owner and callers.
-- **Commitment boundary:** product intent, accepted behavior, public and data
-  contracts, security and privacy posture, compatibility promises, and agreed
+- **Traceability** is the inspectable chain from request, rules, decisions, and
+  current source through behavior and real callers to evidence.
+- A **bounded slice** is the smallest useful scope that preserves commitments
+  and can produce meaningful evidence.
+- The **commitment boundary** is accepted product intent, behavior, public and
+  data contracts, compatibility, security and privacy posture, and agreed
   scope. Technique remains agent-owned until it changes a commitment.
-- **Proof seam:** the caller-facing interface or observable boundary where
-  correct meaning can be established.
-- **Proof lane:** a repository-owned fixture, check, workflow, or artifact that
-  exercises a proof seam. It proves only the behavior and conditions it covers.
-- **Change closure:** removal or justified retention of paths made obsolete,
-  redundant, or contradictory by a change.
-- **Residual risk:** material uncertainty or unexecuted proof that limits a
-  claim.
 
-## Keep Faith With The Work
+## Correctness And Evidence — Must
 
-### Preserve Commitments And Domain Truth — Must
+- Preserve the explicit request, accepted behavior, applicable context-scoped
+  Ubiquitous Language, preconditions, postconditions, invariants, contracts,
+  and unrelated work. Give every decision-bearing term, threshold, unit, or
+  equivalence an operational definition or authoritative owner. Surface
+  ambiguity instead of inventing meaning.
 
-Trace behavior to the governing request, repository authority, accepted domain
-language, invariants, decisions, and contracts. Keep meaning consistent across
-code, tests, interfaces, data, and documentation.
+- Preserve correct behavior over relevant inputs, states, lifecycle
+  transitions, failures, supported environments, applicable accessibility
+  semantics, and observable effects. Address the causal owner across affected
+  callers instead of masking one symptom. Preserve atomicity, recovery, retry,
+  idempotency, compatibility, cancellation, concurrency, and observability only
+  where the supported contract exposes them.
 
-Every decision-bearing acceptance term, threshold, unit, comparison, or
-equivalence needs an operational definition or exact authoritative owner.
-Surface ambiguity and contradiction instead of silently inventing meaning.
+- At a changed trust or data boundary, validate machine-consumed,
+  action-driving input against its functional contract at the boundary that
+  owns it. Validate accepted input once at that boundary. Use a typed internal
+  representation when it prevents invalid states or repeated validation.
+  Preserve applicable data meaning, identity, integrity, provenance, schema,
+  units, ordering, and lifecycle. Do not weaken accepted authorization,
+  privacy, confidentiality, encoding, secret-handling, or external-effect
+  guarantees. Preserving touched guarantees is ordinary correctness; it does
+  not authorize a security program.
 
-Implementation technique remains free where commitments leave it free.
+- Match proof to the claim. Run the smallest discriminating check at the real
+  caller or closest observable boundary. A **Proof Seam** is that caller-facing
+  boundary, not the test that exercises it; name the concrete test, fixture,
+  check, workflow, or artifact used. When a behavioral claim could self-confirm,
+  use an oracle independent of the implementation logic; it need not be a
+  separate reviewer. Prefer state verification; use behavior verification only
+  when the interaction is itself
+  a responsibility or is needed for failure isolation. Structural checks,
+  mocks, generated artifacts, and narration do not prove live behavior. Label
+  the strongest safe substitute as a proxy.
 
-### Make Correctness Robust — Must
+- Complete **Change Closure**: remove paths made obsolete, redundant, or
+  contradictory by the change, or retain them only for a supported obligation
+  with named callers, owner, reason, evidence, selection or cutover behavior,
+  and removal condition. Report material skipped proof and **Residual Risk**,
+  meaning uncertainty that limits the claim.
 
-Correctness includes behavior over relevant inputs, states, lifecycle
-transitions, failures, supported environments, accessibility, and observable
-effects—not merely a successful happy path.
+## Design Defaults — Prefer
 
-Apply **Hyrum's Law** as a compatibility-risk heuristic: externally observable
-behavior may have dependents even when it is not promised. Before changing or
-removing it, distinguish the intended contract from actual dependence;
-demonstrated dependence is migration evidence, not automatically a new
-commitment.
+- Trace the current behavior owner and real callers. Change the smallest
+  repository-native path through them that minimizes total caller, maintainer,
+  migration, operational, coordination, and proof burden. Do not create an
+  orphan component, speculative layer, or parallel `V2` path. Replace or
+  relocate ownership only when direct evidence shows that ownership is the
+  material problem and one bounded migration can close the displaced path.
 
-Where the supported contract exposes them, preserve atomicity, recovery, retry,
-idempotency, compatibility, cancellation, concurrency, and observability
-semantics. Defect correction should address the causal owner and prevent the
-supported failure across affected callers rather than mask one symptom.
+- Preserve conceptual integrity and essential complexity while removing
+  demonstrated accidental complexity. Use information hiding and deep modules
+  to contain change. Avoid shallow modules and pass-through methods whose
+  interface burden approaches their useful behavior.
 
-Do not add machinery for risks the system cannot reach.
+- Make interfaces easy to use correctly and hard to misuse. Prefer clear names,
+  explicit data relationships, local ownership, readable control flow, and
+  representations that define errors out of existence where accepted behavior
+  permits.
 
-Where commitments permit, **define errors out of existence**: choose semantics
-or representations that eliminate needless error cases instead of exporting
-them for callers to handle.
+- Start with repository conventions, owned abstractions, native facilities,
+  and established dependencies. Novelty is neither a goal nor a defect. Add an
+  abstraction, dependency, adapter, cache, concurrency mechanism, or
+  configurability only for supported variation or demonstrated material value.
 
-### Respect Trust And Data Boundaries — Must
+- Apply DRY to knowledge and policy, not repeated syntax. Apply yagni to
+  speculative capability. Prefer bounded duplication to the wrong abstraction
+  when meanings, owners, change rates, or failure modes differ. Refactoring
+  preserves observable behavior; prove intentional behavior changes separately.
 
-Treat crossings between differently trusted callers, services, files,
-processes, users, and privilege levels according to their actual contracts.
-
-Validate untrusted or contract-sensitive input at the boundary that owns it
-when a machine consumes it to affect behavior, state, authority, or mutation.
-Convert accepted input once into a validated typed internal representation;
-trusted internal code relies on that representation until another trust
-boundary is crossed. Unstructured output remains evidence unless a consumer
-parses or acts on it.
-Preserve data meaning, identity, integrity, provenance, schema, units, ordering,
-and lifecycle where applicable. Protect authentication, authorization, secrets,
-confidentiality, privacy, encoding, and external effects in proportion to the
-governing contract and potential harm.
-
-Simplification never discounts these obligations.
-
-### Keep Evidence Honest — Must
-
-Make no claim broader than fresh, relevant evidence supports. A focused check
-proves only its covered slice. Tie behavioral claims to an observable proof
-seam and a proof lane that actually exercises the claimed meaning.
-
-When a behavioral claim could self-confirm, use an oracle independent of the
-implementation logic. The oracle need not be a separate reviewer.
-
-Mocks, generated artifacts, structural inspection, and plausible narration do
-not establish live behavior by themselves. When direct execution is unsafe or
-unavailable, use the strongest safe proxy and identify it as a proxy.
-
-Keep assumptions, skipped proof, unsupported conditions, and residual risk
-visible. Residual risk is not failure; hidden or understated risk is.
-
-### Practice Stewardship — Must
-
-Preserve unrelated behavior, work, and durable decisions. Improve the selected
-scope without silently widening it. Remove only fallout owned by the selected
-change; do not disguise adjacent cleanup as necessary work.
-
-## Shape Code For Understanding
-
-Use **change amplification**, **cognitive load**, and **unknown unknowns** as
-symptoms of complexity. Prefer designs where a supported change touches few
-places, requires little information to be held in mind, and makes affected
-dependencies and callers obvious.
-
-### Deep Modules And Information Hiding — Prefer
-
-Prefer **deep modules**: give callers a small, honest interface that uses
-**information hiding** to conceal essential complexity behind a clear owner.
-Avoid **shallow modules** and **pass-through methods** whose interface burden
-approaches their useful functionality. Preserve **cohesion**, manage
-**coupling**, and separate **essential complexity** from
-**accidental complexity** so the accidental can be removed. Judge depth by coherent
-functionality relative to interface burden, not by class, function, or
-implementation size.
-
-Earn abstraction, indirection, adapters, configurability, and seams through
-supported variation, repeated policy, or a real external boundary.
-
-Prefer deepening or modifying the current behavior owner before adding another
-path. Retain parallel behavior only for an explicit compatibility, migration,
-trust, lifecycle, or ownership boundary with named callers, proof, owner,
-reason, selection or cutover behavior, and Removal Trigger.
-
-### Local Readability — Prefer
-
-Make important behavior understandable where it is owned and used. Let names,
-types, units, state ownership, and control flow reveal meaning and valid
-transitions. Comment surprising reasons and constraints, not syntax the reader
-can already see.
-
-### Fit Before Novelty — Prefer
-
-Start with repository conventions, owned abstractions, standard or native
-facilities, platform capabilities, and established dependencies. Novelty is
-neither a goal nor a defect, and the current owner is a default rather than an
-immutable constraint.
-
-Add a new abstraction, dependency, framework, or mechanism only when its
-demonstrated value exceeds its learning, integration, maintenance, and failure
-costs. Replace or relocate ownership only when direct evidence shows ownership
-is the material problem and one bounded migration can close the displaced path.
-
-### Converge Efficiently — Prefer
-
-When material uncertainty exists, optimize for learning through
-fast, high-quality feedback.
-
-Use the least context, coordination, artifacts, mutations, and validation that
-can support the claim. Prefer direct data flow, existing primitives,
-appropriate data structures, focused proof, and reuse of valid evidence.
-Remove avoidable work, allocation, I/O, and repeated computation when the cost
-is evident. Add caching, batching, concurrency, or optimization machinery only
-for measured or clearly material cost.
-
-### Build Only What Is Needed — Prefer
-
-Apply YAGNI to speculative capabilities, not automatically to the shape of an
-already-needed interface. Prefer **somewhat general-purpose modules** when they
-reduce special cases and caller burden without adding speculative capabilities.
-
-Apply DRY to shared meaning and policy, not every repeated line. Repetition may
-remain when unification would couple different meanings, owners, change rates,
-or failure modes.
-
-A deliberate limit is acceptable when its ceiling is known and there is a clear
-reason to reconsider it.
-
-### Keep Tests Lean And Meaningful — Prefer
-
-Treat tests as durable evidence for behavior, invariants, failure paths, and
-risks—not as a diary of tickets or edits. Reuse or extend a clear existing test
-before adding a separate one.
-
-Treat **a test as the first user** of an interface and as feedback about its
-design, API, and coupling. Prefer **state testing** through stable caller-facing
-APIs; use **interaction testing** only when the interaction itself is part of
-the contract or provides necessary failure isolation.
-
-A separate test earns its place through a distinct behavior, invariant, oracle,
-proof seam, state or failure branch, material risk, or need for diagnostic
-isolation. Consolidation must preserve coverage and diagnostic clarity.
-
-Test count is not a goal. Unique evidence, clarity, maintenance burden, and
-execution cost determine the portfolio.
+Use change amplification, cognitive load, unknown unknowns, deep or shallow
+module, information hiding, essential or accidental complexity, and conceptual
+integrity only when they sharpen a design judgment. They are diagnostics, not
+scorecards or Return fields.
 
 ## Methods When The Condition Applies
 
-### Reason Across State Boundaries — Method
+### Reason Across State And Lifecycle Boundaries
 
-When correctness depends on cached, persisted, resumed, grouped, projected,
-distributed, or session-scoped state, distinguish the supported states, access
-paths, and lifecycle transitions that can change meaning.
+When requested behavior materially depends on reachable state, persistence,
+projection, ordering, retry, resume, cancellation, concurrency, or lifecycle
+transitions, distinguish the supported states, access paths, and transitions
+that can change meaning. Cover distinct behavior and material interactions, not
+a blind Cartesian product.
 
-Cover distinct behavior and high-risk interactions, not a blind Cartesian
-product.
+### Use A Negative Control
 
-### Use A Negative Control — Method
+When a validator, hook, policy check, dependency rule, or other enforcement
+boundary changes, show that a representative controlled violation fails for
+the intended reason. Also show a representative conforming input. Repeat the
+conforming case after failure only when mutable state, caching, hooks, or
+partial mutation could contaminate it.
 
-When adding or changing a validator, hook, policy check, dependency boundary,
-or other enforcement mechanism, show that the rule is causal. A pure stateless
-validator needs one representative conforming input.
-A controlled violation fails for the intended reason.
-Repeat the conforming case after
-failure only when state, caching, hooks, partial mutation, or lifecycle
-contamination could affect later behavior.
+### Prove Durable Artifacts Proportionally
 
-### Prove Durable Artifacts Proportionally — Method
-
-When a change creates or changes a durable artifact contract, prove only the
-properties its consumer and the claim require: schema or format for machine
+When a change creates or changes a durable or machine-consumed artifact, prove
+only the properties required by its consumer and the claim: format for
 consumption, identity and destination for persistence or routing, read-back
-after external or durable mutation, and caller- or consumer-level behavior when
-integration or publication is claimed. Serialization or structural validity
-alone does not prove semantic correctness or consumption.
+after durable or external mutation, and real-consumer behavior when integration
+or publication is claimed. Structural validity alone does not prove semantics
+or consumption.
 
-### Close Displaced Paths — Method
+### Measure Consequential Claims
 
-When a change replaces or makes behavior redundant, trace the affected
-implementations, callers, registrations, exports, flags, tests, configuration,
-documentation, and migrations.
+When an accepted decision or claim depends on performance, capacity,
+reliability, latency, cost, or resource use, measure it against a comparable
+workload, environment, build, method, sample, and baseline or budget. If
+meaningful measurement is unavailable, narrow the claim and report the
+Residual Risk.
 
-Remove obsolete or duplicate paths. Retain an older path only for a supported
-compatibility obligation with a clear reason, owner, evidence, and removal
-condition.
+### Invoke Heavier Owners Only From Their Trigger
 
-### Measure Consequential Claims — Method
+Use Codebase Design when one consequential responsibility, interface,
+ownership, seam, substitution, or migration decision remains unresolved. Use
+TDD only when the user explicitly requests test-first or RED-GREEN-REFACTOR, or
+repository policy requires it.
 
-When a decision or claim depends on performance, capacity, reliability,
-latency, cost, or resource use, measure before claiming improvement.
+Delegate only when the user explicitly requests subagents or an explicitly
+invoked skill owns required fanout. Multiple files, spare capacity,
+possible parallelism, or an independently ownable subtask does not activate
+delegation.
 
-Bind the result to a comparable workload, environment, build, method, sample
-and material variation, and baseline or budget. If meaningful measurement is
-unavailable, narrow the claim and record the residual risk.
+Invoke independent Change Review only when the user or repository requires it;
+the candidate recombines mutations from two or more independent authors; or
+focused proof establishes behavior but a material shared-contract or
+irreversible-migration acceptance judgment still warrants fresh independent
+judgment and review is the lowest-burden way to obtain it. Missing required
+proof stops the work; it is not a review trigger.
+
+High-Assurance Review, security programs, and production/SRE work require an
+explicit user or accepted-task objective. Generic risk, external input, file
+type, release packaging, or production adjacency does not activate them.
+Preserve any touched accepted guarantees without expanding the objective.

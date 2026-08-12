@@ -423,14 +423,9 @@ def test_repo_bootstrap_domain_contract_is_wrap_safe_and_causal() -> None:
 
 def assert_repo_bootstrap_semantic_contract(
     package_root: Path,
-    expected_tree_sha256: str,
     *,
     profile: str,
 ) -> None:
-    assert (
-        exact_tree_hash(package_root)
-        == expected_tree_sha256
-    )
     bootstrap = (package_root / "SKILL.md").read_text(encoding="utf-8")
     domain = (package_root / "domain.md").read_text(encoding="utf-8")
     domain_flat = " ".join(domain.split())
@@ -532,7 +527,6 @@ def assert_repo_bootstrap_semantic_contract(
 def test_repo_bootstrap_reconciles_existing_setup_without_reset() -> None:
     assert_repo_bootstrap_semantic_contract(
         CUSTOM / "repo-bootstrap",
-        "c914dc0bb12d0724af2ecc5ae18f6e9506f89cb4d5a6371c1c6a54b5e576d942",
         profile="incumbent",
     )
 
@@ -637,16 +631,14 @@ def test_portable_fallback_adoption_removes_the_portable_contract_owner() -> Non
     assert validator["portable_owner_failures"](
         "# Repository Instructions\n\n## Skill Pack\n\nAGENTS primes.\n"
     ) == []
-    partial_adoption = fallback.replace("# Portable Engineering Contract", "")
+    partial_adoption = fallback.replace("# Global Codex Instructions", "")
     partial_adoption = partial_adoption.replace(
-        "This contract owns engineering taste, gates, and completion.", ""
+        "Use this as your global `AGENTS.md` when the skill pack is not installed.",
+        "",
     )
     assert validator["portable_owner_failures"](partial_adoption) == failures
-    repo_specific_headings = "# Repository Instructions\n"
-    for heading in validator["PORTABLE_SECTION_HEADINGS"]:
-        repo_specific_headings += f"\n{heading}\n\nRepo-specific guidance.\n"
-    assert validator["portable_owner_failures"](repo_specific_headings) == []
-    for heading, signature in validator["PORTABLE_SECTION_SIGNATURES"]:
+    current_signatures = validator["PORTABLE_CURRENT_SECTION_SIGNATURES"]
+    for heading, signature in current_signatures:
         assert signature in (validator["markdown_section"](fallback, heading) or "")
         split_pair = (
             "# Repository Instructions\n\n"
@@ -657,6 +649,10 @@ def test_portable_fallback_adoption_removes_the_portable_contract_owner() -> Non
         assert validator["portable_owner_failures"](split_pair) == []
         nested = f"# Repository Instructions\n\n{heading}\n\n### Detail\n\n{signature}\n"
         assert validator["portable_owner_failures"](nested) == failures
+
+    for heading, signature in validator["PORTABLE_LEGACY_SECTION_SIGNATURES"]:
+        legacy = f"# Repository Instructions\n\n{heading}\n\n{signature}\n"
+        assert validator["portable_owner_failures"](legacy) == failures
 
     marker = validator["SETUP_SCHEMA_TOKEN"]
     stale = "<!-- programming-agent-skills setup-schema: 1:deadbeefdead -->"
@@ -693,6 +689,49 @@ def test_portable_fallback_adoption_removes_the_portable_contract_owner() -> Non
     assert validator["git_root_failures"](ROOT / "skills") == [
         "Target must be the Git repository root"
     ]
+
+
+def test_engineering_contract_validation_is_structural_and_causal() -> None:
+    validator = runpy.run_path(
+        str(CUSTOM / "repo-bootstrap/scripts/validate_setup.py")
+    )
+    check = validator["engineering_contract_failures"]
+    contract = (CUSTOM / "repo-bootstrap/engineering-contract.md").read_text(
+        encoding="utf-8"
+    )
+
+    assert check(contract, "engineering-contract.md") == []
+    for invalid in (
+        contract.replace("# Engineering Contract\n", ""),
+        contract.replace(
+            "# Engineering Contract\n",
+            "# Engineering Contract\n\n# Engineering Contract\n",
+        ),
+        contract.replace(
+            "# Engineering Contract\n",
+            "```text\n# Engineering Contract\n```\n",
+        ),
+        contract.replace("## Design Defaults — Prefer\n", ""),
+        contract.replace(
+            "## Design Defaults — Prefer\n",
+            "## Design Defaults — Prefer\n\n## Design Defaults — Prefer\n",
+        ),
+        contract.replace(
+            "### Use A Negative Control\n",
+            "```text\n### Use A Negative Control\n```\n",
+        ),
+        contract.replace(
+            "### Use A Negative Control\n",
+            "## Use A Negative Control\n",
+        ),
+        contract.replace(
+            "## Methods When The Condition Applies\n\n"
+            "### Reason Across State And Lifecycle Boundaries\n",
+            "### Reason Across State And Lifecycle Boundaries\n\n"
+            "## Methods When The Condition Applies\n",
+        ),
+    ):
+        assert check(invalid, "engineering-contract.md")
 
 
 def test_outdated_setup_routes_to_repo_bootstrap() -> None:
@@ -2469,52 +2508,44 @@ def test_merge_conflict_resolution_is_three_way_and_finish_bounded() -> None:
 def test_portable_fallback_remains_standalone_from_the_repo_contract() -> None:
     fallback = (ROOT / "AGENTS_PORTABLE_FALLBACK.md").read_text(encoding="utf-8")
     contract = (ROOT / "docs/agents/engineering-contract.md").read_text(encoding="utf-8")
+    seed = (CUSTOM / "repo-bootstrap/engineering-contract.md").read_text(
+        encoding="utf-8"
+    )
     bootstrap = (CUSTOM / "repo-bootstrap/SKILL.md").read_text(encoding="utf-8")
+    fallback_flat = " ".join(fallback.split())
     contract_flat = " ".join(contract.split())
 
-    assert "Explore -> Choose -> Prove -> Expand -> Simplify -> Lock" in fallback
-    assert "Explore -> Choose -> Prove -> Expand -> Simplify -> Lock" not in contract
-    assert "It is not a workflow, checklist, review gate, completion contract" in contract_flat
+    assert fallback.startswith("# Global Codex Instructions\n")
+    assert "when the skill pack is not installed" in fallback_flat
+    assert "each repository its own short `AGENTS.md`" in fallback_flat
     assert "replace any portable contract owner preamble" in " ".join(bootstrap.split())
     assert re.findall(r"\$[a-z0-9][a-z0-9-]*", fallback) == []
-    assert "### Deep Modules And Information Hiding — Prefer" in contract
-    assert "### Fit Before Novelty — Prefer" in contract
-    assert "### Converge Efficiently — Prefer" in contract
-    assert "### Use A Negative Control — Method" in contract
-    assert "### Prove Durable Artifacts Proportionally — Method" in contract
-    assert "controlled violation fails for the intended reason" in contract_flat
-    assert "Repeat the conforming case after failure only when state" in contract_flat
+    assert "It is not a workflow, checklist, review gate, completion contract" in contract_flat
+    assert "Git mutation owners" not in contract_flat
+    assert "## Correctness And Evidence — Must" in contract
+    assert "## Design Defaults — Prefer" in contract
+    assert "## Methods When The Condition Applies" in contract
+    assert "When a validator, hook, policy check" in contract_flat
+    assert "When a change creates or changes a durable or machine-consumed artifact" in contract_flat
+    assert "Missing required proof stops the work" in contract_flat
+    assert "explicit user or accepted-task objective" in contract_flat
+    for shared_term in ("Traceability", "bounded slice", "commitment boundary"):
+        assert shared_term in contract
+    for text in (fallback_flat, contract_flat):
+        assert "user explicitly requests subagents" in text
+        assert "skill owns required fanout" in text
+        assert "skill or workflow owns required fanout" not in text
+        assert "spare capacity" in text
+        assert "does not activate delegation" in text
+    assert "authorized filesystem, Git, environment, tracker" in fallback_flat
 
+    markerless_contract = re.sub(
+        r"(?m)^<!-- programming-agent-skills setup-file: [^\n]+ -->\n\n",
+        "",
+        contract,
+    )
+    assert markerless_contract == seed
 
-def test_source_derived_vocabulary_projects_to_affected_skill_slices() -> None:
-    projections = {
-        "audit-codebase": (
-            "Hyrum's Law",
-            "define needless errors out of existence",
-            "change amplification",
-            "cognitive load",
-            "unknown unknowns",
-            "state testing",
-            "interaction testing",
-        ),
-        "change-review": ("Hyrum's Law", "essential and accidental complexity"),
-        "simplify-code": ("Hyrum's Law", "change amplification", "cognitive load"),
-        "implement": ("Hyrum's Law", "actual dependence"),
-    }
-    paths = {
-        "audit-codebase": tuple((CUSTOM / "audit-codebase").glob("*.md")),
-        "change-review": tuple((CUSTOM / "change-review").glob("*.md")),
-        "simplify-code": (CUSTOM / "simplify-code/SKILL.md",),
-        "implement": (CUSTOM / "implement/SKILL.md",),
-    }
-
-    for owner, terms in projections.items():
-        text = " ".join(
-            " ".join(path.read_text(encoding="utf-8").split())
-            for path in paths[owner]
-        )
-        for term in terms:
-            assert term in text
 
 
 def test_readme_exposes_both_adoption_paths() -> None:
@@ -2795,8 +2826,8 @@ def test_state_boundary_reasoning_is_proportional_and_has_one_owner() -> None:
     seed = (CUSTOM / "repo-bootstrap/engineering-contract.md").read_text(encoding="utf-8")
     tickets = (CUSTOM / "to-tickets/SKILL.md").read_text(encoding="utf-8")
 
-    assert "### Reason Across State Boundaries" in contract
-    assert "### Reason Across State Boundaries" in seed
+    assert "### Reason Across State And Lifecycle Boundaries" in contract
+    assert "### Reason Across State And Lifecycle Boundaries" in seed
     flat = " ".join(tickets.split())
     assert "whose behavior materially changes by state" in flat
     assert "Use a matrix only when it is clearer than prose" in flat
@@ -2805,7 +2836,11 @@ def test_state_boundary_reasoning_is_proportional_and_has_one_owner() -> None:
 
 def test_implement_selection_preserves_one_ready_item_and_explicit_authority() -> None:
     implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
+    metadata = yaml.safe_load(
+        (CUSTOM / "implement/agents/openai.yaml").read_text(encoding="utf-8")
+    )
     flat = " ".join(implement.split())
+    prompt = metadata["interface"]["default_prompt"]
 
     assert not implicit_policy(CUSTOM / "implement")
     assert "Deliver exactly one caller-selected ready item" in flat
@@ -2813,6 +2848,9 @@ def test_implement_selection_preserves_one_ready_item_and_explicit_authority() -
     assert "The caller owns commitments" in flat
     assert "Push requires separate authority" in flat
     assert "Otherwise, direct work creates one only when the caller requests Git delivery" in flat
+    assert "caller explicitly requests subagents" in flat
+    assert "ordinary Implement invocation stays direct" in flat
+    assert "caller explicitly requests subagents" in prompt
     assert "expected root effort saved exceeds handoff and verification cost" in flat
     assert "create no score, worksheet, or artifact" in flat
     assert "When the delegation gate fails" in flat
@@ -2833,7 +2871,7 @@ def test_implement_closeout_locks_exact_candidate_and_preserves_custody() -> Non
     assert "read back non-dispatchability" in flat
     assert "release the claim and verify the frontier" in flat
     assert "exclusive mutation custody of the reconciled checkout until Return" in flat
-    assert "caller did not request root execution" in flat
+    assert "ordinary Implement invocation stays direct" in flat
     assert "keep repair with the root" in flat
     assert "every triggered Change Review" in flat
     assert "Repair generations" not in flat

@@ -17,7 +17,7 @@ REQUIRED_FILES = (
     "docs/agents/engineering-contract.md",
 )
 
-SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:0f720f32e3c8 -->"
+SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:9caab4908050 -->"
 ENGINEERING_PRIMER_TOKEN = (
     "Explore imaginatively. Converge under proof. Simplify ruthlessly."
 )
@@ -27,20 +27,10 @@ SETUP_SCHEMA_MARKER_RE = re.compile(
 
 PORTABLE_OWNER_TOKENS = (
     "# Portable Engineering Contract",
-    "This contract owns engineering taste, gates, and completion.",
+    "Use this as your global `AGENTS.md` when the skill pack is not installed.",
 )
 
-PORTABLE_SECTION_HEADINGS = (
-    "## North Star",
-    "## Engineering Taste",
-    "## Working Loop",
-    "## Hard Gates",
-    "## Shape Before Build",
-    "## Implementation Taste",
-    "## Check, Conditional Review, And Report",
-)
-
-PORTABLE_SECTION_SIGNATURES = (
+PORTABLE_LEGACY_SECTION_SIGNATURES = (
     (
         "## North Star",
         "Explore imaginatively. Converge under proof. Simplify ruthlessly.",
@@ -56,6 +46,26 @@ PORTABLE_SECTION_SIGNATURES = (
     (
         "## Check, Conditional Review, And Report",
         "Inspect every owned diff and final repository state.",
+    ),
+)
+
+PORTABLE_CURRENT_SECTION_SIGNATURES = (
+    (
+        "## Authority And State",
+        "Diagnosis, research, design, explanation, and review are read-only unless",
+    ),
+    ("## Ground Or Route", "If expected behavior, symptom, or cause is uncertain"),
+    (
+        "## Implement The Smallest Integrated Change",
+        "Trace each acceptance commitment through the real caller or entry path",
+    ),
+    (
+        "## Activate Heavier Methods Only When Triggered",
+        "Use RED-GREEN-REFACTOR only when the user or repository explicitly requires",
+    ),
+    (
+        "## Prove, Close, And Report",
+        "Run the smallest fresh check capable of disproving each claim",
     ),
 )
 
@@ -86,41 +96,23 @@ DOMAIN_PROSE_TOKENS = (
     "decision owner",
 )
 
-CONTRACT_LITERAL_TOKENS = (
+CONTRACT_STRUCTURAL_TOKENS = (
     ENGINEERING_PRIMER_TOKEN,
-    "not a workflow, checklist, review gate",
-    "Skills own procedures, checks, stopping",
-    "## How To Read This Contract",
-    "**Must** marks a correctness, safety, integrity, or honesty floor.",
-    "**Prefer** marks the default engineering choice.",
-    "**Method** names a practice triggered by a stated condition.",
-    "## Shared Concepts",
-    "**Bounded slice:**",
-    "fast, high-quality feedback",
-    "**Commitment boundary:**",
-    "**Proof seam:**",
-    "**Proof lane:**",
-    "**Change closure:**",
-    "**Residual risk:**",
-    "## Keep Faith With The Work",
-    "### Preserve Commitments And Domain Truth",
-    "### Make Correctness Robust",
-    "### Respect Trust And Data Boundaries",
-    "### Keep Evidence Honest",
-    "### Practice Stewardship",
-    "## Shape Code For Understanding",
-    "### Deep Modules And Information Hiding",
-    "### Local Readability",
-    "### Fit Before Novelty",
-    "### Build Only What Is Needed",
-    "### Keep Tests Lean And Meaningful",
-    "YAGNI",
-    "DRY",
-    "## Methods When The Condition Applies",
-    "### Reason Across State Boundaries",
-    "### Use A Negative Control",
-    "### Close Displaced Paths",
-    "### Measure Consequential Claims",
+    "# Engineering Contract",
+)
+
+CONTRACT_LEVEL_TWO_HEADINGS = (
+    "Correctness And Evidence — Must",
+    "Design Defaults — Prefer",
+    "Methods When The Condition Applies",
+)
+
+CONTRACT_METHOD_HEADINGS = (
+    "Reason Across State And Lifecycle Boundaries",
+    "Use A Negative Control",
+    "Prove Durable Artifacts Proportionally",
+    "Measure Consequential Claims",
+    "Invoke Heavier Owners Only From Their Trigger",
 )
 
 WORK_ITEM_TOKENS = (
@@ -312,10 +304,62 @@ def markdown_section(
     return section
 
 
+def markdown_headings(text: str, level: int) -> list[str]:
+    headings: list[str] = []
+    fence_char = ""
+    fence_length = 0
+    pattern = re.compile(rf"^{'#' * level}[ \t]+(.+?)[ \t]*$")
+
+    for line in text.splitlines():
+        stripped = line.rstrip()
+        if fence_char:
+            if re.fullmatch(
+                rf"[ \t]{{0,3}}{re.escape(fence_char)}{{{fence_length},}}[ \t]*",
+                stripped,
+            ):
+                fence_char = ""
+                fence_length = 0
+            continue
+        opening = re.match(r"[ \t]{0,3}(`{3,}|~{3,})", stripped)
+        if opening:
+            fence_char = opening.group(1)[0]
+            fence_length = len(opening.group(1))
+            continue
+        match = pattern.fullmatch(stripped)
+        if match:
+            headings.append(match.group(1))
+    return headings
+
+
+def engineering_contract_failures(text: str, relative: str) -> list[str]:
+    failures: list[str] = []
+    require_tokens(text, relative, CONTRACT_STRUCTURAL_TOKENS, failures)
+    if markdown_headings(text, 1) != ["Engineering Contract"]:
+        failures.append(f"{relative} must contain one top-level Engineering Contract heading")
+    if markdown_headings(text, 2) != list(CONTRACT_LEVEL_TWO_HEADINGS):
+        failures.append(
+            f"{relative} must contain the exact engineering-contract section outline"
+        )
+    if markdown_headings(text, 3) != list(CONTRACT_METHOD_HEADINGS):
+        failures.append(
+            f"{relative} must contain the exact condition-triggered method outline"
+        )
+    methods = markdown_section(text, "## Methods When The Condition Applies")
+    if methods is None or markdown_headings(methods, 3) != list(
+        CONTRACT_METHOD_HEADINGS
+    ):
+        failures.append(
+            f"{relative} must own every condition-triggered method under its method section"
+        )
+    return failures
+
+
 def portable_owner_failures(agents: str) -> list[str]:
     portable_section_remains = any(
         signature in (markdown_section(agents, heading) or "")
-        for heading, signature in PORTABLE_SECTION_SIGNATURES
+        for heading, signature in (
+            PORTABLE_LEGACY_SECTION_SIGNATURES + PORTABLE_CURRENT_SECTION_SIGNATURES
+        )
     )
     if any(token in agents for token in PORTABLE_OWNER_TOKENS) or portable_section_remains:
         return [
@@ -539,69 +583,10 @@ def main() -> int:
     failures.extend(domain_contract_failures(domain, "docs/agents/domain.md"))
 
     contract = texts["docs/agents/engineering-contract.md"]
-    require_tokens(
-        contract,
-        "docs/agents/engineering-contract.md",
-        CONTRACT_LITERAL_TOKENS,
-        failures,
-    )
-    require_section_tokens(
-        contract,
-        "docs/agents/engineering-contract.md",
-        (
-            (
-                "## How To Read This Contract",
-                (
-                    "Methods are not",
-                    "responsible task or skill owns the procedure and evidence",
-                    "No generic rule overrides",
-                ),
-            ),
-            (
-                "## Keep Faith With The Work",
-                (
-                    "operational definition or exact authoritative owner",
-                    "not merely a successful happy path",
-                    "Hyrum's Law",
-                    "define errors out of existence",
-                    "Validate untrusted or contract-sensitive input",
-                    "A focused check",
-                    "Preserve unrelated behavior, work, and durable decisions",
-                ),
-            ),
-            (
-                "## Shape Code For Understanding",
-                (
-                    "change amplification",
-                    "deep modules",
-                    "information hiding",
-                    "shallow modules",
-                    "pass-through methods",
-                    "essential complexity",
-                    "accidental complexity",
-                    "fast, high-quality feedback",
-                    "supported variation, repeated policy, or a real external",
-                    "Apply YAGNI",
-                    "somewhat general-purpose modules",
-                    "Apply DRY to shared meaning and policy",
-                    "a test as the first user",
-                    "state testing",
-                    "interaction testing",
-                    "Consolidation must preserve coverage and diagnostic clarity",
-                    "Test count is not a goal",
-                ),
-            ),
-            (
-                "## Methods When The Condition Applies",
-                (
-                    "not a blind Cartesian",
-                    "controlled violation fails for the intended reason",
-                    "Retain an older path only for a supported",
-                    "measure before claiming improvement",
-                ),
-            ),
-        ),
-        failures,
+    failures.extend(
+        engineering_contract_failures(
+            contract, "docs/agents/engineering-contract.md"
+        )
     )
 
     for relative, text in texts.items():
