@@ -18,7 +18,25 @@ and explicit execution authority or approved automatic safety control. Tests,
 alerts, dashboards, and gates provide evidence; they do not grant authority.
 Without authority, return the recommended action and block only the transition.
 
+After each attempted effectful transition, read the authoritative target state
+and material external effects. Distinguish `not attempted`, `zero effect`,
+`success`, `partial effect`, and `uncertain effect`. A request acknowledgement,
+tool return, or desired configuration is not state read-back. For a partial or
+uncertain effect, stop dependent transitions, preserve affected identity,
+contain when required, and follow the recovery path. Retry only under proved
+idempotency or deduplication, or after reconciliation establishes that a new
+attempt is safe.
+
 ## Monitor field behavior
+
+Before a production-readiness, ramp, or scale decision depends on service
+behavior, recover owner-confirmed service objectives: user-visible scope and
+cohort, indicator, target or budget and window, measurement route, and degraded
+or fallback response. Select only material availability, latency, freshness,
+correctness or quality, capacity, and cost objectives. A provider SLA or
+component uptime is dependency evidence, not proof of the end-to-end service
+objective. When an objective or measurement route is missing, block only the
+dependent readiness, ramp, or scale decision and continue safe observation.
 
 Correlate secure internal telemetry with release/artifact identity, Purpose
 Lock, config and data-contract versions, and rollout cohort. Select applicable:
@@ -27,6 +45,8 @@ Lock, config and data-contract versions, and rollout cohort. Select applicable:
   energy, and cost;
 - schema, missingness, range, category, freshness, and transformation health;
 - training-inference skew, prediction distribution, confidence, and model age;
+- load-bearing dependency version or contract state, semantic-health signals,
+  and active failure or fallback state;
 - mature outcome quality, calibration, and error slices;
 - product, scientific, safety, or business guardrails; and
 - feedback, appeal, override, security/abuse, compliance, and wider impacts.
@@ -39,6 +59,18 @@ guardrails, not proof.
 Give every actionable alert an owner, triage condition, evidence pointer, and
 recovery playbook. Treat drift as diagnostic evidence, not proof of degradation
 or attack.
+
+Evaluate consequential service signals against the metric, window, target or
+budget, and breach action in the Delivery Contract. Dashboard existence and
+single-point observations are not service-objective evidence.
+
+When staleness can invalidate use, define age from the freshness-bearing source
+for that failure mode—such as the training-data cutoff, evidence cutoff, or last
+accepted learned-state epoch with qualified new evidence—the maximum permitted
+age by operating context, its measurement source and owner, and the safe
+stop/degrade/fallback action. Packaging, rebuild, or acceptance alone does not
+reset data or evidence age. Exceeding the limit may trigger that action or
+create a refresh candidate; it never authorizes promotion.
 
 ## Refresh and adaptation
 
@@ -79,6 +111,15 @@ During an authorized incident response:
    consumers, and feedback.
 6. Add a regression, invariant, monitor, runbook correction, or accepted-debt
    record at the owning seam.
+
+Before declaring recovery complete, read back the active release or artifact,
+configuration and contract versions, learned or persistent state, and
+affected-output reconciliation. Then exercise the representative real
+caller/consumer path when safe and authorized. Scope the restored claim to what
+that read-back and exercise establish. Re-evaluate the initiating incident
+signal and each affected service objective or guardrail over its eligible
+window; otherwise close only as degraded or partial and name the remaining
+condition.
 
 For committed batch or stream outputs, a bounded partition limits blast radius
 but is not inherently reversible. Require affected-output identity plus

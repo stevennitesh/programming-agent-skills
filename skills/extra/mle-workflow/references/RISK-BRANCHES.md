@@ -84,12 +84,9 @@ parties, failure costs, governing obligations, and available lawful evidence.
 
 Activate controls by capability, not by the label "GenAI":
 
-- **Untrusted retrieved or supplied context:** test prompt/resource injection,
-  provenance loss, and sensitive-context extraction.
-- **Tool or actuator access:** enforce permission boundaries, confirmation,
-  side-effect isolation, unsafe-action tests, and recovery.
-- **Public query access:** test misuse, extraction, privacy leakage, and resource
-  abuse.
+- The composed-AI branch owns behavior identity, retrieval and memory
+  contracts, grader validity, tool state, human controls, injection trust-flow
+  proof, and inference economics. Add only the matching exposure controls here.
 - **Fine-tuning or learned adaptation:** test training-data poisoning,
   circumvention, regression, and update identity.
 - **Open or externally sourced weights:** apply acquired-component and
