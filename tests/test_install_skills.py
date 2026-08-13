@@ -1251,6 +1251,32 @@ def test_install_updates_only_existing_bootstrap_section(tmp_path: Path) -> None
     assert "## Personal After\n\nKeep me." in text
 
 
+def test_install_seeds_the_full_global_template_once(tmp_path: Path) -> None:
+    template = tmp_path / "GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md"
+    target = tmp_path / ".codex/AGENTS.md"
+    template.write_text(
+        "# Global Codex Instructions\n\n"
+        "## Delegation\n\n"
+        "Delegate only on an explicit trigger.\n\n"
+        "## Skill Pack Bootstrap\n\n"
+        "Managed route.\n",
+        encoding="utf-8",
+    )
+
+    assert install_skills.install_global_bootstrap(template, target) == "created"
+    assert target.read_text(encoding="utf-8") == template.read_text(encoding="utf-8")
+
+    target.write_text(
+        target.read_text(encoding="utf-8").replace(
+            "Delegate only on an explicit trigger.",
+            "Personal delegation policy.",
+        ),
+        encoding="utf-8",
+    )
+    assert install_skills.install_global_bootstrap(template, target) == "present"
+    assert "Personal delegation policy." in target.read_text(encoding="utf-8")
+
+
 def test_bootstrap_section_uses_one_real_level_two_heading(tmp_path: Path) -> None:
     template = tmp_path / "template.md"
     template.write_text(

@@ -48,10 +48,7 @@ Choose one global adoption path:
 | Best for recurring, multi-session engineering work | Best for lightweight adoption |
 | [Install the full pack](#full-skill-pack) | [Use the portable contract](AGENTS_PORTABLE_FALLBACK.md) |
 
-The full pack installs a minimal global bootstrap and gives each repository its
-own setup surface. The portable path instead supplies the engineering defaults
-globally while each repository supplies only its commands, invariants, and
-source-of-truth pointers.
+The full pack installs a lean global delegation gate and bootstrap, then gives each repository its own setup surface. The portable path instead supplies the engineering defaults globally while each repository supplies only its commands, invariants, and source-of-truth pointers.
 
 ### Full Skill Pack
 
@@ -82,7 +79,7 @@ python -m scripts.validate_skills --installed-root "$HOME\.agents\skills" --requ
 <details>
 <summary><strong>What the installer manages</strong></summary>
 
-The installer creates or updates only the global template's `## Skill Pack Bootstrap` section, migrates the legacy `## Skill Pack Guide` block, and preserves personal global instructions. It records pack-managed skills in `$HOME/.agents/skills/.programming-agent-skills-manifest.json`, so updates can retire old pack skills without touching unrelated personal skills.
+When no global `AGENTS.md` exists, the installer seeds the complete global template. Later installs create or update only its `## Skill Pack Bootstrap` section, migrate the legacy `## Skill Pack Guide` block, and preserve delegation and other personal global instructions. It records pack-managed skills in `$HOME/.agents/skills/.programming-agent-skills-manifest.json`, so updates can retire old pack skills without touching unrelated personal skills.
 
 Skill swaps, retirements, the manifest, and the global bootstrap commit as one transaction. One process lock excludes competing installs and recovery. The installer validates the complete managed manifest and refuses unsafe names, modified managed trees, or conflicting unmanaged paths before mutation. A failure restores the previous pack and removes the transaction snapshot. If rollback itself cannot finish, the installer preserves a named `.programming-agent-skills-transaction-*` recovery snapshot and refuses another install.
 
@@ -102,29 +99,19 @@ Use `python -m scripts.install_skills --dry-run` to preview skill deltas and the
 
 ### Portable Contract Only
 
-No installer or Python runtime is required. Copy
-[`AGENTS_PORTABLE_FALLBACK.md`](AGENTS_PORTABLE_FALLBACK.md) to
-`$HOME/.codex/AGENTS.md`, then give each target repository a short local
-`AGENTS.md` with verified commands, local invariants, and source-of-truth
-pointers.
+No installer or Python runtime is required. Copy [`AGENTS_PORTABLE_FALLBACK.md`](AGENTS_PORTABLE_FALLBACK.md) to `$HOME/.codex/AGENTS.md`, then give each target repository a short local `AGENTS.md` with verified commands, local invariants, and source-of-truth pointers.
 
-The portable contract carries authority boundaries, grounded routing, lean
-implementation, Root Cause correction, claim-matched proof, condition-triggered
-review and specialist work, Change Closure, and truthful completion. It
-intentionally omits skill routing, specialized procedures, tracker and domain
-setup, templates, and managed updates.
+The portable contract carries authority boundaries, grounded routing, lean implementation, Root Cause correction, claim-matched proof, condition-triggered review and specialist work, Change Closure, and truthful completion. It intentionally omits skill routing, specialized procedures, tracker and domain setup, templates, and managed updates.
 
 ## What's Included
 
 - **Shape before building:** `$grilling`, `$grill-with-docs`, `$wayfinder`, `$to-questionnaire`, `$research`, `$prototype`, `$handoff`
 - **Turn intent into delivery:** `$to-spec`, `$to-tickets`, `$triage`, `$implement`, `$parallel-implement`
-- **Prove and protect behavior:** `$tdd`, `$diagnosing-bugs`,
-  `$resolving-merge-conflicts`, `$change-review`,
-  `$high-assurance-review`, `$audit-codebase`
+- **Prove and protect behavior:** `$tdd`, `$diagnosing-bugs`, `$resolving-merge-conflicts`, `$change-review`, `$high-assurance-review`, `$audit-codebase`
 - **Improve code and design:** `$audit-codebase`, `$simplify-code`, `$codebase-design`, `$domain-modeling`
 - **Route and maintain the pack:** `$repo-bootstrap`, `$skill-router`, `$writing-great-skills`
 
-The small [`GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md`](GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md) bootstrap teaches Codex when to suggest `$skill-router` and `$repo-bootstrap`. Workflows stay with their skills, and personal global instructions stay local.
+The small [`GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md`](GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md) template supplies the delegation gate and teaches Codex when to suggest `$skill-router` and `$repo-bootstrap`. Workflows stay with their skills, and personal environment instructions stay local.
 
 ## Using The Full Pack
 
@@ -138,16 +125,11 @@ Representative routes:
 - External stakeholder knowledge gap -> `$to-questionnaire` -> human delivery and answer collection
 - One bounded ready item -> `$implement`; one parent-backed ready ticket graph to finish -> `$parallel-implement`, serializing or parallelizing each frontier as needed
 - Incoming issue or configured external PR -> `$triage`; ready-for-agent item -> `$implement`
-- Bounded multi-session fog -> `$wayfinder` until the map closes -> terminal
-  decision or settled source for `$to-spec`
-- Explicit test-first, TDD, or RED-GREEN-REFACTOR work -> `$tdd`; ordinary
-  implementation with tests -> `$implement`; route uncertain bugs through
-  `$skill-router`.
+- Bounded multi-session fog -> `$wayfinder` until the map closes -> terminal decision or settled source for `$to-spec`
+- Explicit test-first, TDD, or RED-GREEN-REFACTOR work -> `$tdd`; ordinary implementation with tests -> `$implement`; route uncertain bugs through `$skill-router`.
 - Whole-repository correctness, robustness, or quality discovery -> `$audit-codebase` builds, continues, or refreshes one linked HTML map, audits one user-selected subsystem, then can analyze one user-selected improvement candidate or returned evidence
 - Existing behavior in one bounded region -> `$simplify-code` for one proved reduction, a finite `until-clean` campaign, or a no-safe-cut verdict
-- An explicit read-only change judgment or implementation candidate whose
-  independent-review trigger applies -> `$change-review`; an explicitly selected two-lane assurance review ->
-  `$high-assurance-review`
+- An explicit read-only change judgment or implementation candidate whose independent-review trigger applies -> `$change-review`; an explicitly selected two-lane assurance review -> `$high-assurance-review`
 - Bounded correctness, domain robustness, performance, structural, or simplification discovery over an immutable repository baseline -> `$audit-codebase`, with repo-backed candidate decisions returned through `$grill-with-docs`
 
 These are examples. `$skill-router` owns the complete route map and tie-breakers.
@@ -167,14 +149,9 @@ Build faster without making the repository harder to trust. Move quickly through
 
 [`$repo-bootstrap`](skills/custom/repo-bootstrap/SKILL.md) installs a small `docs/agents/engineering-contract.md` in each target repository. The contract owns engineering taste, preventive code-quality defaults, shared vocabulary, and cross-skill discipline while leaving implementation technique flexible.
 
-The shared default is to ground the request, change the smallest path through
-the current behavior owner and real callers, run the smallest check capable of
-disproving the claim, close displaced paths, and report only what the evidence
-supports. Heavier methods activate only from their stated conditions.
+The shared default is to ground the request, change the smallest path through the current behavior owner and real callers, run the smallest check capable of disproving the claim, close displaced paths, and report only what the evidence supports. Heavier methods activate only from their stated conditions.
 
-For the same core behavior without installing skills, use
-[`AGENTS_PORTABLE_FALLBACK.md`](AGENTS_PORTABLE_FALLBACK.md) as a standalone
-global `AGENTS.md`.
+For the same core behavior without installing skills, use [`AGENTS_PORTABLE_FALLBACK.md`](AGENTS_PORTABLE_FALLBACK.md) as a standalone global `AGENTS.md`.
 
 ## Inspiration
 

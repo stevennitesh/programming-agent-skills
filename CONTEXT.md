@@ -5,7 +5,7 @@ This repository packages a shared engineering discipline as skills, setup contra
 ## Repository Invariants
 
 - `AGENTS.md` is a short agent primer: verified commands, context pointers, and local invariants.
-- `GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md` is the minimal global bootstrap for `$skill-router` and `$repo-bootstrap`. Personal environment rules stay outside it.
+- `GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md` is the lean global delegation gate and bootstrap for `$skill-router` and `$repo-bootstrap`. Personal environment rules stay outside it.
 - `docs/plans/README.md` routes current work without copying plans or runbooks.
 - `docs/agents/engineering-contract.md` owns engineering taste, preventive code quality, shared runtime language, and cross-cutting discipline.
 - `docs/agents/issue-tracker.md`, `triage-labels.md`, and `domain.md` own tracker mechanics, state roles, and domain routing.
@@ -57,7 +57,7 @@ global bootstrap -> repo AGENTS.md -> owning docs -> selected skill -> branch re
 
 Each layer points to the next and keeps only its own contract:
 
-- the global bootstrap exposes route and setup;
+- the global template exposes delegation activation, route, and setup;
 - `AGENTS.md` primes commands and pointers;
 - `docs/agents/*` teaches repo-wide mechanics and vocabulary;
 - a skill owns one procedure, its gates, outputs, mutations, and completion;
@@ -266,7 +266,9 @@ _Avoid_: mega-prompt, self-chaining prompt, pack-wide method
 
 **Global AGENTS template**
 
-The pack-owned bootstrap section merged into a user's global `AGENTS.md` without replacing personal rules.
+The complete template seeds a missing global `AGENTS.md`; later installs update
+only the pack-owned bootstrap section without replacing delegation or personal
+rules.
 _Avoid_: pack manual, copied route map
 
 ## Vocabulary Owners

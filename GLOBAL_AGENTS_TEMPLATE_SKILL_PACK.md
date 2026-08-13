@@ -1,5 +1,12 @@
 # Global Codex Instructions
 
+## Delegation
+
+Delegate only when the user asks directly or an applicable `AGENTS.md` or
+invoked skill explicitly requires fanout. Delegate only concrete, bounded,
+independent work. Keep the final decision, synthesis, integration, and
+verification with the root.
+
 ## Skill Pack Bootstrap
 
 Repo-local `AGENTS.md` primes. `docs/agents/*` teaches. Skills execute.

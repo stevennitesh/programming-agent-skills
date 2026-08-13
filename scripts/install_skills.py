@@ -1594,7 +1594,7 @@ def bootstrap_section(template: Path) -> str:
 def render_global_bootstrap(template: Path, target: Path) -> tuple[str, str]:
     section = bootstrap_section(template)
     if not target.exists():
-        return "created", "# Global Codex Instructions\n\n" + section
+        return "created", template.read_text(encoding="utf-8").strip() + "\n"
 
     text = target.read_text(encoding="utf-8")
     current_span = level_two_section_span(text, BOOTSTRAP_HEADING)
@@ -2113,7 +2113,10 @@ def parse_args() -> argparse.Namespace:
         "--global-agents",
         type=Path,
         default=Path.home() / ".codex/AGENTS.md",
-        help="Global AGENTS.md that receives the minimal bootstrap section.",
+        help=(
+            "Global AGENTS.md seeded from the lean template, then updated only "
+            "at the bootstrap section."
+        ),
     )
     parser.add_argument("--skip-global-agents", action="store_true")
     parser.add_argument(
