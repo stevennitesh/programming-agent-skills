@@ -3,11 +3,15 @@
 from __future__ import annotations
 
 import argparse
+import errno
 import hashlib
 import re
 import subprocess
 import tomllib
+from dataclasses import dataclass
+from enum import Enum
 from pathlib import Path
+from typing import TypeAlias
 
 
 REQUIRED_FILES = (
@@ -18,7 +22,7 @@ REQUIRED_FILES = (
     "docs/agents/engineering-contract.md",
 )
 
-SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:cdb31b54c586 -->"
+SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:602d914543d9 -->"
 SETUP_SCHEMA_MARKER_RE = re.compile(
     r"<!-- programming-agent-skills setup-schema: \d+:[0-9a-f]{12} -->"
 )
@@ -109,18 +113,57 @@ PARALLEL_CONFIG = Path(".codex/config.toml")
 PARALLEL_AGENT = Path(".codex/agents/luna_max.toml")
 
 
+class FailureKind(str, Enum):
+    FILESYSTEM_IO = "filesystem-io"
+    TEXT_DECODING = "text-decoding"
+    GIT_UNAVAILABLE = "git-unavailable"
+    GIT_INVOCATION = "git-invocation"
+    GIT_COMMAND = "git-command"
+
+
+@dataclass(frozen=True)
+class ValidationFailure:
+    kind: FailureKind
+    operation: str
+    path: str | None = None
+
+    def render(self) -> str:
+        context = f" for {self.path}" if self.path is not None else ""
+        return f"[{self.kind.value}] {self.operation} failed{context}"
+
+
+Failure: TypeAlias = str | ValidationFailure
+
+
+def render_failure(failure: Failure) -> str:
+    if isinstance(failure, ValidationFailure):
+        return failure.render()
+    return failure
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("repo", nargs="?", default=".", help="Target repository root")
     return parser.parse_args()
 
 
-def read_required(root: Path, relative: str, failures: list[str]) -> str:
+def read_required(root: Path, relative: str, failures: list[Failure]) -> str:
     path = root / relative
-    if not path.is_file():
-        failures.append(f"Missing required setup file: {relative}")
+    try:
+        if not path.is_file():
+            failures.append(f"Missing required setup file: {relative}")
+            return ""
+        return path.read_text(encoding="utf-8")
+    except UnicodeError:
+        failures.append(
+            ValidationFailure(FailureKind.TEXT_DECODING, "decode setup file", relative)
+        )
         return ""
-    return path.read_text(encoding="utf-8")
+    except OSError:
+        failures.append(
+            ValidationFailure(FailureKind.FILESYSTEM_IO, "read setup file", relative)
+        )
+        return ""
 
 
 def require_tokens(
@@ -266,12 +309,22 @@ def unfenced_markdown(text: str) -> str:
     return "".join(lines)
 
 
-def engineering_contract_failures(text: str, relative: str) -> list[str]:
-    failures: list[str] = []
+def engineering_contract_failures(text: str, relative: str) -> list[Failure]:
+    failures: list[Failure] = []
     if markdown_headings(text, 1) != ["Engineering Contract"]:
         failures.append(f"{relative} must contain one top-level Engineering Contract heading")
-    source = Path(__file__).resolve().parents[1] / "engineering-contract.md"
-    digest = hashlib.sha256(source.read_bytes()).hexdigest()[:12]
+    try:
+        source = Path(__file__).resolve().parents[1] / "engineering-contract.md"
+        digest = hashlib.sha256(source.read_bytes()).hexdigest()[:12]
+    except OSError:
+        failures.append(
+            ValidationFailure(
+                FailureKind.FILESYSTEM_IO,
+                "read canonical setup file",
+                "engineering-contract.md",
+            )
+        )
+        return failures
     expected_marker = (
         "<!-- programming-agent-skills setup-file: "
         f"engineering-contract.md:{digest} -->"
@@ -345,13 +398,34 @@ def parallel_package() -> Path:
     return Path(__file__).resolve().parents[2] / "parallel-implement"
 
 
-def parallel_support_failures(root: Path) -> list[str]:
+def parallel_support_failures(root: Path) -> list[Failure]:
+    try:
+        return inspect_parallel_support(root)
+    except UnicodeError:
+        return [
+            ValidationFailure(
+                FailureKind.TEXT_DECODING,
+                "decode parallel configuration",
+                PARALLEL_CONFIG.as_posix(),
+            )
+        ]
+    except OSError:
+        return [
+            ValidationFailure(
+                FailureKind.FILESYSTEM_IO,
+                "inspect parallel support",
+                ".codex",
+            )
+        ]
+
+
+def inspect_parallel_support(root: Path) -> list[Failure]:
     config_path = root / PARALLEL_CONFIG
     agent_path = root / PARALLEL_AGENT
     if not config_path.is_file() and not agent_path.is_file():
         return []
 
-    failures: list[str] = []
+    failures: list[Failure] = []
     package = parallel_package()
     helper_path = package / "scripts/lane_worktree.py"
     template_path = package / "assets/luna_max.toml"
@@ -371,7 +445,7 @@ def parallel_support_failures(root: Path) -> list[str]:
 
     try:
         config = tomllib.loads(config_path.read_text(encoding="utf-8"))
-    except (OSError, UnicodeError, tomllib.TOMLDecodeError) as error:
+    except tomllib.TOMLDecodeError as error:
         failures.append(f".codex/config.toml is invalid: {error}")
         return failures
 
@@ -407,42 +481,84 @@ def parallel_support_failures(root: Path) -> list[str]:
     return failures
 
 
-def check_ignore(root: Path, probe: str) -> tuple[bool | None, str]:
-    result = subprocess.run(
-        ["git", "check-ignore", "-q", "--no-index", probe],
-        cwd=root,
-        text=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
+def git_invocation_failure(operation: str, error: OSError) -> ValidationFailure:
+    kind = (
+        FailureKind.GIT_UNAVAILABLE
+        if isinstance(error, FileNotFoundError) or error.errno == errno.ENOENT
+        else FailureKind.GIT_INVOCATION
     )
+    return ValidationFailure(kind, operation)
+
+
+def run_git(root: Path, arguments: list[str], operation: str) -> tuple[
+    subprocess.CompletedProcess[str] | None, ValidationFailure | None
+]:
+    try:
+        return (
+            subprocess.run(
+                ["git", *arguments],
+                cwd=root,
+                text=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            ),
+            None,
+        )
+    except OSError as error:
+        return None, git_invocation_failure(operation, error)
+    except UnicodeError:
+        return None, ValidationFailure(
+            FailureKind.TEXT_DECODING,
+            f"decode Git output from {operation}",
+        )
+
+
+def check_ignore(root: Path, probe: str) -> tuple[bool | None, Failure]:
+    result, failure = run_git(
+        root,
+        ["check-ignore", "-q", "--no-index", probe],
+        "check Git ignore state",
+    )
+    if failure is not None:
+        return None, failure
+    assert result is not None
     if result.returncode == 0:
         return True, ""
     if result.returncode == 1:
         return False, ""
-    return None, result.stderr.strip() or "git check-ignore failed"
+    return None, ValidationFailure(FailureKind.GIT_COMMAND, "check Git ignore state")
 
 
-def git_root_failures(root: Path) -> list[str]:
-    try:
-        result = subprocess.run(
-            ["git", "rev-parse", "--show-toplevel"],
-            cwd=root,
-            text=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-        )
-    except OSError as error:
-        return [f"Git root check failed: {error}"]
+def git_root_failures(root: Path) -> list[Failure]:
+    result, failure = run_git(root, ["rev-parse", "--show-toplevel"], "find Git root")
+    if failure is not None:
+        return [failure]
+    assert result is not None
     if result.returncode != 0:
         return ["Target is not a Git repository"]
-    if Path(result.stdout.strip()).resolve() != root:
+    try:
+        observed_root = Path(result.stdout.strip()).resolve()
+    except OSError:
+        return [ValidationFailure(FailureKind.FILESYSTEM_IO, "resolve Git root")]
+    if observed_root != root:
         return ["Target must be the Git repository root"]
     return []
 
 
 def main() -> int:
-    root = Path(parse_args().repo).resolve()
-    failures: list[str] = []
+    raw_root = Path(parse_args().repo)
+    try:
+        root = raw_root.resolve()
+    except OSError:
+        failure = ValidationFailure(
+            FailureKind.FILESYSTEM_IO,
+            "resolve repository root",
+            "repository root",
+        )
+        print("Setup surface is incomplete:")
+        print(f"- {failure.render()}")
+        return 1
+    failures: list[Failure] = []
 
     repository_failures = git_root_failures(root)
     failures.extend(repository_failures)
@@ -521,7 +637,7 @@ def main() -> int:
     if failures:
         print("Setup surface is incomplete:")
         for failure in failures:
-            print(f"- {failure}")
+            print(f"- {render_failure(failure)}")
         return 1
 
     print(f"Setup surface is valid: {root}")
