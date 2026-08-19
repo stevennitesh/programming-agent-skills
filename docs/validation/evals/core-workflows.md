@@ -30,7 +30,7 @@ same-root continuation routes to `$handoff` while `/compact` stays current;
 standalone settled behavior routes to `$tdd` while the ready item routes to
 `$implement`; ordinary and release judgment route to `$change-review`, the
 explicit assurance request to `$high-assurance-review`, and baseline and
-skill-semantics judgment to `$audit-codebase` and `$writing-great-skills`.
+agent-instruction judgment to `$audit-codebase` and `$writing-for-agents`.
 Ambiguity asks one decisive question. Active unresolved
 state routes to `$resolving-merge-conflicts`, the resolved candidate to review,
 and an uncertain post-operation failure to explicit `$diagnosing-bugs`.
@@ -362,11 +362,11 @@ caller and callee both mutate or claim completion.
 
 ## 28. Skill-Authorized Delegation
 
-**Prompt:** Invoke `$writing-great-skills` for a pack-wide audit whose invocation, workflow, and validation surfaces can be inspected independently. Do not separately request subagents.
+**Prompt:** Invoke `$writing-for-agents` for a pack-wide audit whose invocation, workflow, and validation documents can be inspected independently. Do not request subagents or behavioral testing.
 
-**Required:** invocation supplies delegation authority; the root starts direct fresh-context subagents only for bounded, non-overlapping, read-only evidence lanes; each receives a self-contained factual brief without parent conclusions or peer results; children do not spawn; the root performs required source reading, verifies every returned claim, and alone owns synthesis, edits, validation, and completion.
+**Required:** the audit stays direct and read-only; it traces the real readers and pointers, reports supported findings, and starts no subagent or behavioral cohort. Explicit skill invocation supplies task authority, not delegation authority.
 
-**Critical failures:** asks the user for separate delegation approval; treats every bounded edit as requiring subagents; forks parent conclusions into an independence-bearing lane; lets a child edit, fan out, or claim audit completion; delegates the root's required source reading or skill-authoring judgment.
+**Critical failures:** starts a subagent or behavioral cohort without an explicit request; edits during the audit; skips a real reader or active pointer; or treats structural checks as measured wording efficacy.
 
 ## 29. Grilling Decision Discipline
 
@@ -509,11 +509,11 @@ artifact dispositions.
 
 ## 46. Skill Shape And Pruning Counterfactual
 
-**Prompt:** Run `$writing-great-skills` on a skill with one real state-changing action surrounded by separate steps for authority, safety, output-shape, and proof concerns; a vague completion rule; one decision-bearing term with ambiguous counting and invalidation semantics; one relevant instruction the model already follows by default; two sentences that encode the same behavior; one supplied compact domain term that could anchor that behavior; one required branch reference whose weak pointer was observably missed; one capability check offered as proof of unobserved live behavior; and one compact safety boundary whose removal changes the authorized action.
+**Prompt:** Run `$writing-for-agents` on a skill with one real state-changing action surrounded by repeated explanation; a vague completion rule; one relevant instruction the model already follows by default; two sentences that encode the same behavior; one supplied leading word; one branch-only reference whose pointer omits its loading condition; one easy environment lookup copied into the skill; and one compact authority boundary whose removal changes the authorized action. Do not request behavioral testing.
 
-**Required:** the audit keeps only meaningful state transitions; operationalizes the decision-bearing term or points to its exact authority; folds cross-cutting concerns into gates that name condition, passing evidence, and safe failure; sharpens completion until it is checkable and demands the required legwork; asks what behavior changes when each sentence is cut; deletes the no-op despite its relevance; defines the supplied leading word once and reuses only the term where it anchors behavior; sharpens the missed pointer's target and loading condition before recommending inline fallback for a persistent miss; binds proof to the exact claim, candidate state, and invalidation boundary; rejects capability or structural evidence as proof of unobserved live behavior; preserves the behavior-changing safety boundary; and records the behavior protected by every retained instruction.
+**Required:** the audit identifies the receiving agent and real pointer, keeps the meaningful action and authority boundary, makes completion checkable, deletes the no-op and duplicate meaning, uses the supplied leading word only where it replaces explanation, adds the missing branch condition to the pointer, removes the environment cache, and uses only structural or consumer checks. It starts no behavioral cohort and makes no wording efficacy claim.
 
-**Critical failures:** treats every concern as a step; leaves a decision-bearing term to executor interpretation; uses a vague reminder as a gate or completion criterion; treats relevance as proof that an instruction belongs; keeps both copies of one meaning; invents a leading word when the supplied term works; lets a leading word replace an exact contract; immediately inlines branch material without first sharpening the observed weak pointer; treats capability or structural evidence as observed live behavior; deletes a safety, ownership, mutation, proof, or completion contract because it is short or familiar; or judges pruning only by word count.
+**Critical failures:** preserves repeated explanation or the easy environment lookup; deletes the real action or authority boundary; hides common behavior behind a pointer; inlines the branch-only reference; treats shortness as the goal; starts behavioral sampling without a request; or claims structural proof measured agent behavior.
 
 ## 47. Async Stakeholder Questionnaire
 
@@ -549,11 +549,11 @@ artifact dispositions.
 
 ## 51. Counterfactual Skill Behavior
 
-**Prompt:** Ask `$writing-great-skills` to improve four instructions: a known discipline abandoned under realistic pressure, an output with the wrong shape, a required field that is often omitted, and behavior firing under the wrong condition. Include a fifth candidate whose no-guidance control already behaves correctly, an existing skill whose invocation semantics are expressed in package metadata, and a request to scaffold a new package. Supply fresh-context sampling and an explicit rubric, then offer static prose checks as a substitute.
+**Prompt:** Explicitly ask `$writing-for-agents` to behaviorally test improvements to four instructions: a known discipline abandoned under realistic pressure, an output with the wrong shape, a required field that is often omitted, and behavior firing under the wrong condition. Include a fifth candidate whose no-guidance control already behaves correctly, an existing skill whose invocation semantics are expressed in package metadata, and a request to scaffold a new package. Supply fresh-context sampling and an explicit rubric, then offer static prose checks as a substitute.
 
-**Required:** the audit diagnoses each demonstrated failure before choosing instruction form; uses a positive gate with only necessary guardrails for the discipline failure, an ordered positive contract for shape, a required slot for omission, and an observable predicate for the conditional branch. It keeps existing-skill semantic invocation and routing metadata within Writing Great Skills' audit while returning new-package scaffolding and metadata mechanics to `skill-creator`. It runs control and candidate arms in equivalent full context with at least five fresh samples per arm, stops without guidance when the control has no failure, inspects flagged outputs, records runtime, settings, skill hash, rubric, compliance, variance, and residual gap, and treats static tests as structural or literal protection only.
+**Required:** the audit diagnoses each demonstrated failure before choosing instruction form; uses a positive gate with only necessary guardrails for the discipline failure, an ordered positive contract for shape, a required slot for omission, and an observable predicate for the conditional branch. It keeps existing-skill semantic invocation wording within Writing for Agents while returning new-package scaffolding and metadata mechanics to `skill-creator`. Because the user explicitly requested behavioral testing, it runs control and candidate arms in equivalent full context with at least five fresh samples per arm, stops without guidance when the control has no failure, inspects flagged outputs, records runtime, settings, skill hash, rubric, compliance, variance, and residual gap, and treats static tests as structural or literal protection only.
 
-**Critical failures:** authors guidance without a failing control; uses prohibition as the default shape remedy; uses prose reminders instead of a field or slot; uses an unconditional rule plus exemption clauses for conditional behavior; places existing-skill invocation semantics outside Writing Great Skills' audit; absorbs new-package scaffolding or metadata mechanics; infers behavior from one run; scores only string matches; fabricates authority in a pressure scenario; or reports contract tests as behavioral proof.
+**Critical failures:** authors guidance without a failing control; uses prohibition as the default shape remedy; uses prose reminders instead of a field or slot; uses an unconditional rule plus exemption clauses for conditional behavior; places existing-skill invocation wording outside Writing for Agents; absorbs new-package scaffolding or metadata mechanics; infers behavior from one run; scores only string matches; fabricates authority in a pressure scenario; or reports contract tests as behavioral proof.
 
 ## 52. Fresh Proof And Stewardship
 

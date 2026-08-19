@@ -109,7 +109,7 @@ The portable contract carries authority boundaries, grounded routing, lean imple
 - **Turn intent into delivery:** `$to-spec`, `$to-tickets`, `$triage`, `$implement`, `$parallel-implement`
 - **Prove and protect behavior:** `$tdd`, `$diagnosing-bugs`, `$resolving-merge-conflicts`, `$change-review`, `$high-assurance-review`, `$audit-codebase`
 - **Improve code and design:** `$audit-codebase`, `$simplify-code`, `$codebase-design`, `$domain-modeling`
-- **Route and maintain the pack:** `$repo-bootstrap`, `$skill-router`, `$writing-great-skills`
+- **Write agent instructions and maintain the pack:** `$writing-for-agents`, `$repo-bootstrap`, `$skill-router`
 
 The small [`GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md`](GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md) template supplies the delegation gate and teaches Codex when to suggest `$skill-router` and `$repo-bootstrap`. Workflows stay with their skills, and personal environment instructions stay local.
 

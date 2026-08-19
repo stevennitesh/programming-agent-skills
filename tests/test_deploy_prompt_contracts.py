@@ -10,7 +10,7 @@ FRESH_EPOCH = ROOT / "docs/synthesis/methods/fresh-composition-epoch.md"
 SYNTHESIS_README = ROOT / "docs/synthesis/README.md"
 METHODS_README = ROOT / "docs/synthesis/methods/README.md"
 BEHAVIOR_EVALS = (
-    ROOT / "skills/custom/writing-great-skills/BEHAVIOR-EVALS.md"
+    ROOT / "skills/custom/writing-for-agents/references/BEHAVIOR-EVALS.md"
 )
 
 
@@ -100,8 +100,9 @@ def test_wording_claim_routes_to_existing_conditional_behavior_protocol() -> Non
     protocol = _normalized(BEHAVIOR_EVALS)
 
     assert (
-        "skills/custom/writing-great-skills/BEHAVIOR-EVALS.md" in behavioral
+        "skills/custom/writing-for-agents/references/BEHAVIOR-EVALS.md" in behavioral
     )
+    assert "unless the user explicitly requested behavioral testing" in behavioral
     for claim in (
         "wording",
         "invocation",
@@ -113,7 +114,7 @@ def test_wording_claim_routes_to_existing_conditional_behavior_protocol() -> Non
     ):
         assert claim in behavioral
     assert "decision no weaker than the control" in behavioral
-    assert "If the registered control deficit does not appear" in protocol
+    assert "reject-no-control-deficit" in protocol
     assert "stop before candidate sampling" in protocol
     assert "Accept only when the control shows the registered deficit" in protocol
 

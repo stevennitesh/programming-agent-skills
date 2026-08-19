@@ -1559,7 +1559,8 @@ def test_spawned_agents_share_one_runtime_profile_owner() -> None:
     assert "[Runtime Profiles](../parallel-implement/references/RUNTIME-PROFILES.md)" in review
     assert "[Runtime Profiles](../parallel-implement/references/RUNTIME-PROFILES.md)" in assurance
     assert "passes it directly when starting the worker" in profiles_flat
-    assert "first matching capable worker using the ordered conditions" in implement_flat
+    assert "If the user explicitly requests subagents" in implement_flat
+    assert "delegate only a bounded edit that one worker can own" in implement_flat
     assert "Luna/max `clear-worker`" not in implement
     assert not (CUSTOM / "parallel-implement/scripts/run_ledger.py").exists()
     custom_agents = sorted((ROOT / ".codex/agents").glob("*.toml"))
@@ -1979,23 +1980,14 @@ def test_high_assurance_review_checks_snapshot_drift_not_baseline_drift() -> Non
 
 def test_implement_uses_condition_triggered_change_review() -> None:
     implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
-    review = implement.split("## Check, Conditional Review, And Repair", 1)[1].split(
-        "## Final Read-Back And Return", 1
-    )[0]
+    review = implement.split("## 4. Prove", 1)[1].split("## 5. Finish", 1)[0]
     flat = " ".join(review.split())
 
-    assert "user or repository explicitly requires independent review" in flat
+    assert "user or repository requires independent review" in flat
     assert "two or more independent authors" in flat
-    assert "focused proof establishes behavior" in flat
-    assert "One delegated edit" in flat
-    assert "do not trigger review" in flat
-    assert "missing proof returns `partial` or `blocked`" in flat
-    assert "one fresh `ordinary-reviewer` through `$change-review`" in flat
-    assert "distinct from every implementation actor" in flat
-    assert "repeat Change Review only while the original trigger still applies" in flat
-    assert "Do not describe direct self-check as independent review" in flat
-    assert "stage only owned paths or hunks" in flat
-    assert "never unstage foreign work" in flat.lower()
+    assert "material shared-contract or irreversible-migration judgment" in flat
+    assert "Keep the candidate fixed while it is reviewed" in flat
+    assert "Review grants no authority to widen scope" in flat
 
 
 def test_review_policy_is_consistent_across_delivery_metadata() -> None:
@@ -2013,7 +2005,7 @@ def test_review_policy_is_consistent_across_delivery_metadata() -> None:
         )
     )
 
-    assert "Change Review only when its trigger applies" in (
+    assert "Use heavier workflows only when their stated condition applies" in (
         implement["interface"]["default_prompt"]
     )
     assert "Change Review only when its trigger applies" in (
@@ -2102,7 +2094,7 @@ def test_tdd_invocation_gate_is_consistent_across_active_owners() -> None:
         assert "repository policy" in owner.lower()
     assert "integration tests, regression tests, or coverage alone do not trigger" in tdd
     assert "TRACE owns finding or creating" in " ".join(tdd.split())
-    assert "When inactive, implement directly and run appropriate tests" in " ".join(
+    assert "Otherwise implement directly and use ordinary tests" in " ".join(
         implement.split()
     )
     assert "never runs a second TDD loop" in " ".join(parallel.split())
@@ -2380,7 +2372,6 @@ def test_implementation_closeout_requires_the_spec_axis() -> None:
 
     for text in (review, assurance):
         assert "`Spec required: yes | no`" in text
-    assert "`Spec required: yes`" in implement
     assert "`Spec required: yes`" in parallel
 
 
@@ -2392,10 +2383,9 @@ def test_implementation_workflows_keep_local_proof_owners() -> None:
         (CUSTOM / "parallel-implement/SKILL.md").read_text(encoding="utf-8").split()
     )
 
-    assert "tracker and label owners only for tracker-backed work" in implement
-    assert "all source-owned commitments unchanged" in implement
-    assert "Bind proof to the exact candidate and inputs" in implement
-    assert "focused checks that prove the change" in implement
+    assert "Trace the real callers, data flow, and existing proof seam" in implement
+    assert "Run the nearest useful check" in implement
+    assert "Inspect the real output or caller path" in implement
     assert "proof owners" in parallel
     assert "Carry worker proof only while" in parallel
     assert "run only proof invalidated by the transition" in parallel
@@ -2414,7 +2404,8 @@ def test_implement_owns_one_plain_worker_handoff_without_a_schema() -> None:
     assert handoff_path.is_file()
     assert "[Plain Worker Handoff](references/WORKER-HANDOFF.md)" in implement
     assert "[Plain Worker Handoff](../implement/references/WORKER-HANDOFF.md)" in parallel
-    assert "guidance, not as a schema" in " ".join(implement.split())
+    assert "If the user explicitly requests subagents" in " ".join(implement.split())
+    assert "The root inspects the returned diff and proof" in " ".join(implement.split())
     assert "guidance, not a schema" in " ".join(parallel.split())
     assert "implement/references/WORKER-HANDOFF.md" in relationships
     assert "schema" not in handoff.lower()
@@ -2436,13 +2427,13 @@ def test_implementation_workflows_trace_acceptance_before_completion() -> None:
         .split()
     )
 
-    assert "Before either path chooses an implementation seam" in implement
+    assert "Trace the real callers, data flow, and existing proof seam" in implement
     assert (
         "Before choosing an implementation seam, each worker traces every assigned"
         in parallel
     )
     assert (
-        "Do not return `partial` merely because the first bounded seam is green"
+        "Call the item complete only when the requested behavior works"
         in implement
     )
     assert (
@@ -2467,8 +2458,9 @@ def test_planning_and_delivery_activate_lean_integrated_quality_contract() -> No
 
     assert "one bounded implementation" in to_spec
     assert "smallest execution packet" in tickets
-    assert "smallest acceptance-complete path" in implement
-    assert "Change Closure" in implement and "Change Closure" in review
+    assert "smallest integrated design" in implement
+    assert "Remove code made obsolete by the change" in implement
+    assert "Change Closure" in review
     assert "Parallelism is an optimization, not a goal" in parallel
     assert "ToSpec --> Contract" in relationships
     assert "ToTickets --> Contract" in relationships
@@ -2487,9 +2479,9 @@ def test_ticket_and_delivery_packets_are_compact_and_preserve_repairs() -> None:
     assert "Omit inapplicable optional sections" in tickets_flat
     assert "graph-level Repair generation budget" not in tickets_flat
     assert "Create no graph or tracker state" in tickets_flat
-    assert "smallest acceptance-complete path" in implement_flat
-    assert "plain ticket-specific handoff" in implement_flat
-    assert "prose Return as evidence" in implement_flat
+    assert "Use the caller's selection as the scope fence" in implement_flat
+    assert "Direct work creates no tracker state" in implement_flat
+    assert "Return a concise summary" in implement_flat
     assert "create no campaign ledger" in parallel_flat
     assert "plain task context" in parallel_flat
     assert "Prose is evidence, not trusted state" in parallel_flat
@@ -2615,125 +2607,101 @@ def test_research_owns_one_authorized_cited_note() -> None:
     assert "starting downstream work" in research
 
 
-def test_writing_great_skills_keeps_shape_and_relationship_boundary() -> None:
-    skill_dir = CUSTOM / "writing-great-skills"
+def test_writing_for_agents_keeps_a_lean_common_path_and_conditional_branches() -> None:
+    skill_dir = CUSTOM / "writing-for-agents"
     skill = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
-    glossary = (skill_dir / "GLOSSARY.md").read_text(encoding="utf-8")
-    behavior_evals = (skill_dir / "BEHAVIOR-EVALS.md").read_text(
+    mechanics = (skill_dir / "references/SKILL-MECHANICS.md").read_text(
         encoding="utf-8"
+    )
+    behavior_evals = (skill_dir / "references/BEHAVIOR-EVALS.md").read_text(
+        encoding="utf-8"
+    )
+    metadata = yaml.safe_load(
+        (skill_dir / "agents/openai.yaml").read_text(encoding="utf-8")
     )
     relationships = (
         ROOT / "docs/synthesis/skill-context-relationships.md"
     ).read_text(encoding="utf-8")
     context = (ROOT / "CONTEXT.md").read_text(encoding="utf-8")
     normalized_skill = " ".join(skill.split())
-    normalized_glossary = " ".join(glossary.split())
+    normalized_mechanics = " ".join(mechanics.split())
     normalized_evals = " ".join(behavior_evals.split())
     normalized_context = " ".join(context.split())
 
     assert implicit_policy(skill_dir)
+    assert metadata["interface"] == {
+        "display_name": "Writing for Agents",
+        "short_description": "Write instructions agents can follow",
+    }
     assert {
         path.relative_to(skill_dir).as_posix()
         for path in skill_dir.rglob("*")
         if path.is_file()
     } == {
-        "BEHAVIOR-EVALS.md",
-        "GLOSSARY.md",
         "SKILL.md",
         "agents/openai.yaml",
+        "references/BEHAVIOR-EVALS.md",
+        "references/SKILL-MECHANICS.md",
     }
     assert set(re.findall(r"\[[^]]+\]\(([^)]+\.md)\)", skill)) == {
-        "BEHAVIOR-EVALS.md",
-        "GLOSSARY.md",
+        "references/BEHAVIOR-EVALS.md",
+        "references/SKILL-MECHANICS.md",
     }
-    assert all((skill_dir / target).is_file() for target in (
-        "BEHAVIOR-EVALS.md",
-        "GLOSSARY.md",
-    ))
-    assert "Make canonical skill behavior predictable" in normalized_skill
+    assert "Write documents that help an agent take the intended process" in normalized_skill
     assert re.findall(
-        r"^## (Resolve|Trace|Shape|Prune|Prove|Return)$",
+        r"^## [1-5]\. (.+)$",
         skill,
         flags=re.MULTILINE,
-    ) == ["Resolve", "Trace", "Shape", "Prune", "Prove", "Return"]
-    assert "read-only proof branch within either operation" in normalized_skill
-    assert "not a third operation" in normalized_skill
-    assert "exact next-owner handoff" in normalized_skill
-    assert "Use steps for ordered actions or state changes" in normalized_skill
-    assert "Use gates for cross-cutting checks" in normalized_skill
-    assert "condition, passing evidence, and safe failure action" in normalized_skill
-    assert "do not defer it to review" in normalized_skill
-    assert "Recheck only after a transition could invalidate it" in normalized_skill
-    assert "Never report a failed branch complete" in normalized_skill
-    assert "weakest load-bearing evidence" in normalized_skill
-    assert "every proposed step, field, artifact, view, and check" in normalized_skill
-    assert "use the term consistently where the practice must stay salient" in normalized_skill
-    assert "Audit complete" in skill and "Author complete" in skill
-    assert "## Prune" in skill
-    assert all(term in skill for term in (
-        "`Keep`",
-        "`Collapse`",
-        "`Disclose`",
-        "`Delete`",
-    ))
-    assert all(term in glossary for term in (
-        "**Leading word:**",
-        "**Implicitly invocable:**",
-        "**Explicit-only:**",
-        "**Description:**",
-        "**Branch-only reference:**",
-        "**Skill split:**",
-        "**Transfer gate:**",
-        "**Derived view:**",
-    ))
-    assert "sharpen that pointer first" in normalized_glossary
-    assert "narrowest shared owner" in normalized_glossary
-    assert "projection of its owning facts" in normalized_glossary
-    assert (
-        "one prospective mutation, then validate their agreement before publication"
-        in normalized_glossary
-    )
-    assert "begin any attempt limit only at the effect boundary" in normalized_skill
-    assert "read-only proof branch" in normalized_evals
-    assert "fresh isolated model executions" in normalized_evals
-    assert "parent operation status plus one evaluation decision" in normalized_evals
+    ) == [
+        "Understand the reader",
+        "Organize the information",
+        "Write the instructions",
+        "Prune",
+        "Check the result",
+    ]
+    for concept in (
+        "context pointer",
+        "Context load",
+        "Cognitive load",
+        "completion criterion",
+        "leading word",
+        "environment as a source of truth",
+        "no-op sentence",
+    ):
+        assert concept in skill
+    assert "Only when the user explicitly asks" in normalized_skill
+    assert "Otherwise do not run behavioral cohorts" in normalized_skill
+    assert "installation, publishing, staging, or commit only when the user requests it" in normalized_skill
+    assert "Publishing and push require separate authority" in normalized_skill
+    assert "Automatic selection is the default" in normalized_mechanics
+    assert "description that acts as its context pointer" in normalized_mechanics
+    assert "folder name, frontmatter `name`, metadata" in normalized_mechanics
+    assert "structural checks prove package integrity" in normalized_mechanics
+    assert "only when the user explicitly asks" in normalized_evals
+    assert "Start with one fresh control and candidate sample" in normalized_evals
+    assert "Add samples only when the result varies" in normalized_evals
+    assert "Do not create a durable report unless the user asks" in normalized_evals
     assert all(term in normalized_context for term in (
+        "context pointers",
+        "context and cognitive load",
+        "information hierarchy",
         "leading words",
-        "reference loading",
-        "skill splitting",
-        "transfer gates",
-        "derived views",
-        "completion",
-        "pruning stay inline",
+        "environment caches",
+        "explicit-user-request branch",
     ))
-    assert "fork_turns" not in skill
-    assert "For a new package" in normalized_skill
-    assert "owns scaffolding and metadata mechanics" in normalized_skill
-    assert "For an existing canonical skill" in normalized_skill
-    assert (
-        "semantic invocation and routing predicates, behavior, and wording"
-        in normalized_skill
-    )
-    assert "semantics expressed through package metadata" in normalized_skill
     assert (
         "bundled system `skill-creator` owns new-package scaffolding and metadata mechanics"
         in relationships
     )
     assert (
-        "For an existing canonical skill, `$writing-great-skills` owns semantic invocation"
+        "`$writing-for-agents` owns the instructions agents consume"
         in relationships
     )
     assert (
-        "does not absorb metadata mechanics, installation, or delivery"
+        "stops before metadata mechanics, installation, or delivery"
         in relationships
     )
-    assert all(term in relationships for term in (
-        "leading-word",
-        "reference-loading",
-        "skill-splitting",
-        "derived-state",
-        "fresh-context counterfactual wording evaluation",
-    ))
+    assert "user explicitly requests behavioral testing" in relationships
 
 
 def test_merge_conflict_resolution_is_three_way_and_finish_bounded() -> None:
@@ -2888,7 +2856,7 @@ def test_mutating_workflows_require_proportional_readback() -> None:
     parallel = " ".join(
         (CUSTOM / "parallel-implement/SKILL.md").read_text(encoding="utf-8").split()
     )
-    assert "Mutation read-back rules" in implement
+    assert "Read the result back when the operation can partially succeed" in implement
     assert "mutation read-back" in parallel
 
     for name in ("to-spec", "to-tickets", "triage", "wayfinder"):
@@ -2955,7 +2923,7 @@ def test_git_and_parallel_delivery_roles_stay_out_of_the_shared_contract() -> No
         assert "Git mutation owners" not in normalized
         assert "starting index" not in normalized
         assert "registered worktrees" not in normalized
-    assert "preserving the starting index and unrelated work" in " ".join(implement.split())
+    assert "Preserve unrelated work" in " ".join(implement.split())
     assert "Workers never widen scope or dispatch successors" in " ".join(parallel.split())
 
 
@@ -3117,37 +3085,29 @@ def test_implement_selection_preserves_one_ready_item_and_explicit_authority() -
 
     assert not implicit_policy(CUSTOM / "implement")
     assert "Deliver exactly one caller-selected ready item" in flat
-    assert "an exhaustive parent graph to the caller" in flat
-    assert "The caller owns commitments" in flat
+    assert "Use the caller's selection as the scope fence" in flat
+    assert "The caller owns the requested outcome" in flat
     assert "Push requires separate authority" in flat
-    assert "Otherwise, direct work creates one only when the caller requests Git delivery" in flat
-    assert "caller explicitly requests subagents" in flat
-    assert "ordinary Implement invocation stays direct" in flat
-    assert "caller explicitly requests subagents" in prompt
-    assert "expected root effort saved exceeds handoff and verification cost" in flat
-    assert "create no score, worksheet, or artifact" in flat
-    assert "When the delegation gate fails" in flat
+    assert "Commit only when the user or repository requires Git delivery" in flat
+    assert "user explicitly requests subagents" in flat
+    assert "Work directly by default" in flat
+    assert "smallest sound design" in prompt
+    assert "Use heavier workflows only when their stated condition applies" in prompt
 
 
 def test_implement_closeout_locks_exact_candidate_and_preserves_custody() -> None:
     implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
     flat = " ".join(implement.split())
 
-    assert "pin the exact candidate" in flat.lower()
-    assert "stage only owned paths or hunks" in flat
-    assert "never unstage foreign work" in flat.lower()
-    assert "Read back the final checked tree" in flat
-    assert "Do not rewrite an exact accepted commit" in flat
-    assert "proving `HEAD` unchanged" in flat
-    assert "Otherwise preserve the final checked candidate and stop before commit" in flat
-    assert "retain the claim through commit and configured closeout" in flat
-    assert "read back non-dispatchability" in flat
-    assert "release the claim and verify the frontier" in flat
-    assert "exclusive mutation custody of the reconciled checkout until Return" in flat
-    assert "ordinary Implement invocation stays direct" in flat
-    assert "keep repair with the root" in flat
-    assert "every triggered Change Review" in flat
-    assert "Repair generations" not in flat
+    assert "Keep the candidate fixed while it is reviewed" in flat
+    assert "Direct work creates no tracker state" in flat
+    assert "follow the repository's claim and closeout rules" in flat
+    assert "do not push without separate authority" in flat
+    assert "Read the result back when the operation can partially succeed" in flat
+    assert "Call the item complete only when the requested behavior works" in flat
+    assert "Return a concise summary" in flat
+    assert "Outcome: complete | partial | blocked" not in flat
+    assert "repair successor" not in flat.lower()
 
 
 def test_current_relationships_preserve_candidate_commit_and_repair_claim_custody() -> None:

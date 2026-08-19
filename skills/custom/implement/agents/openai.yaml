@@ -4,4 +4,4 @@ policy:
 interface:
   display_name: "Implement"
   short_description: "Deliver one ready item leanly"
-  default_prompt: "Use $implement to deliver this one caller-selected ready item directly through the smallest integrated change, focused proof, and final diff and state read-back. Delegate to one fresh capability-matched implementer only when the caller explicitly requests subagents and the delegation gate passes. Run independent Change Review only when its trigger applies."
+  default_prompt: "Use $implement to understand this one selected ready item, choose the smallest sound design, implement it in the current owner, run proportionate proof, inspect the final diff, and stop. Use heavier workflows only when their stated condition applies."

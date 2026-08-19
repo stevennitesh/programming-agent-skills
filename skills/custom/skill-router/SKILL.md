@@ -97,7 +97,7 @@ post-operation behavioral failure to `$diagnosing-bugs`.
 | --- | --- |
 | Design one bounded module, interface, seam, or adapter | `$codebase-design` |
 | Resolve domain terms, context boundaries, or ADR-worthy decisions | `$domain-modeling` |
-| Create, edit, audit, or behaviorally test canonical Codex skill semantics | `$writing-great-skills` |
+| Create, edit, or audit instructions agents consume | `$writing-for-agents` |
 
 `$domain-modeling` and `$codebase-design` are shared disciplines. Route to them
 when language or interface shape is the work; otherwise let the owning workflow

@@ -534,10 +534,10 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       ],
       "allowed_contributor_skill_ids": [],
       "capability_id": "CAP-019",
-      "completion_return": "A canonically proved skill-semantic result",
+      "completion_return": "A checked agent-facing document or supported read-only audit",
       "disposition": "selected",
       "entry_conditions": [
-        "Canonical skill behavior, invocation, judgment, action, context loading, Return, or completion needs work"
+        "Instructions consumed by an agent need creation, editing, or audit"
       ],
       "essential": true,
       "exclusions": [
@@ -545,11 +545,11 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Unbounded foreign procedure loading",
         "Automated semantic acceptance"
       ],
-      "observable_outcome": "Create, edit, audit, or behaviorally test canonical Codex skill semantics",
+      "observable_outcome": "Create, edit, or audit instructions agents consume",
       "primary_owner_skill_id": "SK-019",
-      "proof_class": "fresh behavioral proof plus structural identity and boundary proof",
+      "proof_class": "proportionate syntax, pointer, metadata, or consumer proof; fresh behavioral proof only when the user requests it",
       "required_authority_mutation": [
-        "Canonical skill wording, disclosed reference, relationship surface, and behavioral evaluation"
+        "Agent-facing instructions and directly affected pointers or semantic metadata"
       ]
     },
     {
@@ -786,7 +786,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "scenario_id": "PS-018"
       },
       {
-        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for writing-great-skills: Create, edit, audit, or behaviorally test canonical Codex skill semantics",
+        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for writing-for-agents: Create, edit, or audit instructions agents consume",
         "expected_owner_skill_id": "SK-019",
         "scenario_id": "PS-019"
       },
@@ -2803,9 +2803,9 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-025",
       "combined_exit_owner_skill_id": "SK-025",
       "context_loaded": [],
-      "entry_condition": "The situation satisfies canonical skill behavior, invocation, judgment, action, context loading, Return, or completion needs work; return that route and leave it unstarted.",
+      "entry_condition": "Instructions consumed by an agent need creation, editing, or audit; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for skill-router and the declared writing-great-skills input",
+      "input_packet": "Caller-owned bounded Source Trace for skill-router and the declared writing-for-agents input",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-070",
       "required_proof_ids": [
@@ -4237,25 +4237,25 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "acceptance_scenario_ids": [
         "PS-019"
       ],
-      "canonical_name": "writing-great-skills",
-      "completion_condition": "The requested semantic behavior is proved at the canonical owner and stops before installation or delivery",
+      "canonical_name": "writing-for-agents",
+      "completion_condition": "The requested agent-facing document is created, edited, or audited with proportionate proof and stops before installation or delivery",
       "contract_order": 19,
-      "essential_outcome": "Create, edit, audit, or behaviorally test canonical Codex skill semantics",
-      "failure_return": "Return the unsettled skill intent, proof gap, or out-of-owner action",
+      "essential_outcome": "Create, edit, or audit instructions agents consume",
+      "failure_return": "Return the unsettled document intent, proof gap, or out-of-owner action",
       "invocation_mode": "implicit",
       "load_budget_class": "conditional-leaf",
       "negative_exclusion_predicates": [
-        "The request does not satisfy: Canonical skill behavior, invocation, judgment, action, context loading, Return, or completion needs work",
+        "The request does not satisfy: Instructions consumed by an agent need creation, editing, or audit",
         "Another selected skill owns the requested outcome",
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
       "owned_authority_mutation_surfaces": [
-        "Canonical skill wording, disclosed reference, relationship surface, and behavioral evaluation"
+        "Agent-facing instructions and directly affected pointers or semantic metadata"
       ],
       "owned_capability_ids": [
         "CAP-019"
       ],
-      "positive_entry_predicate": "Canonical skill behavior, invocation, judgment, action, context loading, Return, or completion needs work",
+      "positive_entry_predicate": "Instructions consumed by an agent need creation, editing, or audit",
       "primary_role": "leaf",
       "prohibited_ownership": [
         "Another selected skill's semantic decision, local mutation, proof judgment, Return, or completion",
@@ -4263,8 +4263,8 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Pack integration acceptance, epoch Lock, cleanup, installation, or Git delivery unless explicitly owned"
       ],
       "relationship_ids": [],
-      "required_input": "A bounded caller-owned Source Trace and authority for: Create, edit, audit, or behaviorally test canonical Codex skill semantics",
-      "return_packet": "A canonically proved skill-semantic result",
+      "required_input": "A bounded caller-owned target and authority for: Create, edit, or audit instructions agents consume",
+      "return_packet": "A checked agent-facing document or supported read-only audit",
       "skill_id": "SK-019"
     },
     {

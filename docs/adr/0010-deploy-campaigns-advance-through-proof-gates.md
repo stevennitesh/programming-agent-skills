@@ -17,10 +17,11 @@ obligations:
    applicable structural, relationship, compatibility,
    canonical-production-caller, and integration check before behavioral
    dispatch, promotion, or installation.
-3. **Behavioral Proof** is conditional. Exact wording claims use the existing
-   `writing-great-skills/BEHAVIOR-EVALS.md` owner. Effect, preservation,
-   failure, and recovery claims use real disposable state. Deterministic claims
-   receive no behavioral samples.
+3. **Behavioral Proof** is conditional on an explicit user request for
+   behavioral testing. Exact wording claims then use the existing
+   `writing-for-agents/references/BEHAVIOR-EVALS.md` owner. Without that
+   request, the campaign makes no wording efficacy claim. Effect, preservation,
+   failure, and recovery claims use real disposable state.
 4. **Release** performs a cheap cut scan, proves only a concrete material cut,
    and promotes only the exact tested candidate. Installation and Git delivery
    remain with their existing authorities.
@@ -54,7 +55,7 @@ those decisions.
 - The active method and its callers expose one four-obligation path.
 - Candidate-facing deterministic and integration proof precedes all behavioral
   dispatch and canonical promotion.
-- Wording efficacy remains owned by the existing conditional behavioral
+- User-requested wording efficacy remains owned by the conditional behavioral
   protocol; real effects require disposable state.
 - Old campaign files may still be read by humans as history, but no supported
   command consumes them.

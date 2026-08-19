@@ -81,9 +81,9 @@ Copying downstream procedure upward is duplication. Repeating one leading word a
 - `$HOME/.agents/skills/<skill>`: installed mirror, never the edit source of truth.
 
 Canonical extraction has one ownership chain. For a new package, the bundled
-`skill-creator` owns scaffolding and metadata. `$writing-great-skills` Author
-owns semantic edits to the requested canonical package and directly affected
-proof or relationship surfaces, then stops after canonical proof. Installation,
+`skill-creator` owns scaffolding and metadata. `$writing-for-agents` owns the
+instructions agents consume and directly affected pointers. Skill-only
+packaging and metadata mechanics remain with `skill-creator`. Installation,
 publishing, and Git delivery resume only under their own authority.
 
 The installer records pack-managed names in `.programming-agent-skills-manifest.json`. It may update or retire those names while preserving unrelated skills in the shared install directory.
@@ -288,11 +288,12 @@ _Avoid_: pack manual, copied route map
 - Change review candidate, High-assurance review candidate, and Supported
   high-risk trigger belong to this context and
   [ADR-0015](docs/adr/0015-independent-change-review-is-condition-triggered.md).
-- Skill-authoring vocabulary—leading words, invocation, reference loading,
-  skill splitting, transfer gates, and derived views—belongs to
-  [`skills/custom/writing-great-skills/GLOSSARY.md`](skills/custom/writing-great-skills/GLOSSARY.md);
-  predictable behavior, gates, completion, and pruning stay inline in
-  `SKILL.md`.
+- Agent-instruction vocabulary—context pointers, context and cognitive load,
+  information hierarchy, completion criteria, leading words, environment
+  caches, and pruning—belongs to
+  [`skills/custom/writing-for-agents/SKILL.md`](skills/custom/writing-for-agents/SKILL.md).
+  Skill-only invocation and packaging live in its `SKILL-MECHANICS.md`
+  reference; behavioral evaluation is an explicit-user-request branch.
 - Runtime engineering vocabulary and preventive code-quality
   defaults—Traceability, bounded slice, commitment boundary, proof seam,
   repository-owned proof mechanism, fixed point, Spec / Standards,

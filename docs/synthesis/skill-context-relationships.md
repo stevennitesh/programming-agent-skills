@@ -150,8 +150,8 @@ flowchart TD
   CodeDesign --> DirectDesign["DIRECT-DESIGN.md"]
   DirectDesign --> DesignRefs["DEEPENING.md / DESIGN-IT-TWICE.md"]
   CodeDesign -. "wide scan" .-> Audit
-  Writing["writing-great-skills"] --> Glossary["GLOSSARY.md<br/>authoring vocabulary"]
-  Writing --> BehaviorEvals["BEHAVIOR-EVALS.md<br/>counterfactual wording evaluation"]
+  Writing["writing-for-agents"] --> SkillMechanics["references/SKILL-MECHANICS.md<br/>skill-only mechanics"]
+  Writing -. "user requests behavioral testing" .-> BehaviorEvals["references/BEHAVIOR-EVALS.md<br/>counterfactual wording evaluation"]
 ```
 
 ## Invocation Map
@@ -183,7 +183,7 @@ Source: `skills/custom/*/agents/openai.yaml`.
 | `to-spec` | explicit-only |
 | `triage` | explicit-only |
 | `wayfinder` | explicit-only |
-| `writing-great-skills` | implicitly invocable |
+| `writing-for-agents` | implicitly invocable |
 
 ## Runtime Composition
 
@@ -303,7 +303,7 @@ every terminal result directly to its current caller or the user.
 
 | Skill | Supporting files own |
 | --- | --- |
-| `writing-great-skills` | `GLOSSARY.md`: leading-word, invocation, reference-loading, skill-splitting, transfer, and derived-state vocabulary; `BEHAVIOR-EVALS.md`: fresh-context counterfactual wording evaluation |
+| `writing-for-agents` | `references/SKILL-MECHANICS.md`: skill-only invocation, packaging, routing, and structural checks; `references/BEHAVIOR-EVALS.md`: fresh-context wording evaluation loaded only when the user explicitly requests behavioral testing |
 | `codebase-design` | `DIRECT-DESIGN.md`: direct pass, material Interface, safe Return, and packet; `DEEPENING.md`: dependency/Seam, test-portfolio, Change Closure, and migration discipline; `DESIGN-IT-TWICE.md`: alternative Interface exploration |
 | `domain-modeling` | `CONTEXT-FORMAT.md`: glossary and context-map format; `ADR-FORMAT.md`: ADR gate and format |
 | `tdd` | `tests.md`, `mocking.md`, `refactoring.md`: examples and branch mechanics |
@@ -321,7 +321,7 @@ every terminal result directly to its current caller or the user.
 ## Boundary Notes
 
 - The global template exposes bootstrap handles; `skill-router` routes or returns a truthful no-match abstention; neither teaches downstream workflow procedures.
-- The bundled system `skill-creator` owns new-package scaffolding and metadata mechanics. For an existing canonical skill, `$writing-great-skills` owns semantic invocation and routing predicates, behavior, and wording, including semantics expressed through package metadata; it stops after canonical proof and does not absorb metadata mechanics, installation, or delivery.
+- The bundled system `skill-creator` owns new-package scaffolding and metadata mechanics. `$writing-for-agents` owns the instructions agents consume and their directly affected pointers, including semantic invocation wording for existing skills. It stops before metadata mechanics, installation, or delivery.
 - Setup docs own tracker, labels, domain routing, and engineering-contract details. Skills should point there instead of restating those mechanics.
 - `$grill-with-docs` owns composition and preserves the intact Grilling packet
   and cumulative Domain Delta. Wayfinder invokes Domain Modeling separately

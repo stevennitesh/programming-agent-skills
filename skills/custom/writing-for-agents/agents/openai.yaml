@@ -1,0 +1,6 @@
+policy:
+  allow_implicit_invocation: true
+
+interface:
+  display_name: "Writing for Agents"
+  short_description: "Write instructions agents can follow"

@@ -42,7 +42,7 @@ intent or authority is unsettled, return the exact gap and stop.
 
 ## Candidate Lock
 
-Use `$writing-great-skills` in Author mode. Build the smallest
+Use `$writing-for-agents` to build the smallest
 acceptance-complete candidate in the canonical source or a clearly isolated
 candidate root. Freeze the exact candidate bytes and affected dependency
 identities. Do not mutate the installed mirror to obtain proof.
@@ -66,11 +66,12 @@ work merely to advance an obligation.
 
 ## Behavioral Proof
 
-Skip this obligation when the remaining claims are deterministic. Invoke the
-existing conditional protocol at
-[`skills/custom/writing-great-skills/BEHAVIOR-EVALS.md`](../../../skills/custom/writing-great-skills/BEHAVIOR-EVALS.md)
+Skip this obligation unless the user explicitly requested behavioral testing.
+When requested, invoke the protocol at
+[`skills/custom/writing-for-agents/references/BEHAVIOR-EVALS.md`](../../../skills/custom/writing-for-agents/references/BEHAVIOR-EVALS.md)
 only for a claim that exact wording changes invocation, judgment, action,
-context loading, Return, or completion.
+context loading, Return, or completion. Without that request, make no wording
+efficacy claim.
 
 Freeze control and candidate bytes and use the protocol's registered control,
 fresh isolated contexts, adaptive sampling gate, wrong-condition boundary, and
@@ -97,7 +98,7 @@ material-cut bytes, into the canonical skill. Read back the complete canonical
 package and rerun the applicable deterministic integration proof. Any byte
 drift invalidates the affected proof and blocks Release.
 
-`$writing-great-skills` stops after canonical proof. Installation dry-run,
+`$writing-for-agents` stops after canonical proof. Installation dry-run,
 synchronization, and parity require installation authority and use the existing
 installer owner. Git staging, commit, and push require separate Git-delivery
 authority. Git delivery remains separately authorized. Never infer either
