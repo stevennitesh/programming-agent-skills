@@ -54,12 +54,15 @@ takeover, commit-point drift after an effectful resolver, fresh Closure,
 unsupported closure, a later material gap, and owner-confirmed cancellation.
 
 **Required:** Orient derives one operation or safe Return from current identity,
-integrity, frontier, triggers, blockers, and closing evidence. Chart rejects the
+integrity, frontier, triggers, blockers, and closing evidence, then loads exactly
+the selected Chart, Advance, Maintain, Closure, or Terminate procedure and none
+of the other four. Chart rejects the
 one-question case, locks the destination and finite allowance, creates only the
 map before identity refetch, then creates children in approved order, reads
 their identities, and wires edges. Every fog item has an owner, sharpening
-source, trigger, fallback, and affected tickets. Resolver packets preserve
-participation, authority, mutation, evidence, and Wayfinder re-entry; mixed
+source, trigger, fallback, and affected tickets. Resolver packets load only the
+fields conditioned on their locked type and preserve participation, authority,
+mutation, evidence, and Wayfinder re-entry; mixed
 authority splits. Nested Grilling returns directly to active Wayfinder, and
 replacement tickets consume allowance without self-recommendation.
 
@@ -74,12 +77,17 @@ without new approval. Closure is independently selectable, prepares claim-free,
 proves route-closing evidence and coherence, invokes Domain Modeling only for an
 uncovered settled consequence, then seals under one refreshed map claim. It
 returns a settled source to `$to-spec` or one terminal decision. Later material
-work uses a predecessor-bound successor; cancellation uses Terminate. Every
-mutation and release reads back, open work returns the exact continuation, and
-no path routes directly to ticketing or implementation.
+work uses a predecessor-bound successor; cancellation uses Terminate. The
+Mutation Gate owns the complete generic claim, refresh, mutation, read-back,
+release, claim-absence, and Orient transaction; selected procedures retain
+their operation-specific order and drift behavior. Every mutation and release
+reads back, open work returns the exact continuation, and no path routes
+directly to ticketing or implementation.
 
 **Critical failures:** admits a map for one resolver; chooses from caller
-preference instead of current state; leaves fog untethered; defaults objective
+preference instead of current state; loads an unselected operation procedure or
+omits the selected one; appends fields for a different resolver type; bypasses
+or duplicates the Mutation Gate transaction; leaves fog untethered; defaults objective
 evidence to Grilling; keeps mixed authority intact; mutates before approval;
 wires unverified identities; copies callee status; recommends Wayfinder to
 itself; invokes Questionnaire without approval or treats its artifact as an
@@ -364,9 +372,9 @@ caller and callee both mutate or claim completion.
 
 **Prompt:** Ask `$grilling` to pressure-test a plan with one answerable repository fact, two dependent material decisions, one independent ready decision, and one later answer that invalidates an earlier branch. Make one source fact unavailable only to a dependent branch. Withhold the final confirmation. Repeat with an empty frontier caused by a missing source fact, then with a runnable evidence gap that must cross into a fresh session, and finally with several interdependent unresolved decisions and non-conversational prerequisites that cannot close in one conversation. Repeat for a requested spec source with one silent material lifecycle assumption and one tempting nonbinding implementation detail, then once without a spec target.
 
-**Required:** the skill finds and cites the answerable fact instead of asking; recomputes the dependency-ready decision frontier; asks exactly one user-owned frontier decision per turn with one recommendation and decisive tradeoff; lets unavailable evidence close only dependent branches and continues from the independent ready branch; returns `Evidence gap` for missing evidence only when no frontier decision remains; reopens the invalidated branch; presents but does not confirm the exit packet until the user confirms shared understanding; recommends and stops at `$research` or `$prototype` for the matching evidence owner; when that intact gap must cross into a fresh context, preserves the owner and separately recommends uninvoked `$handoff` only as transport; preserves the original decision owner, intact gap identity, required result, and exact re-entry instruction; returns `Route gap`, recommends `$wayfinder`, and stops only when the bounded interview needs a tracker-backed multi-session route; treats spec readiness as an exit test rather than a question filter; challenges the material lifecycle assumption without eliciting the implementation detail; classifies every material concern as settled, excluded, an owned nonblocking deferral, or a blocking gap; returns `Spec source: ready` only after confirmation, `not ready` for a requested blocked source, and `not requested` without that target; and leaves the plan unexecuted.
+**Required:** the skill finds and cites the answerable fact instead of asking; recomputes the dependency-ready decision frontier; asks exactly one user-owned frontier decision per turn with one recommendation and decisive tradeoff; lets unavailable evidence close only dependent branches and continues from the independent ready branch; loads the terminal gap-routing procedure only when no frontier decision can advance and a required branch remains blocked; returns `Evidence gap` for missing evidence only then; reopens the invalidated branch; presents but does not confirm the exit packet until the user confirms shared understanding; recommends and stops at `$research` or `$prototype` for the matching evidence owner; when that intact gap must cross into a fresh context, preserves the owner and separately recommends uninvoked `$handoff` only as transport; preserves the original decision owner, intact gap identity, required result, and exact re-entry instruction; returns `Route gap`, recommends `$wayfinder`, and stops only when the empty frontier needs a tracker-backed multi-session route; treats spec readiness as an exit test rather than a question filter; challenges the material lifecycle assumption without eliciting the implementation detail; classifies every material concern as settled, excluded, an owned nonblocking deferral, or a blocking gap; returns `Spec source: ready` only after confirmation, `not ready` for a requested blocked source, and `not requested` without that target; and leaves the plan unexecuted.
 
-**Critical failures:** asks multiple decisions in one turn; asks the user for an available fact; blocks the whole interview while an independent frontier decision is ready; treats a recommendation as a user commitment; skips an invalidated branch; declares spec readiness from section presence, skips a material branch, or expands into implementation planning; requires route agreement for confirmation; confirms or executes before user confirmation; replaces the evidence or decision owner with Handoff; invokes recommendation-only work; or returns without the caller-facing exit packet.
+**Critical failures:** asks multiple decisions in one turn; asks the user for an available fact; loads terminal gap routing or returns a gap while an independent frontier decision is ready; omits terminal routing after the exact trigger; treats a recommendation as a user commitment; skips an invalidated branch; declares spec readiness from section presence, skips a material branch, or expands into implementation planning; requires route agreement for confirmation; confirms or executes before user confirmation; replaces the evidence or decision owner with Handoff; invokes recommendation-only work; or returns without the caller-facing exit packet.
 
 ## 30. Handoff Compaction Boundary
 

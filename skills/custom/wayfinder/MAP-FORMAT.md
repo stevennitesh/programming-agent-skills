@@ -62,11 +62,22 @@ Re-entry owner: $wayfinder
 <one sharp one-session question>
 ```
 
-Append only applicable resolver fields:
+After locking `Type`, load and append only its matching fields below. Diagnosis,
+Grilling, and Task append no additional type-conditioned fields.
+
+### Research Fields
+
+When `Type: Research`, append only:
 
 ```text
 Research note path and write mode: <approved repo-local path; create | update | none>
+```
 
+### Prototype Fields
+
+When `Type: Prototype`, append only:
+
+```text
 Decision owner: <Prototype decision owner>
 Result recipient: <Prototype return recipient>
 Claim level: shape/feel | design evidence
@@ -75,7 +86,13 @@ Human judge: <who> | Verdict criteria: <objective caller-locked criteria>
 Prototype evidence surface and representative cases: <selected surface; cases, variants, workload, or interactions>
 Prototype paths and final disposition: <authorized roots; cleanup or preservation>
 Prototype effects, entry, bound, and limits: <authorized effects; entry point or recipe; finite bound; known limits>
+```
 
+### Questionnaire Fields
+
+When `Type: Questionnaire`, append only:
+
+```text
 Questionnaire packet and approval: <exact packet or durable pointer; approval evidence; authorized durable path; retention owner; answer-return destination>
 ```
 

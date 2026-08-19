@@ -58,6 +58,16 @@ For one map derive:
 | No unresolved ticket, fog, wait, or blocker remains and cited evidence satisfies the route-closing condition | Closure. |
 | None applies | Return `incomplete` with the state gap. |
 
+After Orient selects one operation, load only its procedure:
+
+- `Chart`: [CHART.md](references/CHART.md)
+- `Advance`: [ADVANCE.md](references/ADVANCE.md)
+- `Maintain`: [MAINTAIN.md](references/MAINTAIN.md)
+- `Closure`: [CLOSURE.md](references/CLOSURE.md)
+- `Terminate`: [TERMINATE.md](references/TERMINATE.md)
+
+Do not load any unselected operation procedure.
+
 After selecting one operation and excluding its no-mutation Returns, require
 only its create, update, link, close, claim, release, and read-back
 capabilities, including an exclusive claim route with an observable losing-race
@@ -77,11 +87,12 @@ elapsed time alone never makes a claim stale. Replace another token only with
 explicit approval from an affirmed destination owner or provider administrator,
 after recording the old claim, approver authority, and reason.
 
-**Mutation read-back.** Every mutation follows: verify authority and captured state; acquire and read
-back the required claim; refresh; apply only the selected change; read back all
-direct effects and frontier; release; verify claim absence; Orient. Refresh an
-indeterminate result before any retry. Unverified effects return `incomplete`
-with verified, failed, and unknown state.
+**Mutation read-back.** Every non-exception mutation uses one transaction:
+verify authority and captured state; acquire every operation-required claim and
+read back ownership; refresh decision-bearing state; apply only the selected
+change; read back all direct effects and frontier; release every claim; verify
+claim absence; Orient. Refresh an indeterminate result before any retry.
+Unverified effects return `incomplete` with verified, failed, and unknown state.
 
 Chart is the only pre-claim exception: approve the exact packet, confirm zero
 matches for its initial or successor identity, create only the map, repeat
@@ -103,11 +114,11 @@ return, mutation boundary, and `$wayfinder` re-entry:
 
 | Type | Participation and resolver |
 | --- | --- |
-| Research | AFK; `$research` with the question, supported map use, scope, exact state, Source Trace, approved note path and write mode, and Wayfinder return owner. |
-| Prototype | HITL or AFK; `$prototype` with [MAP-FORMAT.md](MAP-FORMAT.md)'s complete Prototype packet. |
+| Research | AFK; `$research` with the question, supported map use, scope, exact state, Source Trace, Wayfinder return owner, and [Research fields](MAP-FORMAT.md#research-fields). |
+| Prototype | HITL or AFK; `$prototype` with [Prototype fields](MAP-FORMAT.md#prototype-fields). |
 | Diagnosis | AFK after explicit separate start; return `diagnosis-required` with evidence, environment, exact state, authorities, and Wayfinder as return owner. |
 | Grilling | HITL; `$grilling` for a conversation-only user decision, or `$grill-with-docs` while durable domain capture remains active. |
-| Questionnaire | External; `$to-questionnaire` only after the user approves its exact caller packet and `Delivery: not performed`. |
+| Questionnaire | External; `$to-questionnaire` only after the user approves its [Questionnaire fields](MAP-FORMAT.md#questionnaire-fields) and `Delivery: not performed`. |
 | Task | AFK for one bounded objectively provable repository or operational fact; HITL only for required live human action; no durable mutation. |
 
 Prototype `shape/feel` uses HITL, human judgment, and a named judge. Objective
@@ -146,106 +157,6 @@ consumes one; other state changes consume none. Add only in-scope obligations
 caused by accepted evidence. Exhaustion, destination change, or unsupported
 growth returns `blocked` for a new finite approval, Terminate, or successor.
 Never invoke another resolver while reconciling.
-
-## Chart
-
-Use only after Orient admits a zero-match initial or successor identity.
-
-1. **Bound.** Lock the destination. Resolve one material conversational gap;
-   otherwise stop on a missing bound.
-2. **Admit.** Require several interdependent material decisions or
-   prerequisites, a non-conversational resolver, tracker-backed multi-session
-   sequencing, and finitely tethered fog. Otherwise return `not-needed`;
-   recommend `$implement` for one settled bounded implementation or `$to-spec`
-   only when a durable parent decision contract remains useful.
-3. **Sweep.** Surface decisions breadth-first: one ticket per sharp question,
-   only unsharp uncertainty as fog. Set the finite growth allowance.
-4. **Approve.** Show one [MAP-FORMAT.md](MAP-FORMAT.md)-conforming packet with
-   destination, exact map title, ordered tickets and resolver fields, fog,
-   scope, edges, and allowance. Require explicit approval and fresh approval
-   after any change.
-5. **Create.** Apply the initial-map exception. Create children in approved
-   order, read back identities, then wire edges from those identities.
-6. **Verify.** Read back the entire graph, fields, allowance, fog tethers, and
-   initial map condition.
-
-Chart completes with `not-needed` or one canonical verified map, no ticket
-outcome, no retained claim, and an `active | waiting | blocked` condition.
-
-## Advance
-
-Use for one frontier ticket or one Waiting or Blocked ticket whose supplied
-evidence can answer its exact condition.
-
-1. **Select.** Use the named eligible ticket or the frontier head. Otherwise
-   return its state and the actual frontier.
-2. **Claim.** Freeze the commit-point fields, exclusively claim the ticket, and
-   require owner, token, and claimed-at read-back.
-3. **Resolve.** Invoke its locked resolver or validate the attributable return.
-   Missing explicit target approval returns `incomplete` before shared mutation.
-4. **Commit.** Acquire the map claim with the same token, apply the commit-point
-   comparison, normalize the Return, and Reconcile.
-5. **Verify.** Read back outcome or wait, pointers, graph, fog, allowance,
-   frontier, and claims; release both and Orient.
-
-Advance completes after one resolver Return is either reconciled into one
-outcome, one verified wait, or one bounded replacement graph, with no retained
-claim.
-
-## Maintain
-
-Use only for one deterministic change requiring no resolver judgment or ticket
-outcome: consequence-only representation repair, a proved wait or blocker
-transition, or a fog trigger that now makes its question sharp.
-
-1. **Bound.** Show the exact evidence, delta, fog dispositions, allowance use,
-   and resulting condition. Obtain destination-owner approval only to increase
-   the allowance or change the approved destination packet.
-2. **Claim.** Refresh and exclusively claim the map; require exact read-back.
-3. **Apply.** Make only the determined correction or liveness transition and
-   Reconcile no substantive outcome.
-4. **Verify.** Read back affected state, allowance, frontier, and claim absence;
-   Orient.
-
-Maintain completes with the selected deterministic delta verified, no ticket
-outcome, no retained claim, and the resulting condition visible.
-
-## Closure
-
-Closure is independently selectable from `closeable` state.
-
-1. **Gather.** Freeze the map, every ticket and resolver return, fog and scope
-   disposition, Source Trace, growth calculation, route-closing evidence,
-   terminal kind, and proof or acceptance objectives. Hold no claim.
-2. **Coherence.** Require every obligation to have one disposition; every
-   accepted result to agree with the destination, dependencies, contracts, and
-   other decisions; and cited evidence to satisfy the route-closing condition.
-   Return each newly sharp gap as exact Maintain input. Maintain creates and
-   wires its ticket within the approved allowance; Orient then selects Advance.
-   Exhausted allowance returns the approval blocker. Never close an empty but
-   unsupported graph.
-3. **Durability.** For an unaccounted durable-language or ADR consequence,
-   invoke `$domain-modeling` once. Use `persist authorized` only with exact
-   domain-write authority, `render only` otherwise, and `offer only` without
-   separate ADR approval. A material blocker leaves the map open.
-4. **Seal.** Build [MAP-FORMAT.md](MAP-FORMAT.md)'s closing packet. Acquire the
-   map claim, refresh every Gather field, and stop on semantic drift. Otherwise
-   post the packet, close as `delivered`, read back closed state and empty
-   frontier, release, and prove claim absence.
-
-Return the terminal decision and stop. Recommend `$implement` for one settled
-bounded implementation whose acceptance and authority are complete. Recommend
-`$to-spec` when the settled outcome still benefits from a durable parent
-decision contract and several slices or durable coordination are plausible.
-Never route directly to `$to-tickets` or `$parallel-implement`.
-
-## Terminate
-
-Use only with destination-owner confirmation and evidence for `cancelled`,
-`superseded`, or `out of scope`. Capture unresolved obligations and the recovery
-or successor boundary; acquire the map claim; post the terminal closing packet;
-close; read back; release; prove claim absence; and stop. Do not run Closure,
-Domain Modeling, or To Spec. Closed maps remain immutable.
 
 ## Return
 

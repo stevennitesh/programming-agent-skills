@@ -8,14 +8,15 @@ required result, and exact re-entry instruction. The current amendment also
 admits one approved caller-owned conversation while retaining the user's
 decision and confirmation authority. Canonical Grilling is current executable
 authority at tree SHA-256
-`fbde5cb5031866b3ccc78015d8ae210042b74400912e7b1e031e5698c6547c32`.
-Installed parity and fresh wording-efficacy proof are not claimed; later
-campaign-era exact-body and parity statements are historical.
+`52358ad6d736ea6230b5784a7cbb45cdcb7d3617addab0efd0a6b28cb7d8359f`.
+Installed parity is not claimed; later campaign-era exact-body and parity
+statements are historical.
 
-Executable authority is `skills/custom/grilling/SKILL.md` and
+Executable authority is `skills/custom/grilling/SKILL.md`, its conditionally
+loaded `references/TERMINAL-GAP-ROUTING.md`, and
 `skills/custom/grilling/agents/openai.yaml`. The installed mirror is never
-independent authority. The retired evaluation fixture is
-historical-admission-only.
+independent authority. The retired evaluation fixture is historical-admission-
+only.
 
 ## Current Runtime Reconciliation
 
@@ -24,6 +25,12 @@ compact **decision frontier**: ask one highest-leverage unblocked material
 decision, recompute after each answer or fact, and let missing evidence pause
 only dependent branches. It does not adopt frontier batches, question counts,
 durable interview state, or another workflow stage.
+
+Terminal gap routing now enters only when no frontier decision can advance and
+at least one required branch remains blocked. The reference preserves the
+active-Wayfinder exception, exactly one uninvoked gap owner, exact re-entry, and
+Handoff as transport rather than owner. A ready frontier loads no gap-routing
+reference.
 
 When the intended result is a spec source, Grilling now applies readiness as an
 exit test after material exploration. It reports whether the confirmed packet
@@ -34,6 +41,13 @@ and now propagates Grilling's existing `Route gap` without reclassifying it.
 The historical design and evaluation below remain evidence for the accepted
 candidate at their recorded hashes. They are not proof of these later wording
 changes.
+
+Fresh issue #88 evidence is recorded in the
+[Wayfinder and Grilling progressive-disclosure evaluation](../../validation/skills/wayfinder/evals/EV-wayfinder-grilling-progressive-disclosure-20260819-01/evidence/2026-08-19-wayfinder-grilling-progressive-disclosure-eval.md).
+Five isolated candidate samples and two wrong-condition samples preserved gap
+classification, the active-Wayfinder return path, one successor owner, Handoff
+transport, and terminal Return while excluding terminal routing from every
+advanceable-frontier case. Grilling's main surface fell from 558 to 412 words.
 
 ## Design Verdict
 

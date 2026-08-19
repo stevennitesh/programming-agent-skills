@@ -32,10 +32,13 @@ ticketing or implementation.
 
 ## Runtime Authority
 
-- `skills/custom/wayfinder/SKILL.md`: gates, operations, resolver normalization,
-  reconciliation, completion, and Return.
+- `skills/custom/wayfinder/SKILL.md`: Orient, shared mutation and resolver
+  gates, reconciliation, exact operation pointers, and Return.
+- `skills/custom/wayfinder/references/`: the five operation procedures, loaded
+  only after Orient selects the matching operation.
 - `skills/custom/wayfinder/MAP-FORMAT.md`: durable map, ticket, fog, resolution,
-  growth, and closing fields.
+  growth, and closing fields; Research, Prototype, and Questionnaire extensions
+  enter only through their exact type-conditioned anchors.
 - `skills/custom/wayfinder/agents/openai.yaml`: explicit-only invocation.
 - configured tracker `Wayfinding representation`: provider objects, labels,
   relationships, claim storage, close primitives, and Mutation read-back.
@@ -64,6 +67,12 @@ Chart, Advance, and Maintain use the shared Mutation Gate and Reconcile owner.
 Closure prepares Gather, Coherence, and Domain Modeling without a claim, then
 claims only for the drift-checked Seal. Terminate requires destination-owner
 confirmation and bypasses successful closure and To Spec.
+
+Orient loads exactly one selected operation procedure. It loads none for a
+safe no-mutation Return. Generic authority, claim acquisition and read-back,
+refresh, selected mutation, effects/frontier read-back, release, claim-absence
+proof, and re-orientation remain centralized in the inline Mutation Gate;
+operation files retain only their order and operation-specific drift rules.
 
 Closed maps are immutable. Material later gaps require a successor Chart with
 an explicit predecessor pointer and explicit decision/evidence imports. Claims,
@@ -143,3 +152,19 @@ cases should cover:
 
 Historical transcripts and the inactive proposal are provenance, not fresh
 behavioral efficacy evidence.
+
+## Current Progressive-Disclosure Proof
+
+Issue #88 froze the canonical Wayfinder package at tree SHA-256
+`e850538833a429ab5e8c05bbf3b24c1ccc914b94cf440b05fdfc18acd6316148`.
+The main surface fell from 2,080 to 1,394 words while retaining the five
+operation procedures behind exact pointers. Fresh isolated samples loaded only
+Chart, Advance, Maintain, Closure, or Terminate for the matching case, and only
+the applicable Research, Prototype, or Questionnaire field section. The same
+samples preserved the complete mutation transaction, foreign-claim protection,
+Chart creation exception, Advance dependency-drift abort, resolver and re-entry
+ownership, and terminal Return.
+
+The exact identities, per-sample ledger, wrong-condition controls, deviations,
+and residual limits are recorded in the
+[progressive-disclosure evaluation](../../validation/skills/wayfinder/evals/EV-wayfinder-grilling-progressive-disclosure-20260819-01/evidence/2026-08-19-wayfinder-grilling-progressive-disclosure-eval.md).

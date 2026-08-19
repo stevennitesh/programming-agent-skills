@@ -102,6 +102,9 @@ def test_to_questionnaire_owns_one_safe_recipient_artifact() -> None:
     policy = (skill_dir / "agents/openai.yaml").read_text(encoding="utf-8")
     router = (CUSTOM / "skill-router/SKILL.md").read_text(encoding="utf-8")
     grilling = (CUSTOM / "grilling/SKILL.md").read_text(encoding="utf-8")
+    grilling_gap = (CUSTOM / "grilling/references/TERMINAL-GAP-ROUTING.md").read_text(
+        encoding="utf-8"
+    )
 
     assert not implicit_policy(skill_dir)
     assert re.findall(r"(?m)^\*\*([A-Za-z]+)\.\*\*", questionnaire) == [
@@ -151,7 +154,9 @@ def test_to_questionnaire_owns_one_safe_recipient_artifact() -> None:
         "| One external stakeholder holds missing knowledge and needs an async "
         "discovery questionnaire | `$to-questionnaire` |"
     ) in router
-    assert "`$to-questionnaire` for an external stakeholder" in grilling
+    assert "`$to-questionnaire` for an external stakeholder" in " ".join(
+        grilling_gap.split()
+    )
 
 
 def test_tracker_templates_share_ready_state_navigation_and_readback() -> None:
@@ -929,36 +934,49 @@ def test_wayfinder_chart_preserves_unresolved_child_decisions() -> None:
     wayfinder = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
     map_format = (skill_dir / "MAP-FORMAT.md").read_text(encoding="utf-8")
     flat = " ".join(wayfinder.split())
+    operations = {
+        name: (skill_dir / "references" / f"{name.upper()}.md").read_text(
+            encoding="utf-8"
+        )
+        for name in ("chart", "advance", "maintain", "closure", "terminate")
+    }
+    chart = operations["chart"]
+    advance = operations["advance"]
+    maintain = operations["maintain"]
+    closure = operations["closure"]
 
     assert not implicit_policy(skill_dir)
-    assert "[MAP-FORMAT.md](MAP-FORMAT.md)" in wayfinder
-    chart, modes = wayfinder.split("## Chart", 1)[1].split("## Advance", 1)
-    advance, remaining = modes.split("## Maintain", 1)
-    maintain, closure = remaining.split("## Closure", 1)
+    assert "MAP-FORMAT.md#" in wayfinder
+    assert re.findall(r"(?m)^## (.+)$", wayfinder) == [
+        "Model",
+        "Orient",
+        "Mutation Gate",
+        "Resolver Gate",
+        "Reconcile",
+        "Return",
+    ]
+    for name, body in operations.items():
+        filename = f"{name.upper()}.md"
+        assert f"[{filename}](references/{filename})" in wayfinder
+        assert f"selects `{name.title()}`" in body
+        assert "Otherwise do not load it." in " ".join(body.split())
+        assert f"## {name.title()}" not in wayfinder
+    assert "Do not load any unselected operation procedure." in wayfinder
     for earlier, later in (
         ("**Bound.**", "**Admit.**"),
         ("**Admit.**", "**Sweep.**"),
         ("**Sweep.**", "**Approve.**"),
         ("**Approve.**", "**Create.**"),
-        ("**Create.**", "**Verify.**"),
+        ("**Create.**", "**Complete.**"),
     ):
         assert chart.index(earlier) < chart.index(later)
     for earlier, later in (
-        ("**Select.**", "**Claim.**"),
-        ("**Claim.**", "**Resolve.**"),
+        ("**Select.**", "**Freeze.**"),
+        ("**Freeze.**", "**Resolve.**"),
         ("**Resolve.**", "**Commit.**"),
-        ("**Commit.**", "**Verify.**"),
+        ("**Commit.**", "**Complete.**"),
     ):
         assert advance.index(earlier) < advance.index(later)
-    assert re.findall(
-        r"(?m)^## (Chart|Advance|Maintain|Closure|Terminate)$", wayfinder
-    ) == [
-        "Chart",
-        "Advance",
-        "Maintain",
-        "Closure",
-        "Terminate",
-    ]
     for field in (
         "Destination:",
         "owner",
@@ -1016,8 +1034,8 @@ def test_wayfinder_chart_preserves_unresolved_child_decisions() -> None:
     assert mutation_flat.index("repeat identity search") < mutation_flat.index(
         "claim the sole created canonical map"
     )
-    assert chart_flat.index("[MAP-FORMAT.md](MAP-FORMAT.md)-conforming") < chart_flat.index(
-        "Apply the initial-map exception"
+    assert chart_flat.index("[MAP-FORMAT.md](../MAP-FORMAT.md)-conforming") < chart_flat.index(
+        "Run the Mutation Gate's initial-map exception"
     )
     assert "confirm zero matches" in mutation_flat
     assert "sole created canonical map" in mutation_flat
@@ -1026,7 +1044,7 @@ def test_wayfinder_chart_preserves_unresolved_child_decisions() -> None:
     )
     assert "no ticket outcome" in chart_flat
     assert "no ticket outcome" in " ".join(maintain.split())
-    assert "independently selectable" in closure
+    assert "independently selects `Closure`" in closure
 
 
 def test_wayfinder_prototype_participation_matches_judgment() -> None:
@@ -1040,15 +1058,16 @@ def test_wayfinder_prototype_participation_matches_judgment() -> None:
         "`shape/feel` uses HITL, human judgment",
         "Objective `design evidence` defaults to AFK/rule-based",
         "named human verdict owner makes it HITL",
-        "[MAP-FORMAT.md](MAP-FORMAT.md)'s complete Prototype packet",
+        "[Prototype fields](MAP-FORMAT.md#prototype-fields)",
     ):
         assert contract in resolver_flat
 
-    approve = wayfinder.split("4. **Approve.**", 1)[1].split(
+    chart = (skill_dir / "references/CHART.md").read_text(encoding="utf-8")
+    approve = chart.split("4. **Approve.**", 1)[1].split(
         "5. **Create.**", 1
     )[0]
     approve_flat = " ".join(approve.split())
-    assert "[MAP-FORMAT.md](MAP-FORMAT.md)-conforming packet" in approve_flat
+    assert "[MAP-FORMAT.md](../MAP-FORMAT.md)-conforming packet" in approve_flat
     assert "exact map title" in approve_flat
     assert "resolver fields" in approve_flat
 
@@ -1064,6 +1083,10 @@ def test_wayfinder_prototype_participation_matches_judgment() -> None:
         "Prototype effects, entry, bound, and limits:",
     ):
         assert field in map_format
+    prototype_fields = map_format.split("### Prototype Fields", 1)[1].split(
+        "### Questionnaire Fields", 1
+    )[0]
+    assert "When `Type: Prototype`, append only" in prototype_fields
 
 
 def test_wayfinder_routes_by_authority_and_accounts_for_fog() -> None:
@@ -1071,6 +1094,9 @@ def test_wayfinder_routes_by_authority_and_accounts_for_fog() -> None:
     wayfinder = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
     map_format = (skill_dir / "MAP-FORMAT.md").read_text(encoding="utf-8")
     map_flat = " ".join(map_format.split())
+    advance = (skill_dir / "references/ADVANCE.md").read_text(encoding="utf-8")
+    maintain = (skill_dir / "references/MAINTAIN.md").read_text(encoding="utf-8")
+    closure = (skill_dir / "references/CLOSURE.md").read_text(encoding="utf-8")
 
     resolver = wayfinder.split("## Resolver Gate", 1)[1].split("## Reconcile", 1)[0]
     resolver_flat = " ".join(resolver.split())
@@ -1089,10 +1115,16 @@ def test_wayfinder_routes_by_authority_and_accounts_for_fog() -> None:
     assert "require exact approval of the resulting packet" in resolver_flat
     assert "`diagnosis-required`" in resolver_flat
     assert "$diagnosing-bugs" not in resolver_flat
-    assert "only after the user approves its exact caller packet" in resolver_flat
+    assert "only after the user approves its [Questionnaire fields]" in resolver_flat
     assert "`Questionnaire ready` is Waiting, never an answer" in resolver_flat
     assert "supported map use, scope, exact state, Source Trace" in resolver_flat
     assert "Task" in resolver_flat and "no durable mutation" in resolver_flat
+    for pointer in (
+        "[Research fields](MAP-FORMAT.md#research-fields)",
+        "[Prototype fields](MAP-FORMAT.md#prototype-fields)",
+        "[Questionnaire fields](MAP-FORMAT.md#questionnaire-fields)",
+    ):
+        assert pointer in resolver
     for field in (
         "Resolution owner:",
         "Resolver:",
@@ -1101,19 +1133,31 @@ def test_wayfinder_routes_by_authority_and_accounts_for_fog() -> None:
         "Type: Research | Prototype | Diagnosis | Grilling | Questionnaire | Task",
     ):
         assert field in map_format
+    research_fields = map_format.split("### Research Fields", 1)[1].split(
+        "### Prototype Fields", 1
+    )[0]
+    questionnaire_fields = map_format.split("### Questionnaire Fields", 1)[1].split(
+        "## Resolution Comment", 1
+    )[0]
+    assert "When `Type: Research`, append only" in research_fields
+    assert "When `Type: Questionnaire`, append only" in questionnaire_fields
+    assert "Research note path and write mode:" not in map_format.split(
+        "### Research Fields", 1
+    )[0]
+    assert "Questionnaire packet and approval:" not in map_format.split(
+        "### Questionnaire Fields", 1
+    )[0]
 
-    advance = wayfinder.split("## Advance", 1)[1].split("## Maintain", 1)[0]
     advance_flat = " ".join(advance.split())
-    claim = advance.split("2. **Claim.**", 1)[1].split("3. **Resolve.**", 1)[0]
-    claim_flat = " ".join(claim.split())
-    assert "exclusively claim the ticket" in claim_flat
-    assert "owner, token, and claimed-at read-back" in claim_flat
+    resolve = advance.split("3. **Resolve.**", 1)[1].split("4. **Commit.**", 1)[0]
+    resolve_flat = " ".join(resolve.split())
+    assert "exclusively claim and read back the ticket" in resolve_flat
     assert "Waiting or Blocked ticket" in advance_flat
-    assert "validate the attributable return" in advance_flat
-    assert "Acquire the map claim with the same token" in advance_flat
+    assert "validating the attributable return" in advance_flat
+    assert "acquire the map claim with the same token" in advance_flat
     assert "no tracker outcome or map mutation" in resolver_flat
     assert "frozen-boundary resolver effects" in resolver_flat
-    assert "release both and Orient" in advance_flat
+    assert "release both claims, prove absence, and Orient" in advance_flat
     mutation = wayfinder.split("## Mutation Gate", 1)[1].split(
         "## Resolver Gate", 1
     )[0]
@@ -1146,7 +1190,7 @@ def test_wayfinder_routes_by_authority_and_accounts_for_fog() -> None:
     ):
         assert field in research_edge["input_packet"]
 
-    reconcile = wayfinder.split("## Reconcile", 1)[1].split("## Chart", 1)[0]
+    reconcile = wayfinder.split("## Reconcile", 1)[1].split("## Return", 1)[0]
     reconcile_flat = " ".join(reconcile.split())
     for disposition in ("**retain**", "**graduate**", "**resolve**", "**exclude**"):
         assert disposition in reconcile
@@ -1163,33 +1207,32 @@ def test_wayfinder_routes_by_authority_and_accounts_for_fog() -> None:
     ):
         assert fog_field in map_format
 
-    maintain = wayfinder.split("## Maintain", 1)[1].split("## Closure", 1)[0]
     maintain_flat = " ".join(maintain.split())
     assert re.findall(r"(?m)^\d+\. \*\*([A-Za-z]+)\.\*\*", maintain) == [
         "Bound",
-        "Claim",
         "Apply",
-        "Verify",
+        "Reconcile",
+        "Complete",
     ]
     assert "no resolver judgment or ticket outcome" in maintain_flat
-    assert "exclusively claim the map" in maintain_flat
+    assert "Mutation Gate with the map claim" in maintain_flat
     assert "proved wait or blocker transition" in maintain_flat
     assert "fog trigger that now makes its question sharp" in maintain_flat
     assert "approval only to increase the allowance" in maintain_flat
 
-    closure = wayfinder.split("## Closure", 1)[1].split("## Terminate", 1)[0]
     closure_flat = " ".join(closure.split())
-    assert "independently selectable from `closeable` state" in closure_flat
+    assert "independently selects `Closure` from `closeable` state" in closure_flat
     assert "Hold no claim" in closure_flat
     assert "invoke `$domain-modeling` once" in closure_flat
     assert "unaccounted durable-language or ADR consequence" in closure_flat
     assert "`persist authorized` only with exact domain-write authority" in closure_flat
     assert "`render only` otherwise" in closure_flat
-    assert "material blocker leaves the map open" in closure
+    assert "it is not itself a blocker" in closure_flat
+    assert "separately material blocker leaves the map open" in closure_flat
     assert "route-closing condition" in closure_flat
     assert "newly sharp gap as exact Maintain input" in closure_flat
     assert "creates and wires its ticket within the approved allowance" in closure_flat
-    assert "Build [MAP-FORMAT.md](MAP-FORMAT.md)'s closing packet" in closure_flat
+    assert "Build [MAP-FORMAT.md](../MAP-FORMAT.md#closing-packet)'s closing packet" in closure_flat
     assert closure_flat.index("post the packet") < closure_flat.index(
         "close as `delivered`"
     )
@@ -1219,6 +1262,9 @@ def test_wayfinder_routes_by_authority_and_accounts_for_fog() -> None:
 def test_grill_with_docs_package_and_relationship_contract() -> None:
     grill_docs = (CUSTOM / "grill-with-docs/SKILL.md").read_text(encoding="utf-8")
     grilling = (CUSTOM / "grilling/SKILL.md").read_text(encoding="utf-8")
+    grilling_gap = (CUSTOM / "grilling/references/TERMINAL-GAP-ROUTING.md").read_text(
+        encoding="utf-8"
+    )
     domain = (CUSTOM / "domain-modeling/SKILL.md").read_text(encoding="utf-8")
     relationships = (ROOT / "docs/synthesis/skill-context-relationships.md").read_text(
         encoding="utf-8"
@@ -1257,7 +1303,7 @@ def test_grill_with_docs_package_and_relationship_contract() -> None:
     assert "declared return owner, or the user on direct invocation" in " ".join(
         grill_docs.split()
     )
-    assert "When active `$wayfinder` is the return owner" in grilling
+    assert "When active `$wayfinder` is the return owner" in grilling_gap
     for contract in (
         "each settled material answer to Domain Modeling",
         "every returned collision or blocker to Grilling",
@@ -1321,8 +1367,13 @@ def test_instantiated_domain_helper_preserves_routing_and_ownership() -> None:
 
 
 def test_grilling_preserves_one_decision_confirmed_exit_and_evidence_routes() -> None:
-    grilling = (CUSTOM / "grilling/SKILL.md").read_text(encoding="utf-8")
+    skill_dir = CUSTOM / "grilling"
+    grilling = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+    gap = (skill_dir / "references/TERMINAL-GAP-ROUTING.md").read_text(
+        encoding="utf-8"
+    )
     grilling_plain = " ".join(grilling.replace("**", "").split())
+    gap_plain = " ".join(gap.split())
 
     assert re.findall(r"(?m)^\*\*([A-Za-z ]+)\.\*\*", grilling) == [
         "Bound",
@@ -1337,22 +1388,32 @@ def test_grilling_preserves_one_decision_confirmed_exit_and_evidence_routes() ->
         "Let blocked evidence pause only its dependent branches",
         "readiness as an exit test, never a question filter",
         "an owned nonblocking deferral whose answer cannot change the parent commitment",
-        "only when no frontier decision can advance",
+        "Only when no frontier decision can advance",
         "Relay every settled material answer",
         "pause dependent progress",
         "a repeated non-answer makes that decision authority unavailable",
-        "Choose `$research` for an authoritative source",
-        "recommend uninvoked `$wayfinder`",
-        "original decision owner without changing the gap identity",
-        "preserve that owner and add uninvoked `$handoff` only as transport",
-        "Handoff neither answers nor owns the gap",
         "Transport: $handoff (uninvoked)",
         "required result, and exact re-entry instruction",
         "Spec source: ready | not ready | not requested",
         "Downstream execution: none",
     ):
         assert contract in grilling_plain
+    assert "[TERMINAL-GAP-ROUTING.md](references/TERMINAL-GAP-ROUTING.md)" in grilling
+    assert "Otherwise do not load it." in grilling_plain
+    for contract in (
+        "several interdependent unresolved decisions",
+        "When active `$wayfinder` is the return owner",
+        "recommend uninvoked `$wayfinder`",
+        "Choose `$research` for an authoritative source",
+        "original decision owner without changing the gap identity",
+        "preserve the evidence or decision owner",
+        "add uninvoked `$handoff` only as transport",
+        "Handoff neither answers nor owns the gap",
+    ):
+        assert contract in gap_plain
+        assert contract not in grilling_plain
     assert "$to-spec" not in grilling
+    assert "$to-spec" not in gap
 
 
 def test_prototype_preserves_lifecycle_boundaries_and_branch_gates() -> None:
