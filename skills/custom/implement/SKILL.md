@@ -16,9 +16,11 @@ the real callers, data flow, and existing proof seam far enough to understand
 what must change. Preserve unrelated work and established domain language.
 
 Use the caller's selection as the scope fence. If the intended behavior is
-unsettled, return the decision to its owner. For a bug whose behavior, cause,
-or trusted reproduction is uncertain, stop with the observed evidence and
-return `diagnosis-required`.
+unsettled, return the decision to its owner. Ordinary bug investigation stays
+here: reproduce the symptom and trace it to its cause. Return
+`diagnosis-required` only when the failure needs a dedicated investigation,
+such as intermittent, performance, environment-only, production-only, or still
+causally ambiguous behavior.
 
 ## 2. Choose The Design
 

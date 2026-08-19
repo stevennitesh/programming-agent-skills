@@ -844,7 +844,7 @@ def test_router_returns_one_exact_skill_or_truthful_none() -> None:
         "selected ready item to `$implement`",
         "standalone explicitly test-first behavior to `$tdd`",
         "ordinary test, integration-test, regression-test, or coverage work to `$implement`",
-        "uncertain broken behavior to `$diagnosing-bugs`",
+        "uncertain broken behavior that needs dedicated investigation to `$diagnosing-bugs`",
         "existing diff needing judgment",
     ):
         assert contract in existing_code
@@ -2098,7 +2098,8 @@ def test_tdd_invocation_gate_is_consistent_across_active_owners() -> None:
         implement.split()
     )
     assert "never runs a second TDD loop" in " ".join(parallel.split())
-    assert "returns `diagnosis-required` to the root" in parallel
+    assert "Ordinary bug investigation stays with the worker" in parallel
+    assert "`diagnosis-required` to the root" in parallel
     assert "resumes implementation only from a complete TDD proof" in " ".join(
         parallel.split()
     )
@@ -2151,7 +2152,7 @@ def test_tdd_returns_every_outbound_gap_to_its_caller() -> None:
     assert "with the intact facts" in tdd
     assert "to the caller and stop" in tdd
     tdd_flat = " ".join(tdd.split())
-    assert "no uncertain broken symptom or cause requires diagnosis" in tdd_flat
+    assert "no hard failure requires diagnosis" in tdd_flat
     assert "RED would encode an unmade design decision" in tdd_flat
     assert (
         "no single accepted behavior and independent oracle yet decide" in tdd_flat
@@ -2283,6 +2284,8 @@ def test_codebase_design_compares_replacement_with_incremental_evolution() -> No
 def test_bug_routing_is_disjoint_and_non_bouncing() -> None:
     diagnosing = (CUSTOM / "diagnosing-bugs/SKILL.md").read_text(encoding="utf-8")
     diagnosing_flat = " ".join(diagnosing.split())
+    implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
+    implement_flat = " ".join(implement.split())
     tdd = (CUSTOM / "tdd/SKILL.md").read_text(encoding="utf-8")
     tdd_flat = " ".join(tdd.split())
     tdd_tests = (CUSTOM / "tdd/tests.md").read_text(encoding="utf-8")
@@ -2290,20 +2293,30 @@ def test_bug_routing_is_disjoint_and_non_bouncing() -> None:
     assert [
         match.group(1)
         for match in re.finditer(r"(?m)^## \d+\. ([A-Za-z]+)$", diagnosing)
-    ] == ["Trace", "Loop", "Minimise", "Hypothesise", "Probe", "Prove", "Return"]
+    ] == ["Reproduce", "Discriminate", "Resolve", "Return"]
     assert "[SKILL.md](SKILL.md)" in tdd_tests
     assert "`diagnosis-required`" in tdd
     assert "$diagnosing-bugs" not in tdd
-    assert "expected behavior" in diagnosing_flat
-    assert "expected behavior" in tdd_flat
     assert "observed failing result" in tdd
-    assert "canonical test owner" in diagnosing_flat
-    assert (
-        "distinct proof responsibility or necessary failure isolation" in diagnosing_flat
-    )
-    assert "regression-test change" in diagnosing_flat
-    assert "applicable Change Closure" in diagnosing_flat
+    assert "Ordinary bug investigation" in implement_flat
+    assert "initially unknown cause" in tdd_flat
+    assert "original feedback loop" in diagnosing_flat
     assert "intact facts" in tdd_flat
+
+    diagnosis_producers = (
+        CUSTOM / "implement/SKILL.md",
+        CUSTOM / "parallel-implement/SKILL.md",
+        CUSTOM / "tdd/SKILL.md",
+        CUSTOM / "simplify-code/SKILL.md",
+        CUSTOM / "resolving-merge-conflicts/SKILL.md",
+        CUSTOM / "audit-codebase/CANDIDATE-FOLLOWUP.md",
+        CUSTOM / "grilling/references/TERMINAL-GAP-ROUTING.md",
+    )
+    for path in diagnosis_producers:
+        content = " ".join(path.read_text(encoding="utf-8").split())
+        for match in re.finditer("diagnosis-required", content):
+            context = content[max(0, match.start() - 500) : match.end() + 500]
+            assert "dedicated" in context, path
 
 
 def test_workflow_trace_makes_durable_specification_proportional() -> None:
@@ -3150,23 +3163,10 @@ def test_diagnosis_is_an_explicit_leaf_with_bounded_recommendations() -> None:
     )
 
     diagnosing_flat = " ".join(diagnosing.split())
-    assert "description: 'Explicit-only diagnosis loop" in diagnosing
     assert "or reports something broken" not in diagnosing
-    assert "Run only when explicitly selected" in diagnosing_flat
-    assert "When all diagnosis inputs are already settled" in diagnosing_flat
-    assert "It establishes actuality, not correctness, cause, or a corrective RED" in (
-        diagnosing_flat
-    )
-    assert "accounts for every ranked competing hypothesis" in diagnosing_flat
-    assert "discriminating prediction and recorded probe result" in diagnosing_flat
-    assert "why it is no longer viable" in diagnosing_flat
-    assert (
-        "viable competing explanation remains untested or unexplained"
-        in diagnosing_flat
-    )
-    assert "stronger alternatives falsified or unnecessary" not in diagnosing_flat
-    packet = diagnosing.split("Return one diagnosis packet containing:", 1)[1]
-    assert "claims no cause or fix" in packet
+    assert "hypothesis ledger" not in diagnosing_flat
+    assert "every ranked competing hypothesis" not in diagnosing_flat
+    assert "Return one diagnosis packet containing:" not in diagnosing
     rows = set(
         re.findall(
             r"(?m)^\| `([a-z0-9-]+)` \| (Load|Invoke|Compose|Hand off|Recommend and stop) \| `\$([a-z0-9-]+)` \|",
@@ -3174,8 +3174,8 @@ def test_diagnosis_is_an_explicit_leaf_with_bounded_recommendations() -> None:
         )
     )
     assert not implicit_policy(CUSTOM / "diagnosing-bugs")
-    assert "Start no successor; any recommendation below remains unstarted" in diagnosing_flat
-    assert set(re.findall(r"\$[a-z0-9-]+", diagnosing)) == {"$audit-codebase"}
+    assert "Start no successor" in diagnosing_flat
+    assert set(re.findall(r"\$[a-z0-9-]+", diagnosing)) == set()
     assert "recommend `$diagnosing-bugs` and stop before mutation" in prototype
     assert "recommend `$diagnosing-bugs`" in resolver
     assert {
@@ -3184,7 +3184,6 @@ def test_diagnosis_is_an_explicit_leaf_with_bounded_recommendations() -> None:
         if caller == "diagnosing-bugs" or callee == "diagnosing-bugs"
     } == {
         ("prototype", "Recommend and stop", "diagnosing-bugs"),
-        ("diagnosing-bugs", "Recommend and stop", "audit-codebase"),
         ("resolving-merge-conflicts", "Recommend and stop", "diagnosing-bugs"),
     }
     contract = pack_contract.parse_contract(
@@ -3202,7 +3201,6 @@ def test_diagnosis_is_an_explicit_leaf_with_bounded_recommendations() -> None:
     } == {
         ("skill-router", "Recommend and stop", "diagnosing-bugs"),
         ("prototype", "Recommend and stop", "diagnosing-bugs"),
-        ("diagnosing-bugs", "Recommend and stop", "audit-codebase"),
         ("resolving-merge-conflicts", "Recommend and stop", "diagnosing-bugs"),
     }
     for skill in CUSTOM.iterdir():

@@ -82,6 +82,12 @@ applicable repository requirement, but red-testability alone no longer
 activates it. Ordinary implementation uses appropriate tests without a TDD
 packet. Implement retains delivery, lane workers retain mutation custody, and
 Skill Router continues to recommend one route without starting it.
+Revision 19 materializes machine contract revision 7 by keeping ordinary bug
+investigation with Implement and reserving explicit Diagnosis for hard,
+intermittent, performance, environment-only, production-only, or otherwise
+causally ambiguous failures. Diagnosis keeps an authorized causal-fix branch,
+uses proportionate evidence instead of mandatory ledgers and test-first work,
+and returns concerns to its caller without an Audit recommendation.
 It binds the complete fingerprinted pre-discovery fixed point, then freezes the
 tested environment, finite research order, capability
 owners, roles, relationships, exclusions, resolved collisions, acceptance
@@ -194,10 +200,10 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       ],
       "allowed_contributor_skill_ids": [],
       "capability_id": "CAP-005",
-      "completion_return": "A causal packet, regression-ready reproduction, or decision-needed blocker",
+      "completion_return": "A supported cause, plus any authorized causal fix and verification",
       "disposition": "selected",
       "entry_conditions": [
-        "Expected behavior, symptom, cause, reproduction, environment, or performance mechanism is uncertain"
+        "A hard, intermittent, performance, environment-only, production-only, or causally ambiguous failure needs dedicated investigation"
       ],
       "essential": true,
       "exclusions": [
@@ -205,11 +211,11 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Unbounded foreign procedure loading",
         "Automated semantic acceptance"
       ],
-      "observable_outcome": "Establish the cause and trusted reproduction of uncertain broken behavior before repair",
+      "observable_outcome": "Resolve one hard bug through discriminating evidence and an optional authorized causal fix",
       "primary_owner_skill_id": "SK-005",
       "proof_class": "fresh behavioral proof plus structural identity and boundary proof",
       "required_authority_mutation": [
-        "Diagnostic hypotheses, causal experiments, reproduction evidence, and fix-ready return"
+        "Diagnostic hypotheses, causal experiments, reproduction evidence, and an optional bounded causal fix"
       ]
     },
     {
@@ -716,7 +722,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "scenario_id": "PS-004"
       },
       {
-        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for diagnosing-bugs: Establish the cause and trusted reproduction of uncertain broken behavior before repair",
+        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for diagnosing-bugs: Resolve one hard bug through discriminating evidence and an optional authorized causal fix",
         "expected_owner_skill_id": "SK-005",
         "scenario_id": "PS-005"
       },
@@ -987,7 +993,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       }
     ],
     "composition_epoch_id": "FCE-20260727-01",
-    "contract_revision": 6,
+    "contract_revision": 7,
     "epoch_lock": null,
     "exclusions": [
       "Per-skill H1 or candidate wording",
@@ -2328,7 +2334,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-025",
       "combined_exit_owner_skill_id": "SK-025",
       "context_loaded": [],
-      "entry_condition": "The situation satisfies expected behavior, symptom, cause, reproduction, environment, or performance mechanism is uncertain; return that route and leave it unstarted.",
+      "entry_condition": "A hard, intermittent, performance, environment-only, production-only, or causally ambiguous failure needs dedicated investigation; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
       "input_packet": "Caller-owned bounded Source Trace for skill-router and the declared diagnosing-bugs input",
       "ordering_impact": "callee-before-caller",
@@ -3461,31 +3467,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
     },
     {
       "affected_capability_ids": [
-        "CAP-005",
-        "CAP-017"
-      ],
-      "callee_owned_gates_mutations": [
-        "No callee execution, mutation, resumption, or completion is authorized by this edge"
-      ],
-      "caller_skill_id": "SK-005",
-      "combined_exit_owner_skill_id": "SK-005",
-      "context_loaded": [],
-      "entry_condition": "After an authorized fix is proved, post-mortem evidence shows that prevention needs repository mapping or unclassified architecture work, including a missing correct regression seam.",
-      "failure_behavior": "Return the recommendation and exact post-mortem evidence without starting Audit or widening Diagnosis",
-      "input_packet": "Diagnosis identity, proved fix and original-scenario result, architecture concern, affected callers, seam gap, evidence, and limits",
-      "ordering_impact": "none",
-      "relationship_id": "REL-101",
-      "required_proof_ids": [
-        "PROOF-REL-101"
-      ],
-      "resume_owner_skill_id": "SK-005",
-      "return_packet": "One Audit Codebase recommendation with the exact concern and proof, leaving downstream work unstarted",
-      "target_skill_id": "SK-017",
-      "verb": "Recommend and stop",
-      "wrong_condition": "Diagnosis or an authorized fix is incomplete, the architecture concern lacks post-mortem evidence, or the prevention work is already bounded and caller-owned"
-    },
-    {
-      "affected_capability_ids": [
         "CAP-004",
         "CAP-005"
       ],
@@ -3495,7 +3476,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-004",
       "combined_exit_owner_skill_id": "SK-004",
       "context_loaded": [],
-      "entry_condition": "Prototype Fit finds that an existing built system is broken, throwing, failing, or slow for an uncertain reason rather than posing one disposable design question.",
+      "entry_condition": "Prototype Fit finds that an existing built system has a hard failure needing dedicated causal investigation rather than posing one disposable design question.",
       "failure_behavior": "Return the recommendation and intact symptom evidence without creating a probe or starting Diagnosis",
       "input_packet": "Observed symptom, available evidence, relevant work state, caller identity, and known limits",
       "ordering_impact": "none",
@@ -3520,7 +3501,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-016",
       "combined_exit_owner_skill_id": "SK-016",
       "context_loaded": [],
-      "entry_condition": "Resolver State finds no active conflict or unmerged entry and only post-operation behavior is broken for an uncertain reason.",
+      "entry_condition": "Resolver State finds no active conflict or unmerged entry and a hard post-operation failure needs dedicated causal investigation.",
       "failure_behavior": "Return the recommendation and exact state without reconciliation, finish mutation, or starting Diagnosis",
       "input_packet": "Repository and worktree identity, exact Git and operation state, observed symptom, available evidence, authorities, and Return owner",
       "ordering_impact": "none",
@@ -3709,35 +3690,33 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "PS-005"
       ],
       "canonical_name": "diagnosing-bugs",
-      "completion_condition": "The observed symptom has a supported cause or the uncertainty is bounded",
+      "completion_condition": "The hard failure has a supported cause, and any authorized fix passes the original feedback loop",
       "contract_order": 5,
-      "essential_outcome": "Establish the cause and trusted reproduction of uncertain broken behavior before repair",
+      "essential_outcome": "Resolve one hard bug through discriminating evidence and an optional authorized causal fix",
       "failure_return": "Return the exact missing fact, reproduction, access, or authority",
       "invocation_mode": "explicit-only",
       "load_budget_class": "conditional-leaf",
       "negative_exclusion_predicates": [
-        "The request does not satisfy: Expected behavior, symptom, cause, reproduction, environment, or performance mechanism is uncertain",
+        "The request does not satisfy: A hard, intermittent, performance, environment-only, production-only, or causally ambiguous failure needs dedicated investigation",
         "Another selected skill owns the requested outcome",
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
       "owned_authority_mutation_surfaces": [
-        "Diagnostic hypotheses, causal experiments, reproduction evidence, and fix-ready return"
+        "Diagnostic hypotheses, causal experiments, reproduction evidence, and an optional bounded causal fix"
       ],
       "owned_capability_ids": [
         "CAP-005"
       ],
-      "positive_entry_predicate": "Expected behavior, symptom, cause, reproduction, environment, or performance mechanism is uncertain",
+      "positive_entry_predicate": "A hard, intermittent, performance, environment-only, production-only, or causally ambiguous failure needs dedicated investigation",
       "primary_role": "leaf",
       "prohibited_ownership": [
         "Another selected skill's semantic decision, local mutation, proof judgment, Return, or completion",
         "Per-skill H1 outside this immutable contract slice",
         "Pack integration acceptance, epoch Lock, cleanup, installation, or Git delivery unless explicitly owned"
       ],
-      "relationship_ids": [
-        "REL-101"
-      ],
-      "required_input": "A bounded caller-owned Source Trace and authority for: Establish the cause and trusted reproduction of uncertain broken behavior before repair",
-      "return_packet": "A causal packet, regression-ready reproduction, or decision-needed blocker",
+      "relationship_ids": [],
+      "required_input": "A bounded hard bug, available evidence, and explicit authority for any requested causal fix",
+      "return_packet": "A supported cause and any authorized causal fix and verification, or an incomplete return naming the viable explanation and exact evidence boundary",
       "skill_id": "SK-005"
     },
     {

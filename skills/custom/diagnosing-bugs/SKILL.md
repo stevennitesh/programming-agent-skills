@@ -1,168 +1,89 @@
 ---
 name: diagnosing-bugs
-description: 'Explicit-only diagnosis loop for hard bugs and performance regressions when the user requests diagnosis or debugging.'
+description: Explicit-only investigation and optional causal fix for hard, intermittent, performance, environment-only, production-only, or otherwise causally ambiguous bugs.
 ---
 
 # Diagnosing Bugs
 
-**Trace -> Loop -> Minimise -> Hypothesise -> Probe -> Prove -> Return**
+Find and support the cause of one hard bug. When the caller authorizes source
+changes, apply the smallest causal fix and prove the original symptom is gone.
 
-**No evidence-capable Loop, no causal hypothesis. No proven cause, no fix.**
+Run only when explicitly selected. Ordinary deterministic bugs stay with the
+implementation owner. If intended behavior is unsettled, return the decision to
+its owner rather than treating broken output as the oracle. If the failure is
+ordinary and locally reproducible without dedicated investigation, return
+`route mismatch` with the facts unchanged.
 
-## Boundary
+Diagnosis alone retains no source or runtime behavior change. It may use
+invocation-owned temporary local instrumentation when that is the cheapest
+discriminating probe, but must restore it before Return. A request to fix the
+bug grants authority only for the bounded local source change, not live or
+production instrumentation, external writes, review, staging, commit, tracker
+closeout, or push. Get separate approval before capturing sensitive data or
+changing a live system, and redact secrets from commands, output, and artifacts.
 
-Own uncertain diagnosis through causal proof and regression evidence.
+Read the repository instructions and relevant code. Apply the repository's
+engineering and domain guidance when present. Preserve unrelated work and keep
+disposable artifacts under `.tmp/diagnosing-bugs/<bug-slug>/`.
 
-- **Diagnosis mode:** prove the cause and recommend the smallest fix; leave
-  source and runtime behavior unchanged.
-- **Fix mode:** only with user or caller implementation authority; apply the
-  smallest causal fix.
-- **Caller:** owns scope, review, staging, commit, tracker or external mutation,
-  push, release, final read-back, and architecture follow-up.
+## 1. Reproduce
 
-Run only when explicitly selected. Return to the user or named caller. Start no
-successor; any recommendation below remains unstarted. When all diagnosis
-inputs are already settled, return `route mismatch` with the facts unchanged.
+Establish the expected behavior, actual behavior, exact symptom, and the
+environment that exposes it. A characterization test records current behavior;
+it does not prove that behavior is correct.
 
-Apply `docs/agents/engineering-contract.md` and `docs/agents/domain.md` when
-present. Put disposable artifacts under `.tmp/diagnosing-bugs/<bug-slug>/`. Live
-or production instrumentation, persisted telemetry, external writes, and
-sensitive-data capture require explicit approval.
+Build the nearest practical feedback loop that catches the reported symptom,
+not a nearby failure. Choose the cheapest faithful method: an existing test,
+CLI or HTTP command, browser path, captured replay, differential comparison,
+bisection, or a small throwaway harness. Make it repeatable enough to guide the
+investigation. For intermittent failures, track reproduction rate and relevant
+conditions. For performance regressions, establish a comparable baseline.
 
-## 1. Trace
+If available evidence cannot support a useful probe, return the missing access,
+artifact, or instrumentation approval. Make no causal claim.
 
-Record the Source Trace, including expected and actual behavior, exact evidence,
-reproducer and environment, known-good baseline, contradictions, and missing
-evidence. Broken output is not the expected-behavior oracle.
+## 2. Discriminate
 
-Use a characterization test only when actual legacy behavior must be recorded
-while intended behavior is unavailable. It establishes actuality, not
-correctness, cause, or a corrective RED.
+Trace the symptom through the behavior owner, real callers, data, and state.
+State a falsifiable explanation and the observation it predicts. Inspect or
+instrument the cheapest signal that distinguishes it from the strongest viable
+alternative. Change one variable at a time and prefer direct state inspection
+over broad logging.
 
-When expected behavior remains unresolved, return a decision-needed packet to
-the caller. Make no causal claim or source or runtime behavior change.
+Minimize the reproduction when doing so reduces uncertainty or produces useful
+regression evidence. Stop when another reduction costs more than it teaches or
+would stop representing the real failure.
 
-Before instrumentation, record the fixed point, worktree state, and pre-existing
-changes. Existing evidence satisfies a later gate only when its source and
-result are recorded.
+Treat the cause as supported only when the predicted observation occurs and the
+explanation accounts for the original symptom. If a materially different cause
+remains viable, run another useful authorized discriminating probe. When none
+remains, return the viable explanation and the exact missing access, evidence,
+or next probe without claiming completion.
 
-## 2. Loop
+## 3. Resolve
 
-Build and run one repeatable harness, normally a single command, that catches
-the exact reported symptom.
+In diagnosis-only work, recommend the smallest causal fix and change no source
+or runtime behavior.
 
-Start at the nearest automated seam; escalate through replay, a throwaway
-harness, fuzzing, bisection, differential comparison, then structured HITL. When
-automation is impossible, use a shell-appropriate HITL harness that captures the
-exact symptom, expected and actual behavior, steps, attempts, failures,
-environment, and observations.
+With fix authority, correct the cause across affected callers instead of
+guarding one symptom. Add or change a regression test only when repository
+policy requires it or when it is the cheapest durable protection at a seam that
+reaches the real bug pattern. Do not add a shallow test that cannot fail for the
+reported behavior.
 
-The **Loop** must be:
+Rerun the original feedback loop after the fix. Compare reproduction rates or
+performance measurements only on those branches. If the attempted fix fails,
+remove only changes made for that attempt, preserve unrelated work, and resume
+the investigation or return the exact remaining state.
 
-- **sharp:** asserts the exact symptom;
-- **repeatable:** deterministic or measured by reproduction rate;
-- **tight:** practical to run repeatedly;
-- **agent-runnable:** unattended except for structured HITL.
+## 4. Return
 
-For flakes, record attempts, failures, rate, seed, time, environment, and
-concurrency. For performance, record the baseline and constraint.
+Remove temporary instrumentation and disposable artifacts. Return the symptom
+and oracle, the supported cause or remaining uncertainty, the reproducer or
+decisive evidence, the recommended or applied fix, verification, and any
+material gap. Start no successor.
 
-If no red-capable Loop can be built, return blocked with attempts, missing
-evidence, and the required access, artifact, or instrumentation approval. Make
-no causal claim.
-
-## 3. Minimise
-
-Remove one input, caller, configuration, dependency, environment condition, or
-step at a time; rerun the Loop after every cut.
-
-Stop when every remaining element is load-bearing or explicitly unremovable
-without destroying an environment- or production-only condition. The minimised
-repro must still explain the original scenario.
-
-## 4. Hypothesise
-
-Rank the plausible falsifiable hypotheses before testing them. Include a
-competing explanation unless direct evidence uniquely determines the cause.
-
-> If `<cause>` is true, `<probe>` will produce `<observable prediction>`.
-
-Keep a ledger of hypothesis, probe, prediction, result, and what the result
-ruled out.
-
-## 5. Probe
-
-Test one hypothesis and one variable at a time. Prefer direct state inspection,
-then targeted instrumentation that distinguishes named hypotheses. Tag every
-temporary instrumentation point uniquely.
-
-The **cause gate** passes only when the winning cause:
-
-- produces its predicted observation;
-- explains the minimised repro and original symptom;
-- survives a discriminating probe;
-- accounts for every ranked competing hypothesis: its discriminating prediction
-  and recorded probe result falsify it, or the ledger explains from observed
-  evidence why it is no longer viable.
-
-If any viable competing explanation remains untested or unexplained, the cause
-gate fails; rerank and continue probing.
-
-## 6. Prove
-
-In diagnosis mode, record the recommended causal fix and retain no source or
-runtime behavior change.
-
-In fix mode, when a correct regression seam reproduces the real bug pattern:
-
-1. place the minimised repro under its canonical test owner by reusing or
-   extending an existing regression test, case table, or contract suite when it
-   can express the responsibility; add a separate test only for a distinct
-   proof responsibility or necessary failure isolation;
-2. observe RED for the expected reason;
-3. apply the smallest complete causal fix across affected callers and its
-   applicable Change Closure;
-4. observe GREEN;
-5. rerun the original, unminimised Loop.
-
-When no correct seam exists, record the test-surface gap and prove the
-authorized fix with the original Loop without claiming durable regression
-coverage.
-
-Compare flake rates or performance measurements with their baselines. If the
-original Loop remains red, revert only changes authored for that attempted fix,
-preserving pre-existing and unrelated hunks. If clean isolation is impossible,
-stop with the exact state. Record the evidence and return to **Hypothesise**.
-
-## 7. Return
-
-Remove tagged instrumentation and disposable `.tmp/` artifacts, verify their
-absence, and reconcile temporary diagnostic changes against the starting
-inventory. Retain only the authorized causal fix and approved durable evidence.
-Preserve durable evidence under `.scratch/diagnosing-bugs/<bug-slug>/` only with
-explicit approval.
-
-Return one diagnosis packet containing:
-
-- mode, fix authority, and return owner;
-- Source Trace, tight Loop, and load-bearing repro;
-- hypothesis ledger and cause-gate evidence;
-- applied or recommended fix;
-- regression target and, in fix mode, either its canonical test owner and
-  regression-test change or the seam gap;
-- original-scenario result;
-- Change Closure, cleanup, validation, residual risk, and skipped checks.
-
-After an authorized fix is proved, recommend `$audit-codebase` and stop when
-post-mortem evidence shows that prevention needs repository mapping or
-unclassified architecture work, including a missing correct regression seam.
-Return the concern, affected callers, seam gap, fix identity, and proof; leave
-Audit unstarted. Otherwise record architecture concerns as follow-up evidence
-for the caller.
-
-Diagnosis is complete only when the cause gate passes, cleanup is complete, and
-the packet is returned. Fix work additionally requires authority, a complete
-causal fix and applicable Change Closure, regression proof where a correct seam
-exists, a green original scenario, and relevant flake or performance comparison.
-A blocked packet names the missing loop, access, evidence, or causal proof and
-claims no cause or fix.
+Diagnosis is complete only when the cause is supported. An unresolved return is
+incomplete even when its evidence boundary is precise. An authorized fix is
+complete only when the causal change is in scope, the original symptom no longer
+reproduces, relevant proof passes, and debugging residue is gone.

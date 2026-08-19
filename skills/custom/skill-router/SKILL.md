@@ -68,7 +68,7 @@ Implement decides whether each frontier runs serially or concurrently.
 | Situation | Route |
 | --- | --- |
 | Raw tracker issues or configured external PR/MR requests need sorting and readiness verification | `$triage` |
-| Expected behavior, symptom, cause, reproduction, environment, or performance mechanism is uncertain | `$diagnosing-bugs` |
+| A hard, intermittent, performance, environment-only, production-only, or causally ambiguous failure needs dedicated investigation | `$diagnosing-bugs` |
 | The user explicitly requests TDD, test-first work, or RED-GREEN-REFACTOR, or applicable repository policy requires TDD, and one bounded behavior and independent oracle are settled | `$tdd` |
 | An active merge, rebase, cherry-pick, or revert is conflicted, an index is unmerged, or plausible markers need inspection | `$resolving-merge-conflicts` |
 | A branch, WIP, staged, since-X diff, PR, release candidate, or supported-risk candidate needs read-only judgment | `$change-review` |
@@ -82,14 +82,15 @@ judgment to `$audit-codebase`; one bounded behavior-preserving reduction to
 TDD only under an explicit user or repository-policy requirement. Route one
 standalone explicitly test-first behavior to `$tdd`, ordinary test,
 integration-test, regression-test, or coverage work to `$implement`, uncertain
-broken behavior to `$diagnosing-bugs`, and an existing diff needing judgment to
-`$change-review`.
+broken behavior that needs dedicated investigation to `$diagnosing-bugs`, and
+an existing diff needing judgment to `$change-review`.
 High Assurance Review is an explicit user-selected alternative, never an
 automatic route.
 
 **Conflict tie-breaker:** route an active unresolved operation or unmerged index
-to `$resolving-merge-conflicts`; an already-resolved candidate to review; and a
-post-operation behavioral failure to `$diagnosing-bugs`.
+to `$resolving-merge-conflicts`; an already-resolved candidate to review; a
+routine post-operation repair to `$implement`; and a hard post-operation failure
+that needs dedicated investigation to `$diagnosing-bugs`.
 
 ### Design And Pack Maintenance
 

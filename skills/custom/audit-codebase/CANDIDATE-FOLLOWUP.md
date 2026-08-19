@@ -26,7 +26,7 @@ Choose the first unresolved work, not an eventual workflow:
 | --- | --- |
 | One non-diagnostic source-answerable authoritative fact | `$research` |
 | One settled design question needing a disposable runnable probe or performance experiment | `$prototype` |
-| Broken or slow behavior with uncertain expectation, symptom, cause, or trusted reproduction | `none`; return `blocked` with result `diagnosis-required`, the evidence limit, and exact re-entry |
+| Hard, intermittent, performance, environment-only, production-only, or causally ambiguous failure needing dedicated investigation | `none`; return `blocked` with result `diagnosis-required`, the evidence limit, and exact re-entry |
 | Settled domain language, Invariant, Bounded Context, Context Relationship, or ADR candidate needing durable capture | `$domain-modeling` |
 | One current-user decision that also requires domain-record maintenance | `$grill-with-docs` |
 | One conversation-only current-user decision | `$grilling` |

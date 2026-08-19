@@ -27,8 +27,8 @@ Before mutation, decide whether one material design decision can be answered by
 one bounded runnable-evidence question. When it cannot, state the mismatch and
 actual need without mutating.
 
-When an existing built system is instead broken, throwing, failing, or slow
-for an uncertain reason, recommend `$diagnosing-bugs` and stop before mutation.
+When an existing built system has a hard failure that needs dedicated causal
+investigation instead, recommend `$diagnosing-bugs` and stop before mutation.
 Return the observed symptom and intact available evidence; leave Diagnosis
 unstarted.
 

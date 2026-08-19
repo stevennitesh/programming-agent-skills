@@ -10,8 +10,9 @@ mechanics.
 
 Measure compares predeclared design alternatives under one frozen workload. It
 does not diagnose an unexplained slowdown, certify a production baseline, prove
-an SLO, or replace production-scale validation. Route uncertain symptoms to
-diagnosis; return production performance proof to its delivery or audit owner.
+an SLO, or replace production-scale validation. Route a hard unexplained
+slowdown needing dedicated causal investigation to diagnosis; return production
+performance proof to its delivery or audit owner.
 
 ## Measurement Contract
 

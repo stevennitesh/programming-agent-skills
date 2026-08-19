@@ -21,10 +21,13 @@ oracle, support, or authority gap before behavior mutation.
 The caller owns bounded scope, review, staging, commit, tracker or external
 mutation, publishing, and closeout.
 
-When a bug's expected behavior, exact symptom, cause, or trusted red-capable
-reproduction is uncertain, return `diagnosis-required` with the intact facts to
-the caller and stop. Return `design-evidence-required` only when no uncertain
-broken symptom or cause requires diagnosis and RED would encode an unmade
+When a hard, intermittent, performance, environment-only, production-only, or
+causally ambiguous bug needs dedicated investigation, return
+`diagnosis-required` with the intact facts to the caller and stop. An initially
+unknown cause does not exclude an ordinary deterministic bug from TDD when its
+behavior, symptom, and independent oracle are settled. Return
+`design-evidence-required` only when no hard failure requires diagnosis and RED
+would encode an unmade
 design decision: several live alternatives remain and the choice needs a
 runnable, interactive, or measured verdict rather than a test of accepted
 behavior. This is not implementation proof because no single accepted behavior

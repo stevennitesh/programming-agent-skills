@@ -25,11 +25,13 @@ disproved, or incomplete target returns `blocked` unchanged. Without a target,
 return `blocked` with the exact target needed; recommend `$audit-codebase` only
 when wide discovery or repository mapping is needed.
 
-Return feature work, public-contract decisions, reviews, Git delivery, tracker
-mutation, installation, and external-system work to their owners. Return
-uncertain symptoms or causes to the caller as `diagnosis-required`. Return a
-required new Interface, dependency direction, Proof Seam, or ownership decision
-to the caller as a design gap. Stop before copying a foreign owner's procedure.
+Return feature work, ordinary bug repair, public-contract decisions, reviews,
+Git delivery, tracker mutation, installation, and external-system work to their
+owners. Return a hard, intermittent, performance, environment-only,
+production-only, or causally ambiguous failure that needs dedicated
+investigation as `diagnosis-required`. Return a required new Interface,
+dependency direction, Proof Seam, or ownership decision to the caller as a
+design gap. Stop before copying a foreign owner's procedure.
 
 The user owns the target, mode, budget, and commitment decisions. Simplify Code
 owns selection, local edits, proof, and Return only inside the admitted region.

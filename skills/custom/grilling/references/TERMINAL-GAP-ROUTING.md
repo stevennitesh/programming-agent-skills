@@ -17,8 +17,8 @@ When no `Route gap` applies, return `Evidence gap` with kind `evidence` or
 the exact instruction for returning its result to the original decision owner
 without changing the gap identity. Choose `$research` for an authoritative
 source, `$prototype` for runnable design evidence, `$to-questionnaire` for an
-external stakeholder, and the caller or `none` otherwise. Mark causal or
-reproduction uncertainty `diagnosis-required`.
+external stakeholder, and the caller or `none` otherwise. Mark a hard failure
+that needs dedicated causal investigation `diagnosis-required`.
 
 When the intact gap must cross into a fresh context, preserve the evidence or
 decision owner and add uninvoked `$handoff` only as transport. Handoff neither

@@ -27,11 +27,11 @@ separately; invocation alone grants neither.
    An unmerged index with unknown operation may be inspected or reconciled only
    from proven object and intent roles and has no **Finish**. Markers are
    signals, not proof of conflict.
-   When no active conflict or unmerged entry remains and only post-operation
-   behavior is broken for an uncertain reason, recommend `$diagnosing-bugs`
+   When no active conflict or unmerged entry remains and a hard post-operation
+   failure needs dedicated causal investigation, recommend `$diagnosing-bugs`
    and stop without reconciliation or finish mutation. Return the exact Git
    state, symptom, available evidence, and Return owner; leave Diagnosis
-   unstarted.
+   unstarted. Route an ordinary selected repair to its implementation owner.
 2. **Trace.** Load [OPERATIONS.md](OPERATIONS.md) only for the observed
    operation and relevant conflict-class rows. Inspect the base and sides in
    their actual operation roles. Trace intent through the operation goal and
@@ -50,9 +50,10 @@ after Diagnosis, and after every continuation.
    boundary when applicable, and remaining plausible markers. Do not stage.
 4. **Prove.** Run focused repo-owned checks and broader checks required by risk
    or repo convention. Repair an obvious in-scope resolution defect and reprove.
-   When failure causality is uncertain, return `diagnosis-required` with the
-   operation, goal, exact state, evidence, authorities, and Return owner. Return
-   `blocked` for a required
+   When a hard, intermittent, performance, environment-only, production-only,
+   or causally ambiguous failure needs dedicated investigation, return
+   `diagnosis-required` with the operation, goal, exact state, evidence,
+   authorities, and Return owner. Return `blocked` for a required
    out-of-scope, authority-gated, or blocking pre-existing correction. A proven
    unrelated failure may remain explicit residual risk. Focused resolution
    proof must pass before **Finish**.
