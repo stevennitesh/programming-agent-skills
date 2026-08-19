@@ -23,9 +23,19 @@ return `diagnosis-required`.
 ## 2. Choose The Design
 
 Choose the smallest integrated design that makes the requested behavior clear.
-Prefer the current behavior owner, existing abstractions, and a simple data
-shape. Subtract, reuse, or replace before adding another path. Add a boundary
-only for a real caller or trust boundary.
+Prefer the current behavior owner, small interfaces, and local state. Model the
+domain with a clear data shape instead of scattering conditionals. Subtract,
+reuse, or replace before adding another path. Use language, framework, and
+repository capabilities before adding abstractions or dependencies. Add a
+boundary only for a real caller or trust boundary. Fix the cause across
+affected callers instead of guarding one symptom.
+
+Within the bounded change, integrate new behavior as a native part of the
+design rather than a bolted-on special case. Keep framework, transport, and
+storage details at the edge. Pass domain values into core logic and prefer
+explicit results over hidden mutation. Derive secondary state from one source
+of truth. Add a layer or seam only when it hides meaningful complexity or
+supports real variation.
 
 Do not add speculative compatibility, defensive checks, configuration,
 abstraction, documentation, or migration machinery. Validate actionable

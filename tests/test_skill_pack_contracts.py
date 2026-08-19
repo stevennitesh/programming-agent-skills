@@ -2109,7 +2109,9 @@ def test_tdd_invocation_gate_is_consistent_across_active_owners() -> None:
     ) in " ".join(router.split())
     assert "TDD only when the user explicitly requests" in engineering
     assert "TDD only when the user explicitly requests" in projected
-    assert "only when the user or repository explicitly requires" in portable
+    assert "only when the user explicitly requests it or repository policy requires it" in " ".join(
+        portable.split()
+    )
 
     skill = next(
         row for row in contract["selected_skills"] if row["canonical_name"] == "tdd"
@@ -2746,23 +2748,27 @@ def test_portable_fallback_remains_standalone_from_the_repo_contract() -> None:
     assert "each repository its own short `AGENTS.md`" in fallback_flat
     assert "replace any portable contract owner preamble" in " ".join(bootstrap.split())
     assert re.findall(r"\$[a-z0-9][a-z0-9-]*", fallback) == []
-    assert "It is not a workflow, checklist, review gate, completion contract" in contract_flat
+    assert "It is not a workflow, checklist, review gate, completion format" in contract_flat
     assert "Git mutation owners" not in contract_flat
-    assert "## Correctness And Evidence — Must" in contract
-    assert "## Design Defaults — Prefer" in contract
-    assert "## Methods When The Condition Applies" in contract
-    assert "When a validator, hook, policy check" in contract_flat
-    assert "When a change creates or changes a durable or machine-consumed artifact" in contract_flat
-    assert "Missing required proof stops the work" in contract_flat
-    assert "explicit user or accepted-task objective" in contract_flat
-    for shared_term in ("Traceability", "bounded slice", "commitment boundary"):
-        assert shared_term in contract
+    assert re.findall(r"(?m)^## (.+)$", seed) == [
+        "Understand before changing",
+        "Design for simplicity",
+        "Implement the whole change",
+        "Prove the claim",
+        "Activate protection from evidence",
+    ]
+    for shared_term in (
+        "bounded slice",
+        "Subtract, reuse, or replace",
+        "Trust internal types and established invariants",
+        "Run the nearest useful check",
+        "An inactive condition creates no checklist",
+    ):
+        assert shared_term in contract_flat
     for text in (fallback_flat, contract_flat):
         assert "user explicitly requests subagents" in text
-        assert "skill owns required fanout" in text
+        assert "invoked skill owns required fanout" in text
         assert "skill or workflow owns required fanout" not in text
-        assert "spare capacity" in text
-        assert "does not activate delegation" in text
     assert "authorized filesystem, Git, environment, tracker" in fallback_flat
 
     markerless_contract = re.sub(
@@ -2918,8 +2924,7 @@ def test_git_and_parallel_delivery_roles_stay_out_of_the_shared_contract() -> No
 
     for shared in (contract, seed):
         normalized = " ".join(shared.split())
-        assert "use an oracle independent of the implementation logic" in normalized
-        assert "need not be a separate reviewer" in normalized
+        assert "use an independent oracle" in normalized
         assert "Git mutation owners" not in normalized
         assert "starting index" not in normalized
         assert "registered worktrees" not in normalized
@@ -3067,8 +3072,10 @@ def test_state_boundary_reasoning_is_proportional_and_has_one_owner() -> None:
     seed = (CUSTOM / "repo-bootstrap/engineering-contract.md").read_text(encoding="utf-8")
     tickets = (CUSTOM / "to-tickets/SKILL.md").read_text(encoding="utf-8")
 
-    assert "### Reason Across State And Lifecycle Boundaries" in contract
-    assert "### Reason Across State And Lifecycle Boundaries" in seed
+    for shared in (contract, seed):
+        normalized = " ".join(shared.split())
+        assert "Handle state, retry, recovery, cancellation, concurrency" in normalized
+        assert "only when reachable behavior or a supported requirement" in normalized
     flat = " ".join(tickets.split())
     assert "whose behavior materially changes by state" in flat
     assert "Use a matrix only when it is clearer than prose" in flat

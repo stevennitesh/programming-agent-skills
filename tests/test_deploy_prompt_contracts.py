@@ -114,9 +114,9 @@ def test_wording_claim_routes_to_existing_conditional_behavior_protocol() -> Non
     ):
         assert claim in behavioral
     assert "decision no weaker than the control" in behavioral
-    assert "reject-no-control-deficit" in protocol
-    assert "stop before candidate sampling" in protocol
-    assert "Accept only when the control shows the registered deficit" in protocol
+    assert "control exposes the registered deficit" in protocol
+    assert "candidate materially improves it" in protocol
+    assert "no protected behavior regresses" in protocol
 
 
 def test_release_binds_exact_tested_candidate_and_existing_authorities() -> None:

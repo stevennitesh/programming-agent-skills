@@ -101,7 +101,7 @@ Use `python -m scripts.install_skills --dry-run` to preview skill deltas and the
 
 No installer or Python runtime is required. Copy [`AGENTS_PORTABLE_FALLBACK.md`](AGENTS_PORTABLE_FALLBACK.md) to `$HOME/.codex/AGENTS.md`, then give each target repository a short local `AGENTS.md` with verified commands, local invariants, and source-of-truth pointers.
 
-The portable contract carries authority boundaries, grounded routing, lean implementation, Root Cause correction, claim-matched proof, condition-triggered review and specialist work, Change Closure, and truthful completion. It intentionally omits skill routing, specialized procedures, tracker and domain setup, templates, and managed updates.
+The portable contract carries authority boundaries, a direct five-action implementation path, root-cause correction, proportional proof, condition-triggered protection, displaced-path removal, and concise reporting. It intentionally omits skill routing, specialized procedures, tracker and domain setup, templates, and managed updates.
 
 ## What's Included
 
