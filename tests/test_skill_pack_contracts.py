@@ -2454,12 +2454,13 @@ def test_interface_alternatives_receive_curated_fresh_context() -> None:
 def test_research_owns_one_authorized_cited_note() -> None:
     skill_dir = CUSTOM / "research"
     research = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+    research_flat = " ".join(research.split())
 
     assert implicit_policy(skill_dir)
     assert re.findall(r"(?m)^## (.+)$", research) == [
         "Admission And Scope",
         "Evidence",
-        "Output",
+        "Note Mutation",
         "Verify And Return",
     ]
     assert {"`supported`", "`conflicted`", "`unknown`"} <= set(
@@ -2469,7 +2470,7 @@ def test_research_owns_one_authorized_cited_note() -> None:
         assert f"`{status}`" in research
     assert "create or update only that Markdown file" in research
     assert re.search(r"make no\s+tracked mutation", research)
-    for contract in (
+    for common_contract in (
         "Treat a source as authoritative only for the claim it owns",
         "not comparative superiority or real-world reliability",
         "opinion and case reports own the viewpoint or observed case",
@@ -2477,27 +2478,6 @@ def test_research_owns_one_authorized_cited_note() -> None:
         "provisionally route each claim",
         "evidence for a definition does not by itself support effectiveness",
         "Do not demote a source solely as secondary",
-        "For a legal or policy claim",
-        "price basis, availability channel, and date when applicable",
-        "For a quantitative claim, record the applicable measurand",
-        "For a quantitative method",
-        "For any point-in-time claim",
-        "depends on target-specific meaning or operation",
-        "even when the request does not explicitly ask for a comparison",
-        "complete local chain needed for the claim",
-        "reread mutable load-bearing surfaces",
-        "classify each applicable layer independently",
-        "If sufficient applicable evidence for a layer is unavailable",
-        "do not substitute evidence from another layer",
-        "An evidenced `aligned` or `materially different`",
-        "mapping resolution does not determine the packet's terminal status",
-        "packet's terminal status",
-        "source-supported alignment constraints",
-        "Static correspondence supports neither by itself",
-        "only explicitly described applicable alternatives",
-        "For an admitted packet, always include",
-        "a target or repository mapping when applicable",
-        "an empirical remainder when applicable",
         "For `not-admitted`, return only the Admission contract",
         "Do not silently replace a required repo-local note",
         "Challenge the strongest plausible answer",
@@ -2510,15 +2490,66 @@ def test_research_owns_one_authorized_cited_note() -> None:
         "Treat required sources as evidentiary conditions",
         "never block solely on a preference",
         "Use discovery results to refine vocabulary and locate direct sources",
-        "Put only public information or caller-approved search terms",
-        "use it only within the defined audience, destination, and tool authority",
         "Judge independence against the challenged failure mode",
         "sharing the claim's subject alone does not defeat independence",
         "For a direct admitted request, lead with the answer when `answered`",
         "For a caller invocation, use the complete structured Return contract",
     ):
-        assert contract in " ".join(research.split())
-    assert research.index("## Output") < research.index("## Verify And Return")
+        assert common_contract in research_flat
+
+    branches = {
+        "COMPARATIVE-EVIDENCE.md": (
+            "compare or rank two or more alternatives",
+            "caller-owned criteria, constraints, and comparison rule",
+            "return a tie or conditional answer",
+        ),
+        "LEGAL-POLICY-EVIDENCE.md": (
+            "legal or policy meaning",
+            "jurisdiction and effective period",
+            "nonbinding or persuasive authority",
+        ),
+        "PRIVATE-SOURCE-EVIDENCE.md": (
+            "non-public, sensitive, credentialed, or audience-restricted",
+            "authorized private channels",
+            "keep the dependent claim `unknown`",
+        ),
+        "QUANTITATIVE-EVIDENCE.md": (
+            "reports a numeric quantity or uses a quantitative method",
+            "applicable measurand",
+            "equations or algorithm",
+        ),
+        "POINT-IN-TIME-EVIDENCE.md": (
+            "available, known, published, or effective as of a cutoff",
+            "earliest availability established through an inspected channel",
+            "current page does not establish prior availability",
+        ),
+        "TARGET-MAPPING-EVIDENCE.md": (
+            "maps to a named artifact or repository behavior",
+            "complete local chain needed for the claim",
+            "mapping resolution does not determine the packet's terminal status",
+        ),
+    }
+    assert "load every applicable branch below and no inactive branch" in research_flat
+    for filename, contracts in branches.items():
+        assert f"[{filename}](references/{filename})" in research
+        branch = (skill_dir / "references" / filename).read_text(encoding="utf-8")
+        branch_flat = " ".join(branch.split())
+        assert "Otherwise do not load it." in branch_flat
+        for contract in contracts:
+            assert contract in branch_flat
+
+    for disclosed_detail in (
+        "For a legal or policy claim",
+        "For a quantitative claim, record the applicable measurand",
+        "For any point-in-time claim",
+        "Before synthesizing a target mapping",
+        "Keep external source systems read-only",
+    ):
+        assert disclosed_detail not in research
+
+    assert research.index("## Note Mutation") < research.index("## Verify And Return")
+    assert "terminal content contract below" in research_flat
+    assert "omit inactive conditional material" in research_flat
     assert "Return to the caller without deciding its artifact" in research
     assert "starting downstream work" in research
 

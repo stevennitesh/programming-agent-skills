@@ -10,11 +10,16 @@ and `docs/synthesis/skill-context-relationships.md`.
 
 A later lean Author pass clarified source ownership, proportionate
 disconfirmation, independent evidence, and evidence saturation without adding a
-mode or stage. Canonical Research is current executable authority at tree
-SHA-256
-`2b1135c0d77539c92dda3db3df38c5fd3b0b7370017dc70de6c95c9927c732c1`.
-Installed parity and fresh wording-efficacy proof are not claimed; campaign-era
-exact-body and parity statements below are historical.
+mode or stage. The 2026-08-19 conditional-disclosure pass then moved six
+specialized evidence procedures under exact triggers in `references/` and
+collapsed duplicate Output/Return content into one terminal owner. Canonical
+Research is current executable authority at repository tree SHA-256
+`f99abec29568a6f91d015cd723ae8ae417ca0babfa5e3d885a12dadb451a236e`;
+`SKILL.md` SHA-256 is
+`84142c6a8d948c9c3e6b262252eef8a8b329031b34f8a53d76f112a101eea947`.
+Fresh fixed-fixture behavior proof supports this exact candidate. Installed
+parity is not claimed; campaign-era exact-body and parity statements below are
+historical.
 
 ## Historical Promoted Identity
 
@@ -46,6 +51,23 @@ The promoted minimum has six semantic units:
 | `B0-4` | Create or update exactly one authorized Markdown note, or make no tracked mutation; return a blocker when publication requires a second tracked change. |
 | `B0-5` | Return exactly one `answered`, `conflicted`, `blocked`, or pre-research `not-admitted` packet while preserving caller custody and standalone `Next: none`. |
 | `B0-6` | Verify citation identity, entailment, authority, applicability, terminal status, output identity, mutation containment, and packet completeness before Return. |
+
+The current package keeps those common-path units inline and discloses only the
+specialized procedures:
+
+| Observable trigger | Disclosed owner |
+| --- | --- |
+| Compare, rank, or recommend alternatives under caller-owned criteria | `references/COMPARATIVE-EVIDENCE.md` |
+| Legal or policy meaning, obligation, permission, prohibition, or effective status | `references/LEGAL-POLICY-EVIDENCE.md` |
+| Non-public, sensitive, credentialed, or audience-restricted evidence | `references/PRIVATE-SOURCE-EVIDENCE.md` |
+| Numeric quantity or quantitative method | `references/QUANTITATIVE-EVIDENCE.md` |
+| What was available, known, published, or effective as of a cutoff | `references/POINT-IN-TIME-EVIDENCE.md` |
+| External meaning mapped to an exact artifact or repository behavior | `references/TARGET-MAPPING-EVIDENCE.md` |
+
+An ordinary admitted path loads no reference. The main file changed from
+17,038 bytes and 2,332 words to 13,646 bytes and 1,873 words: reductions of
+19.91% and 19.68%, respectively. The six references retain 6,017 bytes and 807
+words of branch-only procedure.
 
 Research remains narrowly implicitly invocable. Its description admits one
 bounded primary- or governing-source question for a caller-owned use and
@@ -105,6 +127,11 @@ Disposition: `pruning-not-needed`. No collapse, disclosure, or deletion lowered
 a named runtime load without risking a protected authority, evidence, mutation,
 Return, or completion obligation. Final C1 remained byte-identical to B0.
 
+That disposition is historical to the 2026-07-23 candidate and its proof. The
+2026-08-19 pass supplied new trigger-level tests and fresh behavior evidence for
+a different candidate: six branch procedures are disclosed without deletion,
+and duplicate note/inline content prose is collapsed under `Verify And Return`.
+
 ## Proof And Evidence Disposition
 
 | Evidence | Disposition |
@@ -117,6 +144,7 @@ Return, or completion obligation. Final C1 remained byte-identical to B0.
 
 Current-epoch proof records:
 
+- [Conditional-disclosure behavior evaluation](../../validation/skills/research/evals/EV-research-conditional-disclosure-20260819-01/evidence/2026-08-19-research-conditional-disclosure-eval.md)
 - [B0/C1 construction evidence](../../validation/skills/research/evals/EV-research-b0-c1-construction-evidence-20260723-01/evidence/2026-07-23-research-b0-c1-construction-evidence.md)
 - [Prompt 4 behavior evaluation](../../validation/skills/research/evals/EV-research-behavior-eval-20260723-01/evidence/2026-07-23-research-behavior-eval.md)
 - [Pruning Pass](../../validation/skills/research/evals/EV-research-pruning-20260723-01/evidence/2026-07-23-research-pruning.md)
@@ -129,8 +157,8 @@ Current-epoch proof records:
 - No assurance taxonomy, fixed source count, numeric confidence, complete
   search log, source catalog, citation helper, cache, database, sidecar,
   auto-refresh, or provider-specific procedure was added.
-- No support file, helper, note template, index, caller packet migration, or
-  relationship change was needed.
+- Six branch-only reference files were added. No helper, note template, index,
+  caller packet migration, or relationship change was needed.
 - Claim statuses remain distinct from terminal research statuses.
 - Exactly one tracked note remains the maximum durable mutation; note authority
   `none` remains a no-write branch.
@@ -151,6 +179,12 @@ Residual evidence limits are:
 - host-level automatic invocation instrumentation beyond fresh-context
   classification; and
 - generalization beyond the fixed packets, worker class, and recorded runtime.
+
+The current evaluation also records bounded admission variance for whether the
+versioned definition fixture is an excluded simple lookup or an admitted bounded
+question, and legal-status variance between conflict reporting and hierarchy
+resolution. Both arms showed those variations. Legal-policy and point-in-time
+loading may overlap when effective status is itself cutoff-dependent.
 
 These limits do not contradict the exact accepted candidate. They bound the
 claims: fixed-packet behavioral evidence proves only its recorded lanes, while
