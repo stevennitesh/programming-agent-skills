@@ -1,0 +1,7 @@
+interface:
+  display_name: "Unslop"
+  short_description: "Cut AI tells from writing"
+  default_prompt: "Use $unslop to remove AI patterns from this writing while preserving its meaning and intended tone."
+
+policy:
+  allow_implicit_invocation: true
