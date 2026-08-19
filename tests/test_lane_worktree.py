@@ -375,6 +375,12 @@ def test_cleanup_removes_helper_owned_lane_state(
     assert cleaned["removed"] == [str(worktree.resolve())]
     assert not worktree.exists()
     assert not sentinel.exists()
+    assert worktree not in {
+        Path(path.removeprefix("worktree ")).resolve()
+        for path in git(repo, "worktree", "list", "--porcelain").splitlines()
+        if path.startswith("worktree ")
+    }
+    assert not (lane_root / ".state" / "preserve-state").exists()
 
 
 def test_capacity_cleanup_returns_blocker_when_no_lane_is_safe(tmp_path: Path) -> None:
@@ -436,6 +442,46 @@ def test_prepare_reports_worktree_creation_failure(
         )
 
 
+def test_prepare_rollback_preserves_state_until_worktree_removal_is_confirmed(
+    tmp_path: Path, monkeypatch,
+) -> None:
+    repo, base = repository(tmp_path)
+    lane_root = tmp_path / "lanes"
+    result, packet = prepare(repo, lane_root, base, "rollback")
+    assert result.returncode == 0, packet
+    worktree = Path(str(packet["worktree"]))
+    state = lane_root / ".state" / "rollback"
+    marker = state / "recovery.txt"
+    marker.write_text("inspectable\n", encoding="utf-8")
+
+    namespace = runpy.run_path(str(HELPER))
+    rollback = namespace["rollback_created_lane"]
+    original_git = rollback.__globals__["git"]
+
+    def fail_remove(checkout, *args, check=True):
+        if args[:3] == ("worktree", "remove", str(worktree)):
+            return subprocess.CompletedProcess(args, 1, "", "worktree locked")
+        return original_git(checkout, *args, check=check)
+
+    monkeypatch.setitem(rollback.__globals__, "git", fail_remove)
+    blocked = rollback(repo, lane_root, worktree, base, "rollback")
+
+    assert blocked is not None
+    assert "worktree removal failed: worktree locked" in blocked
+    assert "lane state preserved; worktree registered; path present" in blocked
+    assert marker.read_text(encoding="utf-8") == "inspectable\n"
+    assert worktree in {
+        Path(path.removeprefix("worktree ")).resolve()
+        for path in git(repo, "worktree", "list", "--porcelain").splitlines()
+        if path.startswith("worktree ")
+    }
+
+    monkeypatch.setitem(rollback.__globals__, "git", original_git)
+    assert rollback(repo, lane_root, worktree, base, "rollback") is None
+    assert not worktree.exists()
+    assert not state.exists()
+
+
 def test_cleanup_reports_partial_failure_and_oldest_falls_through(
     tmp_path: Path, monkeypatch,
 ) -> None:
@@ -474,22 +520,22 @@ def test_cleanup_reports_partial_failure_and_oldest_falls_through(
             "worktree": str(worktrees[0]),
             "reason": "remove failed",
             "error": "worktree locked",
-            "lane_state": "removed",
+            "lane_state": "preserved",
             "worktree_state": "registered",
             "path_state": "present",
         }
     ]
+    first_state = lane_root / ".state" / "first"
+    assert first_state.exists()
 
+    monkeypatch.setitem(cleanup.__globals__, "git", original_git)
     common.oldest = False
     common.completed = [str(worktrees[0])]
     code, packet = cleanup(common)
-    assert code == 1
-    assert packet["ok"] is False
-    assert packet["error"] == "cleanup incomplete"
-    assert packet["preserved"][0]["error"] == "worktree locked"
-    assert packet["preserved"][0]["lane_state"] == "absent"
-    assert packet["preserved"][0]["worktree_state"] == "registered"
-    assert packet["preserved"][0]["path_state"] == "present"
+    assert code == 0
+    assert packet == {"ok": True, "removed": [str(worktrees[0])], "preserved": []}
+    assert not worktrees[0].exists()
+    assert not first_state.exists()
 
 
 def test_cleanup_reports_removed_when_git_unregisters_before_error(
@@ -524,6 +570,7 @@ def test_cleanup_reports_removed_when_git_unregisters_before_error(
 
     assert code == 0
     assert cleaned == {"ok": True, "removed": [str(worktree)], "preserved": []}
+    assert not (lane_root / ".state" / "unregistered-first").exists()
 
 
 def test_cleanup_reports_unregistered_residual_path_after_remove_error(
@@ -564,14 +611,40 @@ def test_cleanup_reports_unregistered_residual_path_after_remove_error(
             "worktree": str(worktree),
             "reason": "remove incomplete",
             "error": "late filesystem error",
-            "lane_state": "removed",
+            "lane_state": "preserved",
             "worktree_state": "unregistered",
             "path_state": "present",
         }
     ]
+    state = lane_root / ".state" / "residual-path"
+    assert state.exists()
+
+    foreign = worktree / "foreign.txt"
+    foreign.write_text("preserve\n", encoding="utf-8")
+    monkeypatch.setitem(cleanup.__globals__, "git", original_git)
+    arguments = Namespace(
+        repo=str(repo),
+        root=str(lane_root),
+        completed=[str(worktree)],
+        oldest=False,
+    )
+    code, blocked = cleanup(arguments)
+    assert code == 1
+    assert blocked["error"] == "cleanup incomplete"
+    assert blocked["preserved"][0]["reason"] == "unregistered residual path preserved"
+    assert blocked["preserved"][0]["lane_state"] == "preserved"
+    assert foreign.read_text(encoding="utf-8") == "preserve\n"
+    assert state.exists()
+
+    foreign.unlink()
+    code, retried = cleanup(arguments)
+    assert code == 0
+    assert retried == {"ok": True, "removed": [str(worktree)], "preserved": []}
+    assert not worktree.exists()
+    assert not state.exists()
 
 
-def test_capacity_cleanup_falls_through_after_lane_state_failure(
+def test_capacity_cleanup_stops_after_lane_state_failure(
     tmp_path: Path, monkeypatch,
 ) -> None:
     repo, base = repository(tmp_path)
@@ -604,19 +677,23 @@ def test_capacity_cleanup_falls_through_after_lane_state_failure(
         )
     )
 
-    assert code == 0
-    assert packet["ok"] is True
-    assert packet["removed"] == [str(worktrees[1])]
+    assert code == 1
+    assert packet["ok"] is False
+    assert packet["error"] == "capacity cleanup incomplete"
+    assert packet["removed"] == []
     assert packet["preserved"] == [
         {
             "worktree": str(worktrees[0]),
             "reason": "lane state cleanup failed",
             "error": "state locked",
+            "lane_state": "preserved",
+            "worktree_state": "unregistered",
+            "path_state": "missing",
         }
     ]
-    assert worktrees[0].exists()
+    assert not worktrees[0].exists()
     assert first_state.exists()
-    assert not worktrees[1].exists()
+    assert worktrees[1].exists()
 
 
 def test_cleanup_preserves_git_uncertainty(tmp_path: Path, monkeypatch) -> None:

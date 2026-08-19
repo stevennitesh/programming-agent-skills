@@ -22,7 +22,10 @@ roots, and runs a quick pytest collection smoke when the checkout declares
 pytest through root configuration or tracked Python tests. Start the worker only when
 the single result says `ok: true`. On failed preflight, the helper removes a
 newly created lane only after rechecking exact `HEAD` and cleanliness; it
-preserves a reused, changed, dirty, or uncertain lane and reports the reason.
+removes the registered worktree before deleting its helper-owned state. A
+failed or uncertain worktree removal preserves that state for inspection and
+retry. The helper also preserves a reused, changed, dirty, or uncertain lane
+and reports the reason.
 Pass successful temp and cache paths to the worker and assign one active writer
 per worktree.
 
@@ -60,12 +63,18 @@ already integrated and whose checkout is clean. Dirty, active, uncertain, and
 unintegrated lanes remain preserved; a capacity-blocked result means no new
 concurrent worker may start. Removing a safe lane also removes only its
 helper-owned temp and cache state under that explicit root. Every supplied
-completed path must belong to that exact root and be a registered worktree; the
-helper accepts only the direct-child layout created by `prepare` and rejects an
-unaccounted path. If state cleanup or worktree removal fails, the helper reads
-back registration and path state, reports the exact remaining custody plus
-whether disposable lane state was removed, then tries another safe lane in
-capacity mode.
+completed path must belong to that exact root. It must be a registered worktree
+unless it is an exact retry whose helper-owned state remains after Git already
+unregistered the lane. Without `--oldest`, that retry removes only a missing or
+empty residual path; non-empty or uncertain paths remain preserved. The helper
+accepts only the direct-child layout created by `prepare` and rejects an
+unaccounted path. The helper deletes state only after `git worktree remove`
+succeeds or read-back confirms both an unregistered worktree and a missing
+path. If removal fails or remains incomplete, the helper leaves state intact,
+reports registration, path, and state custody, and tries another safe lane in
+capacity mode. If state cleanup fails after confirmed worktree removal, the
+helper reports the residual state for explicit recovery and stops capacity
+cleanup without removing another lane.
 
 The helper never forces removal, deletes branches, or changes global Git
 config.

@@ -191,14 +191,19 @@ def rollback_created_lane(
         return "new lane preserved because rollback is not exact-base and clean"
 
     state = lane_state(root, name)
+    removed, evidence = remove_worktree(repo, worktree)
+    if not removed:
+        lane_state_status = "preserved" if state.exists() else "absent"
+        return (
+            "new lane preserved because worktree removal failed: "
+            f"{evidence['error']}; lane state {lane_state_status}; "
+            f"worktree {evidence['worktree_state']}; path {evidence['path_state']}"
+        )
     if state.exists():
         try:
             shutil.rmtree(state)
         except OSError as error:
-            return f"new lane preserved because state cleanup failed: {error}"
-    removed = git(repo, "worktree", "remove", str(worktree), check=False)
-    if removed.returncode != 0:
-        return f"new lane preserved because worktree removal failed: {command_error(removed)}"
+            return f"new lane worktree removed but state cleanup failed: {error}"
     return None
 
 
@@ -274,6 +279,60 @@ def worktree_age(worktree: Path) -> tuple[int, str]:
     return age, str(worktree).casefold()
 
 
+def remove_worktree(repo: Path, worktree: Path) -> tuple[bool, dict[str, str]]:
+    result = git(repo, "worktree", "remove", str(worktree), check=False)
+    if result.returncode == 0:
+        return True, {}
+
+    try:
+        still_registered = worktree in set(registered_worktrees(repo))
+        path_exists = worktree.exists()
+    except (LaneError, OSError):
+        still_registered = None
+        path_exists = True
+    worktree_state = (
+        "registered"
+        if still_registered is True
+        else "unregistered"
+        if still_registered is False
+        else "uncertain"
+    )
+    evidence = {
+        "error": command_error(result),
+        "worktree_state": worktree_state,
+        "path_state": "present" if path_exists else "missing",
+    }
+    return still_registered is False and not path_exists, evidence
+
+
+def recover_unregistered_lane(root: Path, worktree: Path) -> tuple[bool, dict[str, str]]:
+    state = lane_state(root, worktree.name)
+    if worktree.exists():
+        try:
+            worktree.rmdir()
+        except OSError as error:
+            return False, {
+                "worktree": str(worktree),
+                "reason": "unregistered residual path preserved",
+                "error": str(error),
+                "lane_state": "preserved",
+                "worktree_state": "unregistered",
+                "path_state": "present",
+            }
+    try:
+        shutil.rmtree(state)
+    except OSError as error:
+        return False, {
+            "worktree": str(worktree),
+            "reason": "lane state cleanup failed",
+            "error": str(error),
+            "lane_state": "preserved",
+            "worktree_state": "unregistered",
+            "path_state": "missing",
+        }
+    return True, {}
+
+
 def cleanup(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
     repo = repository_root(args.repo)
     root = lane_root(args.root, repo, create=False)
@@ -295,9 +354,18 @@ def cleanup(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
         raise LaneError(f"worktree root does not exist: {root}")
     completed = set(completed_paths)
     registered = set(registered_worktrees(repo))
+    recovery_paths: list[Path] = []
     for worktree in completed_paths:
         if worktree not in registered:
-            raise LaneError(f"completed path is not a registered worktree: {worktree}")
+            state = lane_state(root, worktree.name)
+            if not state.is_dir():
+                raise LaneError(f"completed path is not a registered worktree: {worktree}")
+            if args.oldest:
+                raise LaneError(
+                    "unregistered residual recovery requires cleanup without --oldest: "
+                    f"{worktree}"
+                )
+            recovery_paths.append(worktree)
     repo_head = git(repo, "rev-parse", "HEAD").stdout.strip()
     candidates = sorted(
         (
@@ -343,13 +411,36 @@ def cleanup(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
 
     removed: list[str] = []
     remove_failed = False
+    capacity_released = False
+    for worktree in recovery_paths:
+        recovered, evidence = recover_unregistered_lane(root, worktree)
+        if recovered:
+            removed.append(str(worktree))
+        else:
+            remove_failed = True
+            preserved.append(evidence)
     for index, worktree in enumerate(safe):
         state = lane_state(root, worktree.name)
-        state_status = "absent"
+        worktree_removed, evidence = remove_worktree(repo, worktree)
+        if not worktree_removed:
+            remove_failed = True
+            preserved.append(
+                {
+                    "worktree": str(worktree),
+                    "reason": (
+                        "remove failed"
+                        if evidence["worktree_state"] != "unregistered"
+                        else "remove incomplete"
+                    ),
+                    "lane_state": "preserved" if state.exists() else "absent",
+                    **evidence,
+                }
+            )
+            continue
+        capacity_released = True
         if state.exists():
             try:
                 shutil.rmtree(state)
-                state_status = "removed"
             except OSError as error:
                 remove_failed = True
                 preserved.append(
@@ -357,49 +448,14 @@ def cleanup(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
                         "worktree": str(worktree),
                         "reason": "lane state cleanup failed",
                         "error": str(error),
+                        "lane_state": "preserved",
+                        "worktree_state": "unregistered",
+                        "path_state": "missing",
                     }
                 )
-                continue
-        result = git(repo, "worktree", "remove", str(worktree), check=False)
-        if result.returncode != 0:
-            try:
-                still_registered = worktree in set(registered_worktrees(repo))
-                path_exists = worktree.exists()
-            except (LaneError, OSError):
-                still_registered = None
-                path_exists = True
-            if still_registered is False and not path_exists:
-                removed.append(str(worktree))
                 if args.oldest:
-                    preserved.extend(
-                        {"worktree": str(remaining), "reason": "capacity retained"}
-                        for remaining in safe[index + 1 :]
-                    )
                     break
                 continue
-            remove_failed = True
-            worktree_state = (
-                "registered"
-                if still_registered is True
-                else "unregistered"
-                if still_registered is False
-                else "uncertain"
-            )
-            preserved.append(
-                {
-                    "worktree": str(worktree),
-                    "reason": (
-                        "remove failed"
-                        if still_registered is not False
-                        else "remove incomplete"
-                    ),
-                    "error": command_error(result),
-                    "lane_state": state_status,
-                    "worktree_state": worktree_state,
-                    "path_state": "present" if path_exists else "missing",
-                }
-            )
-            continue
         removed.append(str(worktree))
         if args.oldest:
             preserved.extend(
@@ -412,7 +468,11 @@ def cleanup(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
         if remove_failed:
             return 1, {
                 "ok": False,
-                "error": "capacity cleanup failed",
+                "error": (
+                    "capacity cleanup incomplete"
+                    if capacity_released
+                    else "capacity cleanup failed"
+                ),
                 "removed": [],
                 "preserved": preserved,
             }

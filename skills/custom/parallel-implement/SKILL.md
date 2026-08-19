@@ -196,3 +196,9 @@ external-state change. `partial` means accepted progress is preserved while an
 internal execution, proof, review, or cleanup gate remains safely resumable.
 When both descriptions apply, return `blocked`. Do not infer deployment, PR,
 merge, push, or another campaign.
+
+A `complete` Return must name the integrated `HEAD`; every final proof run and
+result; the review decision (`passed` or `not triggered`) and reviewed candidate
+when applicable; verified child and parent closeout; final claim state; lane
+cleanup; and preserved recovery evidence (`none` when absent). Missing any one
+of these fields makes the Return `partial`, not `complete`.

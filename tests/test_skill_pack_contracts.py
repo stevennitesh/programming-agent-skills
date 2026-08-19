@@ -2858,6 +2858,17 @@ def test_parallel_implement_owns_recovery_authority_and_outcome_gates() -> None:
     assert "`partial` means accepted progress is preserved" in flat
     assert "Retain each claim through verified non-dispatchable closeout" in flat
     assert "Close the parent only after every child verifies" in flat
+    for required_return_evidence in (
+        "integrated `HEAD`",
+        "every final proof run and result",
+        "review decision (`passed` or `not triggered`)",
+        "verified child and parent closeout",
+        "final claim state",
+        "lane cleanup",
+        "preserved recovery evidence (`none` when absent)",
+    ):
+        assert required_return_evidence in flat
+    assert "Missing any one of these fields makes the Return `partial`" in flat
 
 
 def test_parallel_implement_has_one_lean_worktree_lifecycle() -> None:
@@ -2875,6 +2886,10 @@ def test_parallel_implement_has_one_lean_worktree_lifecycle() -> None:
     assert "quick pytest collection smoke when the checkout declares" in flat
     assert "Start the worker only when" in flat and "`ok: true`" in flat
     assert "--oldest" in lanes and "--completed" in lanes
+    assert "deletes state only after `git worktree remove` succeeds" in flat
+    assert "leaves state intact" in flat
+    assert "exact retry whose helper-owned state remains" in flat
+    assert "non-empty or uncertain paths remain preserved" in flat
     assert 'operations.add_parser("prepare")' in lane_script
     assert 'operations.add_parser("cleanup")' in lane_script
     assert '"--collect-only"' in lane_script and '"addopts="' in lane_script
