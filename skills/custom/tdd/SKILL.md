@@ -23,9 +23,22 @@ mutation, publishing, and closeout.
 
 When a bug's expected behavior, exact symptom, cause, or trusted red-capable
 reproduction is uncertain, return `diagnosis-required` with the intact facts to
-the caller and stop. Return `design-evidence-required` with the intact facts
-to the caller and stop when the question needs design evidence rather than
-implementation proof.
+the caller and stop. Return `design-evidence-required` only when no uncertain
+broken symptom or cause requires diagnosis and RED would encode an unmade
+design decision: several live alternatives remain and the choice needs a
+runnable, interactive, or measured verdict rather than a test of accepted
+behavior. This is not implementation proof because no single accepted behavior
+and independent oracle yet decide the choice.
+
+Return the intact facts to the caller and stop with:
+
+- the settled source, constraints, and non-diagnostic facts;
+- the exact unresolved design question and live alternatives;
+- the decision owner and return owner;
+- the discriminating cases, observation, and verdict criteria needed, including
+  any unknown criterion; and
+- why an implementation RED cannot answer the question without assuming the
+  decision.
 
 Read [tests.md](tests.md) only when test shape, oracle, or seam remains unclear
 after inspecting nearby tests. Read [mocking.md](mocking.md) before adding a

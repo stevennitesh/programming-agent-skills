@@ -21,10 +21,13 @@ Choose one operation:
 Behavioral evaluation is a read-only proof branch within either operation, not
 a third operation.
 
-New-package scaffolding and metadata belong to the bundled `skill-creator`.
-Installation, publishing, synchronization, and Git delivery remain with their
-owners. When requested work crosses a foreign boundary, stop with the exact
-next-owner handoff.
+For a new package, the bundled `skill-creator` owns scaffolding and metadata
+mechanics. For an existing canonical skill, Writing Great Skills owns semantic
+invocation and routing predicates, behavior, and wording, including semantics
+expressed through package metadata; `skill-creator` still owns metadata
+mechanics. Installation, publishing, synchronization, and Git delivery remain
+with their owners. When requested work crosses a foreign boundary, stop with
+the exact next-owner handoff.
 
 ## Resolve
 

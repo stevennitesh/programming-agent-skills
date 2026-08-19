@@ -101,9 +101,12 @@ The **cause gate** passes only when the winning cause:
 - produces its predicted observation;
 - explains the minimised repro and original symptom;
 - survives a discriminating probe;
-- leaves stronger alternatives falsified or unnecessary.
+- accounts for every ranked competing hypothesis: its discriminating prediction
+  and recorded probe result falsify it, or the ledger explains from observed
+  evidence why it is no longer viable.
 
-Otherwise rerank and continue probing.
+If any viable competing explanation remains untested or unexplained, the cause
+gate fails; rerank and continue probing.
 
 ## 6. Prove
 

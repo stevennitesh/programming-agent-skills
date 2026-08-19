@@ -674,7 +674,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       ],
       "allowed_contributor_skill_ids": [],
       "capability_id": "CAP-025",
-      "completion_return": "Skill, reason, and precondition with downstream work unstarted",
+      "completion_return": "One exact skill or none, with reason and precondition and downstream work unstarted",
       "disposition": "selected",
       "entry_conditions": [
         "The user needs one engineering route rather than immediate downstream execution"
@@ -685,11 +685,11 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Unbounded foreign procedure loading",
         "Automated semantic acceptance"
       ],
-      "observable_outcome": "Choose exactly one next engineering skill from the current situation and stop",
+      "observable_outcome": "Choose exactly one next engineering skill from the current situation or truthfully return none, then stop",
       "primary_owner_skill_id": "SK-025",
       "proof_class": "fresh behavioral proof plus structural identity and boundary proof",
       "required_authority_mutation": [
-        "Route selection and setup-precondition detection only"
+        "Route selection, no-match abstention, and setup-precondition detection only"
       ]
     }
   ],
@@ -811,7 +811,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "scenario_id": "PS-023"
       },
       {
-        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for skill-router: Choose exactly one next engineering skill from the current situation and stop",
+        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for skill-router: Choose exactly one next engineering skill or truthfully return none, then stop",
         "expected_owner_skill_id": "SK-025",
         "scenario_id": "PS-025"
       }
@@ -4432,10 +4432,10 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "PS-025"
       ],
       "canonical_name": "skill-router",
-      "completion_condition": "Exactly one selected route is returned and no destination is invoked",
+      "completion_condition": "Exactly one selected route or a truthful no-match result is returned and no destination is invoked",
       "contract_order": 25,
-      "essential_outcome": "Choose exactly one next engineering skill from the current situation and stop",
-      "failure_return": "Ask one discriminating question or return the missing setup precondition",
+      "essential_outcome": "Choose exactly one next engineering skill from the current situation or truthfully return none, then stop",
+      "failure_return": "Ask one discriminating question, return the missing setup precondition, or name the exact unmet routing predicates",
       "invocation_mode": "explicit-only",
       "load_budget_class": "metadata-only",
       "negative_exclusion_predicates": [
@@ -4444,7 +4444,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
       "owned_authority_mutation_surfaces": [
-        "Route selection and setup-precondition detection only"
+        "Route selection, no-match abstention, and setup-precondition detection only"
       ],
       "owned_capability_ids": [
         "CAP-025"
@@ -4480,8 +4480,8 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "REL-069",
         "REL-070"
       ],
-      "required_input": "A bounded caller-owned Source Trace and authority for: Choose exactly one next engineering skill from the current situation and stop",
-      "return_packet": "Skill, reason, and precondition with downstream work unstarted",
+      "required_input": "A bounded caller-owned Source Trace and authority for: Choose exactly one next engineering skill or truthfully return none, then stop",
+      "return_packet": "One exact skill or none, with reason and precondition and downstream work unstarted",
       "skill_id": "SK-025"
     }
   ]

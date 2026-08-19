@@ -1,12 +1,13 @@
 ---
 name: skill-router
-description: Route the current situation to exactly one next skill in this engineering pack.
+description: Route the current situation to exactly one next skill in this engineering pack, or abstain when no available skill satisfies the exact contract.
 ---
 
 # Skill Router
 
-**Route:** recommend exactly one next skill and stop. Downstream skills own
-their procedures, artifacts, mutations, proof, and completion.
+**Route:** return exactly one next skill or a truthful `none`, then stop.
+Downstream skills own their procedures, artifacts, mutations, proof, and
+completion.
 
 ## Spine
 
@@ -14,11 +15,18 @@ their procedures, artifacts, mutations, proof, and completion.
    only a fact that could change the route.
 2. **Clarify.** If two routes remain plausible, ask one highest-leverage
    question and wait.
-3. **Route.** Choose one route below. If it needs a missing, incompatible, or
-   outdated setup surface, route to `$repo-bootstrap` instead.
-4. **Stop.** Return `Skill: <skill-name>`, `Reason: <why it wins>`, and
-   `Precondition: <setup or handoff need | none>`. The user starts it;
-   downstream work remains unstarted.
+3. **Route.** Choose one exact route below. If it needs a missing, incompatible,
+   or outdated setup surface, route to `$repo-bootstrap` instead. If no
+   available skill satisfies its entry contract, select `none`; never
+   substitute the nearest or weakest route.
+4. **Stop.** Return `Skill: <skill-name | none>`,
+   `Reason: <winning contract | exact unmet routing predicates>`, and
+   `Precondition: <setup, fact, authority, or handoff need | none>`. The user
+   starts any selected skill; downstream work remains unstarted.
+
+`none` is a terminal abstention, not a recommendation. Use it only when current
+facts make every available route ineligible, not instead of one allowed
+clarification or a required `$repo-bootstrap` route.
 
 ## Route Map
 

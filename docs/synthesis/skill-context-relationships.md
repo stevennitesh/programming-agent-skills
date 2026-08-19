@@ -284,7 +284,7 @@ every terminal result directly to its current caller or the user.
 | --- | --- | --- |
 | `README.md` | Human-facing overview and installation | Humans installing or learning the pack |
 | `GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md` | Minimal pack-owned global Codex bootstrap template: explicit-only router/setup discovery | `~/.codex/AGENTS.md` |
-| `skill-router` | Current executable route map and tie-breakers | Humans or agents choosing one next route |
+| `skill-router` | Current executable route map, tie-breakers, and truthful no-match abstention | Humans or agents choosing one next route or confirming that none fits |
 | `repo-bootstrap` | Inventories and reconciles the repo setup surface; provisions an approved delta and verifies the result | `skill-router`, setup gates in planning/tracker skills |
 | `docs/agents/issue-tracker.md` | Provider transport, configured tracker policy, durable work-item and Wayfinder representation, and mutation read-back | `to-spec`, `to-tickets`, `triage`, `implement`, `parallel-implement`, `wayfinder` |
 | `docs/agents/triage-labels.md` | Category/state role mappings and fixed Wayfinder labels | `to-tickets`, `triage`, `implement`, `parallel-implement`, `wayfinder` |
@@ -320,8 +320,8 @@ every terminal result directly to its current caller or the user.
 
 ## Boundary Notes
 
-- The global template exposes bootstrap handles; `skill-router` routes; neither teaches downstream workflow procedures.
-- The bundled system `skill-creator` owns new-package scaffolding and metadata mechanics. `$writing-great-skills` owns semantic quality for new and existing canonical skill instructions, stops after canonical proof, and does not absorb installation or delivery.
+- The global template exposes bootstrap handles; `skill-router` routes or returns a truthful no-match abstention; neither teaches downstream workflow procedures.
+- The bundled system `skill-creator` owns new-package scaffolding and metadata mechanics. For an existing canonical skill, `$writing-great-skills` owns semantic invocation and routing predicates, behavior, and wording, including semantics expressed through package metadata; it stops after canonical proof and does not absorb metadata mechanics, installation, or delivery.
 - Setup docs own tracker, labels, domain routing, and engineering-contract details. Skills should point there instead of restating those mechanics.
 - `$grill-with-docs` owns composition and preserves the intact Grilling packet
   and cumulative Domain Delta. Wayfinder invokes Domain Modeling separately

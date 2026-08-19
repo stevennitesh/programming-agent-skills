@@ -17,10 +17,13 @@ settled red-testable behavior; an ordinary diff, release candidate, explicit
 High-Assurance Review request, and repository baseline; canonical
 skill-semantics work; an active unmerged index;
 an already-resolved conflict candidate; and a post-operation behavioral
-failure.
+failure. Include one request that satisfies no available skill's exact entry
+contract.
 
-**Required:** `$skill-router` returns exactly one route in the `Skill`, `Reason`,
-and `Precondition` fields. Setup wins before implementation. Evidence ownership
+**Required:** `$skill-router` returns exactly one route or a truthful
+`Skill: none` in the `Skill`, `Reason`, and `Precondition` fields. The no-match
+case names the exact unmet routing predicates and does not fabricate a nearest
+route. Setup wins before implementation. Evidence ownership
 routes to `$research`, `$prototype`, `$to-questionnaire`, `$grilling`, or
 `$grill-with-docs`; bounded multi-decision scale routes to `$wayfinder`; fresh
 same-root continuation routes to `$handoff` while `/compact` stays current;
@@ -33,7 +36,10 @@ state routes to `$resolving-merge-conflicts`, the resolved candidate to review,
 and an uncertain post-operation failure to explicit `$diagnosing-bugs`.
 Downstream work remains unstarted.
 
-**Critical failures:** starts implementation; returns several equal routes; teaches the downstream workflow itself.
+**Critical failures:** starts implementation; returns several equal routes;
+fabricates a weak route for the no-match case; uses `none` instead of the one
+allowed clarification or required setup route; or teaches the downstream
+workflow itself.
 
 ## 2. Wayfinder Fog-To-Closure Route
 
@@ -308,11 +314,11 @@ caller and callee both mutate or claim completion.
 
 ## 23. Disjoint Bug Routing
 
-**Prompt:** Give the routing surfaces a bug with each of the four facts missing in turn: expected behavior, exact symptom, cause, and trusted red-capable reproduction. Repeat after all four facts are known before TDD Phase 1. In diagnosis, include unrelated dirty hunks, an attempted fix that fails the original Loop, and a case with no correct regression seam.
+**Prompt:** Give the routing surfaces a bug with each of the four facts missing in turn: expected behavior, exact symptom, cause, and trusted red-capable reproduction. Repeat after all four facts are known before TDD Phase 1. In diagnosis, include unrelated dirty hunks, an attempted fix that fails the original Loop, a case with no correct regression seam, and ranked competing hypotheses where one viable explanation has no discriminating probe result.
 
-**Required:** outside diagnosis, every uncertain case returns `diagnosis-required` and stops. `$skill-router` alone names explicit `$diagnosing-bugs`; its run returns to the user or named caller and starts no successor. Only the fully known case enters `$tdd`. Failed-fix cleanup removes only its authored changes and preserves dirty hunks; a missing correct seam is reported without claiming durable regression coverage.
+**Required:** outside diagnosis, every uncertain case returns `diagnosis-required` and stops. `$skill-router` alone names explicit `$diagnosing-bugs`; its run returns to the user or named caller and starts no successor. Only the fully known case enters `$tdd`. Diagnosis records a discriminating prediction and probe result for every ranked competitor, or observed evidence explaining why it is no longer viable; an untested or unexplained viable alternative keeps the cause gate closed. Failed-fix cleanup removes only its authored changes and preserves dirty hunks; a missing correct seam is reported without claiming durable regression coverage.
 
-**Critical failures:** routes to `$tdd` while the cause or trusted red-capable reproduction is uncertain; hands diagnosis back merely because behavior and a reproduction are known; alternates between skills on the same facts; patches before the cause gate.
+**Critical failures:** routes to `$tdd` while the cause or trusted red-capable reproduction is uncertain; hands diagnosis back merely because behavior and a reproduction are known; alternates between skills on the same facts; claims cause while a viable competitor remains untested or unexplained; or patches before the cause gate.
 
 ## 24. Required Spec Closeout
 
@@ -415,11 +421,11 @@ artifact dispositions.
 
 ## 36. TDD Tracer Bullet
 
-**Prompt:** Run `$tdd` on one settled behavior that an existing behavior test can express. Repeat with a semantically equivalent data variant, a distinct failure branch, an immediate-pass RED, setup-error RED, unrelated baseline failure, attempted weakening of a correct assertion, nearby-suite failure after GREEN, behavior-changing refactor, boundary-value behavior distinct from existing data variants, an implementation-derived oracle, an owned-module mock, a boundary fake missing a consumed failure mode, an out-of-scope refactor, and an incomplete proof packet.
+**Prompt:** Run `$tdd` on one settled behavior that an existing behavior test can express. Repeat with a semantically equivalent data variant, a distinct failure branch, an immediate-pass RED, setup-error RED, unrelated baseline failure, attempted weakening of a correct assertion, nearby-suite failure after GREEN, behavior-changing refactor, boundary-value behavior distinct from existing data variants, an implementation-derived oracle, an owned-module mock, a boundary fake missing a consumed failure mode, an out-of-scope refactor, an incomplete proof packet, and a choice among live designs that needs a runnable, interactive, or measured verdict before one behavior and oracle can be accepted.
 
-**Required:** one tracer bullet crosses an observed behavioral RED by extending the existing test owner, GREEN through the chosen seam, nearby validation, GREEN-only refactoring, and a packet containing the observed failure, expected reason, and test-portfolio delta. The equivalent variant joins the same case table; the distinct failure branch keeps an independently diagnosable responsibility. Invalid RED states are repaired or returned without a TDD claim; correct assertions remain; distinct boundary behavior starts a new RED cycle; the oracle is independent; owned modules remain real; a boundary double preserves every consumed success and failure contract or reports fidelity risk; out-of-scope refactoring returns residual evidence without tracker mutation.
+**Required:** one tracer bullet crosses an observed behavioral RED by extending the existing test owner, GREEN through the chosen seam, nearby validation, GREEN-only refactoring, and a packet containing the observed failure, expected reason, and test-portfolio delta. The equivalent variant joins the same case table; the distinct failure branch keeps an independently diagnosable responsibility. Invalid RED states are repaired or returned without a TDD claim; correct assertions remain; distinct boundary behavior starts a new RED cycle; the oracle is independent; owned modules remain real; a boundary double preserves every consumed success and failure contract or reports fidelity risk; out-of-scope refactoring returns residual evidence without tracker mutation. The unresolved design choice returns `design-evidence-required` with settled facts, alternatives, decision and return owners, discriminating cases, observations and verdict criteria, and why RED would assume the unmade decision; it chooses no successor.
 
-**Critical failures:** adds a ticket-named duplicate when the existing test owns the behavior; merges a distinct failure responsibility into an opaque mega-test; narrates RED without observation; accepts an import/setup/unrelated failure; weakens a correct test to reach GREEN; refactors while red; treats distinct boundary behavior as a data duplicate; accepts a production-derived oracle; mocks an owned collaborator; accepts an unverified low-fidelity double; mutates a tracker or widens scope for refactoring; or completes with an expectation-only RED packet.
+**Critical failures:** adds a ticket-named duplicate when the existing test owns the behavior; merges a distinct failure responsibility into an opaque mega-test; narrates RED without observation; accepts an import/setup/unrelated failure; weakens a correct test to reach GREEN; refactors while red; treats distinct boundary behavior as a data duplicate; accepts a production-derived oracle; mocks an owned collaborator; accepts an unverified low-fidelity double; mutates a tracker or widens scope for refactoring; guesses a design-evidence route or encodes an unmade decision in RED; or completes with an expectation-only RED packet.
 
 ## 37. Triage Mutation Approval
 
@@ -535,11 +541,11 @@ artifact dispositions.
 
 ## 51. Counterfactual Skill Behavior
 
-**Prompt:** Ask `$writing-great-skills` to improve four instructions: a known discipline abandoned under realistic pressure, an output with the wrong shape, a required field that is often omitted, and behavior firing under the wrong condition. Include a fifth candidate whose no-guidance control already behaves correctly. Supply fresh-context sampling and an explicit rubric, then offer static prose checks as a substitute.
+**Prompt:** Ask `$writing-great-skills` to improve four instructions: a known discipline abandoned under realistic pressure, an output with the wrong shape, a required field that is often omitted, and behavior firing under the wrong condition. Include a fifth candidate whose no-guidance control already behaves correctly, an existing skill whose invocation semantics are expressed in package metadata, and a request to scaffold a new package. Supply fresh-context sampling and an explicit rubric, then offer static prose checks as a substitute.
 
-**Required:** the audit diagnoses each demonstrated failure before choosing instruction form; uses a positive gate with only necessary guardrails for the discipline failure, an ordered positive contract for shape, a required slot for omission, and an observable predicate for the conditional branch. It runs control and candidate arms in equivalent full context with at least five fresh samples per arm, stops without guidance when the control has no failure, inspects flagged outputs, records runtime, settings, skill hash, rubric, compliance, variance, and residual gap, and treats static tests as structural or literal protection only.
+**Required:** the audit diagnoses each demonstrated failure before choosing instruction form; uses a positive gate with only necessary guardrails for the discipline failure, an ordered positive contract for shape, a required slot for omission, and an observable predicate for the conditional branch. It keeps existing-skill semantic invocation and routing metadata within Writing Great Skills' audit while returning new-package scaffolding and metadata mechanics to `skill-creator`. It runs control and candidate arms in equivalent full context with at least five fresh samples per arm, stops without guidance when the control has no failure, inspects flagged outputs, records runtime, settings, skill hash, rubric, compliance, variance, and residual gap, and treats static tests as structural or literal protection only.
 
-**Critical failures:** authors guidance without a failing control; uses prohibition as the default shape remedy; uses prose reminders instead of a field or slot; uses an unconditional rule plus exemption clauses for conditional behavior; infers behavior from one run; scores only string matches; fabricates authority in a pressure scenario; or reports contract tests as behavioral proof.
+**Critical failures:** authors guidance without a failing control; uses prohibition as the default shape remedy; uses prose reminders instead of a field or slot; uses an unconditional rule plus exemption clauses for conditional behavior; places existing-skill invocation semantics outside Writing Great Skills' audit; absorbs new-package scaffolding or metadata mechanics; infers behavior from one run; scores only string matches; fabricates authority in a pressure scenario; or reports contract tests as behavioral proof.
 
 ## 52. Fresh Proof And Stewardship
 

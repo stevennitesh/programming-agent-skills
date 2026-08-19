@@ -758,9 +758,16 @@ def test_outdated_setup_routes_to_repo_bootstrap() -> None:
     assert "$repo-bootstrap" in template
 
 
-def test_router_returns_exactly_one_next_skill() -> None:
+def test_router_returns_one_exact_skill_or_truthful_none() -> None:
     router = (CUSTOM / "skill-router/SKILL.md").read_text(encoding="utf-8")
     router_flat = " ".join(router.split())
+    bootstrap = (ROOT / "GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md").read_text(
+        encoding="utf-8"
+    )
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    contract = pack_contract.parse_contract(
+        (ROOT / "docs/synthesis/skill-pack.md").read_text(encoding="utf-8")
+    )
 
     assert not implicit_policy(CUSTOM / "skill-router")
     assert re.findall(r"(?m)^\d+\. \*\*([A-Za-z]+)\.\*\*", router) == [
@@ -776,6 +783,29 @@ def test_router_returns_exactly_one_next_skill() -> None:
         "Precondition",
     ]
     assert "missing, incompatible, or outdated setup surface" in router_flat
+    assert "Skill: <skill-name | none>" in router
+    assert "exact unmet routing predicates" in router
+    assert "`none` is a terminal abstention, not a recommendation" in router_flat
+    assert "never substitute the nearest or weakest route" in router_flat
+    assert "not instead of one allowed clarification" in router_flat
+    assert "or abstain when no available skill satisfies the exact contract" in router
+    assert "one exact route or truthful none" in bootstrap
+    assert "it returns one route and stops" not in bootstrap
+    assert "truthful `none` when no available skill fits" in readme
+    assert "recommends exactly one next skill" not in readme
+    selected = next(
+        row for row in contract["selected_skills"]
+        if row["canonical_name"] == "skill-router"
+    )
+    capability = next(
+        row for row in contract["capabilities"]
+        if row["capability_id"] == "CAP-025"
+    )
+    assert "truthful no-match result" in selected["completion_condition"]
+    assert "exact unmet routing predicates" in selected["failure_return"]
+    assert "exact skill or none" in selected["return_packet"]
+    assert "truthfully return none" in capability["observable_outcome"]
+    assert "no-match abstention" in capability["required_authority_mutation"][0]
     assert (
         "| Settled source needs a durable parent decision contract before ticket "
         "slicing | `$to-spec` |"
@@ -2065,6 +2095,20 @@ def test_tdd_returns_every_outbound_gap_to_its_caller() -> None:
     assert "`design-evidence-required`" in tdd
     assert "with the intact facts" in tdd
     assert "to the caller and stop" in tdd
+    tdd_flat = " ".join(tdd.split())
+    assert "no uncertain broken symptom or cause requires diagnosis" in tdd_flat
+    assert "RED would encode an unmade design decision" in tdd_flat
+    assert (
+        "no single accepted behavior and independent oracle yet decide" in tdd_flat
+    )
+    for field in (
+        "settled source, constraints, and non-diagnostic facts",
+        "exact unresolved design question and live alternatives",
+        "decision owner and return owner",
+        "discriminating cases, observation, and verdict criteria",
+        "why an implementation RED cannot answer",
+    ):
+        assert field in tdd_flat
     assert "The caller owns any later route" in refactoring_flat
     for callee in (
         "$audit-codebase",
@@ -2571,11 +2615,26 @@ def test_writing_great_skills_keeps_shape_and_relationship_boundary() -> None:
         "pruning stay inline",
     ))
     assert "fork_turns" not in skill
+    assert "For a new package" in normalized_skill
+    assert "owns scaffolding and metadata mechanics" in normalized_skill
+    assert "For an existing canonical skill" in normalized_skill
+    assert (
+        "semantic invocation and routing predicates, behavior, and wording"
+        in normalized_skill
+    )
+    assert "semantics expressed through package metadata" in normalized_skill
     assert (
         "bundled system `skill-creator` owns new-package scaffolding and metadata mechanics"
         in relationships
     )
-    assert "$writing-great-skills` owns semantic quality" in relationships
+    assert (
+        "For an existing canonical skill, `$writing-great-skills` owns semantic invocation"
+        in relationships
+    )
+    assert (
+        "does not absorb metadata mechanics, installation, or delivery"
+        in relationships
+    )
     assert all(term in relationships for term in (
         "leading-word",
         "reference-loading",
@@ -3039,6 +3098,14 @@ def test_diagnosis_is_an_explicit_leaf_with_bounded_recommendations() -> None:
     assert "It establishes actuality, not correctness, cause, or a corrective RED" in (
         diagnosing_flat
     )
+    assert "accounts for every ranked competing hypothesis" in diagnosing_flat
+    assert "discriminating prediction and recorded probe result" in diagnosing_flat
+    assert "why it is no longer viable" in diagnosing_flat
+    assert (
+        "viable competing explanation remains untested or unexplained"
+        in diagnosing_flat
+    )
+    assert "stronger alternatives falsified or unnecessary" not in diagnosing_flat
     packet = diagnosing.split("Return one diagnosis packet containing:", 1)[1]
     assert "claims no cause or fix" in packet
     rows = set(

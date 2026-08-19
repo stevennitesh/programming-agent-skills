@@ -20,7 +20,7 @@ flowchart LR
     E --> F["Close<br/>evidence + residual risk"]
 ```
 
-The diagram shows the common path, not a mandatory sequence. Each skill owns one engineering job, and `$skill-router` recommends exactly one next skill when route choice is the work.
+The diagram shows the common path, not a mandatory sequence. Each skill owns one engineering job, and `$skill-router` returns one exact next skill when its contract fits or truthful `none` when no available skill fits.
 
 ## Purpose
 
