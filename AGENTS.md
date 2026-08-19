@@ -13,6 +13,8 @@ Explore imaginatively. Converge under proof. Simplify ruthlessly.
 - Full pytest suite when repository policy or broad shared impact requires it:
   `python -m pytest`
 - Pytest config: `pyproject.toml`
+- Put disposable test, review, and scratch output under `.tmp/<purpose>`; do
+  not create cache or `.tmp-*` directories at the repository root.
 - Validate skill-pack integrity: `python -m scripts.validate_skills`
 - Preview managed install/update: `python -m scripts.install_skills --dry-run`
 - Sync the installed custom pack: `python -m scripts.install_skills`

@@ -2,14 +2,17 @@ from __future__ import annotations
 
 import json
 import shutil
+import stat
 import subprocess
 import sys
 import tomllib
+import uuid
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
-from scripts import pytest_focused, skill_pack_contract, validate_skills
+from scripts import pytest_focused, pytest_runtime, skill_pack_contract, validate_skills
 
 
 def write_skill(root: Path, name: str, body: str = "") -> Path:
@@ -474,3 +477,32 @@ def test_default_pytest_parallelism_is_capped_at_ten() -> None:
 
     assert addopts[addopts.index("-n") + 1] == "auto"
     assert addopts[addopts.index("--maxprocesses") + 1] == "10"
+
+
+def test_pytest_runtime_isolates_and_removes_disposable_state(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    identity = uuid.UUID("e4bf66bb-dd58-43b1-9413-bf434935edf5")
+    config = SimpleNamespace(
+        rootpath=tmp_path,
+        option=SimpleNamespace(basetemp=None),
+        _inicache={"cache_dir": ".pytest_cache"},
+    )
+    monkeypatch.setattr(pytest_runtime.uuid, "uuid4", lambda: identity)
+
+    pytest_runtime.pytest_configure(config)
+
+    session = tmp_path / ".tmp" / f"pytest-session-{identity}"
+    assert session.is_dir()
+    assert config.option.basetemp == str(session / "tmp")
+    assert config._inicache["cache_dir"] == str(session / "cache")
+
+    read_only = session / "tmp" / "nested" / "fixture.txt"
+    read_only.parent.mkdir(parents=True)
+    read_only.write_text("fixture\n", encoding="utf-8")
+    read_only.chmod(stat.S_IREAD)
+
+    pytest_runtime.remove_session(config)
+
+    assert not session.exists()

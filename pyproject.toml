@@ -22,3 +22,4 @@ norecursedirs = [
     "build",
     "coverage",
 ]
+tmp_path_retention_policy = "none"
