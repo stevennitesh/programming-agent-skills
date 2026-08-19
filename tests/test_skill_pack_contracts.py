@@ -1819,6 +1819,7 @@ def test_high_assurance_review_returns_a_caller_usable_decision() -> None:
     convergent = (CUSTOM / "high-assurance-review/SKILL.md").read_text(
         encoding="utf-8"
     )
+    review = (CUSTOM / "change-review/SKILL.md").read_text(encoding="utf-8")
     decision_section = convergent.split("Derive exactly one decision", 1)[1].split(
         "Return one caller-bound packet", 1
     )[0]
@@ -1829,9 +1830,38 @@ def test_high_assurance_review_returns_a_caller_usable_decision() -> None:
         )
     )
     assert decisions == {"pass", "pass with residual risk", "blocked", "incomplete"}
+    review_decision_section = review.split("Derive exactly one decision", 1)[1].split(
+        "Return one packet", 1
+    )[0]
+    for section in (review_decision_section, decision_section):
+        assert section.index("- `blocked`") < section.index("- `incomplete`")
+        assert "blocker takes precedence over unrelated" in section
     ledger_sentence = convergent.split("and one state:", 1)[1].split(".", 1)[0]
     ledger_states = set(re.findall(r"`([^`]+)`", ledger_sentence))
     assert ledger_states == {"candidate", "accepted", "rejected", "duplicate", "disputed"}
+
+
+def test_audit_close_owns_raw_review_admission() -> None:
+    candidate = (CUSTOM / "audit-codebase/CANDIDATE-CONTRACT.md").read_text(
+        encoding="utf-8"
+    )
+    quick = (CUSTOM / "audit-codebase/REPORT-QUICK-REFERENCE.md").read_text(
+        encoding="utf-8"
+    )
+    normalized = " ".join(candidate.split())
+
+    assert "raw decision and provenance" in normalized
+    assert "`pass` is admissible" in candidate
+    assert "`pass with residual risk` is admissible only" in candidate
+    assert "`blocked` is inadmissible" in candidate
+    assert "`incomplete` is inadmissible" in candidate
+    assert "formal_review_residual_risk_acceptance" in candidate
+    assert "former synthetic `accepted` value remain readable as legacy state" in normalized
+    assert "New Close manifests cannot supply or persist it" in normalized
+    assert "returned accepted" not in normalized
+    assert "admits `pass with residual risk` only with that evidence" in " ".join(
+        quick.split()
+    )
 
 
 def test_high_assurance_review_checks_snapshot_drift_not_baseline_drift() -> None:

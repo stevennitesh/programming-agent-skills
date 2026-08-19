@@ -52,6 +52,19 @@ _TRACKER_STATES = {
     "reused",
     "recovery",
 }
+_FORMAL_REVIEW_DECISIONS = {
+    "pass",
+    "pass with residual risk",
+    "blocked",
+    "incomplete",
+}
+_FORMAL_REVIEW_BASE_FIELDS = {
+    "formal_review_decision",
+    "formal_review_provenance",
+}
+_FORMAL_REVIEW_FIELDS = _FORMAL_REVIEW_BASE_FIELDS | {
+    "formal_review_residual_risk_acceptance"
+}
 
 _STYLE = """
 :root {
@@ -183,6 +196,62 @@ def _text(value: object, label: str, *, allow_empty: bool = False) -> str:
     if not isinstance(value, str) or (not allow_empty and not value.strip()):
         raise ReportError(f"{label} must be a non-empty string")
     return value.strip()
+
+
+def _normalize_close_review(
+    raw: dict[str, Any],
+    label: str,
+    *,
+    allow_legacy_accepted: bool = False,
+) -> dict[str, str]:
+    supplied = set(raw) & _FORMAL_REVIEW_FIELDS
+    if not supplied:
+        return {}
+    if not _FORMAL_REVIEW_BASE_FIELDS <= supplied:
+        raise ReportError(f"{label} review decision and provenance must be supplied together")
+
+    decision = _text(raw["formal_review_decision"], f"{label} formal_review_decision")
+    provenance = _text(
+        raw["formal_review_provenance"], f"{label} formal_review_provenance"
+    )
+    if decision == "accepted":
+        if not allow_legacy_accepted:
+            raise ReportError(f"{label} formal review decision is unsupported")
+        if "formal_review_residual_risk_acceptance" in supplied:
+            raise ReportError(
+                f"{label} legacy accepted review forbids residual-risk acceptance"
+            )
+        return {
+            "formal_review_decision": "accepted",
+            "formal_review_provenance": provenance,
+        }
+    if decision not in _FORMAL_REVIEW_DECISIONS:
+        raise ReportError(f"{label} formal review decision is unsupported")
+    if decision in {"blocked", "incomplete"}:
+        raise ReportError(
+            f"{label} formal review decision {decision} is not admissible for Close"
+        )
+
+    acceptance = ""
+    if "formal_review_residual_risk_acceptance" in supplied:
+        acceptance = _text(
+            raw["formal_review_residual_risk_acceptance"],
+            f"{label} formal_review_residual_risk_acceptance",
+            allow_empty=True,
+        )
+    packet = {
+        "formal_review_decision": decision,
+        "formal_review_provenance": provenance,
+    }
+    if decision == "pass with residual risk":
+        if not acceptance:
+            raise ReportError(
+                f"{label} pass with residual risk requires explicit caller residual-risk acceptance"
+            )
+        packet["formal_review_residual_risk_acceptance"] = acceptance
+    elif acceptance:
+        raise ReportError(f"{label} pass forbids residual-risk acceptance")
+    return packet
 
 
 def _identifier(value: object, label: str) -> str:
@@ -1351,9 +1420,13 @@ def _normalize_close_manifest(raw: dict[str, Any]) -> dict[str, Any]:
         "tracker_completion_sha256",
         "direct_implementation_authority",
     }
-    review_fields = {"formal_review_decision", "formal_review_provenance"}
     legacy_fields = {"repair_generations_used"}
-    _strict(raw, required, route_fields | review_fields | legacy_fields, "Close manifest")
+    _strict(
+        raw,
+        required,
+        route_fields | _FORMAL_REVIEW_FIELDS | legacy_fields,
+        "Close manifest",
+    )
     if raw["version"] != MANIFEST_VERSION:
         raise ReportError(f"Close manifest requires version {MANIFEST_VERSION}")
     route = _text(raw["completion_route"], "Close completion_route")
@@ -1419,19 +1492,7 @@ def _normalize_close_manifest(raw: dict[str, Any]) -> dict[str, Any]:
         raise ReportError("Close requires implementation_outcome complete")
     if raw["change_closure"] != "complete":
         raise ReportError("Close requires complete Change Closure")
-    supplied_review_fields = set(raw) & review_fields
-    if supplied_review_fields and supplied_review_fields != review_fields:
-        raise ReportError("Close review decision and provenance must be supplied together")
-    review_packet: dict[str, str] = {}
-    if supplied_review_fields:
-        if raw["formal_review_decision"] != "accepted":
-            raise ReportError("Close supplied review must be accepted")
-        review_packet = {
-            "formal_review_decision": "accepted",
-            "formal_review_provenance": _text(
-                raw["formal_review_provenance"], "Close formal_review_provenance"
-            ),
-        }
+    review_packet = _normalize_close_review(raw, "Close")
     if "repair_generations_used" in raw:
         repairs = raw["repair_generations_used"]
         if not isinstance(repairs, int) or isinstance(repairs, bool) or repairs < 0:
@@ -1620,7 +1681,6 @@ def _validate_state(state: dict[str, Any]) -> None:
         "residual_risk",
         "last_verified_identity",
     }
-    review_fields = {"formal_review_decision", "formal_review_provenance"}
     legacy_fields = {"repair_generations_used"}
     for index, candidate in enumerate(state["candidates"]):
         item = _object(candidate, f"report candidate[{index}]")
@@ -1659,7 +1719,7 @@ def _validate_state(state: dict[str, Any]) -> None:
                     "direct_implementation_authority",
                     "tracker_completion_sha256",
                 }
-                | review_fields
+                | _FORMAL_REVIEW_FIELDS
                 | legacy_fields,
                 f"report candidate[{index}].implementation",
             )
@@ -1702,18 +1762,19 @@ def _validate_state(state: dict[str, Any]) -> None:
             )
             if source_result not in {"current", "reachable"}:
                 raise ReportError("report implementation has invalid current-source result")
-            supplied_review_fields = set(implementation) & review_fields
-            if supplied_review_fields and supplied_review_fields != review_fields:
-                raise ReportError(
-                    "report implementation review decision and provenance must be supplied together"
-                )
+            supplied_review_fields = set(implementation) & _FORMAL_REVIEW_FIELDS
             if supplied_review_fields:
-                if implementation["formal_review_decision"] != "accepted":
-                    raise ReportError("report implementation supplied review must be accepted")
-                _text(
-                    implementation["formal_review_provenance"],
-                    "report implementation.formal_review_provenance",
+                review_packet = _normalize_close_review(
+                    implementation,
+                    "report implementation",
+                    allow_legacy_accepted=True,
                 )
+                if review_packet != {
+                    key: implementation[key] for key in supplied_review_fields
+                }:
+                    raise ReportError(
+                        "report implementation has noncanonical formal-review fields"
+                    )
             if "repair_generations_used" in implementation:
                 repairs = implementation["repair_generations_used"]
                 if not isinstance(repairs, int) or isinstance(repairs, bool) or repairs < 0:
@@ -2284,7 +2345,8 @@ def _reduce_analyze(
             "run, subsystem, and candidate identities; "
             "implementation outcome; candidate-bundle digest; tracker mutation identity and Ready "
             "tracker item identity; commit and tree identities; current-source result; accepted proof and "
-            "skipped checks; formal-review decision and provenance when activated; "
+            "skipped checks; raw formal-review decision and provenance when activated; "
+            "caller residual-risk acceptance when required; "
             "changed scope; Change Closure; residual risk; last verified identity; and one proposed "
             "state-and-reason transition for every active member finding."
         )
@@ -2466,7 +2528,11 @@ def _reduce_close(
             "last_verified_identity",
         )
     }
-    for key in ("formal_review_decision", "formal_review_provenance"):
+    for key in (
+        "formal_review_decision",
+        "formal_review_provenance",
+        "formal_review_residual_risk_acceptance",
+    ):
         if key in packet:
             candidate["implementation"][key] = packet[key]
     if packet["completion_route"] == "authorized-direct-recovery":
@@ -3053,8 +3119,9 @@ def _schema(
         }
         if reviewed:
             template |= {
-                "formal_review_decision": "accepted",
+                "formal_review_decision": "",
                 "formal_review_provenance": "",
+                "formal_review_residual_risk_acceptance": "",
             }
         if completion_route == "tracker-frontier":
             if tracker_provider not in {None, "local-markdown"}:

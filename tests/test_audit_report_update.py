@@ -341,8 +341,8 @@ def _close_values(
     }
     if reviewed:
         values |= {
-            "formal_review_decision": "accepted",
-            "formal_review_provenance": "change-review accepted the pinned diff",
+            "formal_review_decision": "pass",
+            "formal_review_provenance": "change-review passed the pinned diff",
         }
     if completion_route == "tracker-frontier":
         values |= {
@@ -1479,9 +1479,9 @@ def test_public_inspect_rejects_retired_or_invalid_canonical_state(
         ),
         (
             lambda candidate: candidate["implementation"].update(
-                {"formal_review_decision": "rejected"}
+                {"formal_review_decision": "blocked"}
             ),
-            "supplied review must be accepted",
+            "formal review decision blocked is not admissible for Close",
         ),
         (
             lambda candidate: candidate["implementation"].update(
@@ -1574,8 +1574,9 @@ def test_schema_and_cli_errors_are_one_json_document(tmp_path: Path) -> None:
     assert "direct_implementation_authority" not in tracker_close
     assert "formal_review_decision" not in tracker_close
     assert "formal_review_provenance" not in tracker_close
-    assert reviewed_tracker_close["formal_review_decision"] == "accepted"
+    assert reviewed_tracker_close["formal_review_decision"] == ""
     assert reviewed_tracker_close["formal_review_provenance"] == ""
+    assert reviewed_tracker_close["formal_review_residual_risk_acceptance"] == ""
     assert "repair_generations_used" not in reviewed_tracker_close
     assert local_analyze["tracker"]["provider"] == "local-markdown"
     assert "ready_issue_ref" in local_analyze["tracker"]
@@ -1630,6 +1631,109 @@ def test_schema_and_cli_errors_are_one_json_document(tmp_path: Path) -> None:
     assert process.returncode == 2
     assert process.stderr == ""
     assert json.loads(process.stdout)["error"] == "reviewed applies only to Close schema"
+
+
+@pytest.mark.parametrize(
+    ("decision", "acceptance", "message"),
+    [
+        ("pass", None, None),
+        ("pass with residual risk", "caller accepted review risk", None),
+        (
+            "pass with residual risk",
+            None,
+            "requires explicit caller residual-risk acceptance",
+        ),
+        ("blocked", None, "blocked is not admissible for Close"),
+        ("incomplete", None, "incomplete is not admissible for Close"),
+        ("accepted", None, "formal review decision is unsupported"),
+        ("rejected", None, "formal review decision is unsupported"),
+        ("pass", "unexpected acceptance", "pass forbids residual-risk acceptance"),
+    ],
+)
+def test_close_maps_raw_review_decisions_to_admission(
+    tmp_path: Path,
+    decision: str,
+    acceptance: str | None,
+    message: str | None,
+) -> None:
+    commit, tree = _init_repo(tmp_path)
+    report = _published_analysis(tmp_path)
+    values = _close_values(tmp_path, report, commit, tree, reviewed=True)
+    values["formal_review_decision"] = decision
+    if acceptance is not None:
+        values["formal_review_residual_risk_acceptance"] = acceptance
+
+    if message is not None:
+        with pytest.raises(MODULE.ReportError, match=message):
+            MODULE._normalize_close_manifest(values)
+        return
+
+    packet = MODULE._normalize_close_manifest(values)
+    assert packet["formal_review_decision"] == decision
+    assert packet["formal_review_provenance"] == "change-review passed the pinned diff"
+    if acceptance is None:
+        assert "formal_review_residual_risk_acceptance" not in packet
+    else:
+        assert packet["formal_review_residual_risk_acceptance"] == acceptance
+
+
+def test_close_persists_raw_residual_review_and_caller_acceptance(
+    tmp_path: Path,
+) -> None:
+    commit, tree = _init_repo(tmp_path)
+    report = _published_analysis(tmp_path)
+    values = _close_values(tmp_path, report, commit, tree, reviewed=True)
+    values["formal_review_decision"] = "pass with residual risk"
+    values["formal_review_residual_risk_acceptance"] = (
+        "caller accepted the documented review risk"
+    )
+    manifest = _write(tmp_path / "close-reviewed.json", values)
+
+    _prepare_and_publish("close-candidate", tmp_path, report, manifest)
+
+    candidate = MODULE.inspect_report(
+        repo_root=tmp_path,
+        report=report,
+        objective="map",
+    )["state"]["candidates"][0]
+    implementation = candidate["implementation"]
+    assert implementation["formal_review_decision"] == "pass with residual risk"
+    assert implementation["formal_review_provenance"] == (
+        "change-review passed the pinned diff"
+    )
+    assert implementation["formal_review_residual_risk_acceptance"] == (
+        "caller accepted the documented review risk"
+    )
+
+
+def test_inspect_accepts_legacy_review_decision_without_rewriting_it(
+    tmp_path: Path,
+) -> None:
+    commit, tree = _init_repo(tmp_path)
+    report = _published_analysis(tmp_path)
+    manifest = _write(
+        tmp_path / "close-reviewed.json",
+        _close_values(tmp_path, report, commit, tree, reviewed=True),
+    )
+    _prepare_and_publish("close-candidate", tmp_path, report, manifest)
+    state = MODULE._load_report(tmp_path, report)[3]
+    implementation = state["candidates"][0]["implementation"]
+    implementation["formal_review_decision"] = "accepted"
+    implementation["formal_review_provenance"] = (
+        "fixed-point Change Review accepted the pinned diff"
+    )
+    _write_invalid_canonical_state(report, state)
+
+    inspected = MODULE.inspect_report(
+        repo_root=tmp_path,
+        report=report,
+        objective="map",
+    )["state"]["candidates"][0]["implementation"]
+
+    assert inspected["formal_review_decision"] == "accepted"
+    assert inspected["formal_review_provenance"] == (
+        "fixed-point Change Review accepted the pinned diff"
+    )
 
 
 def test_close_accepts_legacy_manifest_repair_count_without_persisting_it(
@@ -1780,14 +1884,14 @@ def test_authorized_direct_recovery_closes_without_a_tracker_frontier(
         (
             "authorized-direct-recovery",
             "authority-required",
-            lambda values: values.update({"formal_review_decision": "accepted"}),
+            lambda values: values.update({"formal_review_decision": "pass"}),
             "review decision and provenance must be supplied together",
         ),
         (
             "authorized-direct-recovery",
             "authority-required",
             lambda values: values.update(
-                {"formal_review_provenance": "change-review accepted the pinned diff"}
+                {"formal_review_provenance": "change-review passed the pinned diff"}
             ),
             "review decision and provenance must be supplied together",
         ),
@@ -1833,11 +1937,11 @@ def test_authorized_direct_recovery_closes_without_a_tracker_frontier(
             "authority-required",
             lambda values: values.update(
                 {
-                    "formal_review_decision": "rejected",
-                    "formal_review_provenance": "change-review rejected the pinned diff",
+                    "formal_review_decision": "blocked",
+                    "formal_review_provenance": "change-review blocked the pinned diff",
                 }
             ),
-            "supplied review must be accepted",
+            "formal review decision blocked is not admissible for Close",
         ),
         (
             "authorized-direct-recovery",

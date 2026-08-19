@@ -166,14 +166,18 @@ not replace the pinned fixed point.
 
 Derive exactly one decision after the reviewer quorum closes:
 
-- `incomplete` when required source, coverage, finding-candidate disposition,
-  dispute, protocol, report, specialist, or drift state remains unresolved;
 - `blocked` when a directly verified admitted finding blocks candidate
   acceptance under the governing caller or repository policy;
+- `incomplete` when required source, coverage, finding-candidate disposition,
+  dispute, protocol, report, specialist, or drift state remains unresolved and
+  no admitted blocker already establishes `blocked`;
 - `pass with residual risk` when coverage is complete, no blocker exists, and
   decision-bearing residual risk remains for caller acceptance; or
 - `pass` when coverage is complete, no blocker or decision-bearing residual
   risk remains, and drift is clear.
+
+A directly verified admitted blocker takes precedence over unrelated
+incomplete coverage; preserve that unresolved coverage in the Return.
 
 Return one caller-bound packet with mode, fixed point, snapshot, candidate,
 sources, coordinator provenance, core and specialist requested and

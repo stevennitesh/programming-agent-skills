@@ -38,10 +38,13 @@ returns the exact manifest template for the selected objective and Close
 route; copy only its `template` object into an invocation-owned JSON file.
 Unknown manifest fields are rejected.
 
-For Close, add `--reviewed` only when condition-triggered Change Review ran and
-returned accepted. The resulting exact template includes the paired review
-decision and provenance fields. Without it, the template contains no review
-fields or dormant placeholders.
+For Close, add `--reviewed` only when condition-triggered Change Review ran.
+The resulting exact template includes its raw decision, provenance, and a
+separate residual-risk-acceptance field. Fill the last field only for
+`pass with residual risk`, using explicit caller-acceptance evidence. Audit Close
+admits `pass`, admits `pass with residual risk` only with that evidence, and
+rejects `blocked` or `incomplete`. Without `--reviewed`, the template contains
+no review fields or dormant placeholders.
 
 ## Publish Once
 

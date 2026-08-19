@@ -126,8 +126,18 @@ Close is a separately user-selected `$audit-codebase` objective for exactly one
 analyzed candidate. Select the route returned by `inspect --objective close`
 and use `schema --objective close --completion-route <route>`. Add
 `--tracker-provider local-markdown` for a Local Markdown `tracker-frontier`.
-Add `--reviewed` only when condition-triggered Change Review ran and returned
-accepted:
+Add `--reviewed` only when condition-triggered Change Review ran. Record its
+raw decision and provenance. Audit Close owns this admission table:
+
+- `pass` is admissible;
+- `pass with residual risk` is admissible only with separate, explicit caller
+  acceptance in `formal_review_residual_risk_acceptance`;
+- `blocked` is inadmissible; and
+- `incomplete` is inadmissible.
+
+Existing state-version-2 reports that persisted the former synthetic
+`accepted` value remain readable as legacy state. New Close manifests cannot
+supply or persist it.
 
 - **`tracker-frontier`:** only for `ready-graph|reused`; require the candidate
   digest, tracker mutation/read-back identity, and provider-native Ready tracker
@@ -146,7 +156,8 @@ accepted:
   reconstruct, or imply a retrospective ticket.
 
 Before constructing any packet, the root verifies that the accepted proof and,
-when review ran, the accepted review bind to the supplied commit/tree; the
+when review ran, the admissible raw review decision, provenance, and any
+caller residual-risk acceptance bind to the supplied commit/tree; the
 commit is current or reachable; Change Closure is complete; no implementation blocker remains;
 the report/run/subsystem/candidate, candidate digest, and last Analyze identity
 match, and every active candidate finding has one state-and-reason transition.

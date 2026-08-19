@@ -146,6 +146,9 @@ Derive exactly one decision:
   but verified decision-bearing residual risk remains; or
 - `pass` when coverage is complete, no blocker remains, and drift is clear.
 
+A directly verified admitted blocker takes precedence over unrelated
+incomplete coverage; preserve that unresolved coverage in the Return.
+
 Return one packet:
 
 ```text
