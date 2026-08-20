@@ -1490,10 +1490,10 @@ def test_prototype_preserves_lean_evidence_and_branch_gates() -> None:
 
 def test_review_baselines_are_discovered_and_independence_is_honest() -> None:
     review = (CUSTOM / "change-review/SKILL.md").read_text(encoding="utf-8")
-    convergent = (CUSTOM / "high-assurance-review/SKILL.md").read_text(
+    formal = (CUSTOM / "change-review/references/FORMAL-REVIEW.md").read_text(
         encoding="utf-8"
     )
-    baseline = (CUSTOM / "change-review/SMELL-BASELINE.md").read_text(
+    convergent = (CUSTOM / "high-assurance-review/SKILL.md").read_text(
         encoding="utf-8"
     )
     review_summary = (
@@ -1506,36 +1506,32 @@ def test_review_baselines_are_discovered_and_independence_is_honest() -> None:
     assert re.search(r"(?m)^name: change-review$", review)
     assert re.search(r"(?m)^name: high-assurance-review$", convergent)
     assert "$high-assurance-review" not in review
-    assert "$change-review" not in convergent.split("## 1. Admit", 1)[1].split(
-        "## 2. Pin", 1
-    )[0]
     review_flat = " ".join(review.split())
-    assert "Candidate kind, size, release status, and supported risk neither invoke review" in review_flat
+    formal_flat = " ".join(formal.split())
+    assert re.findall(r"(?m)^## \d+\. ([A-Za-z]+)$", review) == [
+        "Pin",
+        "Understand",
+        "Inspect",
+        "Verify",
+        "Return",
+    ]
+    assert "Otherwise do not load it" in review_flat
+    assert "A whole-repository or subsystem baseline audit is outside" in review_flat
+    assert "Review the captured candidate, not a later version" in review_flat
+    assert "another agent's report" in review_flat
+    assert "An empty review is valid" in (
+        CUSTOM / "change-review/FINDING-CONTRACT.md"
+    ).read_text(encoding="utf-8")
+    assert "model choice and runtime transport are not review evidence" in formal_flat
+    assert "fresh task or context" in formal_flat
+    assert "distinct from every implementation and integration author" in formal_flat
+    assert "pass with residual risk" in formal
     assert "Accept only when the user explicitly names" in convergent
     assert "explicitly user-selected immutable candidate" in assurance_summary
     assert "No workflow selects High-Assurance Review automatically" in assurance_summary
-    assert "only when documented repo standards" in " ".join(baseline.split())
-    assert "concrete, actionable maintainability risk" in baseline
-    assert (
-        "change-review/SMELL-BASELINE.md` only when Standards are thin"
-        in " ".join(convergent.split())
-    )
-    report = review.split("```text", 2)[2].split("```", 1)[0]
-    for field in (
-        "Invocation: formal-delivery | standalone",
-        "Review mode: initial | remediation",
-        "Semantic agent: ordinary-reviewer | integration-reviewer | standalone",
-        "Reviewer actor ID:",
-        "Reviewer task ID:",
-        "Runtime binding: agent type <value or standalone>; requested <model and reasoning or standalone>; observed <values or unavailable>",
-        "Fresh-context and separation evidence: <evidence> | standalone",
-        "Coverage: complete | incomplete",
-        "Decision: pass | pass with residual risk | blocked | incomplete",
-        "Standards findings:",
-        "Spec findings:",
-        "Candidate:",
-    ):
-        assert field in report
+    assert not (CUSTOM / "change-review/SMELL-BASELINE.md").exists()
+    assert "formal review" in review_summary.lower()
+    assert "Implementation-worker profiles remain with implementation dispatch" in review_summary
 
 
 def test_spawned_agents_share_one_runtime_profile_owner() -> None:
@@ -1560,19 +1556,14 @@ def test_spawned_agents_share_one_runtime_profile_owner() -> None:
         ("adaptive-worker", "default", "gpt-5.6-terra", "xhigh"),
         ("fast-adaptive-worker", "default", "gpt-5.6-sol", "medium"),
         ("demanding-worker", "default", "gpt-5.6-sol", "high"),
-        ("ordinary-reviewer", "default", "gpt-5.6-sol", "high"),
-        ("integration-reviewer", "default", "gpt-5.6-sol", "xhigh"),
-        ("har-spec-reviewer", "default", "gpt-5.6-sol", "xhigh"),
-        ("har-standards-reviewer", "default", "gpt-5.6-sol", "xhigh"),
-        ("har-specialist", "default", "gpt-5.6-sol", "xhigh"),
     ]
     assert "A named agent type loads its custom TOML" in profiles_flat
-    assert "Enforce a row only for a spawned actor" in profiles_flat
+    assert "Enforce a row only for a spawned implementation actor" in profiles_flat
     assert "public interface, cross-owner invariant" in profiles_flat
-    assert "`transport-invalid` and receives no review credit" in profiles_flat
+    assert "Review roles use their owning review skill's fresh-context" in profiles_flat
     assert "[Runtime Profiles](../parallel-implement/references/RUNTIME-PROFILES.md)" in implement
-    assert "[Runtime Profiles](../parallel-implement/references/RUNTIME-PROFILES.md)" in review
-    assert "[Runtime Profiles](../parallel-implement/references/RUNTIME-PROFILES.md)" in assurance
+    assert "[Runtime Profiles](../parallel-implement/references/RUNTIME-PROFILES.md)" not in review
+    assert "[Runtime Profiles](../parallel-implement/references/RUNTIME-PROFILES.md)" not in assurance
     assert "passes it directly when starting the worker" in profiles_flat
     assert "If the user explicitly requests subagents" in implement_flat
     assert "delegate only a bounded edit that one worker can own" in implement_flat
@@ -1583,12 +1574,6 @@ def test_spawned_agents_share_one_runtime_profile_owner() -> None:
     luna = custom_agents[0].read_text(encoding="utf-8")
     assert 'model = "gpt-5.6-luna"' in luna
     assert 'model_reasoning_effort = "max"' in luna
-    review_flat = " ".join(review.split())
-    assert "missing or mismatched formal-delivery binding" in review_flat
-    assert "`transport-invalid` before candidate judgment" in review_flat
-    assert "Standalone review records its current runtime provenance" in " ".join(
-        review.split()
-    )
     for skill in (implement, review, assurance):
         assert "gpt-5.6" not in skill
 
@@ -1601,65 +1586,27 @@ def test_review_finding_interface_and_return_boundary_are_shared() -> None:
     finding = (CUSTOM / "change-review/FINDING-CONTRACT.md").read_text(
         encoding="utf-8"
     )
+    finding_flat = " ".join(finding.split())
 
-    fields = finding.split("```text", 1)[1].split("```", 1)[0]
-    assert set(re.findall(r"(?m)^([A-Za-z ]+):", fields)) == {
-        "ID",
-        "Axis",
-        "Class",
-        "Severity",
-        "Location",
+    assert re.findall(r"(?m)^- \*\*([^*]+):\*\*", finding) == [
         "Anchor",
-        "Supported scenario",
-        "Behavior or failure path",
+        "Reach",
         "Evidence",
         "Impact",
-        "Supported risk trigger",
-        "Blocking",
-        "Remediation",
-        "Required proof",
-    }
-    assert {
+        "Proportion",
+    ]
+    assert re.findall(r"(?m)^- `(P[0-3])`", finding) == ["P0", "P1", "P2", "P3"]
+    assert "stable ID when a later formal remediation review may occur" in finding_flat
+    for removed in (
         "automatic-in-scope",
         "decision-required",
         "residual-hardening",
-    } <= set(re.findall(r"(?m)^- `([^`]+)`(?:\:| )", finding))
-    severity = finding.split("## Severity And Remediation", 1)[1]
-    assert re.findall(r"(?m)^- `(P[0-3])`:", severity) == ["P0", "P1", "P2", "P3"]
+        "Supported risk trigger:",
+        "Blocking:",
+    ):
+        assert removed not in finding
     for skill in (review, convergent):
         assert "FINDING-CONTRACT.md" in skill
-        assert not re.search(r"(?m)^- (?:\*\*)?`?P[0-3]", skill)
-        assert "Return boundary: caller" in skill
-        assert "Mutation authority: none" in skill
-        assert "Successor snapshot authority: none" in skill
-    assert "Test count or runtime alone does not admit a finding" in finding
-    assert "distinct responsibility or justified failure isolation" in finding
-    assert "A frozen delivery request authorizes `automatic-in-scope` remediation" in (
-        " ".join(finding.split())
-    )
-    assert "every other class returns for caller decision" in " ".join(
-        finding.split()
-    )
-    remediation = finding.split("## Remediation Review", 1)[1].split(
-        "## Severity And Remediation", 1
-    )[0]
-    remediation_flat = " ".join(remediation.split())
-    for field in (
-        "`Invocation: formal-delivery`",
-        "`Review mode: remediation`",
-        "original accepted commitments",
-        "prior snapshot identity",
-        "stable carried IDs",
-        "caller-owned Repair delta",
-        "remaining acceptance",
-        "fixed point",
-        "successor candidate",
-    ):
-        assert field in remediation_flat
-    for skill in (review, convergent):
-        assert "Finding Contract's remediation packet and coverage boundary" in " ".join(
-            skill.split()
-        )
 
 
 def test_review_family_shares_one_bounded_quality_and_risk_model() -> None:
@@ -1674,24 +1621,18 @@ def test_review_family_shares_one_bounded_quality_and_risk_model() -> None:
     finding_flat = " ".join(finding.split())
     convergent_flat = " ".join(convergent.split())
 
-    for class_name in (
-        "Commitment Fidelity",
-        "Scope and Contracts",
-        "Acceptance and Change Closure",
-        "Semantic Correctness",
-        "Robustness and Operability",
-        "Code Quality and Design",
-        "Proof Discipline",
-        "Stewardship",
+    for contract in (
+        "accepted requirement, repository rule, or supported behavior",
+        "concrete scenario inside the selected change",
+        "direct evidence from the reviewed candidate",
+        "correctness, contract, data, operability, proof, or maintainability",
+        "smallest required correction or proof",
     ):
-        assert finding.count(f"**{class_name}**") == 1
-    assert "It never invokes Change Review" in finding_flat
-    assert "PR existence, size, labels, and hypothetical cases do not qualify." in finding_flat
-    assert "Omit inapplicable classes" in convergent_flat
-    assert "inapplicable classes `N/A`" not in convergent_flat
-    assert "Reuse proof tied to the exact snapshot" in review
+        assert contract in finding_flat
+    assert "preference-only" in finding_flat
+    assert "reviewer agreement does not establish a finding" in finding_flat
+    assert "Reuse proof bound to the candidate" in review
     assert "Reuse exact-snapshot proof" in convergent_flat
-    assert "release candidate, or implementation candidate" in review
     assert "FINDING-CONTRACT.md" in convergent
     assert "neither required nor sufficient for invocation" in convergent_flat
     assert "supported-risk candidate needs read-only judgment" in router
@@ -1701,8 +1642,11 @@ def test_review_family_shares_one_bounded_quality_and_risk_model() -> None:
 def test_review_assurance_route_has_one_domain_decision() -> None:
     context = (ROOT / "CONTEXT.md").read_text(encoding="utf-8")
     normalized_context = " ".join(context.split())
-    adr = (
+    prior_adr = (
         ROOT / "docs/adr/0015-independent-change-review-is-condition-triggered.md"
+    ).read_text(encoding="utf-8")
+    adr = (
+        ROOT / "docs/adr/0016-ordinary-and-formal-review-share-one-lean-judgment-owner.md"
     ).read_text(encoding="utf-8")
     normalized_adr = " ".join(adr.split())
 
@@ -1712,15 +1656,18 @@ def test_review_assurance_route_has_one_domain_decision() -> None:
         "**Supported high-risk trigger**",
     ):
         assert context.count(term) == 1
-    assert "ADR-0015" in context
+    assert "ADR-0016" in context
     assert "The caller owns activation" in normalized_context
     assert "each review skill validates its admitted candidate" in normalized_context
-    assert "after an applicable review is admitted" in normalized_context
+    assert "risk expands only applicable candidate-scoped judgment" in normalized_context
+    assert "**Status**: superseded by ADR-0016" in prior_adr
     assert "**Status**: accepted" in adr
-    assert "Supported facts expand ordinary candidate-scoped coverage" in normalized_adr
-    assert "Candidate size, PR or release packaging" in normalized_adr
-    assert "Missing required proof stops the work" in normalized_adr
-    assert "High-Assurance Review remains explicit-only" in normalized_adr
+    normalized_prior_adr = " ".join(prior_adr.split())
+    assert "Supported facts expand ordinary candidate-scoped coverage" in normalized_prior_adr
+    assert "Candidate size, PR or release packaging" in normalized_prior_adr
+    assert "Missing required proof stops the work" in normalized_prior_adr
+    assert "High Assurance Review remains explicit-only" in normalized_adr
+    assert "semantic roles, not model or reasoning assignments" in normalized_adr
     superseded = (
         ROOT / "docs/adr/0011-review-assurance-follows-release-risk.md"
     ).read_text(encoding="utf-8")
@@ -1736,9 +1683,9 @@ def test_high_assurance_review_uses_fresh_context_and_root_only_fanout() -> None
         "exactly two direct core reviewer lanes as fresh read-only collaboration subagents"
         in " ".join(convergent.split())
     )
-    assert "Record each lane's semantic agent ID, runtime agent type, actor ID, task ID" in convergent
+    assert "Record each lane's actor and task IDs" in convergent
     contract = (
-        convergent.split("this return contract:", 1)[1]
+        convergent.split("return contract:", 1)[1]
         .split("```text", 1)[1]
         .split("```", 1)[0]
     )
@@ -1746,7 +1693,6 @@ def test_high_assurance_review_uses_fresh_context_and_root_only_fanout() -> None
         "status",
         "lane",
         "axis",
-        "classes",
         "coverage",
         "finding candidates",
         "skipped checks",
@@ -1762,7 +1708,6 @@ def test_high_assurance_review_has_root_guard_bounded_capacity_and_risk() -> Non
 
     assert "top-level root of its review run" in convergent_flat
     assert "semantic assurance coordinator" in convergent_flat
-    assert "without a model or reasoning gate" in convergent_flat
     assert "nested review lane that invokes this skill returns `incomplete` before Pin" in convergent_flat
     assert "other nested review lane that invokes this skill" in convergent_flat
     for mode in ("initial", "remediation"):
@@ -1787,7 +1732,7 @@ def test_high_assurance_review_has_root_guard_bounded_capacity_and_risk() -> Non
     for overlap in (
         "supported risk",
         "failure and recovery paths",
-        "Change Closure",
+        "complete replacement or removal",
         "evidence completeness",
     ):
         assert overlap in convergent
@@ -1930,7 +1875,9 @@ def test_high_assurance_review_returns_a_caller_usable_decision() -> None:
     convergent = (CUSTOM / "high-assurance-review/SKILL.md").read_text(
         encoding="utf-8"
     )
-    review = (CUSTOM / "change-review/SKILL.md").read_text(encoding="utf-8")
+    formal = (
+        CUSTOM / "change-review/references/FORMAL-REVIEW.md"
+    ).read_text(encoding="utf-8")
     decision_section = convergent.split("Derive exactly one decision", 1)[1].split(
         "Return one caller-bound packet", 1
     )[0]
@@ -1941,12 +1888,22 @@ def test_high_assurance_review_returns_a_caller_usable_decision() -> None:
         )
     )
     assert decisions == {"pass", "pass with residual risk", "blocked", "incomplete"}
-    review_decision_section = review.split("Derive exactly one decision", 1)[1].split(
-        "Return one packet", 1
+    formal_decision_section = formal.split("return exactly one decision", 1)[1].split(
+        "## Return", 1
     )[0]
-    for section in (review_decision_section, decision_section):
+    for section in (formal_decision_section, decision_section):
         assert section.index("- `blocked`") < section.index("- `incomplete`")
         assert "blocker takes precedence over unrelated" in section
+    formal_flat = " ".join(formal.split())
+    for field in (
+        "prior formal Return and candidate identity",
+        "fixed successor identity",
+        "exact repair delta",
+        "all carried IDs",
+        "remaining acceptance",
+    ):
+        assert field in formal_flat
+    assert "partial remediation packet is `incomplete`" in formal_flat
     ledger_sentence = convergent.split("and one state:", 1)[1].split(".", 1)[0]
     ledger_states = set(re.findall(r"`([^`]+)`", ledger_sentence))
     assert ledger_states == {"candidate", "accepted", "rejected", "duplicate", "disputed"}
@@ -2005,7 +1962,15 @@ def test_implement_uses_condition_triggered_change_review() -> None:
     assert "user or repository requires independent review" in flat
     assert "two or more independent authors" in flat
     assert "material shared-contract or irreversible-migration judgment" in flat
-    assert "Keep the candidate fixed while it is reviewed" in flat
+    assert "freeze the proved candidate" in flat
+    assert "fresh `ordinary-reviewer`" in flat
+    assert "`Formal review: yes`" in flat
+    assert "`Mode: initial`" in flat
+    assert "`Mode: remediation`" in flat
+    assert "required proof and material skips" in flat
+    assert "fresh task or context" in flat
+    assert "Do not finish from `blocked` or `incomplete`" in flat
+    assert "caller accepts the named risk" in flat
     assert "Review grants no authority to widen scope" in flat
 
 
@@ -2346,12 +2311,14 @@ def test_to_spec_handoff_keeps_ticket_design_downstream() -> None:
 
 
 def test_implementation_closeout_requires_the_spec_axis() -> None:
-    review = (CUSTOM / "change-review/SKILL.md").read_text(encoding="utf-8")
+    formal = (
+        CUSTOM / "change-review/references/FORMAL-REVIEW.md"
+    ).read_text(encoding="utf-8")
     assurance = (CUSTOM / "high-assurance-review/SKILL.md").read_text(encoding="utf-8")
     implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
     parallel = (CUSTOM / "parallel-implement/SKILL.md").read_text(encoding="utf-8")
 
-    for text in (review, assurance):
+    for text in (formal, assurance):
         assert "`Spec required: yes | no`" in text
     assert "`Spec required: yes`" in parallel
 
@@ -2441,7 +2408,7 @@ def test_planning_and_delivery_activate_lean_integrated_quality_contract() -> No
     assert "smallest execution packet" in tickets
     assert "smallest integrated design" in implement
     assert "Remove code made obsolete by the change" in implement
-    assert "Change Closure" in review
+    assert "complete replacement or removal" in review
     assert "Parallelism is an optimization, not a goal" in parallel
     assert "ToSpec --> Contract" in relationships
     assert "ToTickets --> Contract" in relationships
@@ -2935,7 +2902,16 @@ def test_parallel_implement_separates_plain_context_checkout_and_review() -> Non
     assert "warm general integrator" in flat
     assert "plain task context" in flat and "not a schema" in flat
     assert "quick pytest collection smoke when the checkout declares" in " ".join(lanes.split())
-    assert "| `integration-reviewer` | `default` | `gpt-5.6-sol` | `xhigh` |" in profiles
+    assert "`integration-reviewer`" not in profiles
+    for field in (
+        "`Mode: initial`",
+        "`Mode: remediation`",
+        "required proof, material skips",
+        "fresh task or context",
+        "implementation and integration-author identities",
+    ):
+        assert field in flat
+    assert "Do not close from `blocked` or `incomplete`" in flat
     assert "serial-integrator" not in profiles
     assert not (skill_dir / "scripts/run_ledger.py").exists()
     assert not (skill_dir / "references/RUN-LEDGER.md").exists()
@@ -3027,7 +3003,6 @@ def test_parallel_implement_exposes_live_frontier_and_closeout_contracts() -> No
     assert "retain the parent campaign through serial or concurrent frontiers" in flat
     assert "Claim the parent and read the claim back before dispatch" in flat
     assert "does not land the same commit again" in flat
-    assert "one fresh `integration-reviewer`" in flat
     assert flat.index("Close children") < flat.index("Close the parent")
     assert re.search(
         r"(?m)^\| One explicitly requested parent has an exhaustive "
@@ -3090,7 +3065,6 @@ def test_implement_closeout_locks_exact_candidate_and_preserves_custody() -> Non
     implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
     flat = " ".join(implement.split())
 
-    assert "Keep the candidate fixed while it is reviewed" in flat
     assert "Direct work creates no tracker state" in flat
     assert "follow the repository's claim and closeout rules" in flat
     assert "do not push without separate authority" in flat
@@ -3099,7 +3073,7 @@ def test_implement_closeout_locks_exact_candidate_and_preserves_custody() -> Non
     assert "Call the item complete only when the requested behavior works" in flat
     assert "Return a concise summary" in flat
     assert "Outcome: complete | partial | blocked" not in flat
-    assert "repair successor" not in flat.lower()
+    assert "request remediation review only while the original trigger remains" in flat
 
 
 def test_current_relationships_preserve_candidate_commit_and_repair_claim_custody() -> None:
@@ -3221,7 +3195,7 @@ def test_runtime_composition_edges_respect_lean_review_and_planning_policy() -> 
         for caller, _, callee in edges
     )
     assert "mutations from two or more independent authors" in relationships_flat
-    assert "Missing proof stops instead of invoking review" in relationships_flat
+    assert "Missing proof stops instead" in relationships_flat
     assert "Supported risk modifies coverage only after review admission" in relationships_flat
     assert not implicit_policy(CUSTOM / "high-assurance-review")
 

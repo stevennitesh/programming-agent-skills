@@ -9,8 +9,7 @@ description: Explicit-only review of one immutable caller-selected candidate thr
 
 ## 1. Admit
 
-Load the `change-review` skill's `FINDING-CONTRACT.md` and the shared
-[Runtime Profiles](../parallel-implement/references/RUNTIME-PROFILES.md).
+Load the `change-review` skill's `FINDING-CONTRACT.md`.
 Accept only when the user explicitly names High Assurance Review or approves
 one exact caller-owned invocation packet for one immutable candidate. That
 admission authorizes the two core lanes only. Release status, supported risk,
@@ -20,8 +19,7 @@ Recommend `$audit-codebase` for an immutable
 repository-baseline audit, then stop.
 
 Require this invocation to be the top-level root of its review run. That root
-is the semantic assurance coordinator and records its available runtime
-provenance without a model or reasoning gate. A core reviewer, specialist, or
+is the semantic assurance coordinator. A core reviewer, specialist, or
 other nested review lane that invokes this skill returns `incomplete` before
 Pin. The coordinator owns
 dispatch, finding admission, convergence, and the terminal read-only decision;
@@ -38,8 +36,9 @@ facts, carried IDs, coordinator actor and task IDs, and mode.
 Use one mode:
 
 - `initial` is the default and judges the selected snapshot; or
-- `remediation` is a fresh run for one caller-repaired candidate and applies
-  the Finding Contract's remediation packet and coverage boundary.
+- `remediation` is a fresh run for one caller-repaired candidate and inspects
+  the carried outcomes, exact repair delta, affected seams, and remaining
+  acceptance without reopening untouched scope.
 
 Return `incomplete` before Pin for a missing, contradictory, or ambiguous
 decision-bearing field.
@@ -62,9 +61,8 @@ mutate to obtain one, or silently narrow scope.
 
 Trace Standards from repository instructions,
 `docs/agents/engineering-contract.md`, maintained
-configuration, and meaningful nearby conventions. Load
-`change-review/SMELL-BASELINE.md` only when Standards are thin. Trace Spec
-independently in this precedence:
+configuration, and meaningful nearby conventions. Trace Spec independently in
+this precedence:
 
 1. caller-supplied source;
 2. captured-commit material;
@@ -73,32 +71,26 @@ independently in this precedence:
 A missing, conflicting, unreadable, or unresolved required Spec makes coverage
 `incomplete`. An absent optional Spec is skipped, never inferred.
 
-Freeze one compact row per semantic change unit:
-
-```text
-change -> governing commitment -> actual behavior path
-       -> applicable Finding Contract classes -> proof -> disposition
-```
-
-Assign each applicable Spec and Standards class to exactly one core lane. Reuse
-exact-snapshot proof and run only missing, invalidated, or repository-required
-safe checks. Omit inapplicable classes; cover semantic branches and supported
-interactions, not a blind Cartesian product. Any required source, class, proof
-seam, overlap, or risk trigger left uncovered makes the review `incomplete`.
+Assign accepted-behavior judgment to the Spec lane and implementation-quality
+judgment to the Standards lane. Reuse exact-snapshot proof and run only missing,
+invalidated, or repository-required safe checks. Cover semantic branches and
+supported interactions, not a blind Cartesian product. Any required source,
+proof seam, overlap, or risk trigger left uncovered makes the review
+`incomplete`.
 
 ## 3. Review
 
 Dispatch exactly two direct core reviewer lanes as fresh read-only collaboration
-subagents using their exact semantic agent, model, and reasoning bindings:
+subagents:
 
-1. `har-spec-reviewer` — Commitment Fidelity, Scope and Contracts, and
-   Acceptance and Change Closure.
-2. `har-standards-reviewer` — Semantic Correctness, Robustness and Operability,
-   Code Quality and Design, Proof Discipline, and Stewardship.
+1. `har-spec-reviewer` — accepted meaning, scope, contracts, acceptance, and
+   complete replacement or removal.
+2. `har-standards-reviewer` — correctness, failure behavior, ownership,
+   simplicity, maintainability, and proof proportional to the claim.
 
 Both lanes intentionally overlap on supported risk, failure and recovery paths,
-Change Closure, and evidence completeness while retaining their primary axis
-and classes.
+complete replacement or removal, and evidence completeness while retaining
+their primary axis.
 
 Add at most one `har-specialist` only when the user or approved invocation
 packet explicitly names one bounded specialist objective and its coverage.
@@ -106,20 +98,17 @@ Security and production/SRE specialist coverage require those objectives to
 be explicit. Supported risk alone never selects a specialist. Without explicit
 specialist authority, the two core lanes cover the admitted general scope or
 return `incomplete` when required specialist evidence cannot be obtained. The
-specialist covers only its assigned classes and risk; Risk never becomes a
-third axis.
+specialist covers only its assigned objective; risk never becomes a third axis.
 
-Record each lane's semantic agent ID, runtime agent type, actor ID, task ID,
-requested and observed-or-unavailable model and reasoning, accepted-request or telemetry
-proof, fresh-context proof, and snapshot binding. Give each lane only the
-immutable snapshot, factual sources, assigned coverage, read-only boundary,
-and this return contract:
+Record each lane's actor and task IDs, fresh-context and separation evidence,
+assigned objective, and snapshot binding. Give each lane only the immutable
+snapshot, factual sources, assigned coverage, read-only boundary, and this
+return contract:
 
 ```text
 status: complete | blocked
 lane: har-spec-reviewer | har-standards-reviewer | har-specialist
 axis: Spec | Standards
-classes:
 coverage:
 finding candidates:
 skipped checks:
@@ -130,7 +119,7 @@ Withhold coordinator hypotheses, peer output, the partial ledger, and terminal
 cues. Reviewers return finding candidates only; they do not spawn, admit
 findings, decide the gate, or authorize Repair.
 
-Verify each return against its dispatch binding and required fields. A
+Verify each return against its lane, snapshot, and required fields. A
 contaminated, mutating, out-of-lane, stale, or incomplete return receives no
 credit. Permit at most one fresh unbiased replacement per invalid lane while
 the snapshot and factual brief remain valid. An evidence blocker or second
@@ -143,7 +132,7 @@ coordinator never substitutes for a reviewer.
 ## 4. Converge
 
 Normalize valid lane finding candidates into one coordinator-owned ledger. Give
-each item a stable ID, factual origin, axis, primary class, and one state:
+each item a stable ID, factual origin, axis, and one state:
 `candidate`, `accepted`, `rejected`, `duplicate`, or `disputed`. Preserve
 carried IDs through remediation.
 
@@ -180,10 +169,9 @@ A directly verified admitted blocker takes precedence over unrelated
 incomplete coverage; preserve that unresolved coverage in the Return.
 
 Return one caller-bound packet with mode, fixed point, snapshot, candidate,
-sources, coordinator provenance, core and specialist requested and
-observed-or-unavailable runtime bindings plus their proof, coverage by axis and
-class, admitted findings, carried dispositions, closed finding-candidate
-states, skipped checks, residual risk, drift, decision, and blockers. The decision
+sources, core and specialist fresh-context evidence, coverage by axis, admitted
+findings, carried dispositions, closed finding-candidate states, skipped checks,
+residual risk, drift, decision, and blockers. The decision
 grants no Repair, candidate acceptance or closeout, or residual-risk acceptance
 authority; those remain with the caller. End with:
 
@@ -193,7 +181,7 @@ Mutation authority: none
 Successor snapshot authority: none
 ```
 
-Completion requires valid reviewer quorum; every applicable axis, class, and
-risk trigger to close; every finding candidate and carried ID to be disposed;
+Completion requires valid reviewer quorum; every applicable axis and risk
+trigger to close; every finding candidate and carried ID to be disposed;
 drift to pass; and one internally consistent decision to return. Return control
 to the caller and stop.

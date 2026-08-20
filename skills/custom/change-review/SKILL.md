@@ -1,185 +1,87 @@
 ---
 name: change-review
-description: "Review one caller-admitted branch, WIP, staged, since-X diff, local PR, release candidate, or implementation candidate read-only from a fixed snapshot. Judge Spec and Standards separately, with risk-proportional coverage, then return one terminal gate decision."
+description: Review one selected branch, WIP, staged or since-X diff, PR, or fixed implementation candidate read-only for concrete correctness and code-quality problems. Use for direct review or caller-triggered independent review; exclude repository-baseline audits, repair requests, and explicit High Assurance Review.
 ---
 
 # Change Review
 
-**Pin -> Cover -> Judge -> Gate**
+Review one code change against its accepted behavior and repository standards.
+Return only evidence-backed findings or a truthful pass. Never edit, repair,
+delegate, or authorize a successor.
 
-The whole review is read-only. Inspect and safely verify; leave files, Git,
-dependencies, trackers, PR state, external systems, and successor snapshots
-unchanged.
+## 1. Pin
 
-## Pin
+Use the candidate and comparison point the caller names. Otherwise select the
+current WIP, including staged, unstaged, and in-scope untracked files. Capture
+the exact diff or content and enough identity to repeat the check. Stop as
+`incomplete` when the candidate is empty, ambiguous, partial, or cannot be
+identified completely.
 
-Load [FINDING-CONTRACT.md](FINDING-CONTRACT.md) and the shared
-[Runtime Profiles](../parallel-implement/references/RUNTIME-PROFILES.md).
-Change Review owns one caller-admitted branch, WIP, staged, since-X diff, local
-PR, release candidate, or implementation candidate. Candidate kind, size,
-release status, and supported risk neither invoke review nor select another
-review system. Recommend `$audit-codebase`
-for an immutable repository-baseline audit, then stop. Return mutation requests
-to their caller without beginning review.
+Review the captured candidate, not a later version. The repository baseline is
+context, not part of the candidate. A whole-repository or subsystem baseline
+audit is outside this skill.
 
-Change Review reviews directly and never delegates, invokes another review, or
-repairs. Formal delivery requires caller-supplied implementation IDs and any
-integration IDs the caller has, plus a fresh reviewer actor and task distinct
-from every supplied ID. Use `ordinary-reviewer` for one-item delivery and
-`integration-reviewer` for a Parallel Implement final candidate. A missing or
-mismatched formal-delivery binding returns
-`transport-invalid` before candidate judgment. Standalone review records its current runtime
-provenance but needs no binding or separation proof.
+When the caller declares `Formal review: yes`, load
+[Formal Review](references/FORMAL-REVIEW.md) and apply its additional admission,
+remediation, decision, and Return rules. Otherwise do not load it.
 
-Carry the caller-supplied accepted request and commitments, `Spec required`,
-invocation and review modes, implementation and integration IDs, Source Trace, fixed point
-and candidate, required proof, skips, risk, contradictory evidence, and carried
-finding IDs. Hypotheses, expected conclusions, partial findings, and terminal
-cues are not evidence.
+## 2. Understand
 
-Use the supplied fixed point. Otherwise resolve the repository default branch
-and its ref, enumerate applicable best merge bases with the candidate, and
-require exactly one. Select exactly one candidate in this precedence:
+Read the accepted request and commitments, repository instructions and durable
+decisions, the shared engineering contract when routed, meaningful nearby code
+and tests, and any caller-supplied proof. Use a supplied specification when it
+exists. Without one, do not infer product intent from tests or implementation;
+review the observable request and repository contracts that are available.
 
-1. supplied review tree;
-2. explicitly staged-only;
-3. supplied committed candidate or connected local PR head;
-4. live WIP.
+Trace each meaningful change through its real owner and callers to its result or
+effect. Include an applicable failure or recovery path and any behavior the
+change replaces or makes redundant.
 
-Capture a nonempty immutable state-location tuple before inspection. For a
-connected local PR, record its exact base, head, and diff content. Otherwise
-record the candidate kind, fixed point, resolved endpoints, captured diff bytes,
-commands and ref resolutions, plus every applicable identity: `HEAD`, index
-tree, staged diff, unstaged diff, normalized status and untracked inventory, and
-each in-scope untracked path, mode, and content identity. Return `incomplete`
-when the fixed point or candidate is missing, ambiguous, partial, empty, or
-cannot be identified completely. Judge captured bytes, never later live reads.
+## 3. Inspect
 
-Record `Invocation: formal-delivery | standalone` and `Review mode: initial |
-remediation`; standalone defaults to `initial`. Apply the Finding Contract's
-remediation packet and coverage boundary.
+First judge whether the candidate delivers the accepted behavior with the right
+meaning, scope, contracts, and complete replacement or removal. Then judge the
+implementation independently for correctness, ownership, data shape, interface
+clarity, simplicity, maintainability, and proof proportional to the claim.
+Neither judgment may hide failures in the other.
 
-## Cover
+Ask whether the change introduces indirection, mutable state, branching, or a
+second path that no current caller or requirement justifies. Prefer direct,
+repository-native code, but do not report a preference as a defect.
 
-Trace the user request, accepted commitments, Source Trace, repository instructions, domain
-decisions, captured candidate, tests, required proof, skips, and risk. Narration
-is a source pointer, not proof. After review is admitted, supported facts expand
-ordinary coverage only within the accepted request and repository contracts.
-Preserve touched security, privacy, authorization, data-integrity, and
-production guarantees as correctness obligations. Do not initiate threat
-modeling, security hardening, deployment, operations, SRE analysis, or
-specialist work without an explicit objective. Change Review reviews directly
-and never delegates.
+Follow only conditions the candidate activates. For a touched trust or effect
+boundary, migration, concurrent state, or partial-effect path, inspect the
+applicable contract and failure behavior. For removed or replaced behavior,
+inspect displaced callers, registrations, configuration, proof, and public
+documentation. An inactive concern creates no checklist or specialist review.
 
-Trace Spec in this precedence:
+## 4. Verify
 
-1. caller-supplied source;
-2. decision-bearing material referenced by captured commits;
-3. one matching repository source.
+Reuse proof bound to the candidate. Run only safe checks needed to resolve a
+material finding candidate, repository requirement, or concrete uncertainty.
+Prefer the real caller or artifact when an isolated check cannot establish the
+claim; unavailable optional proof is a stated limit, not an automatic defect.
 
-The caller supplies `Spec required: yes | no`; standalone Change Review defaults
-to `no`. A missing, unreadable, conflicting, or unresolved required Spec makes
-coverage `incomplete`. When optional Spec is absent, record it as skipped; do
-not infer intent from tests or implementation.
+Load [Finding Contract](FINDING-CONTRACT.md) before admitting a finding. Treat
+every observation as a hypothesis until it satisfies that contract. Verify the
+location and decisive evidence yourself; another agent's report, test count, or
+tool output summary is not sufficient by itself.
 
-Trace Standards from repository instructions, the routed
-`docs/agents/engineering-contract.md`, maintained test and tool configuration,
-and meaningful nearby conventions. Load [SMELL-BASELINE.md](SMELL-BASELINE.md)
-only when these Standards are thin. Repository Standards override the fallback.
+## 5. Return
 
-Freeze one compact in-context row per semantic change unit:
+Repeat the candidate identity check. If mutable content changed, return
+`incomplete` and name the drift; do not silently recapture it.
 
-```text
-change -> governing commitment -> actual behavior path
-       -> applicable Finding Contract classes -> proof -> disposition
-```
+For ordinary review, list admitted findings in impact order with their location,
+evidence, impact, and required correction or proof. If required evidence remains
+unresolved, return `Review incomplete` and the gap. Otherwise, when no finding
+remains, say `No findings`. Include only material checks, skipped proof,
+uncertainty, and the candidate identity needed to understand the conclusion.
 
-Trace the real entry, caller, output or effect, and applicable failure or
-recovery path. Reuse proof tied to the exact snapshot; run only missing,
-invalidated, or repository-required safe checks. Omit inapplicable classes
-instead of adding `N/A` bookkeeping. Cover distinct semantic branches and supported risk
-interactions, not a blind Cartesian product. Close each row as `inspected`,
-`proved`, `skipped-nonmaterial`, or `blocked`; any material skip or block makes
-coverage `incomplete`.
+Formal review returns the decision and fields defined by its conditional
+reference. In every mode, return control to the caller with mutation and
+successor authority unchanged, then stop.
 
-When observable behavior changes, use Hyrum's Law to distinguish actual
-dependence from the intended contract as compatibility or migration evidence.
-When the candidate supersedes or makes behavior redundant, extend coverage to
-every displaced implementation, caller, registration, export, flag, test,
-configuration, document, and migration required by Change Closure.
-
-## Judge
-
-Judge Spec first: whether the candidate fulfills its commitments with the
-intended meaning, scope, contracts, acceptance, and Change Closure. Check for
-missing or partial requirements, scope creep, and wrong semantics.
-
-Reset attention to the pinned snapshot and Standards sources; discard Spec
-conclusions, severity, counts, and ranking pressure. Judge Standards separately:
-whether the candidate is correct, robust, operable, maintainable, well designed,
-and adequately proved under the applicable Finding Contract classes. Apply
-**Must** rules as floors. Apply **Prefer** rules only when direct evidence shows
-violated repository authority or a concrete supported cost.
-
-Behavior is evidence for both axes, not a third axis. Admit finding candidates
-only through the Finding Contract. Missing evidence for a required axis makes
-coverage `incomplete`; unavailable optional verification is residual risk.
-
-Keep admitted IDs stable. In remediation, dispose each carried ID as `resolved`,
-`still admitted`, `disproved`, or `incomplete`.
-
-## Gate
-
-Recompute every applicable snapshot-tuple cell with its recorded command and ref
-resolution, including connected PR base, head, and diff content. Any missing or
-changed cell makes the decision `incomplete`; name the drift and preserve
-findings only as evidence for the original snapshot. Do not recapture.
-
-Derive exactly one decision:
-
-- `blocked` when an admitted finding blocks under the Finding Contract and
-  repository policy;
-- `incomplete` when required source, coverage, evidence, finding-candidate
-  disposition, report state, or drift is unresolved and no admitted blocker
-  already establishes `blocked`;
-- `pass with residual risk` when coverage is complete and no blocker exists,
-  but verified decision-bearing residual risk remains; or
-- `pass` when coverage is complete, no blocker remains, and drift is clear.
-
-A directly verified admitted blocker takes precedence over unrelated
-incomplete coverage; preserve that unresolved coverage in the Return.
-
-Return one packet:
-
-```text
-Invocation: formal-delivery | standalone
-Review mode: initial | remediation
-Semantic agent: ordinary-reviewer | integration-reviewer | standalone
-Reviewer actor ID:
-Reviewer task ID:
-Runtime binding: agent type <value or standalone>; requested <model and reasoning or standalone>; observed <values or unavailable>
-Fresh-context and separation evidence: <evidence> | standalone
-Coverage: complete | incomplete
-Decision: pass | pass with residual risk | blocked | incomplete
-Fixed point:
-Snapshot identity:
-Candidate:
-Sources: Spec: <source or skipped>. Standards: <sources>.
-Covered work:
-Spec findings: <admitted findings, none, or skipped>
-Standards findings: <admitted findings or none>
-Carried dispositions: <when applicable>
-Skipped checks:
-Residual risk:
-Blocker: <when applicable>
-Drift: none | detected | not reached
-Return boundary: caller
-Mutation authority: none
-Successor snapshot authority: none
-```
-
-Completion requires every applicable coverage row and axis to close, the axis
-reset to occur, every finding candidate and carried ID to be disposed, drift
-read-back to pass, and the packet to be internally consistent. The decision is review
-judgment and grants no mutation or release authority. Return control to the
-caller and stop.
+Completion requires the selected candidate to be fully inspected, every
+reported finding to satisfy the Finding Contract, material uncertainty to be
+named, and the final identity check to agree with what was reviewed.

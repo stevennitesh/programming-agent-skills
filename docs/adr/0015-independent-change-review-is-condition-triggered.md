@@ -1,6 +1,6 @@
 # Independent Change Review Is Condition-Triggered
 
-**Status**: accepted
+**Status**: superseded by ADR-0016
 
 ## Context
 

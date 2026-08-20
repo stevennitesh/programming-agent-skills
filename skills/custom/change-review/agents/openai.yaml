@@ -3,5 +3,5 @@ policy:
 
 interface:
   display_name: "Change Review"
-  short_description: "Single fixed-snapshot review gate"
-  default_prompt: "Use $change-review to pin this candidate, cover and judge Spec and Standards separately with risk-proportional depth, and return one read-only gate decision."
+  short_description: "Evidence-backed review of one code change"
+  default_prompt: "Use $change-review to inspect this selected code change read-only, verify concrete findings, and return a concise result."

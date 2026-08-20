@@ -1,113 +1,30 @@
 # Finding Contract
 
-Load this contract before coverage and judgment. It owns review
-classification, risk admission, finding fields, severity, and remediation
-bounds.
+Use this contract to turn review observations into actionable findings. A
+finding must have all five:
 
-## Classify
+- **Anchor:** an accepted requirement, repository rule, or supported behavior;
+- **Reach:** a concrete scenario inside the selected change;
+- **Evidence:** direct evidence from the reviewed candidate or safe verification;
+- **Impact:** a correctness, contract, data, operability, proof, or maintainability
+  failure; and
+- **Proportion:** the smallest required correction or proof fits that impact.
 
-Use one primary class per finding candidate. Cite secondary anchors without
-duplicating the finding.
+Reject disproved, speculative, preference-only, optional-hardening, and
+unrelated pre-existing concerns. A smell, unfamiliar technique, test count, or
+reviewer agreement does not establish a finding. An empty review is valid.
 
-| Axis | Class | Brief |
-| --- | --- | --- |
-| **Spec** | **Commitment Fidelity** | Required outcomes are implemented with their intended meaning. |
-| **Spec** | **Scope and Contracts** | Scope, non-goals, compatibility, public and data contracts, domain rules, and accepted decisions hold. |
-| **Spec** | **Acceptance and Change Closure** | Required acceptance is proved and displaced or redundant paths are removed or supported. |
-| **Standards** | **Semantic Correctness** | Actual behavior preserves applicable meaning, invariants, state, and data. |
-| **Standards** | **Robustness and Operability** | Failure, recovery, idempotency, concurrency, environmental, and operational behavior are safe where applicable. |
-| **Standards** | **Code Quality and Design** | Ownership, cohesion, clarity, duplication, coupling, complexity, and simplification have a concrete supported shape. |
-| **Standards** | **Proof Discipline** | Required proof exercises the meaningful seam and applicable branches; each new or changed test has a distinct responsibility or justified failure isolation; prefer state verification and use behavior verification only when the interaction is itself a responsibility or is needed for failure isolation. |
-| **Standards** | **Stewardship** | Retained complexity has an owner and reason, unrelated work is preserved, and changed code remains maintainable. |
+Record one finding per violated obligation with a stable ID when a later formal
+remediation review may occur. Include severity, location, anchor and supported
+scenario, decisive evidence, impact, and required correction or proof. Use:
 
-Behavior is evidence used by both axes, not another axis. Risk is a
-cross-cutting modifier after review is admitted. It never invokes Change
-Review, High-Assurance Review, security work, production/SRE work, or a
-specialist. A **supported high-risk trigger** identifies a changed
-surface, supported scenario, reachable behavior or failure path, and concrete
-impact involving a trust boundary, irreversible effect or migration,
-concurrency or recovery, high-impact domain or model invariant, or measured
-performance obligation. PR existence, size, labels, and hypothetical cases do
-not qualify.
+- `P0` for catastrophic production, security, privacy, or data failure;
+- `P1` for a blocking supported correctness or contract failure;
+- `P2` for a significant supported edge, validation, release, or operator risk;
+  and
+- `P3` for a lower-impact actionable correctness or maintainability problem.
 
-## Admit
-
-Admit a finding only when all five gates close:
-
-| Gate | Required evidence |
-| --- | --- |
-| **Anchor** | Governing acceptance, repository Standard, required validation, or reachable behavior changed or promised by the candidate |
-| **Reach** | A supported scenario inside the accepted request or requested slice |
-| **Evidence** | Direct evidence from the immutable snapshot and safe read-only verification |
-| **Impact** | Concrete correctness, security, privacy, data, proof, operability, or maintainability failure |
-| **Proportion** | A required outcome with a remedy proportionate to the anchored contract |
-
-Admission precedes severity. Reject disproved, speculative, preference-only,
-unsupported-environment, tooling-style, optional-hardening, and adjacent
-cleanup finding candidates. Exclude pre-existing problems unless the candidate creates or
-worsens them, or Change Closure brings them into scope. Record one finding per
-violated primary obligation; do not multiply one observation across classes.
-
-A candidate's omission of contract-required proof may pass the normal gates.
-Reviewer inability to obtain evidence needed to decide a finding candidate or
-required axis makes coverage `incomplete`, not a finding. Optional unavailable
-verification is residual risk and does not admit a finding candidate.
-
-Test count or runtime alone does not admit a finding. For new or changed test
-overlap, require direct evidence that no distinct behavior, branch, seam, risk,
-or diagnostic responsibility remains and that the duplication creates
-concrete maintenance or execution cost.
-
-## Record
-
-Every admitted finding records:
-
-```text
-ID:
-Axis:
-Class:
-Severity:
-Location:
-Anchor:
-Supported scenario:
-Behavior or failure path:
-Evidence:
-Impact:
-Supported risk trigger: <trigger or none>
-Blocking: yes | no
-Remediation: automatic-in-scope | decision-required | residual-hardening
-Required proof:
-```
-
-Keep IDs stable through remediation. Name the tightest useful captured line or
-missing seam. Separate direct observation from inference. Required proof is
-the smallest semantic proof that can close the Repair.
-
-## Remediation Review
-
-A fresh remediation review receives `Invocation: formal-delivery` and
-`Review mode: remediation`, plus the original accepted commitments, prior snapshot identity,
-stable carried IDs, caller-owned Repair delta, remaining acceptance, fixed
-point, and successor candidate. Judge only the carried outcomes, Repair delta,
-affected surfaces, and remaining acceptance exercised there; leave untouched
-scope closed.
-
-## Severity And Remediation
-
-- `P0`: catastrophic production, security, privacy, or data failure.
-- `P1`: merge-blocking supported correctness or contract failure.
-- `P2`: significant supported edge-case, required-validation, CI, release, or
-  operator risk.
-- `P3`: lower-risk actionable correctness or maintainability.
-
-`P0` and `P1` block. `P2` and `P3` follow the accepted commitments or repository policy.
-
-- `automatic-in-scope` preserves the accepted commitments with bounded proof.
-- `decision-required` changes an accepted commitment or authority.
-- `residual-hardening` identifies a directly evidenced reachable risk outside
-  automatic acceptance.
-
-Classification grants no mutation. The delivery owner validates it before
-Repair. A frozen delivery request authorizes `automatic-in-scope` remediation
-unless its caller restricted Repair; every other class returns for caller
-decision.
+Missing evidence needed to decide required behavior makes the review
+`incomplete`; unavailable optional verification becomes a stated limit. A
+candidate's omission of required proof may itself be a finding when the five
+conditions above hold.

@@ -149,21 +149,25 @@ production adjacency do not trigger review.
 
 When review triggers, pin one immutable candidate only after final proof passes
 and the integration checkout is clean. Use one fresh `integration-reviewer`
-through `$change-review`, with an actor, task, and context distinct from every
-implementation actor and the root integration actor. Supply the accepted
-parent commitments, source, fixed point, immutable candidate, implementation
-and integration identities, proof, material skips, supported facts,
-contradictory evidence, and `Spec required: yes`.
+through `$change-review`, distinct from every implementation author and the root
+integration actor. Supply `Formal review: yes`, the accepted parent commitments,
+`Mode: initial`, source, fixed point, immutable candidate, required proof,
+material skips, supported facts, contradictory evidence, `Spec required: yes`,
+implementation and integration-author identities, and evidence of the
+reviewer's fresh task or context and distinct identity.
 
-Accept only a complete Review Return bound to the candidate. Review grants no
-mutation. Repair only admitted `automatic-in-scope` blockers through the
-responsible resumable worker or one fresh capable worker; land the correction,
-rerun invalidated proof, and repeat review only while the original trigger
-still applies. One review invocation authorizes at most one automatic repair
-successor; any blocker in that successor review returns to the caller rather
-than opening another automatic repair cycle. Return decision-required,
-scope-changing, speculative, mixed,
-or unsupported findings to the caller unchanged. If the same blocker recurs
+Accept only a complete formal Review Return bound to the candidate. Do not
+close from `blocked` or `incomplete`; `pass with residual risk` also requires
+caller acceptance of the named risk. Review grants no mutation. Apply only
+caller-authorized in-scope corrections through
+the responsible resumable worker or one fresh capable worker; land the
+correction, rerun invalidated proof, and repeat remediation review only while
+the original trigger still applies. Supply `Mode: remediation`, the prior formal
+Return and candidate identity, fixed successor identity, exact repair delta,
+all carried IDs, and remaining acceptance. One review invocation permits at most one
+repair successor; any blocker in that successor review returns to the caller
+rather than opening another automatic repair cycle. Return scope-changing,
+speculative, mixed, or unsupported findings to the caller unchanged. If the same blocker recurs
 without a new authorized in-scope repair path, stop under the terminal
 classifier.
 

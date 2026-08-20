@@ -9,11 +9,6 @@ binding; the orchestrator passes it directly when starting the worker.
 | `adaptive-worker` | `default` | `gpt-5.6-terra` | `xhigh` |
 | `fast-adaptive-worker` | `default` | `gpt-5.6-sol` | `medium` |
 | `demanding-worker` | `default` | `gpt-5.6-sol` | `high` |
-| `ordinary-reviewer` | `default` | `gpt-5.6-sol` | `high` |
-| `integration-reviewer` | `default` | `gpt-5.6-sol` | `xhigh` |
-| `har-spec-reviewer` | `default` | `gpt-5.6-sol` | `xhigh` |
-| `har-standards-reviewer` | `default` | `gpt-5.6-sol` | `xhigh` |
-| `har-specialist` | `default` | `gpt-5.6-sol` | `xhigh` |
 
 Choose worker profiles in this order:
 
@@ -33,8 +28,7 @@ model and reasoning must match the row.
 `../assets/luna_max.toml` is the canonical named-agent template;
 `$repo-bootstrap` owns its repo-local provisioning and reconciliation.
 
-Enforce a row only for a spawned actor. A current root records available
-provenance without a model or reasoning gate. The accepted launch request proves
-the requested binding when resolved telemetry is unavailable. A known
-mismatched implementation binding is `transport-blocked`; a known formal-review
-mismatch is `transport-invalid` and receives no review credit.
+Enforce a row only for a spawned implementation actor. Review roles use their
+owning review skill's fresh-context and separation rules without a model or
+reasoning assignment from this worker table. A known mismatched implementation
+binding is `transport-blocked`.

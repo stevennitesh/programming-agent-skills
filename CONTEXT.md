@@ -151,8 +151,9 @@ _Avoid_: worker runtime, scheduler, execution ledger
 
 **Change review candidate**
 
-A caller-admitted fixed-snapshot implementation diff or PR. `$change-review`
-owns admission, coverage, and its separate Spec and Standards judgment.
+A caller-selected implementation diff or PR. `$change-review` owns read-only
+judgment of the identified content; its formal branch requires one fixed
+candidate and returns the terminal decision.
 _Avoid_: low-priority review, risk-free review
 
 **High-assurance review candidate**
@@ -165,8 +166,8 @@ _Avoid_: automatic escalation, every risky change
 
 A supported reachable scenario with concrete material impact. After review is
 admitted, it may expand candidate-scoped coverage; it never activates review.
-The `$change-review` [Finding Contract](skills/custom/change-review/FINDING-CONTRACT.md)
-owns its classification after an applicable review is admitted.
+The reviewing skill applies it only to reachable behavior inside the accepted
+request and repository contracts.
 _Avoid_: hypothetical edge case, risk label, PR route
 
 **Router skill**
@@ -206,10 +207,9 @@ _Avoid_: pack manual, copied route map
   remains the controllerless proof-ordering decision.
 - Change review candidate, High-assurance review candidate, and Supported
   high-risk trigger belong to this context and
-  [ADR-0015](docs/adr/0015-independent-change-review-is-condition-triggered.md).
+  [ADR-0016](docs/adr/0016-ordinary-and-formal-review-share-one-lean-judgment-owner.md).
   The caller owns activation, each review skill validates its admitted
-  candidate, and the Change Review Finding Contract owns supported-risk
-  classification only after an applicable review is admitted.
+  candidate, and risk expands only applicable candidate-scoped judgment.
 - Agent-instruction vocabulary—context pointers, context and cognitive load,
   information hierarchy, completion criteria, leading words, environment
   caches, and pruning—belongs to

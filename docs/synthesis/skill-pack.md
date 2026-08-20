@@ -102,6 +102,11 @@ and reducing Wayfinder's Prototype packet to decision-bearing caller facts.
 Revision 23 materializes machine contract revision 11 by rewriting Research as
 one five-action evidence loop, adding conditional empirical appraisal, and
 returning route mismatches to the caller instead of selecting a successor.
+Revision 24 materializes machine contract revision 12 by rewriting Change Review
+around one five-action ordinary review, disclosing formal delivery only when the
+caller supplies that mode, shrinking shared finding admission, removing the
+fallback smell catalog, and returning reviewer dispatch ownership to Implement,
+Parallel Implement, and explicit High-Assurance Review.
 It binds the complete fingerprinted pre-discovery fixed point, then freezes the
 tested environment, finite research order, capability
 owners, roles, relationships, exclusions, resolved collisions, acceptance
@@ -456,7 +461,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       ],
       "allowed_contributor_skill_ids": [],
       "capability_id": "CAP-015",
-      "completion_return": "One terminal ordinary review report",
+      "completion_return": "Evidence-backed findings or no findings, plus one formal decision only when that mode is supplied",
       "disposition": "selected",
       "entry_conditions": [
         "A caller admits a branch, WIP, staged, since-X diff, local PR, release candidate, or implementation candidate for read-only judgment"
@@ -467,11 +472,11 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Unbounded foreign procedure loading",
         "Automated semantic acceptance"
       ],
-      "observable_outcome": "Review one fixed-snapshot implementation candidate with risk-proportional Spec and Standards judgment",
+      "observable_outcome": "Review one identified code change read-only and return concrete findings or a formal fixed-candidate decision",
       "primary_owner_skill_id": "SK-015",
       "proof_class": "fresh behavioral proof plus structural identity and boundary proof",
       "required_authority_mutation": [
-        "Fixed-point resolution, Spec review, Standards review, and finding contract"
+        "Candidate identity, accepted-behavior and engineering-quality judgment, finding admission, and final drift check"
       ]
     },
     {
@@ -786,7 +791,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "scenario_id": "PS-014"
       },
       {
-        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for change-review: Review one fixed-snapshot implementation candidate with risk-proportional Spec and Standards judgment",
+        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for change-review: review one identified code change and conditionally gate a formal fixed candidate",
         "expected_owner_skill_id": "SK-015",
         "scenario_id": "PS-015"
       },
@@ -1007,7 +1012,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       }
     ],
     "composition_epoch_id": "FCE-20260727-01",
-    "contract_revision": 11,
+    "contract_revision": 12,
     "epoch_lock": null,
     "exclusions": [
       "Per-skill H1 or candidate wording",
@@ -1053,7 +1058,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "github-issue-body:stevennitesh/programming-agent-skills#39#sha256-v1:f8115df444ab80f15fdb49610d96152cdff2edc12a5f03bb50efaba308a840a3",
       "github-issue-body:stevennitesh/programming-agent-skills#50#sha256-v1:21d89976101c1815c6e08f921d6045f97615bfdad8b3a3babc6ed40ca9d463bb",
       "git-commit:2710890325c51a2120656a8d1233d442f6454c1a",
-      "docs/synthesis/skill-context-relationships.md#sha256-v1:84a41f13e6a2a3b836fe79ff0cd2073652e2b5b931e89620e082cac594b3e66b"
+      "docs/synthesis/skill-context-relationships.md#sha256-v1:9ac791feec5c8b8d35f29b01d2e9a44687cea920434d809bcdf40d34a5d7a504"
     ],
     "status": "frozen"
   },
@@ -1683,18 +1688,18 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-022",
       "combined_exit_owner_skill_id": "SK-022",
       "context_loaded": [
-        "change-review caller-facing interface and branch-required reference only"
+        "change-review caller-facing interface and formal-review reference"
       ],
       "entry_condition": "The user or repository explicitly requires independent review; the final candidate contains mutations from two or more independent authors; or focused proof establishes behavior but a material shared-contract or irreversible-migration acceptance judgment still warrants fresh independent judgment and Change Review is the lowest-burden way to obtain it.",
       "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
-      "input_packet": "Caller-owned bounded Source Trace for implement, implementation actor and task identities, factual candidate evidence, and the declared change-review input",
+      "input_packet": "Formal review mode, accepted request, fixed point, immutable candidate, proof and material skips, Spec requirement, implementation-author identities, and fresh reviewer task or context separation evidence",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-016",
       "required_proof_ids": [
         "PROOF-REL-016"
       ],
       "resume_owner_skill_id": "SK-022",
-      "return_packet": "The declared change-review Return packet plus review actor and fresh-task provenance, exact candidate evidence, limits, and residual state",
+      "return_packet": "One fixed-candidate formal decision with admitted findings, material limits, residual risk, drift, and independence evidence",
       "target_skill_id": "SK-015",
       "verb": "Invoke",
       "wrong_condition": "No explicit review requirement exists, the candidate has one mutation author, focused proof establishes its material claims without a remaining independent acceptance judgment, or required proof is missing and must stop rather than route to review."
@@ -2094,18 +2099,18 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-023",
       "combined_exit_owner_skill_id": "SK-023",
       "context_loaded": [
-        "change-review caller-facing interface and branch-required reference only"
+        "change-review caller-facing interface and formal-review reference"
       ],
       "entry_condition": "The user or repository explicitly requires independent review; the final candidate contains mutations from two or more independent authors; or focused proof establishes behavior but a material shared-contract or irreversible-migration acceptance judgment still warrants fresh independent judgment and Change Review is the lowest-burden way to obtain it.",
       "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
-      "input_packet": "Caller-owned bounded Source Trace for parallel-implement, implementation and integration actor identities, factual candidate evidence, and the declared change-review input",
+      "input_packet": "Formal review mode, accepted parent source, fixed point, immutable candidate, proof and material skips, required Spec, implementation and integration-author identities, and fresh reviewer task or context separation evidence",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-034",
       "required_proof_ids": [
         "PROOF-REL-034"
       ],
       "resume_owner_skill_id": "SK-023",
-      "return_packet": "The declared change-review Return packet plus review actor and fresh-task provenance, exact candidate evidence, limits, and residual state",
+      "return_packet": "One fixed-candidate formal decision with admitted findings, material limits, residual risk, drift, and independence evidence",
       "target_skill_id": "SK-015",
       "verb": "Invoke",
       "wrong_condition": "The candidate has one mutation author, no explicit review requirement exists, focused proof establishes its material claims without a remaining independent acceptance judgment, or required proof is missing and must stop rather than route to review."
@@ -3946,24 +3951,24 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "PS-015"
       ],
       "canonical_name": "change-review",
-      "completion_condition": "Every in-scope changed behavior is judged against Spec and Standards",
+      "completion_condition": "The identified candidate is inspected against accepted behavior and engineering quality, every finding is directly supported, and the final identity check agrees",
       "contract_order": 15,
-      "essential_outcome": "Review one fixed-snapshot implementation candidate with risk-proportional Spec and Standards judgment",
-      "failure_return": "Return incomplete evidence or coverage to the caller without mutation",
+      "essential_outcome": "Review one identified code change read-only and return evidence-backed findings or a formal fixed-candidate decision",
+      "failure_return": "Return material uncertainty, candidate drift, or an incomplete formal gate without mutation",
       "invocation_mode": "implicit",
       "load_budget_class": "conditional-leaf",
       "negative_exclusion_predicates": [
-        "The request does not satisfy: A caller admits a branch, WIP, staged, since-X diff, local PR, release candidate, or implementation candidate for read-only judgment",
+        "The request does not satisfy: A caller selects a branch, WIP, staged or since-X diff, PR, or fixed implementation candidate for read-only judgment",
         "Another selected skill owns the requested outcome",
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
       "owned_authority_mutation_surfaces": [
-        "Fixed-point resolution, Spec review, Standards review, and finding contract"
+        "Candidate identity, accepted-behavior and engineering-quality judgment, finding admission, and formal-review gating when supplied"
       ],
       "owned_capability_ids": [
         "CAP-015"
       ],
-      "positive_entry_predicate": "A caller admits a branch, WIP, staged, since-X diff, local PR, release candidate, or implementation candidate for read-only judgment",
+      "positive_entry_predicate": "A caller selects a branch, WIP, staged or since-X diff, PR, or fixed implementation candidate for read-only judgment",
       "primary_role": "leaf",
       "prohibited_ownership": [
         "Another selected skill's semantic decision, local mutation, proof judgment, Return, or completion",
@@ -3973,8 +3978,8 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "relationship_ids": [
         "REL-092"
       ],
-      "required_input": "A bounded caller-owned Source Trace and one fixed-snapshot implementation candidate for risk-proportional Spec and Standards judgment",
-      "return_packet": "One terminal change review report",
+      "required_input": "One selected code change and its accepted behavior; formal review additionally requires one fixed candidate and its formal admission packet",
+      "return_packet": "Evidence-backed findings or no findings; formal mode returns one terminal decision",
       "skill_id": "SK-015"
     },
     {

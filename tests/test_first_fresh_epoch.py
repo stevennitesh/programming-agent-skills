@@ -127,7 +127,7 @@ def test_first_epoch_contract_freezes_complete_h1_free_composition() -> None:
 
     assert pack_contract.validate_contract(contract) == []
     assert contract["epoch_header"]["composition_epoch_id"] == EPOCH
-    assert contract["epoch_header"]["contract_revision"] == 11
+    assert contract["epoch_header"]["contract_revision"] == 12
     assert contract["epoch_header"]["status"] == "frozen"
     assert contract["epoch_header"]["integration_result"] == {
         "decision": None,
@@ -213,7 +213,7 @@ def test_first_epoch_revision_preserves_history_and_derives_r11_blueprints() -> 
             skill_id,
         )
         assert projected["slice"]["slice_id"].startswith(
-            f"{EPOCH}:r11:"
+            f"{EPOCH}:r12:"
         )
         assert projected["slice"]["skill"] == skill_by_id[skill_id]
     assert {
@@ -230,7 +230,7 @@ def test_current_contract_preserves_review_and_tdd_topology() -> None:
         skill["canonical_name"]: skill for skill in contract["selected_skills"]
     }
     assert contract["epoch_header"]["status"] == "frozen"
-    assert contract["epoch_header"]["contract_revision"] == 11
+    assert contract["epoch_header"]["contract_revision"] == 12
     assert {
         name: (skill_by_name[name]["skill_id"], skill_by_name[name]["invocation_mode"])
         for name in (
@@ -297,11 +297,16 @@ def test_current_contract_preserves_review_and_tdd_topology() -> None:
         ROOT
         / "docs/adr/0013-automatic-implementation-review-uses-one-change-review-path.md"
     ).read_text(encoding="utf-8")
-    adr = (
+    prior_adr = (
         ROOT
         / "docs/adr/0015-independent-change-review-is-condition-triggered.md"
     ).read_text(encoding="utf-8")
+    adr = (
+        ROOT
+        / "docs/adr/0016-ordinary-and-formal-review-share-one-lean-judgment-owner.md"
+    ).read_text(encoding="utf-8")
     assert "**Status**: superseded by ADR-0015" in superseded
+    assert "**Status**: superseded by ADR-0016" in prior_adr
     assert "**Status**: accepted" in adr
 
     relationships = (
