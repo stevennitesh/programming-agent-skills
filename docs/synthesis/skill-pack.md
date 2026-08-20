@@ -99,6 +99,9 @@ unresolved architecture question, and removing the former Direct Design layer.
 Revision 22 materializes machine contract revision 10 by rewriting Prototype
 as one five-action evidence loop, removing Research's stale Prototype route,
 and reducing Wayfinder's Prototype packet to decision-bearing caller facts.
+Revision 23 materializes machine contract revision 11 by rewriting Research as
+one five-action evidence loop, adding conditional empirical appraisal, and
+returning route mismatches to the caller instead of selecting a successor.
 It binds the complete fingerprinted pre-discovery fixed point, then freezes the
 tested environment, finite research order, capability
 owners, roles, relationships, exclusions, resolved collisions, acceptance
@@ -163,10 +166,10 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       ],
       "allowed_contributor_skill_ids": [],
       "capability_id": "CAP-003",
-      "completion_return": "A cited answer or exact evidence gap with limits",
+      "completion_return": "A cited answer, conflict, or exact evidence gap with material limits",
       "disposition": "selected",
       "entry_conditions": [
-        "Primary or governing sources can answer one bounded question without transferring adoption authority"
+        "Claim-owning sources can answer one bounded question without transferring decision authority"
       ],
       "essential": true,
       "exclusions": [
@@ -178,7 +181,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "primary_owner_skill_id": "SK-003",
       "proof_class": "fresh behavioral proof plus structural identity and boundary proof",
       "required_authority_mutation": [
-        "Source selection, evidence assessment, citations, and bounded research notes"
+        "Source selection, evidence assessment, citations, and one authorized research note"
       ]
     },
     {
@@ -1004,7 +1007,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       }
     ],
     "composition_epoch_id": "FCE-20260727-01",
-    "contract_revision": 10,
+    "contract_revision": 11,
     "epoch_lock": null,
     "exclusions": [
       "Per-skill H1 or candidate wording",
@@ -1050,7 +1053,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "github-issue-body:stevennitesh/programming-agent-skills#39#sha256-v1:f8115df444ab80f15fdb49610d96152cdff2edc12a5f03bb50efaba308a840a3",
       "github-issue-body:stevennitesh/programming-agent-skills#50#sha256-v1:21d89976101c1815c6e08f921d6045f97615bfdad8b3a3babc6ed40ca9d463bb",
       "git-commit:2710890325c51a2120656a8d1233d442f6454c1a",
-      "docs/synthesis/skill-context-relationships.md#sha256-v1:28ca7905e36a653747e1a961146069cfd2b0cc19595086b3594327afbd34beed"
+      "docs/synthesis/skill-context-relationships.md#sha256-v1:84a41f13e6a2a3b836fe79ff0cd2073652e2b5b931e89620e082cac594b3e66b"
     ],
     "status": "frozen"
   },
@@ -1580,7 +1583,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-008",
       "combined_exit_owner_skill_id": "SK-008",
       "context_loaded": [],
-      "entry_condition": "A source evidence gap needs one cited note.",
+      "entry_condition": "Claim-owning sources can answer the evidence gap.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
       "input_packet": "Caller-owned bounded Source Trace for grilling and the declared research input",
       "ordering_impact": "none",
@@ -1759,7 +1762,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-017",
       "combined_exit_owner_skill_id": "SK-017",
       "context_loaded": [],
-      "entry_condition": "One analyzed candidate needs one non-diagnostic source-answerable authoritative fact; Audit publishes an exact report-backed pickup and leaves Research unstarted.",
+      "entry_condition": "One analyzed candidate needs claim-owning source evidence for one non-diagnostic question; Audit publishes an exact report-backed pickup and leaves Research unstarted.",
       "failure_behavior": "Return the recommendation without invoking the target; preserve the candidate and report for user-selected continuation",
       "input_packet": "Durable audit report, candidate identity, analysis, route prerequisite, and exact suggested invocation",
       "ordering_impact": "none",
@@ -2161,81 +2164,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
     },
     {
       "affected_capability_ids": [
-        "CAP-003",
-        "CAP-020"
-      ],
-      "callee_owned_gates_mutations": [
-        "No callee execution, mutation, resumption, or completion is authorized by this edge"
-      ],
-      "caller_skill_id": "SK-003",
-      "combined_exit_owner_skill_id": "SK-003",
-      "context_loaded": [],
-      "entry_condition": "The current user owns the unresolved repo-backed decision and durable domain capture must remain active.",
-      "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for research and the declared grill-with-docs input",
-      "ordering_impact": "none",
-      "relationship_id": "REL-039",
-      "required_proof_ids": [
-        "PROOF-REL-039"
-      ],
-      "resume_owner_skill_id": "SK-003",
-      "return_packet": "One named target and reason with downstream work unstarted",
-      "target_skill_id": "SK-020",
-      "verb": "Recommend and stop",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
-    },
-    {
-      "affected_capability_ids": [
-        "CAP-003",
-        "CAP-008"
-      ],
-      "callee_owned_gates_mutations": [
-        "No callee execution, mutation, resumption, or completion is authorized by this edge"
-      ],
-      "caller_skill_id": "SK-003",
-      "combined_exit_owner_skill_id": "SK-003",
-      "context_loaded": [],
-      "entry_condition": "The current user owns the unresolved conversation-only decision.",
-      "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for research and the declared grilling input",
-      "ordering_impact": "none",
-      "relationship_id": "REL-040",
-      "required_proof_ids": [
-        "PROOF-REL-040"
-      ],
-      "resume_owner_skill_id": "SK-003",
-      "return_packet": "One named target and reason with downstream work unstarted",
-      "target_skill_id": "SK-008",
-      "verb": "Recommend and stop",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
-    },
-    {
-      "affected_capability_ids": [
-        "CAP-003",
-        "CAP-021"
-      ],
-      "callee_owned_gates_mutations": [
-        "No callee execution, mutation, resumption, or completion is authorized by this edge"
-      ],
-      "caller_skill_id": "SK-003",
-      "combined_exit_owner_skill_id": "SK-003",
-      "context_loaded": [],
-      "entry_condition": "Research admission directly identifies several interdependent decisions and non-conversational prerequisites needing a durable route.",
-      "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Deterministic owner match, bounded question, identified decision set and prerequisites, and caller-owned Source Trace",
-      "ordering_impact": "none",
-      "relationship_id": "REL-042",
-      "required_proof_ids": [
-        "PROOF-REL-042"
-      ],
-      "resume_owner_skill_id": "SK-003",
-      "return_packet": "One deterministic Wayfinder match with route choice and downstream work left to the caller",
-      "target_skill_id": "SK-021",
-      "verb": "Recommend and stop",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
-    },
-    {
-      "affected_capability_ids": [
         "CAP-025",
         "CAP-017"
       ],
@@ -2520,7 +2448,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-025",
       "combined_exit_owner_skill_id": "SK-025",
       "context_loaded": [],
-      "entry_condition": "The situation satisfies primary or governing sources can answer one bounded question without transferring adoption authority; return that route and leave it unstarted.",
+      "entry_condition": "The situation satisfies claim-owning sources can answer one bounded question without transferring decision authority; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
       "input_packet": "Caller-owned bounded Source Trace for skill-router and the declared research input",
       "ordering_impact": "callee-before-caller",
@@ -2820,7 +2748,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-009",
       "combined_exit_owner_skill_id": "SK-009",
       "context_loaded": [],
-      "entry_condition": "Inspectable primary sources can answer the gap.",
+      "entry_condition": "Claim-owning sources can answer the gap.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
       "input_packet": "Caller-owned bounded Source Trace for to-questionnaire and the declared research input",
       "ordering_impact": "none",
@@ -3576,37 +3504,33 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "PS-003"
       ],
       "canonical_name": "research",
-      "completion_condition": "The bounded question is answered or its source gap is proved",
+      "completion_condition": "The bounded question returns an evidence-calibrated answer, conflict, or exact source gap",
       "contract_order": 3,
       "essential_outcome": "Answer one bounded source-answerable question with cited evidence for a caller-owned decision",
-      "failure_return": "Return the missing source, authority, or applicability boundary",
+      "failure_return": "Return the material conflict or missing source, authority, or applicability boundary",
       "invocation_mode": "implicit",
       "load_budget_class": "conditional-leaf",
       "negative_exclusion_predicates": [
-        "The request does not satisfy: Primary or governing sources can answer one bounded question without transferring adoption authority",
+        "The request does not satisfy: Claim-owning sources can answer one bounded question without transferring decision authority",
         "Another selected skill owns the requested outcome",
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
       "owned_authority_mutation_surfaces": [
-        "Source selection, evidence assessment, citations, and bounded research notes"
+        "Source selection, evidence assessment, citations, and one authorized research note"
       ],
       "owned_capability_ids": [
         "CAP-003"
       ],
-      "positive_entry_predicate": "Primary or governing sources can answer one bounded question without transferring adoption authority",
+      "positive_entry_predicate": "Claim-owning sources can answer one bounded question without transferring decision authority",
       "primary_role": "leaf",
       "prohibited_ownership": [
         "Another selected skill's semantic decision, local mutation, proof judgment, Return, or completion",
         "Per-skill H1 outside this immutable contract slice",
         "Pack integration acceptance, epoch Lock, cleanup, installation, or Git delivery unless explicitly owned"
       ],
-      "relationship_ids": [
-        "REL-039",
-        "REL-040",
-        "REL-042"
-      ],
+      "relationship_ids": [],
       "required_input": "A bounded caller-owned Source Trace and authority for: Answer one bounded source-answerable question with cited evidence for a caller-owned decision",
-      "return_packet": "A cited answer or exact evidence gap with limits",
+      "return_packet": "A cited answer, conflict, or exact evidence gap with material limits",
       "skill_id": "SK-003"
     },
     {

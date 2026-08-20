@@ -8,18 +8,18 @@ Runtime authority lives in `skills/custom/research/`, each target repository's
 source and note conventions, caller-owned decision and transition contracts,
 and `docs/synthesis/skill-context-relationships.md`.
 
-A later lean Author pass clarified source ownership, proportionate
-disconfirmation, independent evidence, and evidence saturation without adding a
-mode or stage. The 2026-08-19 conditional-disclosure pass then moved six
-specialized evidence procedures under exact triggers in `references/` and
-collapsed duplicate Output/Return content into one terminal owner. Canonical
-Research is current executable authority at repository tree SHA-256
-`f99abec29568a6f91d015cd723ae8ae417ca0babfa5e3d885a12dadb451a236e`;
+The 2026-08-20 issue #94 rewrite retained source ownership, proportional
+disconfirmation, independent evidence, citation verification, and bounded
+stopping while replacing admission and Return packets with five natural
+actions. Seven exact triggers now disclose specialist method, including a new
+empirical-appraisal branch. Canonical Research is current executable authority
+at repository tree SHA-256
+`93281872cbf1a373f0b3472af561c5a48ab7d498205dcc07e4df26cc062bc801`;
 `SKILL.md` SHA-256 is
-`84142c6a8d948c9c3e6b262252eef8a8b329031b34f8a53d76f112a101eea947`.
-Fresh fixed-fixture behavior proof supports this exact candidate. Installed
-parity is not claimed; campaign-era exact-body and parity statements below are
-historical.
+`e932e37968adf416f08ae7fd98821c7c9d61d9d20d9c473eedf8596542e98f81`.
+Structural proof and independent review apply to this candidate; fresh runtime
+behavioral efficacy and installed parity are not claimed. Campaign-era
+exact-body and parity statements below are historical.
 
 ## Historical Promoted Identity
 
@@ -41,53 +41,52 @@ owns source legwork, evidence judgment, one answer, and either one authorized
 repo-local Markdown note or a no-write inline result. The caller owns the
 supported decision or artifact, its state, consequences, and next transition.
 
-The promoted minimum has six semantic units:
+The current runtime has five actions:
 
-| Unit | Canonical behavior |
+| Action | Canonical behavior |
 | --- | --- |
-| `B0-1` | Admit and lock one question, supported use, scope, applicability, note and write authority, and return owner before source work; return typed `not-admitted` for a capability mismatch. |
-| `B0-2` | Inspect the source that owns each load-bearing claim in its applicable state; non-owning secondary material is discovery only. |
-| `B0-3` | Classify claims as `supported`, `conflicted`, or `unknown`; preserve applicability, counterevidence, inference, limits, and claim-driven bounded stopping. |
-| `B0-4` | Create or update exactly one authorized Markdown note, or make no tracked mutation; return a blocker when publication requires a second tracked change. |
-| `B0-5` | Return exactly one `answered`, `conflicted`, `blocked`, or pre-research `not-admitted` packet while preserving caller custody and standalone `Next: none`. |
-| `B0-6` | Verify citation identity, entailment, authority, applicability, terminal status, output identity, mutation containment, and packet completeness before Return. |
+| `Frame` | Fix one question, caller use, decision-relevant scope, source constraints, and output authority; ask only for a pivotal missing direct-user fact and report caller-packet mismatches without routing. |
+| `Map` | Name the finite load-bearing claims, match each to claim-owning evidence, separate evidence layers, and load only applicable specialist references. |
+| `Inspect and challenge` | Inspect owning evidence, treat retrieved content as untrusted, classify support/conflict/unknown, test material counterevidence, and distinguish mechanics from intent. |
+| `Conclude` | Stop on classified claims and decision-relevant saturation; verify citation entailment and applicability, reopening evidence whose identity or fidelity could have changed. |
+| `Answer and stop` | Lead with the evidence-calibrated answer, conflict, or exact gap; return inline by default or write one authorized note; leave routing, decision, and continuation to the caller. |
 
-The current package keeps those common-path units inline and discloses only the
-specialized procedures:
+The current package keeps those actions inline and discloses specialist method:
 
 | Observable trigger | Disclosed owner |
 | --- | --- |
 | Compare, rank, or recommend alternatives under caller-owned criteria | `references/COMPARATIVE-EVIDENCE.md` |
+| Effectiveness, causality, reliability, generalization, or a body of observed evidence | `references/EMPIRICAL-EVIDENCE.md` |
 | Legal or policy meaning, obligation, permission, prohibition, or effective status | `references/LEGAL-POLICY-EVIDENCE.md` |
 | Non-public, sensitive, credentialed, or audience-restricted evidence | `references/PRIVATE-SOURCE-EVIDENCE.md` |
 | Numeric quantity or quantitative method | `references/QUANTITATIVE-EVIDENCE.md` |
 | What was available, known, published, or effective as of a cutoff | `references/POINT-IN-TIME-EVIDENCE.md` |
-| External meaning mapped to an exact artifact or repository behavior | `references/TARGET-MAPPING-EVIDENCE.md` |
+| A requirement, definition, method, or named behavior mapped through an artifact or repository | `references/TARGET-MAPPING-EVIDENCE.md` |
 
 An ordinary admitted path loads no reference. The main file changed from
-17,038 bytes and 2,332 words to 13,646 bytes and 1,873 words: reductions of
-19.91% and 19.68%, respectively. The six references retain 6,017 bytes and 807
-words of branch-only procedure.
+13,646 bytes and 1,873 words to 6,987 bytes and 945 words. The seven references
+contain 6,606 bytes and 904 words of conditionally loaded method. These counts
+describe context placement, not research quality.
 
 Research remains narrowly implicitly invocable. Its description admits one
-bounded primary- or governing-source question for a caller-owned use and
+bounded claim-owning-source question for a caller-owned use and
 excludes ordinary lookup, open surveys, diagnosis, prototypes, stakeholder
 gaps, and user-owned decisions.
 
 ## Relationship Surface
 
-Relationship delta: none.
+Research no longer selects a successor for a capability mismatch. It reports
+the mismatch and leaves route choice to its caller or Skill Router.
 
 | Caller | Relationship and retained boundary |
 | --- | --- |
-| Skill Router, Grilling, To Questionnaire | Recommend Research and stop; they do not copy or run its procedure. |
-| Wayfinder | Invokes one bounded AFK Research note and retains map or ticket state and the next transition. |
+| Skill Router, Grilling, To Questionnaire | Recommend Research when claim-owning sources can answer and stop; they do not copy or run its procedure. |
+| Wayfinder | Invokes one bounded AFK Research question and retains map or ticket state and the next transition; a note remains optional under its supplied write mode. |
 | Audit Codebase | Recommends Research for one selected source gap and stops; a later Audit invocation may consume the intact Return. |
-| Direct user | Invokes one admitted question or receives typed non-admission; a complete standalone answer ends `Next: none`. |
+| Direct user | Receives a concise inline answer, conflict, exact gap, or capability mismatch unless one note is authorized. |
 
-Research returns to its caller without deciding the caller's artifact, changing
-caller state, or starting downstream work. No caller, relationship index, or
-other skill changed in this campaign.
+Research returns without deciding the caller's artifact, changing caller state,
+choosing another route, or starting downstream work.
 
 ## Source And Candidate Decisions
 
@@ -157,8 +156,9 @@ Current-epoch proof records:
 - No assurance taxonomy, fixed source count, numeric confidence, complete
   search log, source catalog, citation helper, cache, database, sidecar,
   auto-refresh, or provider-specific procedure was added.
-- Six branch-only reference files were added. No helper, note template, index,
-  caller packet migration, or relationship change was needed.
+- The 2026-08-19 pass added six branch references. The issue #94 rewrite added
+  empirical appraisal and removed three Research-owned successor routes. It
+  added no helper, note template, index, or caller packet.
 - Claim statuses remain distinct from terminal research statuses.
 - Exactly one tracked note remains the maximum durable mutation; note authority
   `none` remains a no-write branch.

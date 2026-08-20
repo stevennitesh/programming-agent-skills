@@ -126,7 +126,8 @@ flowchart TD
   Audit -. "current-user decision" .-> GrillDocs
   Audit -. "settled domain capture" .-> DomainModel
 
-  Research --> ResearchDocs["docs/research/*"]
+  Research --> ResearchRefs["seven conditional evidence references"]
+  Research -. "authorized note" .-> ResearchNote["one repo-local Markdown note"]
   Conflict["resolving-merge-conflicts"] --> Contract
   Conflict --> SpecSources
   Conflict --> StandardsSources
@@ -205,17 +206,14 @@ Return.
 | --- | --- | --- | --- |
 | `grill-with-docs` | Compose | `$grilling` | Run the one-decision-at-a-time frontier interview; preserve its readiness and terminal packet through the composer. |
 | `grill-with-docs` | Compose | `$domain-modeling` | Relay every settled material answer, return each collision or blocker to Grilling before dependent progress, and preserve Domain Modeling's authoritative cumulative Domain Delta under the explicit context action and separate ADR gate. |
-| `grilling` | Recommend and stop | `$research` | A source evidence gap needs one cited note. |
+| `grilling` | Recommend and stop | `$research` | Claim-owning sources can answer the evidence gap. |
 | `grilling` | Recommend and stop | `$prototype` | A design evidence gap needs a runnable verdict. |
 | `grilling` | Recommend and stop | `$to-questionnaire` | An identifiable external stakeholder owns evidence that must be collected asynchronously. |
 | `grilling` | Recommend and stop | `$handoff` | The intact gap must cross into a fresh context; preserve its evidence or decision owner and use Handoff only as transport. |
 | `grilling` | Recommend and stop | `$wayfinder` | The bounded interview cannot close in one conversation because several interdependent unresolved decisions or non-conversational prerequisites need a tracker-backed multi-session route, and active Wayfinder is not the return owner. An active Wayfinder receives the intact Route gap directly for graph reconciliation. |
-| `to-questionnaire` | Recommend and stop | `$research` | Inspectable primary sources can answer the gap. |
+| `to-questionnaire` | Recommend and stop | `$research` | Claim-owning sources can answer the gap. |
 | `to-questionnaire` | Recommend and stop | `$grilling` | The current user owns the unresolved conversation-only decision. |
 | `to-questionnaire` | Recommend and stop | `$repo-bootstrap` | The default artifact path cannot be proved ignored; return the exact setup precondition with Repo Bootstrap unstarted. |
-| `research` | Recommend and stop | `$grilling` | The current user owns the unresolved conversation-only decision. |
-| `research` | Recommend and stop | `$grill-with-docs` | The current user owns the unresolved repo-backed decision and durable domain capture must remain active. |
-| `research` | Recommend and stop | `$wayfinder` | Admission directly identifies several interdependent decisions and non-conversational prerequisites needing a durable route; Research returns only the deterministic match and leaves route choice to the caller. |
 | `wayfinder` | Invoke | `$research` | Pass the question, supported map use, scope, exact state, approved note path and write mode, and Wayfinder return owner; normalize the intact answer or blocker. |
 | `wayfinder` | Invoke | `$prototype` | Pass the question, resolution and return owners, named human judge or predeclared objective rule, representative evidence, mutation boundary with authority evidence, run bound, cleanup or accepted custody, and Wayfinder re-entry; normalize the intact answer or residual. |
 | `wayfinder` | Invoke | `$grilling` | One HITL ticket or Chart bound needs a conversation-only user decision; receive the intact decision or gap packet and retain map ownership. |
@@ -254,7 +252,7 @@ Return.
 | `audit-codebase` | Recommend and stop | `$domain-modeling` | One analyzed candidate has settled domain language, Invariants, Bounded Contexts, Context Relationships, or an ADR candidate requiring durable capture or assessment; Audit publishes an exact report-backed pickup and leaves Domain Modeling unstarted. |
 | `audit-codebase` | Recommend and stop | `$grill-with-docs` | One candidate decision belongs to the current user and also requires current domain language, Invariants, relationships, or ADR handling; Audit publishes the decision brief and exact Analyze re-entry, then leaves composition unstarted. |
 | `audit-codebase` | Recommend and stop | `$grilling` | One candidate decision belongs to the current user but needs no domain-record maintenance; Audit publishes the decision brief and exact Analyze re-entry, then leaves Grilling unstarted. |
-| `audit-codebase` | Recommend and stop | `$research` | One analyzed candidate needs one non-diagnostic source-answerable authoritative fact; Audit publishes an exact report-backed pickup and leaves Research unstarted. |
+| `audit-codebase` | Recommend and stop | `$research` | One analyzed candidate needs claim-owning source evidence for one non-diagnostic question; Audit publishes an exact report-backed pickup and leaves Research unstarted. |
 | `audit-codebase` | Recommend and stop | `$prototype` | One selected candidate has an unresolved runnable-evidence question needing a disposable probe or comparative design measurement; Audit publishes an exact report-backed pickup and leaves Prototype unstarted. |
 | `audit-codebase` | Recommend and stop | `$to-questionnaire` | One identifiable external stakeholder holds candidate knowledge unavailable from sources or the current user; Audit publishes an exact report-backed pickup and leaves questionnaire creation unstarted. |
 | `audit-codebase` | Load | `$codebase-design` | During Analyze of one selected design or mixed candidate after user decisions settle, resolve its one bounded architecture question and fold the result into the HTML. Audit retains artifact and completion and creates no second design step. |
@@ -307,7 +305,7 @@ every terminal result directly to its current caller or the user.
 | `triage` | `ATTENTION-SCAN.md`, `SPECIFIC-ITEM.md`, `QUICK-OVERRIDE.md`: branch procedures; `AGENT-BRIEF.md`: agent/human ready brief, branch emphasis, and Ready Gate; `OUT-OF-SCOPE.md`: rejected-work knowledge base |
 | `repo-bootstrap` | Tracker, label, domain, and engineering-contract seeds; optional repo-local parallel-lane permission and agent setup; `setup-schema.json`: aggregate compatibility fingerprint; `scripts/validate_setup.py`: target-repo structural compatibility validation |
 | `wayfinder` | `MAP-FORMAT.md`: canonical map and ticket shape, empty-fog sentinel, and exclusion pointers; `SKILL.md`: Chart, Advance, Maintain, Closure, and foggy map lifecycle semantics |
-| `research` | One cited repo-local Markdown note per source question |
+| `research` | Seven conditional evidence references; one authorized cited Markdown note or cited inline result |
 | `resolving-merge-conflicts` | `OPERATIONS.md`: branch-only operation roles, conflict classes, finish checks, and recovery decisions; `SKILL.md`: universal State/Trace/Reconcile/Prove/Finish contract, authority, typed Return, and completion |
 | `change-review`, `high-assurance-review`, `implement`, `parallel-implement` | `change-review/FINDING-CONTRACT.md`: shared axes, review classes, supported-risk and finding admission, remediation classes, and remediation-review bound; `parallel-implement/references/RUNTIME-PROFILES.md`: semantic profiles and runtime bindings; `change-review/SMELL-BASELINE.md`: fallback Standards reference when repo standards are thin |
 | `implement`, `parallel-implement` | `implement/references/WORKER-HANDOFF.md`: shared plain handoff meaning and provisional evidence Return that Parallel Implement consumes without invoking Implement's delivery lifecycle |
@@ -334,7 +332,10 @@ every terminal result directly to its current caller or the user.
   provider representation, transport primitives, and mutation read-back. Each
   resolver owns its local gates and Return; none chooses the map outcome or
   downstream route.
-- `research` owns one bounded source question, claim-owning evidence judgment, and one authorized cited note or verified inline result. A user request or caller packet must authorize one note path before that tracked mutation; otherwise Research returns cited inline evidence, a blocker, or typed `not-admitted` classification without choosing the caller's next route.
+- `research` owns one bounded source question, claim-owning evidence judgment,
+  and one authorized cited note or cited inline result. It reports a mismatch
+  without choosing the next route. A user request or caller packet must
+  authorize one note path before that tracked mutation.
 - `resolving-merge-conflicts` inspects State and Trace read-only by default.
   Reconciliation authority permits only in-scope working-tree changes; finish
   authority separately permits exact-path staging and native continuation.

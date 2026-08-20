@@ -15,8 +15,8 @@ instruction, and stop.
 When no `Route gap` applies, return `Evidence gap` with kind `evidence` or
 `decision authority`, missing input, impact, exactly one uninvoked owner, and
 the exact instruction for returning its result to the original decision owner
-without changing the gap identity. Choose `$research` for an authoritative
-source, `$prototype` for runnable design evidence, `$to-questionnaire` for an
+without changing the gap identity. Choose `$research` when claim-owning sources
+can answer, `$prototype` for runnable design evidence, `$to-questionnaire` for an
 external stakeholder, and the caller or `none` otherwise. Mark a hard failure
 that needs dedicated causal investigation `diagnosis-required`.
 

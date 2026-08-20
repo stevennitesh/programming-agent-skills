@@ -10,6 +10,3 @@ evidence only through authorized private channels and use it only within the
 defined audience, destination, and tool authority. Keep private and public
 provenance separate. If separation fails, keep the dependent claim `unknown`
 and return the access boundary.
-
-Read-only local inspection, tool-managed temporary retrieval, and the one
-authorized note mutation remain permitted under the common authority rules.

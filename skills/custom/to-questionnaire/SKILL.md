@@ -18,7 +18,7 @@ and external state unchanged. Never contact or answer for the recipient.
 **Grill the send, not the subject.**
 
 **Admit.** Proceed only when one identifiable external stakeholder owns material
-facts, judgment, or decision authority unavailable from inspectable sources and
+facts, judgment, or decision authority unavailable from claim-owning sources and
 the current user. When sources can answer, recommend `$research` and stop. When
 the current user owns the decision, recommend `$grilling` and stop.
 
