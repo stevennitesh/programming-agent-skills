@@ -118,7 +118,7 @@ return, mutation boundary, and `$wayfinder` re-entry:
 | Prototype | HITL or AFK; `$prototype` with [Prototype fields](MAP-FORMAT.md#prototype-fields). |
 | Diagnosis | AFK after explicit separate start; return `diagnosis-required` with evidence, environment, exact state, authorities, and Wayfinder as return owner. |
 | Grilling | HITL; `$grilling` for a conversation-only user decision, or `$grill-with-docs` while durable domain capture remains active. |
-| Questionnaire | External; `$to-questionnaire` only after the user approves its [Questionnaire fields](MAP-FORMAT.md#questionnaire-fields) and `Delivery: not performed`. |
+| Questionnaire | External; return its [Questionnaire fields](MAP-FORMAT.md#questionnaire-fields) for the user to invoke `$to-questionnaire`, then re-enter Advance with the artifact path. |
 | Task | AFK for one bounded objectively provable repository or operational fact; HITL only for required live human action; no durable mutation. |
 
 A Prototype ticket with a named human judge uses HITL. One with a predeclared
@@ -132,17 +132,18 @@ labels blindly:
 | --- | --- |
 | Supported answer, confirmed decision, or objective verdict | `resolved` |
 | Intact Research `conflicted` | `blocked` with the conflict owner and one observable intervention; never `resolved` or generic `incomplete` |
-| Verified questionnaire artifact, human verdict wait, or `diagnosis-required` | `waiting` with owner, trigger, and required evidence |
+| Verified questionnaire path, human verdict wait, or `diagnosis-required` | `waiting` with owner, trigger, and required evidence |
 | Advance receives nested Grilling `Route gap` | Keep the ticket blocked on the admitted replacement graph; never recommend Wayfinder to itself |
 | Chart receives a Grilling decision or `Route gap` | Treat it as claim-free proposed Chart input; record no ticket outcome or map mutation, and require exact approval of the resulting packet |
 | Exact evidence, authority, setup, or prerequisite gap | `blocked` with one intervention |
 | Governing evidence places the question outside the destination | `out of scope` |
 | Missing approval, malformed or mismatched return, transport failure, or callee non-admission | `incomplete`; release claims, record no tracker outcome or map mutation, and report any frozen-boundary resolver effects |
 
-`Questionnaire ready` is Waiting, never an answer. Only matching attributable
-answers can resolve it. Without exact questionnaire approval, return the packet
-and `approve, then re-enter Wayfinder Advance`; do not invoke the callee or
-mutate shared state.
+A verified questionnaire path is Waiting, never an answer. Only matching
+attributable answers can resolve it. Return the packet and exact instruction to
+invoke `$to-questionnaire`, then re-enter Wayfinder Advance with the artifact
+path. Wayfinder never invokes the explicit-only skill or mutates shared state
+while waiting for that return.
 
 ## Reconcile
 

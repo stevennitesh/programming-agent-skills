@@ -1,111 +1,89 @@
 ---
 name: to-questionnaire
-description: Create one Markdown discovery questionnaire for one external stakeholder who holds facts, judgments, or decision authority unavailable to the user.
+description: Create one Markdown discovery questionnaire for one external stakeholder who owns facts, judgment, or a decision unavailable from inspectable sources and the user.
 ---
 
 # To Questionnaire
 
-**Outcome:** one recipient-ready questionnaire that elicits attributable
-stakeholder facts, judgments, or decisions needed for one downstream decision.
-
-**Boundary.** This skill owns send intake, the needed-back ledger, question
-design, one Markdown artifact, verification, and its returned path. The user
-owns the recipient, delivery, answers, and downstream decision. A supplied
-origin owner and identity are context for returning answers, not delegated
-invocation or continuation authority. Leave tracker, domain, specification, Git,
-and external state unchanged. Never contact or answer for the recipient.
+Turn one gap the user cannot answer into a questionnaire for the one external
+person who can. The user owns delivery, answers, and the downstream decision.
+Create the file, report its path, and stop. Never contact or answer for the
+recipient.
 
 **Grill the send, not the subject.**
 
-**Admit.** Proceed only when one identifiable external stakeholder owns material
-facts, judgment, or decision authority unavailable from claim-owning sources and
-the current user. When sources can answer, recommend `$research` and stop. When
-the current user owns the decision, recommend `$grilling` and stop.
+## Identify
 
-**Define.** Trace supplied context. Define one recipient; their role, expertise, and
-relationship to the sender; the downstream decision; the origin owner and
-identity; where attributable answers return; what must be learned; how answers
-will be used; any applicable deadline; the recipient effort budget or a
-proportionate estimate; and the authorized output path. Infer available fields.
-Ask one compact intake only for missing sender-known information that materially
-changes the recipient, coverage, sensitivity, effort, or output authority.
+Keep one recipient and one downstream decision. When materially different gaps
+belong to different people, return the proposed split instead of blending them.
+When supplied context already answers the gap, explain that no questionnaire is
+needed and stop. When claim-owning sources can answer it, recommend `$research`
+and stop. When the current user owns the answer, recommend `$grilling` and stop.
 
-For a direct request, default the current user as the origin and return owner,
-delivery authority to the user, delivery to not performed, overwrite authority
-to no, and the response format to Markdown. State material inferred context as
-unresolved assumptions; skill defaults are not assumptions.
+Infer from the conversation who the questionnaire is for and what the user
+needs back. Ask one compact intake only when missing sender-known information
+would change the recipient, questions, tone, effort, or destination. Preserve
+a supplied answer-return destination.
 
-**Gap.** Build a needed-back ledger. Each missing fact, judgment, constraint,
-example, or risk names the downstream decision it unlocks. When materially
-different gaps belong to different recipients, return the proposed split instead
-of blending them.
+## Draft
 
-**Draft.** Give the recipient enough context to answer without reconstructing
-the conversation. Order questions by decision value, then dependency. Keep each
-question neutral, recipient-answerable, and about one idea. Add answer space and
-a short “why this matters” only when it prevents misreading.
-
-Use a title; purpose and decision; sender, recipient, and answer use; context;
-answering instructions; themed questions; and a final catch-all. Invite partial
-answers and explicit unknowns. Ask for rationale, examples, sources, or
+Give the recipient enough context to answer without reconstructing the
+conversation. Order questions by decision value, then dependency. Make each
+question neutral, about one idea, and answerable by that recipient. Invite
+partial answers and explicit unknowns. Ask for rationale, examples, sources, or
 constraints only when the downstream decision needs them.
 
-**Cover.** Map every needed-back item to a question. Remove duplicate, compound,
-leading, speculative, source-answerable, and out-of-scope questions. The
-catch-all does not cover a known ledger item.
+Every item the user needs back must have a substantive question. A catch-all
+does not count as coverage. Remove any question that does not affect the
+downstream decision. Do not include or ask for credentials or secrets; ask for
+a safe pointer or non-secret description instead.
 
-**Save.** Write exactly one file. Default to
-`<work-root>/.tmp/to-questionnaire/<slug>.md` after verifying the path is
-ignored. Otherwise recommend `$repo-bootstrap` and stop. An explicitly supplied
-path overrides the default. Treat the default as disposable. When the artifact
-must outlive normal temporary cleanup, require an explicitly authorized durable
-path.
+Use this shape, omitting sections that add nothing:
 
-Before the first write, classify the artifact's sensitivity; resolve the
-absolute `.md` target and prove it remains contained in the authorized root
-after traversal and link handling; reject a collision unless overwrite of that
-exact target is authorized; and capture the target and unrelated worktree state.
-Refresh that state immediately before Save. Render and reread the complete
-candidate against Draft and Cover before writing. If the target or worktree
-changed concurrently, return `Incomplete` with the drift and write nothing.
+```markdown
+# <Questionnaire title>
 
-**Verify.** Reread the artifact as the recipient. Verify identity, context,
-coverage, priority, answerability, effort fit, sensitive-context minimization,
-path existence, exact content, and that this invocation changed only the
-authorized file. Record unrelated baseline drift separately. A failed or partial
-write returns `Incomplete` with the exact artifact state; never report it as
-ready.
+**Purpose:** <why this exists and the decision riding on it>
+**From:** <sender>
+**To:** <recipient>
+**How your answers will be used:** <answer use>
+**Return answers to:** <destination, when not obvious>
 
-**Return.** Return one typed status and stop:
+## Context
 
-```text
-Status: Questionnaire ready | Not admitted | Incomplete
-Reason or exact blocking predicate:
-Recipient:
-Sender:
-Downstream decision:
-Origin owner and identity:
-Answers return to:
-Artifact path: <absolute path> | none
-Artifact durability: disposable default | authorized durable path | none
-Covered and excluded needed-back summary:
-Question count and estimated effort:
-Sensitive-context omissions or redactions:
-Unresolved assumptions:
-Verification and attributable mutation summary:
-Delivery: not performed
-Suggested owner: <$research or $grilling for Not admitted only> | none
+<Enough context to answer well.>
+
+## How to answer
+
+<Deadline and rough effort when relevant. Partial answers and "I don't know"
+are useful.>
+
+## <Theme, when there are more than a handful of questions>
+
+### <One question>
+
+_Why this matters: <only when it prevents misreading>_
+
+>
+
+## Anything else?
+
+<Include only when an open catch-all is useful.>
 ```
 
-`Questionnaire ready` requires one verified artifact and complete ledger. `Not
-admitted` requires a proven failed Admit predicate and no artifact mutation.
-`Incomplete` names missing intake, authority, path, coverage, write, reread, or
-proof and reports any file state honestly. Stop before delivery or downstream
-synthesis.
+## Write
 
-Complete only when Admit passes; one recipient, downstream decision, and
-answer-return destination are defined; every needed-back item has an atomic,
-recipient-answerable question; the questionnaire fits the effort budget; the
-complete render passes its pre-Save gates; the artifact passes reread; only the
-authorized file changed; and typed Return reports its exact path, state,
-delivery status, and unresolved assumptions.
+Write exactly one Markdown file to the requested path. Otherwise use
+`to-questionnaire-<slug>.md` in the current directory. Never overwrite an
+existing file without explicit authority; when no exact target was requested,
+choose a clear unused name instead.
+
+Reread the complete intended file as the recipient. Confirm the path exists and
+every needed item has a recipient-answerable question. If the write or reread
+failed or was partial, do not claim completion; report whether an incomplete
+file remains. Otherwise return the path, what it covers, any unresolved gap,
+and `Delivery: not performed`.
+
+Complete when the file exists, every item the user needs back is covered,
+nothing outside the downstream decision remains, and the path is reported. Stop
+before delivery, answer handling, or the downstream decision.

@@ -8,6 +8,12 @@ Otherwise do not load it.
    return its state and the actual frontier.
 2. **Freeze.** Lock the map identity and open state, ticket contract,
    dependencies, eligibility, and commit-point fields.
+
+When the selected Questionnaire has no verified artifact path, return its exact
+packet and explicit user re-entry before step 3. This is a claim-free,
+no-mutation Return. Re-entry with the artifact path follows the ordinary steps
+below.
+
 3. **Resolve.** Through the Mutation Gate, exclusively claim and read back the
    ticket before invoking its locked resolver or validating the attributable
    return. Missing explicit target approval returns `incomplete` before shared

@@ -99,61 +99,86 @@ def test_to_questionnaire_owns_one_safe_recipient_artifact() -> None:
     questionnaire_flat = " ".join(questionnaire.split())
     policy = (skill_dir / "agents/openai.yaml").read_text(encoding="utf-8")
     router = (CUSTOM / "skill-router/SKILL.md").read_text(encoding="utf-8")
-    grilling = (CUSTOM / "grilling/SKILL.md").read_text(encoding="utf-8")
     grilling_gap = (CUSTOM / "grilling/references/TERMINAL-GAP-ROUTING.md").read_text(
+        encoding="utf-8"
+    )
+    wayfinder = (CUSTOM / "wayfinder/SKILL.md").read_text(encoding="utf-8")
+    synthesis = (ROOT / "docs/synthesis/skills/to-questionnaire.md").read_text(
+        encoding="utf-8"
+    )
+    audit = (CUSTOM / "audit-codebase/CANDIDATE-FOLLOWUP.md").read_text(
         encoding="utf-8"
     )
 
     assert not implicit_policy(skill_dir)
-    assert re.findall(r"(?m)^\*\*([A-Za-z]+)\.\*\*", questionnaire) == [
-        "Boundary",
-        "Admit",
-        "Define",
-        "Gap",
+    questionnaire_instructions = re.sub(
+        r"```.*?```", "", questionnaire, flags=re.DOTALL
+    )
+    assert re.findall(r"(?m)^## ([A-Za-z]+)$", questionnaire_instructions) == [
+        "Identify",
         "Draft",
-        "Cover",
-        "Save",
-        "Verify",
-        "Return",
+        "Write",
     ]
     for contract in (
         "Grill the send, not the subject.",
-        "facts, judgment, or decision authority unavailable from claim-owning sources",
-        "missing sender-known information that materially changes",
-        "skill defaults are not assumptions",
+        "one recipient and one downstream decision",
+        "return the proposed split instead of blending them",
+        "Preserve a supplied answer-return destination.",
+        "supplied context already answers the gap",
+        "Remove any question that does not affect the downstream decision.",
         "Invite partial answers and explicit unknowns.",
-        "Treat the default as disposable.",
-        "The catch-all does not cover a known ledger item.",
-        "<work-root>/.tmp/to-questionnaire/<slug>.md",
-        "resolve the absolute `.md` target",
-        "overwrite of that exact target is authorized",
-        "Refresh that state immediately before Save.",
-        "Render and reread the complete candidate",
-        "changed only the authorized file",
-        "Status: Questionnaire ready | Not admitted | Incomplete",
-        "origin owner and identity are context for returning answers",
-        "Origin owner and identity:",
-        "Answers return to:",
-        "Artifact path: <absolute path> | none",
-        "Artifact durability: disposable default | authorized durable path | none",
+        "Every item the user needs back must have a substantive question.",
+        "A catch-all does not count as coverage.",
+        "Do not include or ask for credentials or secrets",
+        "to-questionnaire-<slug>.md",
+        "Never overwrite an existing file without explicit authority",
+        "Reread the complete intended file as the recipient.",
+        "If the write or reread failed or was partial, do not claim completion",
         "Delivery: not performed",
-        "`Questionnaire ready` requires one verified artifact",
-        "`Not admitted` requires a proven failed Admit predicate",
-        "`Incomplete` names missing intake",
+        "Stop before delivery, answer handling, or the downstream decision.",
     ):
         assert contract in questionnaire_flat
-    for rejected in ("Wayfinder", ".scratch/to-questionnaire"):
+    for rejected in (
+        "Status: Questionnaire ready",
+        "Artifact durability:",
+        "attributable mutation",
+        ".tmp/to-questionnaire",
+        "$repo-bootstrap",
+        "Wayfinder",
+    ):
         assert rejected not in questionnaire
     assert policy.endswith("policy:\n  allow_implicit_invocation: false\n")
-    assert skill_pack_contract.tree_hash(skill_dir) == (
-        "e660daf7b4e62055998399e3f15f2277f86c8bced907994304e14f4d91cc226f"
-    )
+    current_reconciliation = synthesis.split("Decision: Prompt 5", 1)[0]
+    assert skill_pack_contract.tree_hash(skill_dir) in current_reconciliation
+    assert "unavailable from inspectable sources and the user" in questionnaire
     assert (
         "| One external stakeholder holds missing knowledge and needs an async "
         "discovery questionnaire | `$to-questionnaire` |"
     ) in router
     assert "`$to-questionnaire` for an external stakeholder" in " ".join(
         grilling_gap.split()
+    )
+    assert "One identifiable external stakeholder" in audit
+    assert "| `$audit-codebase` | Recommend and stop | `$to-questionnaire` |" in synthesis
+    assert questionnaire.index("supplied context already answers the gap") < (
+        questionnaire.index("Ask one compact intake")
+    )
+    wayfinder_flat = " ".join(wayfinder.split())
+    assert "for the user to invoke `$to-questionnaire`" in wayfinder_flat
+    assert "Wayfinder never invokes the explicit-only skill" in wayfinder_flat
+
+    pack = pack_contract.parse_contract(
+        (ROOT / "docs/synthesis/skill-pack.md").read_text(encoding="utf-8")
+    )
+    relationships = {
+        row["relationship_id"]: row for row in pack["relationships"]
+    }
+    assert "REL-104" not in relationships
+    questionnaire_edge = relationships["REL-096"]
+    assert questionnaire_edge["verb"] == "Recommend and stop"
+    assert questionnaire_edge["context_loaded"] == []
+    assert questionnaire_edge["return_packet"].endswith(
+        "questionnaire work unstarted"
     )
 
 
@@ -1098,8 +1123,9 @@ def test_wayfinder_routes_by_authority_and_accounts_for_fog() -> None:
     assert "require exact approval of the resulting packet" in resolver_flat
     assert "`diagnosis-required`" in resolver_flat
     assert "$diagnosing-bugs" not in resolver_flat
-    assert "only after the user approves its [Questionnaire fields]" in resolver_flat
-    assert "`Questionnaire ready` is Waiting, never an answer" in resolver_flat
+    assert "for the user to invoke `$to-questionnaire`" in resolver_flat
+    assert "A verified questionnaire path is Waiting, never an answer" in resolver_flat
+    assert "never invokes the explicit-only skill" in resolver_flat
     assert "supported map use, scope, exact state, Source Trace" in resolver_flat
     assert "Task" in resolver_flat and "no durable mutation" in resolver_flat
     for pointer in (
@@ -1135,6 +1161,10 @@ def test_wayfinder_routes_by_authority_and_accounts_for_fog() -> None:
     resolve = advance.split("3. **Resolve.**", 1)[1].split("4. **Commit.**", 1)[0]
     resolve_flat = " ".join(resolve.split())
     assert "exclusively claim and read back the ticket" in resolve_flat
+    assert "claim-free, no-mutation Return" in advance_flat
+    assert advance_flat.index("claim-free, no-mutation Return") < advance_flat.index(
+        "exclusively claim and read back the ticket"
+    )
     assert "Waiting or Blocked ticket" in advance_flat
     assert "validating the attributable return" in advance_flat
     assert "acquire the map claim with the same token" in advance_flat
@@ -1276,7 +1306,7 @@ def test_grill_with_docs_package_and_relationship_contract() -> None:
     } >= {"triage"}
     assert ("wayfinder", "Invoke", "grill-with-docs") in rows
     assert ("wayfinder", "Invoke", "grilling") in rows
-    assert ("wayfinder", "Invoke", "to-questionnaire") in rows
+    assert ("wayfinder", "Recommend and stop", "to-questionnaire") in rows
     assert ("grilling", "Recommend and stop", "wayfinder") in rows
     assert ("grilling", "Recommend and stop", "to-spec") not in rows
     assert "Status: Confirmed" not in grill_docs
@@ -1311,12 +1341,8 @@ def test_grill_with_docs_package_and_relationship_contract() -> None:
         skill_pack_contract.tree_hash(CUSTOM / "grill-with-docs")
         in grill_docs_synthesis
     )
-    contract = pack_contract.parse_contract(
-        (ROOT / "docs/synthesis/skill-pack.md").read_text(encoding="utf-8")
-    )
-    assert (
-        f"revision {contract['epoch_header']['contract_revision']}"
-        in grill_docs_synthesis
+    assert "Current reconciliation: Pack composition revision 16" in (
+        grill_docs_synthesis
     )
 
 

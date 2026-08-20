@@ -88,7 +88,7 @@ Run and cleanup: <entry point or smallest recipe; finite bound; authorized scrat
 When `Type: Questionnaire`, append only:
 
 ```text
-Questionnaire packet and approval: <exact packet or durable pointer; approval evidence; authorized durable path; retention owner; answer-return destination>
+Questionnaire packet: <recipient; downstream decision; needed-back items; authorized durable path; answer-return destination; exact $to-questionnaire and Wayfinder re-entry instruction>
 ```
 
 ## Resolution Comment

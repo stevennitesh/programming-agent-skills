@@ -100,7 +100,7 @@ multi-counter compatibility machinery are deliberately absent.
 | Prototype | Invoke `$prototype` with the complete resolver packet owned by `MAP-FORMAT.md`. |
 | Diagnosis | Return `diagnosis-required` and Wait. Diagnosis remains separately explicit; its attributable Return later re-enters Wayfinder. |
 | Grilling | Invoke `$grilling` for a conversation-only user decision or `$grill-with-docs` while domain capture is active. A nested Route gap returns to active Wayfinder without a self-recommendation. |
-| Questionnaire | Invoke `$to-questionnaire` only after exact packet approval. A verified artifact becomes Waiting; missing approval is an incomplete Wayfinder Return with no callee execution. |
+| Questionnaire | Return the compact packet and exact `$to-questionnaire` instruction for explicit user invocation. Re-enter Advance with the verified artifact path, which becomes Waiting rather than an answer. |
 | Task | Inspect one objectively bounded repository or operational fact without durable mutation. |
 
 Wayfinder maps supported answers to `resolved`, attributable external or human
@@ -114,9 +114,8 @@ of scope`, and malformed, unauthorized, mismatched, or non-admitted Returns to
 - Missing tracker capability recommends Repo Bootstrap and stops.
 - Resolver Returns always come back to Wayfinder; they never select another map
   operation.
-- To Questionnaire may recommend Repo Bootstrap for a missing ignored artifact
-  root. Nested under Wayfinder, that intact setup gap returns for map
-  classification.
+- To Questionnaire is explicit-only. Wayfinder prepares its packet and stops;
+  it never invokes the leaf from context.
 - Domain Modeling runs only for an unaccounted durable consequence during
   Closure and returns its complete Domain Delta.
 - Successful Closure recommends To Spec and stops.
@@ -144,7 +143,7 @@ cases should cover:
 - fog sharpening and growth exhaustion;
 - Waiting and Blocked re-entry;
 - nested Grilling Route gap without a self-cycle;
-- questionnaire approval and setup failure;
+- questionnaire packet and explicit user re-entry;
 - commit-point drift with resolver evidence preserved;
 - independently selected Closure with route-closing evidence;
 - owner-confirmed Terminate; and

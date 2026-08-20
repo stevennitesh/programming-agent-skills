@@ -6,16 +6,16 @@ Historical status: canonical-and-installed synthesis for the fresh
 `to-questionnaire` campaign that began at Git
 `4359f7afeeec29a9c8692b18c1586afb041f9bf4`.
 
-Current amendment (2026-07-28): a later lean Author pass lets a direct user
-supply an origin owner and identity as context, locks where attributable
-answers return, and accepts a complete caller packet. Wayfinder may invoke it
-only after the user approves that exact packet; supplied origin context alone
-grants no invocation authority. The skill creates the questionnaire but does
-not own delivery, waiting, answer ingestion, analysis, or continuation.
-Canonical tree SHA-256
-is `8036aed37d90fb37eab71ce2313f313e08b48864401af1ab1c10f89553dacf7f`;
-installed parity and fresh wording-efficacy proof are not claimed. Later
-campaign-era exact-body and parity statements are historical.
+Current reconciliation: pack composition revision 17 rewrites the explicit-only
+leaf as Identify, Draft, and Write. It keeps one recipient, one downstream
+decision, complete needed-back coverage, question quality, overwrite
+protection, real-file reread, and the no-delivery boundary. It removes the
+default transaction protocol, `.tmp` custody model, and typed return. Wayfinder
+prepares a packet and stops for explicit user invocation. The current canonical
+tree SHA-256 is
+`ab93f3ebbf146b495b15863fa23393b536ced669458ae0f86f518cabbdeccb3f`;
+installed parity and fresh wording-efficacy proof are not claimed.
+Campaign-era exact-body and parity statements below are historical.
 
 Decision: Prompt 5 complete after exact final C1 promotion,
 `pruning-not-needed`, and managed installation parity.
@@ -25,9 +25,9 @@ Campaign shape: `behavioral-candidate`.
 Runtime decision:
 
 ```text
-historical control B0 != current canonical
-final C1 = B0 + C1-TRANSACTION + C1-DIRECT-RETURN
-current canonical = final C1 + later lean Author amendments
+historical control B0 != historical final C1
+historical final C1 = B0 + C1-TRANSACTION + C1-DIRECT-RETURN
+current canonical = issue-94 lean rewrite at pack revision 17
 C1-LEDGER = rejected-no-control-failure
 ```
 
@@ -46,46 +46,28 @@ The supported installer synchronized the same two-file package to
 `C:\Users\steve\.agents\skills\to-questionnaire` at the same package and file
 identities.
 
-This document records the active design and proof trace. Current behavior is
-owned by
+This document preserves the historical design and proof trace. Current
+behavior is owned by
 `skills/custom/to-questionnaire/SKILL.md` and
 `skills/custom/to-questionnaire/agents/openai.yaml`.
 
 ## Outcome And Viability Floor
 
-To Questionnaire is an explicit-only leaf that creates one local,
-recipient-ready Markdown questionnaire for one identifiable external
-stakeholder who owns material facts, judgment, or decision authority
-unavailable to the current user and authorized inspectable sources. The
-artifact asks for what one downstream decision needs and may be completed
-asynchronously or used in a later meeting.
+To Questionnaire is an explicit-only leaf that creates one recipient-ready
+Markdown questionnaire for one external stakeholder and one downstream
+decision. It owns sender-known intake, question design, named-item coverage,
+one file, and real-file reread. The user owns delivery, answers, and the
+downstream decision.
 
-The leaf owns sender-known intake, question design, one artifact, verification,
-and Return. The user owns recipient selection, output authority, delivery, and
-the downstream decision. The recipient owns their answers.
+The common path asks who the questionnaire is for and what the user needs back,
+drafts neutral atomic questions ordered by decision value and dependency, then
+writes and rereads one file. It never contacts or answers for the recipient.
+It never overwrites an existing target without explicit authority.
 
-The leaf is viable only while all of these boundaries hold:
-
-- explicit user invocation selects it;
-- `$skill-router`, `$grilling`, and `$wayfinder` may recommend it and stop, but
-  do not invoke or continue it;
-- `$research` owns source-answerable gaps, and `$grilling` owns decisions the
-  current user can make;
-- one artifact serves one recipient and one downstream decision;
-- the skill does not conduct a survey, deliver or send the artifact, handle
-  answers, interpret answers, synthesize the downstream decision, or continue
-  another workflow;
-- a missing recipient, output authority, or other required fact produces an
-  exact no-write gap Return rather than an invented answer or authority;
-- recipient and outcome lock precedes a coverage-ready draft; safe write
-  precedes reread; reread precedes Return; and
-- the leaf does not contact anyone, escape the authorized path, overwrite
-  without authority, leak sensitive context, or create extra attributable
-  content.
-
-Implicit invocation, delegated callers, Wayfinder schemas, Wayfinder
-durability and lifetime rules, and caller continuation remain outside current
-behavior. A user-supplied origin pointer is context only.
+`$skill-router`, `$grilling`, `$wayfinder`, and `$audit-codebase` may recommend
+the leaf and stop. `$research` remains the owner for source-answerable gaps, and
+`$grilling` owns decisions the current user can make. Wayfinder owns its durable
+wait, answer reconciliation, and re-entry after the questionnaire path returns.
 
 ## Source-First Checkpoint
 
@@ -164,10 +146,11 @@ This order is irreversible at the write boundary: the recipient and outcome
 must be locked and the candidate coverage-ready before the first Save. A
 failed gate returns the exact gap without writing or inventing an answer.
 
-## Active C1 Delta
+## Historical C1 Delta
 
-Active canonical `C1` is B0 plus the two accepted hypotheses below. The ledger
-hypothesis remains only as concise decision-changing history.
+Historical `C1` was B0 plus the two accepted hypotheses below. The ledger
+hypothesis remains concise campaign history. Revision 17 supersedes their
+runtime authority.
 
 | Hypothesis | Origin and owner | Expected B0 failure | Cheapest expression | Wrong-condition case | Proof | Destination and decision |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -211,6 +194,7 @@ These deferred items are not residual gaps for this Direct-only campaign.
 | `$skill-router` | Recommend and stop | `$to-questionnaire` | Route selection identifies this explicit leaf; the user decides whether to start it |
 | `$grilling` | Recommend and stop | `$to-questionnaire` | Grilling reaches a question owned by one external stakeholder; the user decides whether to start the leaf |
 | `$wayfinder` | Recommend and stop | `$to-questionnaire` | One Task/HITL prerequisite needs attributable asynchronous answers; the user starts the leaf and later resumes the same ticket |
+| `$audit-codebase` | Recommend and stop | `$to-questionnaire` | One candidate depends on knowledge held by an external stakeholder; Audit leaves questionnaire creation unstarted |
 | `$to-questionnaire` | Recommend and stop | `$research` | Authorized inspectable sources own the whole material gap |
 | `$to-questionnaire` | Recommend and stop | `$grilling` | The current user owns the material decision |
 
@@ -221,9 +205,9 @@ The recipient owns answers. The user owns delivery and subsequent use.
 These are the complete active To Questionnaire edges. Delegated callers,
 Grill-with-Docs routing, and a Research-to-Questionnaire edge remain excluded.
 
-## Proof Matrix
+## Historical Proof Matrix
 
-| Lane | Exact claim | Control and candidate | Required evidence | Current state |
+| Lane | Exact claim | Control and candidate | Required evidence | Campaign result |
 | --- | --- | --- | --- | --- |
 | B0 viability | Each `B0-*` unit satisfies the viability floor as the executable minimum | Exact Prompt 3 B0 against fixed positive and negative tasks | Artifact and filesystem read-back, rubric, exact Return, no-write failures | `passed`; complete ten-case suite 5/5 |
 | Conditional D0 steering | "Grill the send, not the subject" changes intake; priority/atomic drafting changes question selection and wording | D0 omits only the tested steering while invocation, authority, task, tools, and context match B0 | D0 must exhibit the claimed failure before B0 receives efficacy credit | `passed`; send 0/5 to 5/5, priority/atomic 0/5 to 4/5 |
@@ -254,7 +238,7 @@ transactional safety, and typed Return. It does not authorize carrying the old
 implicit invocation, Wayfinder adapters, durability model, chronology, or
 package bytes into C1.
 
-## Promotion Lifecycle And Residual Gaps
+## Historical Promotion Lifecycle And Residual Gaps
 
 Lifecycle:
 
@@ -281,6 +265,6 @@ common-path instructions, duplicated semantic ownership, branch load, or an
 unused package surface. No pre-prune fixture or behavior wave was created.
 Final C1 remains byte-identical at
 `a5c63f7c0ecbe2971dbbd20bb1774ece83990e08fa97d3df6d9f49c3b41cf3c4`.
-The canonical runtime and Direct-only relationship surface now publish that
-exact decision. Promotion and installation evidence is recorded in
+Revision 17 supersedes that runtime. Historical promotion and installation
+evidence is recorded in
 [`2026-07-23-to-questionnaire-promotion-install.md`](../../validation/skills/to-questionnaire/evals/EV-to-questionnaire-promotion-install-20260723-01/evidence/2026-07-23-to-questionnaire-promotion-install.md).

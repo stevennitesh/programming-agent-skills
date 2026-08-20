@@ -99,7 +99,7 @@ payload or pointer. A mismatch changes no judgment.
 - Unresolved required evidence marks it `blocked` with exact re-entry.
 - A foreign recommendation is evidence only; reapply this contract's
   first-unresolved-work rule.
-- `Questionnaire ready` is not answer evidence; require attributable
+- A questionnaire artifact is not answer evidence; require attributable
   stakeholder answers.
 - An unchanged exhausted or blocked return keeps suggestion `none` until its
   named unblock condition changes.

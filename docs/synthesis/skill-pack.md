@@ -124,6 +124,10 @@ optional RED-GREEN-REFACTOR inner loop. It removes diagnosis and design status
 packets, the mandatory proof receipt, and the separate refactoring guide while
 retaining explicit admission, observed behavioral RED, independent expectations,
 smallest GREEN, conditional test guidance, and green-only cleanup.
+Revision 29 materializes machine contract revision 17 by rewriting To
+Questionnaire as Identify, Draft, and Write. It removes the default transaction
+protocol and typed return, keeps one-recipient coverage and overwrite protection,
+and changes Wayfinder's impossible explicit-only invocation into user re-entry.
 It binds the complete fingerprinted pre-discovery fixed point, then freezes the
 tested environment, finite research order, capability
 owners, roles, relationships, exclusions, resolved collisions, acceptance
@@ -332,7 +336,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       ],
       "allowed_contributor_skill_ids": [],
       "capability_id": "CAP-009",
-      "completion_return": "A verified questionnaire path, artifact durability, and delivery-ready summary",
+      "completion_return": "A verified questionnaire path, coverage summary, unresolved gap, and no-delivery statement",
       "disposition": "selected",
       "entry_conditions": [
         "One external stakeholder holds material facts, judgment, or decision authority unavailable from inspectable sources and the current user"
@@ -1029,7 +1033,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       }
     ],
     "composition_epoch_id": "FCE-20260727-01",
-    "contract_revision": 16,
+    "contract_revision": 17,
     "epoch_lock": null,
     "exclusions": [
       "Per-skill H1 or candidate wording",
@@ -3252,27 +3256,24 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "CAP-009"
       ],
       "callee_owned_gates_mutations": [
-        "To Questionnaire retains admission, send intake, needed-back ledger, artifact mutation, verification, Return, and completion gates"
+        "No callee execution, mutation, resumption, or completion is authorized by this edge"
       ],
       "caller_skill_id": "SK-021",
       "combined_exit_owner_skill_id": "SK-021",
-      "context_loaded": [
-        "to-questionnaire caller-facing interface only after exact packet approval"
-      ],
-      "entry_condition": "One external Questionnaire prerequisite needs attributable asynchronous answers from an identifiable stakeholder, and the user approved the exact invocation packet.",
-      "explicit_target_authority": "exact-user-approved-packet",
-      "failure_behavior": "Return To Questionnaire's exact status and artifact state to Wayfinder; classify a verified questionnaire only as Waiting",
-      "input_packet": "User-approved recipient, downstream decision, origin and return owner, needed-back ledger, sensitivity, effort, explicitly authorized durable path, retention owner, answer-return destination, overwrite authority, and Delivery not performed",
-      "ordering_impact": "callee-before-caller",
+      "context_loaded": [],
+      "entry_condition": "One external Questionnaire prerequisite needs attributable asynchronous answers from an identifiable stakeholder, and Wayfinder has the bounded packet needed for explicit user invocation.",
+      "failure_behavior": "Return the packet and exact user re-entry without invoking To Questionnaire or mutating shared state",
+      "input_packet": "Recipient, downstream decision, needed-back items, authorized durable path, answer-return destination, and exact To Questionnaire and Wayfinder re-entry instruction",
+      "ordering_impact": "none",
       "relationship_id": "REL-096",
       "required_proof_ids": [
         "PROOF-REL-096"
       ],
       "resume_owner_skill_id": "SK-021",
-      "return_packet": "One typed questionnaire status, exact artifact path and durability when written, and answer-return destination",
+      "return_packet": "One exact target, packet, and user re-entry with questionnaire work unstarted",
       "target_skill_id": "SK-009",
-      "verb": "Invoke",
-      "wrong_condition": "Without exact approval no edge fires and Wayfinder returns the packet as incomplete; otherwise inspectable sources, the current user, or objective AFK proof can resolve the prerequisite"
+      "verb": "Recommend and stop",
+      "wrong_condition": "The packet is incomplete, or inspectable sources, the current user, or objective AFK proof can resolve the prerequisite"
     },
     {
       "affected_capability_ids": [
@@ -3425,31 +3426,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "target_skill_id": "SK-005",
       "verb": "Recommend and stop",
       "wrong_condition": "An active conflict or unmerged entry remains, the request is operation planning, or the behavioral failure cause is already settled"
-    },
-    {
-      "affected_capability_ids": [
-        "CAP-009",
-        "CAP-001"
-      ],
-      "callee_owned_gates_mutations": [
-        "No callee execution, mutation, resumption, or completion is authorized by this edge"
-      ],
-      "caller_skill_id": "SK-009",
-      "combined_exit_owner_skill_id": "SK-009",
-      "context_loaded": [],
-      "entry_condition": "The default questionnaire artifact path cannot be proved ignored and no explicitly authorized path overrides it.",
-      "failure_behavior": "Return the exact setup precondition without starting Repo Bootstrap or writing the questionnaire",
-      "input_packet": "Repository identity, failed ignored-path proof, intended default artifact root, and To Questionnaire return owner",
-      "ordering_impact": "none",
-      "relationship_id": "REL-104",
-      "required_proof_ids": [
-        "PROOF-REL-104"
-      ],
-      "resume_owner_skill_id": "SK-009",
-      "return_packet": "One Repo Bootstrap recommendation with the exact setup gap and questionnaire work unstarted",
-      "target_skill_id": "SK-001",
-      "verb": "Recommend and stop",
-      "wrong_condition": "The default path is proved ignored or an explicitly authorized output path is usable"
     }
   ],
   "selected_skills": [
@@ -3766,11 +3742,10 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       ],
       "relationship_ids": [
         "REL-076",
-        "REL-077",
-        "REL-104"
+        "REL-077"
       ],
-      "required_input": "A bounded caller-owned Source Trace and authority for: Create one Markdown questionnaire for an identifiable external stakeholder who owns missing facts, judgment, or decision authority",
-      "return_packet": "A verified questionnaire path, artifact durability, and delivery-ready summary",
+      "required_input": "One recipient, one downstream decision, what the user needs back, and an optional exact output path",
+      "return_packet": "A verified questionnaire path, coverage summary, unresolved gap, and no-delivery statement",
       "skill_id": "SK-009"
     },
     {

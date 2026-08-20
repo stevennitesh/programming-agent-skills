@@ -37,7 +37,7 @@ flowchart TD
   Grilling -. "async stakeholder gap" .-> Questionnaire
   Grilling -. "multi-decision route gap" .-> Wayfinder
   Grilling -. "fresh-context transport" .-> Handoff
-  Questionnaire --> TmpQuestionnaire[".tmp/to-questionnaire/*.md"]
+  Questionnaire --> QuestionnaireFile["to-questionnaire-<slug>.md"]
   Questionnaire -. "source-answerable" .-> Research
   Questionnaire -. "user-owned decision" .-> Grilling
   Wayfinder["wayfinder"] --> Tracker
@@ -45,7 +45,7 @@ flowchart TD
   Wayfinder -. "setup gate" .-> Setup
   Wayfinder --> Grilling
   Wayfinder --> GrillDocs
-  Wayfinder -. "exact user-approved artifact packet" .-> Questionnaire
+  Wayfinder -. "explicit user re-entry" .-> Questionnaire
   Wayfinder --> Prototype["prototype"]
   Wayfinder --> Research["research"]
   Wayfinder -. "closed settled source" .-> ToSpec
@@ -213,12 +213,11 @@ Return.
 | `grilling` | Recommend and stop | `$wayfinder` | The bounded interview cannot close in one conversation because several interdependent unresolved decisions or non-conversational prerequisites need a tracker-backed multi-session route, and active Wayfinder is not the return owner. An active Wayfinder receives the intact Route gap directly for graph reconciliation. |
 | `to-questionnaire` | Recommend and stop | `$research` | Claim-owning sources can answer the gap. |
 | `to-questionnaire` | Recommend and stop | `$grilling` | The current user owns the unresolved conversation-only decision. |
-| `to-questionnaire` | Recommend and stop | `$repo-bootstrap` | The default artifact path cannot be proved ignored; return the exact setup precondition with Repo Bootstrap unstarted. |
 | `wayfinder` | Invoke | `$research` | Pass the question, supported map use, scope, exact state, approved note path and write mode, and Wayfinder return owner; normalize the intact answer or blocker. |
 | `wayfinder` | Invoke | `$prototype` | Pass the question, resolution and return owners, named human judge or predeclared objective rule, representative evidence, mutation boundary with authority evidence, run bound, cleanup or accepted custody, and Wayfinder re-entry; normalize the intact answer or residual. |
 | `wayfinder` | Invoke | `$grilling` | One HITL ticket or Chart bound needs a conversation-only user decision; receive the intact decision or gap packet and retain map ownership. |
 | `wayfinder` | Invoke | `$grill-with-docs` | One HITL ticket or Chart bound needs a user decision while durable domain capture remains active; receive the intact Grilling packet and Domain Delta. |
-| `wayfinder` | Invoke | `$to-questionnaire` | One external Questionnaire prerequisite needs asynchronous attributable answers and the user approved the exact recipient, needed-back, sensitivity, effort, durable path, retention owner, answer-return destination, overwrite, no-send, origin, and return packet. The questionnaire path returns as Waiting. Without approval, no edge fires: Wayfinder returns `incomplete` with the packet and exact re-entry. |
+| `wayfinder` | Recommend and stop | `$to-questionnaire` | One external Questionnaire prerequisite needs asynchronous attributable answers. Return the recipient, downstream decision, needed-back items, authorized durable path, answer-return destination, and exact `$to-questionnaire` and Wayfinder re-entry instruction. A verified path returns as Waiting, never as an answer. |
 | `wayfinder` | Invoke | `$domain-modeling` | A settled closing decision changes durable domain truth or yields an already-settled ADR candidate, and no current Domain Delta accounts for it; return the complete Domain Delta before Closure continues. |
 | `wayfinder` | Recommend and stop | `$implement` | The closed map produced one settled bounded implementation and no durable parent contract is useful. |
 | `wayfinder` | Recommend and stop | `$to-spec` | The closed map produced settled parent-spec source. |
@@ -323,8 +322,8 @@ every terminal result directly to its current caller or the user.
   and cumulative Domain Delta. Wayfinder invokes Domain Modeling separately
   only for an uncovered settled consequence during Closure.
 - `$to-questionnaire` owns one verified artifact, not delivery or continuation.
-  Wayfinder may invoke it only from an exact user-approved durable-custody
-  packet and then owns Waiting and answer reconciliation.
+  Wayfinder prepares its packet and stops for explicit user invocation, then
+  owns Waiting and answer reconciliation after the artifact path returns.
 - `domain-modeling` is the only skill that writes `CONTEXT.md`, `CONTEXT-MAP.md`, or approved ADR truth; `repo-bootstrap` configures and verifies routing before persistence across a required topology transition, and vocabulary consumers follow `docs/agents/domain.md`.
 - `to-spec` owns final source admission, parent spec synthesis, and tracker publication. Grilling confirms shared understanding but neither certifies source readiness nor drafts or publishes. `to-tickets` owns implementation issue slicing.
 - `wayfinder` owns finite foggy multi-session maps, ticket classification,
