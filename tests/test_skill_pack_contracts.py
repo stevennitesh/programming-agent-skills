@@ -60,39 +60,37 @@ def test_handoff_compacts_context_without_advancing_work() -> None:
     handoff_flat = " ".join(handoff.split())
 
     assert not implicit_policy(skill_dir)
-    assert re.findall(r"(?m)^\*\*([A-Za-z]+)\.\*\*", handoff) == [
-        "Trace",
-        "Snapshot",
-        "Compact",
-        "Redact",
-        "Save",
-        "Verify",
+    assert re.findall(r"(?m)^## \d+\. ([A-Za-z]+)$", handoff) == [
+        "Qualify",
+        "Gather",
+        "Write",
+        "Check",
         "Return",
     ]
     template = handoff.split("```markdown", 1)[1].split("```", 1)[0]
     assert re.findall(r"(?m)^## (.+)$", template) == [
-        "Purpose",
-        "Current State",
-        "Key Decisions",
-        "Source Trace",
-        "Validation",
-        "Open Questions",
-        "Next Step",
-        "Suggested Skills",
+        "Purpose and boundary",
+        "State, decisions, blockers, and authority",
+        "Sources and proof",
+        "Next action and preconditions",
     ]
     assert "<work-root>/.tmp/handoff-<YYYYMMDD-HHMMSS>[-<NN>].md" in handoff
     assert "$repo-bootstrap" in handoff
     for contract in (
-        "receiver can read the same work root",
+        "fresh task or context that can read the same work root",
+        "Use `/compact` within the same conversation",
         "never overwrite",
-        "read first` or `conditional",
-        "exact condition that requires proof to rerun",
-        "Do not route here",
-        "refresh its volatile Current State",
-        "only if its authority and preconditions still hold",
-        "Do not create or message the receiving task",
+        "Treat completed, verified work as inherited evidence",
+        "Reference durable truth instead of copying it",
+        "Write only the Handoff artifact",
+        "ignored when Git applies",
+        "verification a precondition for any action that depends on an unverified pointer",
+        "remove only incomplete state created by this invocation",
+        "refresh state and authority before acting",
     ):
         assert contract in handoff_flat
+    assert "Suggested Skills" not in handoff
+    assert "not-created" not in handoff
 
 
 def test_to_questionnaire_owns_one_safe_recipient_artifact() -> None:

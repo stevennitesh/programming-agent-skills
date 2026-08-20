@@ -262,7 +262,7 @@ Return.
 | `audit-codebase` | Recommend and stop | `$simplify-code` | One analyzed candidate has a bounded behavior-preserving reduction, current report identity, supported behavior, Source Trace, and proof seam; Audit publishes an exact report-backed pickup and leaves simplification unstarted. |
 | `audit-codebase` | Recommend and stop | `$implement` | To Tickets returned a candidate-digest-bound ready/reused graph, verified mutation/read-back identity, exact provider-native tracker identities, and a non-empty Ready-for-agent frontier. To Tickets owns the first recommendation; Audit preserves it and appends candidate/report identity plus the exact Close-return schema without starting implementation. Close remains a separate user-selected Audit invocation. |
 | `codebase-design` | Recommend and stop | `$audit-codebase` | The request needs codebase-wide mapping and improvement discovery. |
-| `handoff` | Recommend and stop | `$repo-bootstrap` | The exact Handoff target cannot be proved ignored because the disposable-artifact setup is missing or incompatible; return `not-created` and leave Repo Bootstrap unstarted. |
+| `handoff` | Recommend and stop | `$repo-bootstrap` | The exact Handoff target cannot be proved ignored because the disposable-artifact setup is missing or incompatible; return the mismatch without a pickup and leave Repo Bootstrap unstarted. |
 
 Wayfinder invokes Domain Modeling once for an uncovered settled closing
 consequence; Audit Codebase recommends it and stops for user-selected settled

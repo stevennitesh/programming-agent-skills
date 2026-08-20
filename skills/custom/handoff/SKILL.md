@@ -5,79 +5,81 @@ description: Compact the live thread into one verified local continuation packet
 
 # Handoff
 
-**Trace -> Snapshot -> Compact -> Redact -> Save -> Verify -> Return**
+Create one verified local continuation note without advancing the work.
 
-**Trace.** Admit only an intended fresh session or agent thread whose receiver
-can read the same work root and required local sources. For same-conversation
-compaction or an ordinary live-workflow Return, report `not-created` with
-`/compact` or the active owner; when receiver access cannot be established,
-report `not-created` with the transport mismatch. Resolve `<work-root>` as the
-Git root when present, otherwise the current directory. Select the first unused
-`<work-root>/.tmp/handoff-<YYYYMMDD-HHMMSS>[-<NN>].md`; never overwrite. In a
-Git repo, confirm the exact target is ignored before writing; otherwise
-recommend `$repo-bootstrap`, report `not-created`, and stop. Read the live
-thread, active workflow, and named sources as evidence, not new authority.
+## 1. Qualify
 
-**Snapshot.** Refresh volatile repo and workflow state, including the active
-owner, exact phase or gate, selected work identity, authority, and unrelated
-dirty-work ownership. Verify every pointer and material identity or mark it
-explicitly unverified. Label facts, inferences, unknowns, and unstable state;
-leave new evidence and task work to the receiver.
+Use Handoff only for an intended fresh task or context that can read the same
+work root and required sources. Use `/compact` within the same conversation;
+use the active workflow's Return for ordinary continuation.
 
-**Compact.** Preserve only state expensive to recover from the Source Trace,
-using the active workflow's vocabulary. A supplied focus sets Purpose and Next
-Step without hiding any blocker, risk, unresolved decision, or state needed to
-resume safely.
+Resolve the work root as the Git root when present, otherwise the current
+directory. Choose the first unused
+`<work-root>/.tmp/handoff-<YYYYMMDD-HHMMSS>[-<NN>].md`; never overwrite it. In
+a Git repository, prove the exact target is ignored before writing. If the
+disposable-artifact setup is missing, recommend `$repo-bootstrap` and stop
+without creating a pickup. Create `.tmp/` when it is absent; in Git, do so only
+after proving the target ignored. Stop when receiver access is not credible.
+
+## 2. Gather
+
+Refresh the current workflow and repository state. Preserve only information
+whose loss could cause repeated work, a wrong mutation, false evidence, or an
+authority mistake: the objective and stopping boundary, completed and pending
+work, decisions and constraints, blockers and required authority, material
+dirty work, decisive source and proof pointers, and the next already-legal
+action or the condition that would make one legal.
+
+When they affect resumption, include the exact selected work and gate,
+worktree, branch, and HEAD identities, plus the scope and owner of dirty work.
+
+A supplied focus changes emphasis, not scope or authority. Treat completed,
+verified work as inherited evidence. Repeat discovery or proof only when its
+identity is missing, relevant state has drifted, evidence conflicts, or an
+applicable repository or workflow condition requires a rerun. Mark material
+uncertainty instead of filling it with inference.
+
+## 3. Write
+
+Write one concise note using these content groups:
 
 ```markdown
 # Handoff
 
-## Purpose
-Continuation, decision, or proof target; completion and stopping boundaries.
+## Purpose and boundary
+Objective, completion and stopping boundaries, and current owner.
 
-## Current State
-Complete, in-progress, intentionally unchanged, and blocked state; active owner, workflow, exact phase or gate, and selected work identity. For repo work: cwd/worktree, branch or detached HEAD, relevant commit, staged/unstaged scope, material untracked files, and unrelated-dirty-work ownership.
+## State, decisions, blockers, and authority
+What is done, pending, unchanged, or blocked; accepted constraints and authority still needed.
 
-## Key Decisions
-Confirmed and rejected decisions, constraints, commitment and scope boundaries, approvals, and authority still required.
+## Sources and proof
+Exact durable pointers, relevant identities, useful checks and outcomes, and material uncertainty.
 
-## Source Trace
-Exact pointers to durable truth and intentionally preserved `.tmp/` or tracked `.scratch/` artifacts, with owner, identity or revision, verification status, and `read first` or `conditional` priority. Reference; do not copy.
-
-## Validation
-Commands/checks, outcomes, proof identity, skips, gaps, residual risk, and the exact condition that requires proof to rerun.
-
-## Open Questions
-Question, owner, known evidence, and decision unlocked, or `None`.
-
-## Next Step
-Exactly one workflow-native re-entry action with owner, target, refresh preconditions, expected evidence, and stopping point. Do not execute it in Handoff.
-
-## Suggested Skills
-Only the active owner or an already-selected supporting skill with a one-line reason, or `None`. Do not route here.
+## Next action and preconditions
+One already-legal re-entry action and stopping point, or the condition that must be resolved first.
 ```
 
-**Redact.** Remove secrets, credentials, and personally identifiable information
-while preserving the dependency type and operational impact.
+Reference durable truth instead of copying it. Redact secrets and credentials.
+Include a personal identifier only when an exact local pointer or active
+dependency needs it; otherwise redact it while preserving its operational
+impact. Write only the Handoff artifact and its directory when absent. Do not
+change tracked files, Git state, tracker state, the active workflow, or Codex
+tasks.
 
-**Save.** Create `.tmp/` when absent and write exactly the unused target
-artifact. The invocation authorizes only those changes. Keep the file outside
-the index and commits; leave tracked files, tracker state, Git state, the active
-workflow, and Codex tasks unchanged. Suggested skills remain unexecuted.
+## 4. Check
 
-**Verify.** Reread the artifact and refresh material volatile state. Reconcile
-drift into the same file or mark it unstable with a receiver precondition.
-Finish only when the file is source-traced, redacted, actionable, pointer-exact
-or explicitly unverified, ignored when Git applies, and the only authorized
-state change. If safe completion fails, remove only incomplete Handoff-authored
-state and return `not-created` or `blocked` without a pickup.
+Reread the note as a cold receiver. Confirm that its pointers are usable or
+explicitly unverified, its next action does not exceed current authority, and
+the artifact is ignored when Git applies and is the only state change apart
+from its newly created directory. Make verification a precondition for any
+action that depends on an unverified pointer. Refresh material mutable state
+once more; reconcile drift in the note or make it a receiver precondition. If
+completion fails, remove only incomplete state created by this invocation and
+return the reason without a pickup.
 
-**Return.** Report the absolute path and:
+## 5. Return
 
-> Continue from `<absolute-path>`. Read the handoff and current repo
-> instructions, refresh its volatile Current State, then execute its Next Step
-> only if its authority and preconditions still hold.
-
-Append a redacted one-line form of any supplied focus to the pickup prompt. Do
-not create or message the receiving task, invoke a suggested skill, or execute
-the Next Step.
+Return the absolute path and tell the receiver to read the note and current
+repository instructions, then refresh state and authority before acting. Do
+not create or message the receiving task, invoke a skill, or execute the next
+action.

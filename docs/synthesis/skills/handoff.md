@@ -14,11 +14,16 @@ Runtime authority remains in:
 - `$repo-bootstrap` for the required ignored disposable-artifact surface;
 - `docs/synthesis/skill-context-relationships.md` for pack-wide composition
   edges;
-- `tests/test_skill_pack_contracts.py` and
-  `docs/validation/evals/core-workflows.md` for current structural and
-  behavioral protection; and
+- `tests/test_skill_pack_contracts.py` for current structural protection;
+- `docs/validation/evals/core-workflows.md` as historical behavioral evidence,
+  not proof of the current five-action wording; and
 - `C:\Users\steve\.agents\skills\handoff` as the installed mirror of validated
   canonical source.
+
+Current reconciliation: Pack composition revision 13 replaces the historical
+seven-action, eight-section proposal with five actions and four compact content
+groups. Same-root admission, one ignored artifact, and refresh-before-action
+remain current. Later sections preserve design history, not packet requirements.
 
 The lean admission, continuation-packet, and reconcile-before-execute boundary
 is extracted into canonical runtime. The installed mirror remains unchanged.

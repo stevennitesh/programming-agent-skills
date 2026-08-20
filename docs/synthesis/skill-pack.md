@@ -107,6 +107,10 @@ around one five-action ordinary review, disclosing formal delivery only when the
 caller supplies that mode, shrinking shared finding admission, removing the
 fallback smell catalog, and returning reviewer dispatch ownership to Implement,
 Parallel Implement, and explicit High-Assurance Review.
+Revision 25 materializes machine contract revision 13 by rewriting Handoff as
+one five-action local continuity note, reducing eight mandatory sections to four
+content groups, removing skill-routing and status-taxonomy fields, and retaining
+same-root admission, ignored-file protection, redaction, and state refresh.
 It binds the complete fingerprinted pre-discovery fixed point, then freezes the
 tested environment, finite research order, capability
 owners, roles, relationships, exclusions, resolved collisions, acceptance
@@ -1012,7 +1016,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       }
     ],
     "composition_epoch_id": "FCE-20260727-01",
-    "contract_revision": 12,
+    "contract_revision": 13,
     "epoch_lock": null,
     "exclusions": [
       "Per-skill H1 or candidate wording",
@@ -1058,7 +1062,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "github-issue-body:stevennitesh/programming-agent-skills#39#sha256-v1:f8115df444ab80f15fdb49610d96152cdff2edc12a5f03bb50efaba308a840a3",
       "github-issue-body:stevennitesh/programming-agent-skills#50#sha256-v1:21d89976101c1815c6e08f921d6045f97615bfdad8b3a3babc6ed40ca9d463bb",
       "git-commit:2710890325c51a2120656a8d1233d442f6454c1a",
-      "docs/synthesis/skill-context-relationships.md#sha256-v1:9ac791feec5c8b8d35f29b01d2e9a44687cea920434d809bcdf40d34a5d7a504"
+      "docs/synthesis/skill-context-relationships.md#sha256-v1:845a8af206f9c48d942242076056a46d6c235e3515c03754d0a2f884f31f0275"
     ],
     "status": "frozen"
   },
@@ -1639,7 +1643,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "combined_exit_owner_skill_id": "SK-010",
       "context_loaded": [],
       "entry_condition": "The exact Handoff target cannot be proved ignored because the disposable-artifact setup is missing or incompatible.",
-      "failure_behavior": "Return not-created with the exact setup mismatch and leave Repo Bootstrap unstarted",
+      "failure_behavior": "Return the exact setup mismatch without a pickup and leave Repo Bootstrap unstarted",
       "input_packet": "Resolved work root, exact candidate target, ignore evidence or failure, and the declared repo-bootstrap input",
       "ordering_impact": "none",
       "relationship_id": "REL-012",
@@ -1647,7 +1651,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "PROOF-REL-012"
       ],
       "resume_owner_skill_id": "SK-010",
-      "return_packet": "One not-created setup return with Repo Bootstrap recommended but unstarted",
+      "return_packet": "One setup mismatch with Repo Bootstrap recommended but unstarted",
       "target_skill_id": "SK-001",
       "verb": "Recommend and stop",
       "wrong_condition": "The exact target is ignored, or admission failed because of receiver access, transport, redaction, or another non-setup condition"
@@ -3764,7 +3768,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "completion_condition": "One verified ignored packet and reconcile-before-execute pickup are returned",
       "contract_order": 10,
       "essential_outcome": "Create one verified local continuation packet without advancing the active workflow",
-      "failure_return": "Return not-created or blocked with verified state and the required safe condition",
+      "failure_return": "Return the exact reason no verified pickup was created",
       "invocation_mode": "explicit-only",
       "load_budget_class": "conditional-leaf",
       "negative_exclusion_predicates": [
