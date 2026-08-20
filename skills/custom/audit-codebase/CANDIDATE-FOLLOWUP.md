@@ -83,7 +83,8 @@ Re-entry invocation:
 Recommend `$grilling` when documentation effect is `none`,
 `$domain-modeling` when meaning is settled and only durable capture remains,
 and `$grill-with-docs` when the decision and Domain Delta are both required.
-Render context only unless domain mutation is separately authorized.
+Return proposed context wording unless context writing is separately authorized;
+ADR recording needs separate approval for an identified, settled candidate.
 
 ## Returned Evidence
 

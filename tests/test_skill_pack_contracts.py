@@ -1208,8 +1208,8 @@ def test_wayfinder_routes_by_authority_and_accounts_for_fog() -> None:
     assert "Hold no claim" in closure_flat
     assert "invoke `$domain-modeling` once" in closure_flat
     assert "unaccounted durable-language or ADR consequence" in closure_flat
-    assert "`persist authorized` only with exact domain-write authority" in closure_flat
-    assert "`render only` otherwise" in closure_flat
+    assert "unless exact domain-write authority permits persistence" in closure_flat
+    assert "ADR recording still needs separate approval" in closure_flat
     assert "it is not itself a blocker" in closure_flat
     assert "separately material blocker leaves the map open" in closure_flat
     assert "route-closing condition" in closure_flat
@@ -1307,55 +1307,107 @@ def test_grill_with_docs_package_and_relationship_contract() -> None:
     ).read_text(encoding="utf-8")
     assert "They are historical, not current instructions" in grill_docs_synthesis
     assert "# Layer Two: Historical Normative Design" in grill_docs_synthesis
+    assert (
+        skill_pack_contract.tree_hash(CUSTOM / "grill-with-docs")
+        in grill_docs_synthesis
+    )
+    contract = pack_contract.parse_contract(
+        (ROOT / "docs/synthesis/skill-pack.md").read_text(encoding="utf-8")
+    )
+    assert (
+        f"revision {contract['epoch_header']['contract_revision']}"
+        in grill_docs_synthesis
+    )
 
 
 def test_domain_modeling_owns_durable_domain_truth() -> None:
     domain = (CUSTOM / "domain-modeling/SKILL.md").read_text(encoding="utf-8")
     domain_flat = " ".join(domain.split())
+    description = domain.split("---", 2)[1]
+    assert (
+        "description: Resolve or capture project-specific domain meaning, "
+        "invariants, bounded contexts, relationships, or an already-settled "
+        "ADR candidate. Exclude vocabulary lookup, code-structure design, and "
+        "unresolved product or architecture decisions."
+    ) in " ".join(description.split())
     context_format = (
         CUSTOM / "domain-modeling/CONTEXT-FORMAT.md"
     ).read_text(encoding="utf-8")
     context_format_flat = " ".join(context_format.split())
 
-    assert re.findall(r"(?m)^\d+\. \*\*([A-Za-z]+)\.\*\*", domain) == [
-        "Trace",
-        "Challenge",
-        "Resolve",
+    assert re.findall(r"(?m)^## \d+\. ([A-Za-z]+)$", domain) == [
+        "Ground",
+        "Clarify",
+        "Settle",
+        "Capture",
         "Return",
     ]
-    assert "Trace -> Challenge -> Resolve -> (Persist -> Verify | Render) -> Return" in domain
     for target in ("CONTEXT-FORMAT.md", "ADR-FORMAT.md"):
         assert (CUSTOM / "domain-modeling" / target).is_file()
         assert f"({f'./{target}'})" in domain
     for contract in (
-        "accept every settled material answer",
-        "Return the authoritative cumulative Domain Delta and any collision before dependent questioning continues",
-        "never choose interview materiality or branching",
-        "Domain Delta",
+        "They do not settle intended meaning",
+        "scenario only when its answer could change the model",
         "implementation defect, model correction, or intentional migration",
+        "Reconcile with routed current records before adding text",
+        "every verified intermediate state retains readable current truth",
+        "Reread every attempted target",
+        "verified changed, verified unchanged, or unknown",
+        "return each unapplied consequence to its owner",
+        "authoritative cumulative Domain Delta after every settled material answer",
+        "does not choose interview materiality",
     ):
         assert contract in domain_flat
-    assert domain.count("Reconcile proposed material") == 1
     assert (
-        "Within one context, its local model owns canonical meaning. Across "
-        "contexts, preserve independent meanings unless an explicit "
-        "relationship contract or Shared Kernel says otherwise."
+        "Preserve independent meanings across contexts unless an explicit "
+        "relationship or Shared Kernel joins them."
     ) in context_format_flat
-    assert context_format.count("routed current records") == 1
-    assert "executable procedures or algorithm specifications" in context_format_flat
+    assert "non-obvious durable distinction" in context_format_flat
+    assert "Never force a pattern" in context_format_flat
+    assert "Big Ball of Mud" not in context_format
+    assert "Anticorruption Layer, not Conformist" in context_format_flat
+    assert "schema alone does not establish an Open-host Service" in context_format_flat
+    assert "executable procedure, algorithm specifications" in context_format_flat
     adr_format = (CUSTOM / "domain-modeling/ADR-FORMAT.md").read_text(
         encoding="utf-8"
     )
     adr_format_flat = " ".join(adr_format.split())
     assert domain.count("(./ADR-FORMAT.md)") == 1
-    assert "`superseded by ADR-NNNN`" in adr_format
-    assert "- **Applicability:**" in adr_format
-    assert "all partial-successor links" in adr_format_flat
-    assert "algorithm choice" in adr_format_flat
-    assert "executable algorithm specification" in adr_format_flat
+    for contract in (
+        "Hard to reverse",
+        "Surprising without context",
+        "Real trade-off",
+        "separate explicit approval",
+        "all controlling successors and its exact remaining scope",
+        "accepted only while that scope is nonempty",
+        "superseded by the controlling successors",
+    ):
+        assert contract in adr_format_flat
+    assert "executable specification" in adr_format_flat
+    for stale_packet in (
+        "Semantic outcome:",
+        "Persistence outcome:",
+        "persist authorized",
+        "render only",
+        "offer only",
+    ):
+        assert stale_packet not in domain
     root_context = (ROOT / "CONTEXT.md").read_text(encoding="utf-8")
-    assert "Reconcile proposed material with routed current records" not in root_context
+    assert "Reconcile with routed current records" not in root_context
     assert "partial-successor links" not in root_context
+
+    relationships = (
+        ROOT / "docs/synthesis/skill-context-relationships.md"
+    ).read_text(encoding="utf-8")
+    assert "`skill-router`, `grill-with-docs`, `wayfinder`, `audit-codebase`, `repo-bootstrap`" in relationships
+    pack = pack_contract.parse_contract(
+        (ROOT / "docs/synthesis/skill-pack.md").read_text(encoding="utf-8")
+    )
+    audit_edge = next(
+        row for row in pack["relationships"] if row["relationship_id"] == "REL-093"
+    )
+    assert "context-write authority" in audit_edge["input_packet"]
+    assert "separate ADR approval" in audit_edge["input_packet"]
 
 
 def test_instantiated_domain_helper_preserves_routing_and_ownership() -> None:
@@ -1811,6 +1863,8 @@ def test_audit_codebase_is_thorough_incremental_html_atlas() -> None:
     assert "helper derives the linked Analyze pickup" in candidate
     assert "conditional To Tickets authority" in candidate
     assert "`schema --objective close --completion-route <route>`" in candidate
+    assert "Return proposed context wording unless context writing is separately authorized" in normalized_followup
+    assert "ADR recording needs separate approval" in normalized_followup
 
     contract = pack_contract.parse_contract(
         (ROOT / "docs/synthesis/skill-pack.md").read_text(encoding="utf-8")

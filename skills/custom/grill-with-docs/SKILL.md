@@ -12,16 +12,13 @@ or the concrete blocker that prevents either result.
 1. **Admit.** Accept a direct-user request or a caller packet that preserves the
    current user as decision owner and supplies the return owner when the
    decision needs both components. Align their bounded subject and Source
-   Trace. Default the context action to `render only` unless the user separately
-   authorizes persistence;
-   default the ADR action to `offer only` unless the user separately approves an
-   identified candidate.
+   Trace. Domain Modeling returns proposed wording unless the user separately
+   authorizes context persistence. ADR recording needs separate approval for an
+   identified, already-settled candidate.
 
-   Before Grilling asks its first question, state the effective context action
-   and separate ADR approval gate. If the request needs only one component,
-   name that narrower owner and stop without invoking it. A missing or
-   contradictory requirement returns to its owner before either component
-   starts.
+   If the request needs only one component, name that narrower owner and stop
+   without invoking it. A missing or contradictory requirement returns to its
+   owner before either component starts.
 
 2. **Compose.** Run one `$grilling` session with `$domain-modeling` active.
    Relay each settled material answer to Domain Modeling and every returned

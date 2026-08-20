@@ -1,17 +1,15 @@
-# Domain Context Format
+# Domain context format
 
-Follow the repository's routed domain-document format. When no format exists,
-use the fallbacks below for settled, context-scoped language, behavior,
-invariants, responsibilities, and relationships. Keep unresolved meaning in the
-Domain Delta.
+Follow the repository's routed format. Use these fallbacks only when no format
+exists and a non-obvious durable distinction would likely be misapplied without
+a record.
 
-A routed context record owns the current semantic contract for its bounded
-context. It does not own executable procedures or algorithm specifications,
-commands, mutable work state, implementation inventories, change history, or
-decision rationale. It may own a settled domain rule an algorithm must preserve.
-Route foreign material to its current owner.
+A context record owns current semantic meaning, defining behavior, invariants,
+responsibility, and material relationships. It does not own executable
+procedure, algorithm specifications, commands, mutable work state,
+implementation inventories, change history, or decision rationale.
 
-## Single-Context Fallback
+## Single-context fallback
 
 Use root `CONTEXT.md`:
 
@@ -24,20 +22,20 @@ Use root `CONTEXT.md`:
 
 ### <Canonical term>
 
-<Precise project meaning, behavior, and boundary.>
+<Project-specific meaning, defining behavior, and boundary.>
 
 _Avoid_: <ambiguous or rejected synonym>
 
 ## Invariants
 
-- <Settled rule owned by this context.>
+- <Settled rule that remains true across implementation changes.>
 ```
 
-Omit `## Invariants` when no settled load-bearing rule needs durable capture.
+Omit empty sections.
 
-## Multi-Context Fallback
+## Multi-context fallback
 
-Use root `CONTEXT-MAP.md` to route each context's record:
+Use root `CONTEXT-MAP.md` to route each context record:
 
 ```md
 # Context Map
@@ -50,68 +48,29 @@ Use root `CONTEXT-MAP.md` to route each context's record:
 
 ### <Context A> <-> <Context B>
 
-Interaction: <A -> B | B -> A | bidirectional | none>
-Responsibilities: <what each context owns>
-Contract: <what crosses the boundary>
-Language: <owner, reference, or explicit translation>
-Authority: <controlling owner, or joint owners and change rule>
-Pattern: <recognized DDD pattern when one fits>
+<Direction, responsibility, crossing contract, language translation, or change
+authority needed to keep the boundary unambiguous.>
 ```
 
-`Pattern` is optional. Recognized Context Mapping patterns are:
+Name a recognized DDD Context Mapping pattern only when the repository already
+uses one or the label clarifies ownership or translation. Never force a pattern.
+Translation into a distinct local model is an Anticorruption Layer, not
+Conformist. A versioned or published schema alone does not establish an
+Open-host Service.
 
-- **Partnership:** contexts coordinate evolution and share success or failure.
-- **Shared Kernel:** contexts share an explicitly bounded model subset under
-  joint change control.
-- **Customer/Supplier Development:** downstream priorities influence the
-  upstream provider's plan.
-- **Conformist:** downstream adopts the upstream model without influence over
-  it.
-- **Anticorruption Layer:** a translation boundary protects one model from
-  another.
-- **Open-host Service:** an upstream context exposes a broadly usable
-  integration protocol.
-- **Published Language:** contexts share a documented interchange language.
-- **Separate Ways:** contexts deliberately integrate nothing.
-- **Big Ball of Mud:** a boundary contains an incoherent model instead of
-  pretending it is well-structured.
+## Representation rules
 
-Patterns may combine when each relationship is true. `Translation` belongs in
-the language mapping; it is not itself a Context Mapping pattern. Omit `Pattern`
-rather than force a false label.
+- Reconcile with routed current records. Revise or remove covered or conflicting
+  material rather than append a parallel definition.
+- Record only settled project-specific meaning and implementation-stable domain
+  behavior, invariants, ownership, boundaries, or relationships.
+- Use one canonical term inside a context. Preserve independent meanings across
+  contexts unless an explicit relationship or Shared Kernel joins them.
+- Define the local term and translation when contexts use different language.
+- Keep generic technical vocabulary, ordinary words, implementation layout,
+  procedures, rationale, and code indexes out.
+- Add subheadings only when natural groups emerge.
 
-Select patterns from model behavior, not organizational influence alone:
-
-- Use **Conformist** only when downstream adopts the upstream model as its own.
-  A boundary that translates into a distinct local model is an **Anticorruption
-  Layer**, not Conformist for that interaction.
-- Use **Open-host Service** only when upstream intentionally exposes a general
-  protocol for multiple consumers. A versioned or published schema alone does
-  not establish it.
-
-## Representation Rules
-
-- Before adding material, compare it with routed current records. Leave one
-  coherent current statement by revising or removing covered or conflicting
-  material in the same authorized delta.
-- Record only settled canonical meaning, ownership, material conflicts, and
-  decision authority.
-- Admit a term only when its project-specific meaning changes how the model is
-  understood. Admit an invariant only when it distinguishes valid from invalid
-  domain behavior or responsibility across implementation changes.
-- Define domain behavior and boundaries independently of implementation.
-- Use one canonical term inside its context; list rejected synonyms under
-  `_Avoid_`.
-- Keep generic technical vocabulary, ordinary words without context-specific
-  meaning, and code indexes out.
-- Within one context, its local model owns canonical meaning. Across contexts,
-  preserve independent meanings unless an explicit relationship contract or
-  Shared Kernel says otherwise.
-- Define each local term and mapping when contexts translate.
-- Repeat definitions only for a genuine Shared Kernel with explicit joint
-  control.
-- Add language subheadings only when natural groups emerge.
-
-Rendered output names the target, insertion or replacement scope, complete
-wording, affected relationships, and ordering dependency. Unclear meaning,
-ownership, relationship, or authority stays unresolved in the Domain Delta.
+Rendered output includes only the target, replacement or insertion scope,
+wording, and relationship or ordering effect needed to apply the material
+delta. Unclear meaning or authority remains an unresolved question.

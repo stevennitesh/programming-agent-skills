@@ -10,7 +10,7 @@ Current invocation evidence is recorded in
 [`2026-07-22-grill-with-docs-implicit-invocation-eval.md`](../../validation/skills/grill-with-docs/evals/EV-grill-with-docs-implicit-invocation-eval-20260722-01/evidence/2026-07-22-grill-with-docs-implicit-invocation-eval.md);
 historical promotion evidence does not prove the later wording changes.
 Canonical tree SHA-256 is
-`454925e601a121f62d0a700e5a52f58edcc1700c9b7cf9e4c34a219c4e84320e`;
+`73f6f891f2f4d898f5df392c6389d2cd4d3c28a1ba069d3a6d4b0773a86a804d`;
 installed parity and fresh wording-efficacy proof are not claimed.
 
 Runtime authority currently remains in:
@@ -23,11 +23,12 @@ Runtime authority currently remains in:
 
 The sibling [Grilling Decision-Frontier Synthesis](grilling.md) and [Domain Modeling Durable-Truth Synthesis](domain-modeling.md) own component behavior. This synthesis owns only their composition.
 
-Current reconciliation: Pack composition revision 14 keeps the separate
-composer and its three actions. It retains pre-question authority, ordered
-Relay, opaque Domain Delta transport, and domain-blocker precedence. It removes
-the four-status combined packet and returns only the current component results
-or the concrete owner-preserving blocker.
+Current reconciliation: Pack composition revision 15 keeps the separate
+composer and its three actions. It retains ordered Relay, opaque Domain Delta
+transport, domain-blocker precedence, optional context-write authority, and
+separate ADR approval. It removes the four-status combined packet and universal
+authority preamble, returning only current component results or the concrete
+owner-preserving blocker.
 
 ## How To Read The Historical Record
 

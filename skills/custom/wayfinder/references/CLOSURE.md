@@ -14,11 +14,11 @@ Otherwise do not load it.
    Exhausted allowance returns the approval blocker. Never close an empty but
    unsupported graph.
 3. **Durability.** For an unaccounted durable-language or ADR consequence,
-   invoke `$domain-modeling` once. Use `persist authorized` only with exact
-   domain-write authority, `render only` otherwise, and `offer only` without
-   separate ADR approval. Missing write or ADR authority selects those
-   non-mutating modes; it is not itself a blocker. A separately material
-   blocker leaves the map open.
+   invoke `$domain-modeling` once. It returns proposed wording unless exact
+   domain-write authority permits persistence. ADR recording still needs
+   separate approval for an identified, already-settled candidate. Missing
+   write or ADR authority selects the non-mutating result; it is not itself a
+   blocker. A separately material blocker leaves the map open.
 4. **Seal.** Build [MAP-FORMAT.md](../MAP-FORMAT.md#closing-packet)'s closing
    packet. Run the Mutation Gate with the map claim, refresh every Gather field, and stop on
    semantic drift. Otherwise post the packet, close as `delivered`, then read

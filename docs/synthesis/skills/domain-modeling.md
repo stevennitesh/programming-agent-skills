@@ -1,21 +1,34 @@
 # Domain Modeling Durable-Truth Synthesis
 
-Status: Prompt 5 complete. The accepted Domain Modeling package is canonical and globally installed; no experimental lifecycle entry remains.
+Historical status: Prompt 5 promoted the earlier package. Current executable
+authority is `skills/custom/domain-modeling/` at canonical tree SHA-256
+`d80c459f59330ebea87378fb89a72099bbad26696bfcd8403bf0285943d0d300`.
+Installed parity and fresh wording-efficacy proof are not claimed.
 
-Current relationship amendment: Wayfinder invokes Domain Modeling for one
-uncovered settled closing consequence, while Audit Codebase recommends it and
-stops for user-selected settled capture. Grill With Docs remains the sole
-composer for unresolved direct-user decisions. The Domain Modeling package is
-unchanged; no new installation or wording-efficacy claim is made.
+## Current runtime reconciliation
+
+Pack composition revision 15 uses five actions: Ground, Clarify, Settle,
+Capture, and Return. It keeps meaning authority, code-as-evidence, bounded
+context ownership, current-record reconciliation, explicit context-write
+authority, separate ADR approval, read-back, safe dependency-ordered writes,
+and exact partial state.
+
+Direct use returns plain resolved wording, one exact unresolved question, a
+no-change result, or verified changed paths. Grill With Docs remains the sole
+composer and receives the authoritative cumulative Domain Delta after each
+settled material answer. Domain Modeling neither chooses code shape nor starts
+downstream work.
+
+The runtime no longer exposes universal semantic and persistence statuses, a
+fixed Return packet, mandatory relationship fields, or the full Context Mapping
+catalog. Context and ADR references load only when their branch is active.
 
 Before Prompt 3, the canonical and experimental Domain Modeling packages were byte-identical. Prompt 3 replaced the stale lifecycle copy; Prompt 4 repaired direct-user meaning authority and false Context Mapping labels, froze pre-prune package `cfea0f22106e4a8ec231912afadd09ca717189dcb4b53eadb6ec19bdde44c6e0`, and accepted pruned candidate `88413f471ffcedccdf8b4b3a162a3068334c7befbcd28801165add6d29e8941b`. Prompt 5 promoted those exact bytes to `skills/custom/domain-modeling/`; accepted behavioral evidence was reused because no candidate byte or claim changed.
 
-This synthesis has four roles:
-
-1. **Baseline** identifies the smallest credible control.
-2. **Normative Design** owns the selected future behavior.
-3. **Admission And Decision Ledgers** preserve why each delta exists.
-4. **Extraction And Proof** makes Prompt 3 mechanical without claiming behavioral proof.
+The remaining baseline, design, ledgers, and extraction record explain the
+earlier promotion. They are historical, not current instructions. When they
+conflict with the executable package or current reconciliation above, the
+current sources control.
 
 ## Baseline
 
@@ -33,7 +46,7 @@ The checked-out Superpowers baseline at `d884ae04edebef577e82ff7c4e143debd0bbec9
 
 The upstream package is a design control, not local runtime authority. Local additions must cure a demonstrated baseline failure, satisfy an accepted caller contract, or preserve a non-intuitive safety boundary.
 
-# Normative Design
+# Historical normative design
 
 ## Outcome And Admission
 

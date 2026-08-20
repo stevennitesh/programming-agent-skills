@@ -115,6 +115,10 @@ Revision 26 materializes machine contract revision 14 by rewriting Grilling as
 one four-action conversation, returning source-readiness admission to To Spec,
 and reducing Grill With Docs to Relay, blocker precedence, and intact component
 return. Terminal owner routing remains conditionally loaded.
+Revision 27 materializes machine contract revision 15 by rewriting Domain
+Modeling as five direct actions, removing its universal status packet, and
+retaining meaning authority, reconciliation, conditional capture, separate ADR
+approval, cumulative composed deltas, and verified partial-write handling.
 It binds the complete fingerprinted pre-discovery fixed point, then freezes the
 tested environment, finite research order, capability
 owners, roles, relationships, exclusions, resolved collisions, acceptance
@@ -155,10 +159,10 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       ],
       "allowed_contributor_skill_ids": [],
       "capability_id": "CAP-002",
-      "completion_return": "The current cumulative Domain Delta and any separate ADR decision gate",
+      "completion_return": "A settled distinction, exact unresolved question, verified changed paths, or the caller-required cumulative Domain Delta",
       "disposition": "selected",
       "entry_conditions": [
-        "Domain meaning or an ADR-worthy decision needs focused clarification or capture"
+        "Project-specific domain meaning needs resolution or capture, or an already-settled decision needs ADR assessment or approved recording"
       ],
       "essential": true,
       "exclusions": [
@@ -166,11 +170,11 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Unbounded foreign procedure loading",
         "Automated semantic acceptance"
       ],
-      "observable_outcome": "Clarify and persist context-scoped domain language, invariants, relationships, and approved durable decisions",
+      "observable_outcome": "Resolve or capture one bounded domain distinction in its owning record",
       "primary_owner_skill_id": "SK-002",
-      "proof_class": "fresh behavioral proof plus structural identity and boundary proof",
+      "proof_class": "proportionate structural, boundary, or consumer proof; fresh behavioral proof only when the user requests it",
       "required_authority_mutation": [
-        "Domain vocabulary, invariants, relationship records, and ADR assessment"
+        "Domain meaning, conditional context persistence, cumulative composed deltas, and approved ADR recording"
       ]
     },
     {
@@ -734,7 +738,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "scenario_id": "PS-001"
       },
       {
-        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for domain-modeling: Clarify and persist context-scoped domain language, invariants, relationships, and approved durable decisions",
+        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for domain-modeling: Resolve or capture one bounded project-specific domain distinction in its owning record",
         "expected_owner_skill_id": "SK-002",
         "scenario_id": "PS-002"
       },
@@ -1020,7 +1024,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       }
     ],
     "composition_epoch_id": "FCE-20260727-01",
-    "contract_revision": 14,
+    "contract_revision": 15,
     "epoch_lock": null,
     "exclusions": [
       "Per-skill H1 or candidate wording",
@@ -1066,7 +1070,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "github-issue-body:stevennitesh/programming-agent-skills#39#sha256-v1:f8115df444ab80f15fdb49610d96152cdff2edc12a5f03bb50efaba308a840a3",
       "github-issue-body:stevennitesh/programming-agent-skills#50#sha256-v1:21d89976101c1815c6e08f921d6045f97615bfdad8b3a3babc6ed40ca9d463bb",
       "git-commit:2710890325c51a2120656a8d1233d442f6454c1a",
-      "docs/synthesis/skill-context-relationships.md#sha256-v1:a0b863c82210d55091cb8b25ed7a05664da7238fc0e3d7faafb57415d7a7785f"
+      "docs/synthesis/skill-context-relationships.md#sha256-v1:dcf849b205733dd2bae7549d2faf24d6e6ac4ab34c6ebe1f3c6aa9b8ad141706"
     ],
     "status": "frozen"
   },
@@ -1494,7 +1498,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [
         "domain-modeling caller-facing interface and branch-required reference only"
       ],
-      "entry_condition": "Relay every settled material answer, return each collision or blocker to Grilling before dependent progress, and preserve Domain Modeling's authoritative current cumulative Domain Delta under the explicit context action and separate ADR gate.",
+      "entry_condition": "Relay every settled material answer, return each collision or blocker to Grilling before dependent progress, and preserve Domain Modeling's authoritative cumulative Domain Delta under explicit context-write authority and a separate ADR approval gate.",
       "failure_behavior": "Return the target's exact blocker and owner; preserve the caller-owned resumption boundary",
       "input_packet": "Caller-owned bounded Source Trace for grill-with-docs and the declared domain-modeling input",
       "ordering_impact": "callee-before-caller",
@@ -1503,7 +1507,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "PROOF-REL-005"
       ],
       "resume_owner_skill_id": "SK-020",
-      "return_packet": "The declared domain-modeling Return packet plus evidence, limits, and residual state",
+      "return_packet": "The current cumulative Domain Delta with only material consequences, collisions, and write evidence",
       "target_skill_id": "SK-002",
       "verb": "Compose",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
@@ -2261,7 +2265,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-025",
       "combined_exit_owner_skill_id": "SK-025",
       "context_loaded": [],
-      "entry_condition": "The situation satisfies domain meaning or an ADR-worthy decision needs focused clarification or capture; return that route and leave it unstarted.",
+      "entry_condition": "The situation requires project-specific semantic resolution or capture, or an already-settled ADR candidate needs assessment or approved recording; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
       "input_packet": "Caller-owned bounded Source Trace for skill-router and the declared domain-modeling input",
       "ordering_impact": "callee-before-caller",
@@ -2990,16 +2994,16 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [
         "domain-modeling caller-facing interface and branch-required reference only"
       ],
-      "entry_condition": "A settled closing decision changes durable domain language or warrants ADR assessment, and no current Domain Delta accounts for it.",
+      "entry_condition": "A settled closing decision changes durable domain truth or yields an already-settled ADR candidate, and no current Domain Delta accounts for it.",
       "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
-      "input_packet": "Settled Wayfinder decision, return owner, explicit context action, separate ADR action, and declared domain-modeling input",
+      "input_packet": "Settled Wayfinder decision, return owner, context-write authority, separate ADR approval, and declared domain-modeling input",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-086",
       "required_proof_ids": [
         "PROOF-REL-086"
       ],
       "resume_owner_skill_id": "SK-021",
-      "return_packet": "The declared domain-modeling Return packet plus evidence, limits, and residual state",
+      "return_packet": "The complete Domain Delta or exact unresolved question with verified write state when applicable",
       "target_skill_id": "SK-002",
       "verb": "Invoke",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
@@ -3019,7 +3023,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       ],
       "entry_condition": "One HITL decision ticket or Chart bound needs a user decision while durable domain capture remains active.",
       "failure_behavior": "Return the target's intact decision, gap, Domain Delta, or exact blocker for Wayfinder classification",
-      "input_packet": "Wayfinder ticket or Chart bound, current user as decision owner, return owner, identifiers, Source Trace, context action, and separate ADR action",
+      "input_packet": "Wayfinder ticket or Chart bound, current user as decision owner, return owner, identifiers, Source Trace, and any supplied context-write authority or separate ADR approval",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-087",
       "required_proof_ids": [
@@ -3029,7 +3033,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "return_packet": "The intact Grilling packet plus current cumulative Domain Delta",
       "target_skill_id": "SK-020",
       "verb": "Invoke",
-      "wrong_condition": "The decision has no durable domain consequence, does not belong to the current user, or the caller packet lacks a return owner or locked context and ADR actions"
+      "wrong_condition": "The decision has no durable domain consequence, does not belong to the current user, the caller packet lacks a return owner, or supplied write or ADR authority is contradictory"
     },
     {
       "affected_capability_ids": [
@@ -3173,7 +3177,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [],
       "entry_condition": "One analyzed candidate has settled domain language, Invariants, Bounded Contexts, Context Relationships, or an ADR candidate requiring durable capture or assessment.",
       "failure_behavior": "Return the recommendation without invoking the target; preserve the candidate and report for user-selected continuation",
-      "input_packet": "Durable audit report, candidate identity, settled domain consequence and authority, context action, ADR action, and exact Analyze re-entry",
+      "input_packet": "Durable audit report, candidate identity, settled domain consequence and authority, context-write authority, separate ADR approval, and exact Analyze re-entry",
       "ordering_impact": "none",
       "relationship_id": "REL-093",
       "required_proof_ids": [
@@ -3483,24 +3487,24 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "PS-002"
       ],
       "canonical_name": "domain-modeling",
-      "completion_condition": "The requested domain delta is current and every residual is explicit",
+      "completion_condition": "The bounded distinction is settled or returned as one exact question, every authorized write is verified or has exact partial state, and no downstream work starts",
       "contract_order": 2,
-      "essential_outcome": "Clarify and persist context-scoped domain language, invariants, relationships, and approved durable decisions",
+      "essential_outcome": "Resolve or capture one bounded project-specific domain distinction in its owning record",
       "failure_return": "Return the unresolved domain question or missing decision authority",
       "invocation_mode": "implicit",
       "load_budget_class": "conditional-leaf",
       "negative_exclusion_predicates": [
-        "The request does not satisfy: Domain meaning or an ADR-worthy decision needs focused clarification or capture",
+        "The request does not satisfy: project-specific domain meaning needs resolution or capture, or an already-settled ADR candidate needs assessment or approved recording",
         "Another selected skill owns the requested outcome",
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
       "owned_authority_mutation_surfaces": [
-        "Domain vocabulary, invariants, relationship records, and ADR assessment"
+        "Domain meaning, conditional context persistence, cumulative composed deltas, and approved ADR recording"
       ],
       "owned_capability_ids": [
         "CAP-002"
       ],
-      "positive_entry_predicate": "Domain meaning or an ADR-worthy decision needs focused clarification or capture",
+      "positive_entry_predicate": "Project-specific domain meaning needs resolution or capture, or an already-settled ADR candidate needs assessment or approved recording",
       "primary_role": "leaf",
       "prohibited_ownership": [
         "Another selected skill's semantic decision, local mutation, proof judgment, Return, or completion",
@@ -3508,8 +3512,8 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Pack integration acceptance, epoch Lock, cleanup, installation, or Git delivery unless explicitly owned"
       ],
       "relationship_ids": [],
-      "required_input": "A bounded caller-owned Source Trace and authority for: Clarify and persist context-scoped domain language, invariants, relationships, and approved durable decisions",
-      "return_packet": "The current cumulative Domain Delta and any separate ADR decision gate",
+      "required_input": "One bounded domain distinction, relevant routed truth and evidence, meaning authority, and any separate context-write or ADR authority",
+      "return_packet": "A settled distinction, exact unresolved question, verified changed paths, or the caller-required cumulative Domain Delta",
       "skill_id": "SK-002"
     },
     {

@@ -26,40 +26,30 @@ def test_promoted_domain_modeling_preserves_compact_ddd_contract() -> None:
 
     for contract in (
         "Model, don't catalog.",
-        "Trace -> Challenge -> Resolve -> (Persist -> Verify | Render) -> Return",
-        "language collisions",
-        "model boundaries",
-        "contradictions",
-        "evidence settles source facts",
-        "the direct user unless a source names another authority",
-        "Direct use may ask focused questions",
-        "Bounded contexts follow model, language, responsibility, and consistency boundaries",
-        "Create the first record only for an authorized settled resolution",
-        "`persist authorized`",
-        "`render only`",
-        "return the accepted topology and exact setup requirement",
-        "preserve verified changes",
-        "Domain Delta",
+        "## 1. Ground",
+        "## 2. Clarify",
+        "## 3. Settle",
+        "## 4. Capture",
+        "## 5. Return",
+        "They do not settle intended meaning",
+        "scenario only when its answer could change the model",
+        "explicit persistence request or exact caller authority",
+        "ADR recording always needs separate approval",
+        "every verified intermediate state retains readable current truth",
+        "Reread every attempted target",
+        "return each unapplied consequence to its owner",
+        "authoritative cumulative Domain Delta",
         "$grill-with-docs",
-        "Semantic outcome: no-change | resolved | partial | unresolved",
-        "Persistence outcome: complete | partial | failed | not-applicable",
-        "Return every other consequence or residual to its owner and stop",
+        "Do not mutate foreign-owner consequences",
     ):
         assert contract in skill_flat
 
     for contract in (
         "## Invariants",
-        "Authority:",
-        "Language: <owner, reference, or explicit translation>",
-        "Partnership",
-        "Customer/Supplier Development",
-        "Anticorruption Layer",
-        "Published Language",
-        "Separate Ways",
-        "Big Ball of Mud",
-        "it is not itself a Context Mapping pattern",
-        "A boundary that translates into a distinct local model is an **Anticorruption Layer**, not Conformist",
-        "A versioned or published schema alone does not establish it",
+        "non-obvious durable distinction",
+        "Never force a pattern",
+        "Preserve independent meanings across contexts",
+        "Revise or remove covered or conflicting material",
     ):
         assert contract in context_format_flat
 
@@ -73,12 +63,14 @@ def test_promoted_domain_modeling_preserves_compact_ddd_contract() -> None:
         assert contract in adr_format_flat
 
     for rejected in (
-        "Trace -> Challenge -> Resolve -> Reconcile",
-        "Overload, Alias, Leakage, Boundary, and Contradiction",
-        "$skill-router",
-        "Domain subject and source:",
+        "Semantic outcome:",
+        "Persistence outcome:",
+        "persist authorized",
+        "render only",
+        "offer only",
+        "Big Ball of Mud",
     ):
-        assert rejected not in skill
+        assert rejected not in skill and rejected not in context_format
 
     assert {
         path.relative_to(skill_dir).as_posix()
@@ -126,10 +118,10 @@ def test_promoted_grilling_and_domain_modeling_preserve_composer_inputs() -> Non
         assert contract in grill_docs_plain
 
     for contract in (
-        "accept every settled material answer",
+        "accept each settled material answer",
+        "authoritative cumulative Domain Delta after every settled material answer",
         "including one with no durable consequence",
-        "Return the authoritative cumulative Domain Delta and any collision before dependent questioning continues",
-        "never choose interview materiality or branching",
+        "does not choose interview materiality",
     ):
         assert contract in domain_flat
 

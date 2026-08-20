@@ -97,12 +97,13 @@ that needs dedicated investigation to `$diagnosing-bugs`.
 | Situation | Route |
 | --- | --- |
 | Decide the architecture of one bounded module or interface | `$codebase-design` |
-| Resolve domain terms, context boundaries, or ADR-worthy decisions | `$domain-modeling` |
+| Resolve or capture domain terms, invariants, context boundaries, or relationships; assess or record an already-settled ADR candidate | `$domain-modeling` |
 | Create, edit, or audit instructions agents consume | `$writing-for-agents` |
 
-`$domain-modeling` and `$codebase-design` are shared disciplines. Route to them
-when domain meaning or one unresolved architecture choice is the work;
-otherwise let the owning workflow proceed directly.
+`$domain-modeling` and `$codebase-design` are shared disciplines. Route
+unresolved code shape, interfaces, or module ownership to Codebase Design;
+route project-specific semantic truth or an already-settled ADR candidate to
+Domain Modeling. Otherwise let the owning workflow proceed directly.
 
 **Handoff / compact:** `$handoff` starts a fresh same-root context; `/compact`
 continues the current conversation.

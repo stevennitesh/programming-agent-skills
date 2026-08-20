@@ -1,122 +1,96 @@
 ---
 name: domain-modeling
-description: Model and persist a project's context-scoped ubiquitous language, invariants, bounded contexts, relationships, and approved durable decisions. Use when domain meaning needs focused clarification or capture, including delegated capture, or an already-settled decision needs ADR assessment; exclude ordinary vocabulary lookup and general design debate.
+description: Resolve or capture project-specific domain meaning, invariants, bounded contexts, relationships, or an already-settled ADR candidate. Exclude vocabulary lookup, code-structure design, and unresolved product or architecture decisions.
 ---
 
 # Domain Modeling
 
-Keep the project's domain model coherent and return one complete Domain Delta.
+Settle one bounded domain distinction and keep its owning record current when
+durable capture is warranted and authorized.
 
-**Model, don't catalog.** Capture meaning, behavior, invariants, responsibility,
-and relationships. Omit generic technical vocabulary, code indexes, and
-boundaries inferred only from implementation layout.
+**Model, don't catalog.** Capture project-specific meaning, defining behavior,
+invariants, responsibility, and relationships. Leave generic technical terms,
+code indexes, procedures, and code-shape decisions with their owners.
 
-## Authority
+## 1. Ground
 
-Lock three independent authorities:
+Identify the bounded distinction, relevant routed domain records and ADRs,
+load-bearing evidence, meaning authority, caller, and return owner. Follow the
+repository's configured domain route. Without one, use an existing root
+`CONTEXT-MAP.md`, then root `CONTEXT.md` as the fallback. A missing record is not
+a setup gap; create the first one only for an authorized settled distinction.
 
-- **Meaning:** evidence settles source facts; the direct user unless a source
-  names another authority, or the caller's named domain authority, settles
-  intended meaning. Direct use may ask focused questions about terms,
-  invariants, bounded contexts, and relationships. Under `$grill-with-docs`,
-  Grilling asks and relays settled answers. A caller-invoked pass returns
-  unresolved choices to its caller.
-- **Context:** use `persist authorized` only after an explicit persistence
-  request or exact caller mode; otherwise use `render only`.
-- **ADR:** use `offer only` unless one identified, already-settled candidate has
-  explicit recording approval. The originating workflow owns the decision.
+Code, tests, contracts, runtime behavior, and widespread usage show how the
+system works. They do not settle intended meaning. Bounded contexts follow
+meaning, language, responsibility, and consistency, not directories or
+services. If the correct route itself must change, return that requirement to
+`$repo-bootstrap` and stop before writing.
 
-Mutate only routed domain records and approved ADRs. Return every other
-consequence or residual to its owner and stop.
+## 2. Clarify
 
-## Runtime
+Call out conflicting definitions and sharpen vague or overloaded terms. Use a
+concrete normal, edge, failure, inclusion, or exclusion scenario only when its
+answer could change the model.
 
-```text
-Trace -> Challenge -> Resolve -> (Persist -> Verify | Render) -> Return
-```
+The direct user or named domain authority settles intended meaning. Direct use
+may ask that owner one focused question. Under `$grill-with-docs`, accept each
+settled material answer and return any collision before dependent questioning
+continues. Other callers retain unresolved choices.
 
-1. **Trace.** Trace the bounded subject, repository instructions and domain
-   routing, relevant domain records and ADRs, load-bearing evidence,
-   authorities, caller, and return owner. Follow the repository's configured
-   domain-document route. Without one, an existing root `CONTEXT-MAP.md` selects
-   multiple contexts; otherwise root `CONTEXT.md` is the fallback. Create the
-   first record only for an authorized settled resolution.
+## 3. Settle
 
-   Treat code, tests, contracts, runtime behavior, and widespread usage as
-   evidence about implementation, not authority over intended meaning. Bounded
-   contexts follow model, language, responsibility, and consistency
-   boundaries—not directories, packages, services, or repository size. When
-   managed routing must change, return the accepted topology and exact setup
-   requirement; resume only in a later invocation after setup read-back agrees.
+Resolve the canonical term or decision, defining behavior, owning context,
+evidence, and authority. Add an alias, invariant, boundary, relationship, or
+consequence only when it changes the model. When implementation and intended
+meaning disagree, let the meaning authority classify an implementation defect,
+model correction, or intentional migration.
 
-2. **Challenge.** Test material uncertainty for **language collisions**
-   (overload, aliases, implementation leakage), **model boundaries**
-   (responsibility, invariants, relationship contract, language ownership,
-   change authority), and **contradictions** (records, evidence, decisions,
-   implementation). Use concrete normal, edge, failure, inclusion, and exclusion
-   scenarios only when they can change the model. Resolve each material
-   collision or return its exact blocker and owner.
+For a context relationship, record only the responsibility, crossing contract,
+language translation, or change authority whose omission would make the
+boundary ambiguous. Code-shape consequences return to the design or
+implementation owner.
 
-3. **Resolve.** Settle the canonical term or decision,
-   implementation-independent meaning, owning context, load-bearing sources, and
-   decision authority. Add aliases, invariants, boundaries, relationships,
-   conflicts, and consequences only when material. When implementation and
-   proposed meaning differ, keep the change unresolved until the meaning
-   authority classifies an implementation defect, model correction, or
-   intentional migration.
+Reconcile with routed current records before adding text. Prefer no change,
+replacement, merge, relocation, or removal over a second current statement.
+Keep procedure, commands, mutable state, implementation inventories, and
+decision rationale with their owners.
 
-   For each context relationship, settle interaction direction,
-   responsibilities, contract, language ownership, and change authority. Apply a
-   DDD Context Mapping pattern only when it fits; exact representation and the
-   optional recognized patterns live in
-   [CONTEXT-FORMAT.md](./CONTEXT-FORMAT.md).
+## 4. Capture
 
-   Reconcile proposed material with routed current records before adding it.
-   Leave one coherent current model: revise or remove existing material when it
-   already covers or conflicts with the proposal, and add only a settled
-   distinction current records cannot express. Keep procedure, commands,
-   mutable state, implementation inventories, and decision rationale with their
-   owners.
+Capture only a non-obvious durable distinction that future work would likely
+misapply without a record. Otherwise return no change. For a material delta,
+return proposed wording by default and write only after an explicit persistence
+request or exact caller authority. Read
+[CONTEXT-FORMAT.md](./CONTEXT-FORMAT.md) only when a material context delta needs
+rendering or persistence. Read [ADR-FORMAT.md](./ADR-FORMAT.md) only for an
+already-settled candidate that may clear its worthiness test. ADR recording
+always needs separate approval for that identified candidate.
 
-4. **Persist -> Verify | Render.** Read [CONTEXT-FORMAT.md](./CONTEXT-FORMAT.md)
-   only to render or persist language, invariants, context maps, or
-   relationships. Read [ADR-FORMAT.md](./ADR-FORMAT.md) only for a plausible
-   already-settled ADR candidate.
+Before writing, refresh the route and targets and preflight the bounded change.
+Order dependent writes so every verified intermediate state retains readable
+current truth; make replacements readable before removing displaced material.
+Reread every attempted target, including one whose write reports failure, and
+classify it as verified changed, verified unchanged, or unknown. On the first
+failure, stop and report the exact per-target state. Do not mutate foreign-owner
+consequences; return each unapplied consequence to its owner with enough detail
+to resume.
 
-   For `persist authorized`, refresh routing and every target, preflight the
-   bounded set, and persist one coherent accepted delta. Remove or consolidate
-   displaced material in the same authorized records; return foreign-owner
-   consequences without mutating them. Reread each attempted and changed record.
-   On the first write or verification failure, preserve verified changes, stop
-   mutation, and return exact partial state. For `render only`, return directly
-   applicable wording, target, placement, and relationship effects without
-   writing.
+## 5. Return
 
-5. **Return.** Return the Domain Delta to the direct user, caller, or
-   `$grill-with-docs` and stop:
+Return the settled distinction, exact unresolved question, no-change result, or
+verified changed paths to the user or caller, then stop. Include authority,
+blockers, consequences, ADR outcome, and per-target state only when they affect
+the result.
 
-```text
-Semantic outcome: no-change | resolved | partial | unresolved
-Persistence outcome: complete | partial | failed | not-applicable
-Blockers and consequences:
-Return owner:
-```
-
-Add authority, resolved language, context boundaries, invariants, relationships,
-per-target state, caller identifiers, ADR outcomes, and continuation authority
-only when present or caller-required. Each blocker names its condition, owner,
-impact, and re-entry requirement. Keep a no-change result minimal.
-
-   Under `$grill-with-docs`, accept every settled material answer, including one
-   with no durable consequence. Return the authoritative cumulative Domain Delta
-   and any collision before dependent questioning continues; never choose
-   interview materiality or branching.
+Under `$grill-with-docs`, return the authoritative cumulative Domain Delta after
+every settled material answer, including one with no durable consequence. The
+delta carries only current domain consequences, collisions, and applicable
+write evidence. Domain Modeling does not choose interview materiality,
+branching, or downstream work.
 
 ## Completion
 
-Complete when Trace is current; every in-scope consequence is resolved,
-no-change, or an exact blocker; each intended target is verified, rendered, or
-returned with exact failure state; every plausible ADR candidate has an outcome;
-mutation stayed inside routed domain records and approved ADRs; the Domain Delta
-is complete; no in-scope parallel truth or displaced active material remains;
-and Return starts nothing.
+Complete when the bounded distinction is settled or returned to its owner as
+one exact question, every in-scope consequence is applied, no-change, or
+returned to its owner, every attempted write has exact state, and no downstream
+work has started.

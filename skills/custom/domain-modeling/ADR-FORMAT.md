@@ -1,72 +1,49 @@
-# ADR Format
+# ADR format
 
-Domain Modeling records approved ADRs; the originating product, domain,
-interface, architecture, or engineering owner settles the decision. Follow the
-repository's routed ADR convention, using the fallback below only when none
-exists.
-
-An ADR owns durable rationale, the chosen trade-off, and material consequences,
-including a hard-to-reverse algorithm choice when worthy. It does not own the
-current executable algorithm specification, procedure, commands, mutable state,
-or implementation inventory.
+Follow the repository's routed ADR convention. An ADR records durable rationale,
+the chosen trade-off, and material consequences. It does not own the current
+executable specification, procedure, commands, mutable state, or implementation
+inventory.
 
 ## Worthiness
 
 Offer an ADR only when all three are true:
 
-1. **Hard to reverse:** changing course later has meaningful cost.
-2. **Surprising without context:** a future reader would reasonably ask why.
-3. **Real trade-off:** genuine alternatives existed and one was chosen for
-   specific reasons.
+1. **Hard to reverse.** Changing course later has meaningful cost.
+2. **Surprising without context.** A future reader would reasonably ask why.
+3. **Real trade-off.** Genuine alternatives existed and one was chosen for a
+   specific reason.
 
-Ordinary terminology, reversible implementation detail, unresolved judgment, and
-decisions without a real alternative omit this branch.
+Ordinary terminology, reversible implementation details, unresolved decisions,
+and obvious choices do not need an ADR.
 
-## Approval
+## Approval and history
 
-Create an ADR only after explicit approval identifies the already-settled
-candidate. Context persistence does not grant ADR approval. Preserve an
-unapproved candidate as `offered`, `deferred`, or `declined` without writing.
+Record only an identified, already-settled candidate with separate explicit
+approval. Context-write authority does not grant ADR authority.
 
-## Fallback Location And Numbering
+Before creating one, inspect applicable ADRs for the same decision. Preserve a
+predecessor. The successor names what it replaces and what remains. Keep one
+current applicability statement on the predecessor naming all controlling
+successors and its exact remaining scope. It remains accepted only while that
+scope is nonempty; otherwise mark it superseded by the controlling successors.
+Update authorized current links in the same change.
 
-Use root `docs/adr/` for system-wide decisions. For a context-local decision,
-follow `CONTEXT-MAP.md` and use the `docs/adr/` directory beside that context's
-record.
+## Fallback
 
-Create the directory lazily. Scan the target directory for the highest number
-and create the next `NNNN-slug.md`; ambiguous or concurrent numbering returns a
-blocker instead of overwriting.
+When the repository has no convention, use root `docs/adr/` for system-wide
+decisions or the `docs/adr/` beside a routed context record for context-local
+decisions. Create the directory lazily. Scan that directory and use the next
+`NNNN-slug.md`; ambiguous or concurrent numbering is a blocker.
 
-Before numbering a new ADR, inspect applicable ADRs for the same
-decision. A successor names its predecessor and the exact scope it replaces,
-including retained bounded decisions. Mark the predecessor `superseded by
-ADR-NNNN` only when the successor replaces it as a whole; otherwise state the
-exact replaced and retained scope in the successor and update one predecessor
-applicability note with every partial successor and the scope that remains. The
-predecessor stays `accepted` only for that retained scope. Preserve the
-predecessor file as history. Update authorized current routes in the same
-change, and return every foreign route consequence to its owner.
-
-## Record
+Start with one short record:
 
 ```md
 # <Decision title>
 
-<Context: the pressure and constraints that made a decision necessary.>
-
-<Decision: what was chosen and why.>
+<What pressure or constraint mattered, what was chosen, and why.>
 ```
 
-Add only sections that preserve material information:
-
-- **Status:** `accepted`, `deprecated`, or `superseded by ADR-NNNN` when
-  lifecycle matters.
-- **Applicability:** all partial-successor links and the predecessor scope that
-  remains current, when partially replaced.
-- **Considered Options:** when rejected alternatives remain instructive.
-- **Consequences:** when non-obvious effects, obligations, or risks matter
-  downstream.
-
-Reread every created or changed ADR. Return the candidate, approval authority,
-path, outcome, and read-back state in the Domain Delta.
+Add status, applicability, rejected alternatives, or consequences only when
+they preserve non-obvious durable information or the repository requires them.
+Read back every created or changed ADR and return its path and actual state.
