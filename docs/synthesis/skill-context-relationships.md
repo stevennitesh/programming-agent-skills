@@ -204,7 +204,7 @@ Return.
 
 | Caller | Verb | Callee | Condition and return |
 | --- | --- | --- | --- |
-| `grill-with-docs` | Compose | `$grilling` | Run the one-decision-at-a-time frontier interview; preserve its readiness and terminal packet through the composer. |
+| `grill-with-docs` | Compose | `$grilling` | Run the one-decision-at-a-time interview; preserve its confirmed understanding or intact terminal gap through the composer. |
 | `grill-with-docs` | Compose | `$domain-modeling` | Relay every settled material answer, return each collision or blocker to Grilling before dependent progress, and preserve Domain Modeling's authoritative cumulative Domain Delta under the explicit context action and separate ADR gate. |
 | `grilling` | Recommend and stop | `$research` | Claim-owning sources can answer the evidence gap. |
 | `grilling` | Recommend and stop | `$prototype` | A design evidence gap needs a runnable verdict. |
@@ -326,7 +326,7 @@ every terminal result directly to its current caller or the user.
   Wayfinder may invoke it only from an exact user-approved durable-custody
   packet and then owns Waiting and answer reconciliation.
 - `domain-modeling` is the only skill that writes `CONTEXT.md`, `CONTEXT-MAP.md`, or approved ADR truth; `repo-bootstrap` configures and verifies routing before persistence across a required topology transition, and vocabulary consumers follow `docs/agents/domain.md`.
-- `to-spec` owns final source admission, parent spec synthesis, and tracker publication; Grilling may report conditional spec-source readiness but neither drafts nor publishes. `to-tickets` owns implementation issue slicing.
+- `to-spec` owns final source admission, parent spec synthesis, and tracker publication. Grilling confirms shared understanding but neither certifies source readiness nor drafts or publishes. `to-tickets` owns implementation issue slicing.
 - `wayfinder` owns finite foggy multi-session maps, ticket classification,
   frontier selection, claim lifecycle and takeover, resolver selection, Waiting
   and outcome reconciliation, consequence-only Maintain repairs, fog

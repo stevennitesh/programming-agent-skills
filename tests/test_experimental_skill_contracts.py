@@ -105,14 +105,11 @@ def test_promoted_grilling_and_domain_modeling_preserve_composer_inputs() -> Non
     domain_flat = " ".join(domain.split())
 
     for contract in (
-        "Maintain the decision frontier",
-        "Let blocked evidence pause only its dependent branches",
-        "Relay every settled material answer",
-        "pause dependent progress",
-        "domain collision or blocker returns",
-        "Grilling owns materiality, not domain consequences",
-        "Spec source: ready | not ready | not requested",
-        "Add caller identifiers when supplied",
+        "decision frontier",
+        "blocked branch pause only its dependents",
+        "trace real callers and existing constraints",
+        "Never repeat an unchanged question",
+        "Include caller identifiers only when supplied",
     ):
         assert contract in grilling_plain
 
@@ -123,9 +120,8 @@ def test_promoted_grilling_and_domain_modeling_preserve_composer_inputs() -> Non
     for contract in (
         "every returned collision or blocker to Grilling",
         "never merge or reinterpret it",
-        "Any material blocker in the current Domain Delta makes the "
-        "combined status `Blocked`",
-        "Composition blocker, owner, and re-entry condition",
+        "A material Domain Delta blocker prevents a confirmed combined result",
+        "return that blocker, its owner, and re-entry condition",
     ):
         assert contract in grill_docs_plain
 

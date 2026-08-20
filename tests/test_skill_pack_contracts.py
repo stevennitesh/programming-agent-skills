@@ -1279,24 +1279,34 @@ def test_grill_with_docs_package_and_relationship_contract() -> None:
     assert ("wayfinder", "Invoke", "to-questionnaire") in rows
     assert ("grilling", "Recommend and stop", "wayfinder") in rows
     assert ("grilling", "Recommend and stop", "to-spec") not in rows
-    assert "Status: Confirmed | Evidence gap | Route gap | Blocked" in grill_docs
-    assert "Preserve every `Evidence gap` or `Route gap` field exactly" in " ".join(
+    assert "Status: Confirmed" not in grill_docs
+    assert "current Grilling understanding or intact gap" in " ".join(
         grill_docs.split()
     )
     assert "declared return owner, or the user on direct invocation" in " ".join(
         grill_docs.split()
+    )
+    assert (
+        "either the confirmed understanding or intact gap plus the current "
+        "Domain Delta, or the concrete composition blocker"
+        in " ".join(grill_docs.split())
     )
     assert "When active `$wayfinder` is the return owner" in grilling_gap
     for contract in (
         "each settled material answer to Domain Modeling",
         "every returned collision or blocker to Grilling",
         "never merge or reinterpret it",
-        "Any material blocker in the current Domain Delta makes the "
-        "combined status `Blocked`",
-        "Composition blocker, owner, and re-entry condition",
-        "preserves its originating blocker and owner",
+        "A material Domain Delta blocker prevents a confirmed combined result",
+        "return that blocker, its owner, and re-entry condition",
+        "Preserve an originating Grilling gap and its owner",
     ):
         assert contract in " ".join(grill_docs.split())
+
+    grill_docs_synthesis = (
+        ROOT / "docs" / "synthesis" / "skills" / "grill-with-docs.md"
+    ).read_text(encoding="utf-8")
+    assert "They are historical, not current instructions" in grill_docs_synthesis
+    assert "# Layer Two: Historical Normative Design" in grill_docs_synthesis
 
 
 def test_domain_modeling_owns_durable_domain_truth() -> None:
@@ -1374,37 +1384,32 @@ def test_grilling_preserves_one_decision_confirmed_exit_and_evidence_routes() ->
     grilling_plain = " ".join(grilling.replace("**", "").split())
     gap_plain = " ".join(gap.split())
 
-    assert re.findall(r"(?m)^\*\*([A-Za-z ]+)\.\*\*", grilling) == [
+    assert re.findall(r"(?m)^## \d+\. ([A-Za-z ]+)$", grilling) == [
         "Bound",
+        "Learn",
         "Grill",
-        "Confirm",
-        "Gap",
-        "Return",
+        "Confirm and return",
     ]
     for contract in (
-        "Maintain the decision frontier",
+        "decision frontier",
         "highest-leverage decision",
-        "Let blocked evidence pause only its dependent branches",
-        "readiness as an exit test, never a question filter",
-        "an owned nonblocking deferral whose answer cannot change the parent commitment",
-        "Only when no frontier decision can advance",
-        "Relay every settled material answer",
-        "pause dependent progress",
-        "a repeated non-answer makes that decision authority unavailable",
-        "Transport: $handoff (uninvoked)",
-        "required result, and exact re-entry instruction",
-        "Spec source: ready | not ready | not requested",
-        "Downstream execution: none",
+        "blocked branch pause only its dependents",
+        "trace real callers and existing constraints",
+        "not material without a reachable consequence",
+        "Never repeat an unchanged question",
+        "explicit choice also confirms the understanding",
+        "Stop without selecting or starting downstream work",
     ):
         assert contract in grilling_plain
-    assert "[TERMINAL-GAP-ROUTING.md](references/TERMINAL-GAP-ROUTING.md)" in grilling
+    assert "(references/TERMINAL-GAP-ROUTING.md)" in grilling
     assert "Otherwise do not load it." in grilling_plain
     for contract in (
         "several interdependent unresolved decisions",
         "When active `$wayfinder` is the return owner",
         "recommend uninvoked `$wayfinder`",
         "Choose `$research` when claim-owning sources can answer",
-        "original decision owner without changing the gap identity",
+        "original decision owner",
+        "Preserve the gap identity across the detour",
         "preserve the evidence or decision owner",
         "add uninvoked `$handoff` only as transport",
         "Handoff neither answers nor owns the gap",
@@ -1413,6 +1418,10 @@ def test_grilling_preserves_one_decision_confirmed_exit_and_evidence_routes() ->
         assert contract not in grilling_plain
     assert "$to-spec" not in grilling
     assert "$to-spec" not in gap
+    assert "Spec source:" not in grilling
+    assert "Interview relentlessly" not in grilling
+    assert "Relay" not in grilling
+    assert "diagnosis-required" not in gap
 
 
 def test_prototype_preserves_lean_evidence_and_branch_gates() -> None:

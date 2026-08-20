@@ -111,6 +111,10 @@ Revision 25 materializes machine contract revision 13 by rewriting Handoff as
 one five-action local continuity note, reducing eight mandatory sections to four
 content groups, removing skill-routing and status-taxonomy fields, and retaining
 same-root admission, ignored-file protection, redaction, and state refresh.
+Revision 26 materializes machine contract revision 14 by rewriting Grilling as
+one four-action conversation, returning source-readiness admission to To Spec,
+and reducing Grill With Docs to Relay, blocker precedence, and intact component
+return. Terminal owner routing remains conditionally loaded.
 It binds the complete fingerprinted pre-discovery fixed point, then freezes the
 tested environment, finite research order, capability
 owners, roles, relationships, exclusions, resolved collisions, acceptance
@@ -295,7 +299,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       ],
       "allowed_contributor_skill_ids": [],
       "capability_id": "CAP-008",
-      "completion_return": "A confirmed decision packet with conditional spec-source readiness or one exact gap route",
+      "completion_return": "A confirmed bounded understanding or one exact gap route",
       "disposition": "selected",
       "entry_conditions": [
         "The current user owns one material decision that benefits from direct questioning"
@@ -308,9 +312,9 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       ],
       "observable_outcome": "Stress-test one bounded plan, decision, or idea conversationally until shared understanding is confirmed",
       "primary_owner_skill_id": "SK-008",
-      "proof_class": "fresh behavioral proof plus structural identity and boundary proof",
+      "proof_class": "proportionate structural, boundary, or consumer proof; fresh behavioral proof only when the user requests it",
       "required_authority_mutation": [
-        "Question frontier, contradiction pressure, conversation-only confirmation, and conditional spec-source readiness assessment"
+        "Question frontier, contradiction pressure, and conversation-only confirmation"
       ]
     },
     {
@@ -590,7 +594,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "SK-008"
       ],
       "capability_id": "CAP-020",
-      "completion_return": "A confirmed decision or intact Grilling gap, each with the current Domain Delta, or one owned composition blocker",
+      "completion_return": "A confirmed understanding or intact Grilling gap, each with the current Domain Delta, or one owned composition blocker",
       "disposition": "selected",
       "entry_conditions": [
         "One repo-backed decision needs both direct grilling and cumulative domain capture"
@@ -603,7 +607,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       ],
       "observable_outcome": "Stress-test one repo-backed decision while keeping durable domain language current",
       "primary_owner_skill_id": "SK-020",
-      "proof_class": "fresh behavioral proof plus structural identity and boundary proof",
+      "proof_class": "proportionate structural, boundary, or consumer proof; fresh behavioral proof only when the user requests it",
       "required_authority_mutation": [
         "Composition sequence, bidirectional Relay, cumulative Domain Delta, blocker precedence, and combined exit"
       ]
@@ -1016,7 +1020,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       }
     ],
     "composition_epoch_id": "FCE-20260727-01",
-    "contract_revision": 13,
+    "contract_revision": 14,
     "epoch_lock": null,
     "exclusions": [
       "Per-skill H1 or candidate wording",
@@ -1062,7 +1066,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "github-issue-body:stevennitesh/programming-agent-skills#39#sha256-v1:f8115df444ab80f15fdb49610d96152cdff2edc12a5f03bb50efaba308a840a3",
       "github-issue-body:stevennitesh/programming-agent-skills#50#sha256-v1:21d89976101c1815c6e08f921d6045f97615bfdad8b3a3babc6ed40ca9d463bb",
       "git-commit:2710890325c51a2120656a8d1233d442f6454c1a",
-      "docs/synthesis/skill-context-relationships.md#sha256-v1:845a8af206f9c48d942242076056a46d6c235e3515c03754d0a2f884f31f0275"
+      "docs/synthesis/skill-context-relationships.md#sha256-v1:a0b863c82210d55091cb8b25ed7a05664da7238fc0e3d7faafb57415d7a7785f"
     ],
     "status": "frozen"
   },
@@ -1526,7 +1530,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "PROOF-REL-006"
       ],
       "resume_owner_skill_id": "SK-020",
-      "return_packet": "The declared Grilling Return packet, including readiness or an intact Evidence or Route gap, preserved through the composer without reinterpretation",
+      "return_packet": "The confirmed Grilling understanding or intact Evidence or Route gap, preserved through the composer without reinterpretation",
       "target_skill_id": "SK-008",
       "verb": "Compose",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
@@ -3687,10 +3691,10 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "PS-008"
       ],
       "canonical_name": "grilling",
-      "completion_condition": "The bounded decision is confirmed with applicable readiness or one exact gap is exposed",
+      "completion_condition": "The bounded understanding is confirmed or one exact gap is exposed",
       "contract_order": 8,
       "essential_outcome": "Stress-test one bounded plan, decision, or idea conversationally until shared understanding is confirmed",
-      "failure_return": "Recommend one evidence owner and stop when conversation cannot settle the gap",
+      "failure_return": "Return one exact terminal gap and uninvoked owner when conversation cannot settle it",
       "invocation_mode": "implicit",
       "load_budget_class": "conditional-leaf",
       "negative_exclusion_predicates": [
@@ -3699,7 +3703,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
       "owned_authority_mutation_surfaces": [
-        "Question frontier, contradiction pressure, conversation-only confirmation, and conditional spec-source readiness assessment"
+        "Question frontier, contradiction pressure, and conversation-only confirmation"
       ],
       "owned_capability_ids": [
         "CAP-008"
@@ -3719,7 +3723,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "REL-094"
       ],
       "required_input": "A bounded caller-owned Source Trace and authority for: Stress-test one bounded plan, decision, or idea conversationally until shared understanding is confirmed",
-      "return_packet": "A confirmed decision packet with conditional spec-source readiness or one exact gap route",
+      "return_packet": "A confirmed bounded understanding or one exact gap route",
       "skill_id": "SK-008"
     },
     {
@@ -4171,7 +4175,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "REL-006"
       ],
       "required_input": "A bounded caller-owned Source Trace and authority for: Stress-test one repo-backed decision while keeping durable domain language current",
-      "return_packet": "A confirmed decision or intact Grilling gap plus current Domain Delta, or one composition blocker with its owner",
+      "return_packet": "A confirmed understanding or intact Grilling gap plus current Domain Delta, or one composition blocker with its owner",
       "skill_id": "SK-020"
     },
     {

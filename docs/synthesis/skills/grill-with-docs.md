@@ -10,7 +10,7 @@ Current invocation evidence is recorded in
 [`2026-07-22-grill-with-docs-implicit-invocation-eval.md`](../../validation/skills/grill-with-docs/evals/EV-grill-with-docs-implicit-invocation-eval-20260722-01/evidence/2026-07-22-grill-with-docs-implicit-invocation-eval.md);
 historical promotion evidence does not prove the later wording changes.
 Canonical tree SHA-256 is
-`f1ede795193cecefcc930573bfb35711574aab8eb762cd1395488c8905b6ad50`;
+`454925e601a121f62d0a700e5a52f58edcc1700c9b7cf9e4c34a219c4e84320e`;
 installed parity and fresh wording-efficacy proof are not claimed.
 
 Runtime authority currently remains in:
@@ -23,18 +23,22 @@ Runtime authority currently remains in:
 
 The sibling [Grilling Decision-Frontier Synthesis](grilling.md) and [Domain Modeling Durable-Truth Synthesis](domain-modeling.md) own component behavior. This synthesis owns only their composition.
 
-## How To Read This Document
+Current reconciliation: Pack composition revision 14 keeps the separate
+composer and its three actions. It retains pre-question authority, ordered
+Relay, opaque Domain Delta transport, and domain-blocker precedence. It removes
+the four-status combined packet and returns only the current component results
+or the concrete owner-preserving blocker.
 
-Consistent with [ADR-0007](../../adr/0007-synthesis-preserves-exhaustive-research-runtime-skills-compress.md):
+## How To Read The Historical Record
 
-1. **Orientation** states the selected future design.
-2. **Normative Design** is the sole authority for future runtime behavior.
-3. **Evidence And Decisions** preserves exhaustive research, admissions, rejections, and current-runtime comparison without creating rules.
-4. **Extraction And Proof** tells Deploy Prompt 3 where each admitted behavior belongs and how later prompts prove it.
+The remaining layers preserve the design and evidence that produced the earlier
+runtime. They are historical, not current instructions or extraction authority.
+When they conflict with the executable package or Current Runtime Reconciliation
+above, the current sources control. This preserves the record required by
+[ADR-0007](../../adr/0007-synthesis-preserves-exhaustive-research-runtime-skills-compress.md)
+without allowing its retired four-status packet to re-enter runtime.
 
-When another layer conflicts with Normative Design, correct the other layer. A confirmed decision enters runtime only through the destination named in the extraction map.
-
-# Layer One: Orientation
+# Layer One: Historical Orientation
 
 ## North Star
 
@@ -80,7 +84,7 @@ Admit -> Compose [Grill <-> Relay <-> Model] -> Return
 
 These are composer-local terms, not additions to the repository domain model.
 
-# Layer Two: Normative Design
+# Layer Two: Historical Normative Design
 
 ## Contract Map
 

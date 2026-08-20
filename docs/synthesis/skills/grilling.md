@@ -8,7 +8,7 @@ required result, and exact re-entry instruction. The current amendment also
 admits one approved caller-owned conversation while retaining the user's
 decision and confirmation authority. Canonical Grilling is current executable
 authority at tree SHA-256
-`52358ad6d736ea6230b5784a7cbb45cdcb7d3617addab0efd0a6b28cb7d8359f`.
+`eb789eb2ee3bf50a6e2e656d8d3e694d2a9dcc3aa51dc13507e7708234c3db58`.
 Installed parity is not claimed; later campaign-era exact-body and parity
 statements are historical.
 
@@ -20,11 +20,11 @@ only.
 
 ## Current Runtime Reconciliation
 
-The current lean Author pass keeps the five-part runtime and admits only a
-compact **decision frontier**: ask one highest-leverage unblocked material
-decision, recompute after each answer or fact, and let missing evidence pause
-only dependent branches. It does not adopt frontier batches, question counts,
-durable interview state, or another workflow stage.
+Pack composition revision 14 uses four actions: Bound, Learn, Grill, and
+Confirm and return. It keeps one highest-leverage decision at a time, fact
+lookup before questions, explicit ownership, and branch-local blocking. It
+removes the relentless tone, universal return fields, and a second confirmation
+turn after one uncomplicated explicit choice.
 
 Terminal gap routing now enters only when no frontier decision can advance and
 at least one required branch remains blocked. The reference preserves the
@@ -32,11 +32,10 @@ active-Wayfinder exception, exactly one uninvoked gap owner, exact re-entry, and
 Handoff as transport rather than owner. A ready frontier loads no gap-routing
 reference.
 
-When the intended result is a spec source, Grilling now applies readiness as an
-exit test after material exploration. It reports whether the confirmed packet
-is ready, blocked, or not targeting a spec; it does not draft, publish, or
-perform To Spec's final source admission. Grill With Docs preserves that packet
-and now propagates Grilling's existing `Route gap` without reclassifying it.
+To Spec owns final source admission. Grilling confirms one bounded
+understanding without a source-readiness checklist or field. Grill With Docs
+preserves that understanding or an intact terminal gap without reclassifying
+it.
 
 The historical design and evaluation below remain evidence for the accepted
 candidate at their recorded hashes. They are not proof of these later wording
