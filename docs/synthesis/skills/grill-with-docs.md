@@ -23,7 +23,7 @@ Runtime authority currently remains in:
 
 The sibling [Grilling Decision-Frontier Synthesis](grilling.md) and [Domain Modeling Durable-Truth Synthesis](domain-modeling.md) own component behavior. This synthesis owns only their composition.
 
-Current reconciliation: Pack composition revision 15 keeps the separate
+Current reconciliation: Pack composition revision 16 keeps the separate
 composer and its three actions. It retains ordered Relay, opaque Domain Delta
 transport, domain-blocker precedence, optional context-write authority, and
 separate ADR approval. It removes the four-status combined packet and universal

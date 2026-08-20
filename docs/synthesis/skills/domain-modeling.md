@@ -7,7 +7,7 @@ Installed parity and fresh wording-efficacy proof are not claimed.
 
 ## Current runtime reconciliation
 
-Pack composition revision 15 uses five actions: Ground, Clarify, Settle,
+Pack composition revision 16 uses five actions: Ground, Clarify, Settle,
 Capture, and Return. It keeps meaning authority, code-as-evidence, bounded
 context ownership, current-record reconciliation, explicit context-write
 authority, separate ADR approval, read-back, safe dependency-ordered writes,

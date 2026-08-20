@@ -1,43 +1,66 @@
-# TDD Minimum-Runtime Synthesis
+# TDD synthesis
 
-> Status (2026-07-27): historical evidence for the exact pruning-campaign
-> bytes. A later authorized Author pass changed canonical TDD so RED reuses or
-> extends a behavior-owned test before adding a distinct responsibility and
-> GREEN refactoring consolidates only proved in-slice overlap. The latest lean
-> composition pass returns an out-of-slice Interface or Seam question to the
-> caller as a design gap instead of recommending a post-TDD Codebase Design
-> step. Prior hashes and evaluations below do not prove current wording.
-> `skills/custom/tdd/` is runtime authority. No installed sync is claimed.
+Current executable authority is `skills/custom/tdd/` at canonical tree SHA-256
+`8174f664e725f5c0e3d8437a76f5561e3ed5a92dd0d825f084ec31585ca9a729`.
+Installed parity and fresh wording-efficacy proof are not claimed.
 
-This synthesis owns the completed pruning decision and its durable rationale.
-Validation owns campaign chronology, raw evaluations, and installation proof.
+## Current runtime reconciliation
 
-## Outcome And Decision
+Pack composition revision 16 keeps TDD optional. It admits only an explicit
+TDD, test-first, or RED-GREEN-REFACTOR request or an applicable repository
+policy. Ordinary implementation may use tests without invoking TDD.
 
-TDD owns one bounded inner loop for settled, red-testable production behavior:
+TDD owns one settled observable behavior through:
+
+```text
+RED -> GREEN -> REFACTOR
+```
+
+The runtime retains observed behavioral RED, an independent expected result,
+smallest GREEN, green-only cleanup, and concise proof. Test shape and test
+doubles load only when their branch is active. The runtime no longer exposes a
+Trace artifact, diagnosis or design statuses, a fixed Return packet, a separate
+refactoring guide, or automatic review and delivery.
+
+Matt supplies the short workflow and vertical-slice teaching. Superpowers
+contributes the question about which realistic production break a test catches.
+Pstack contributes the cost test that an honest gap is better than a weak,
+expensive test. The local contract keeps stricter admission, independent
+oracles, preservation of pre-existing work, and green-only refactoring because
+review is conditional rather than automatic.
+
+Current comparison identities are issue #94, repository base
+`42114b5fee9a90f49c54dc0c607543ce415a667e`, Matt Pocock
+`9c9f36ccd3995266cd675468af71639c8dde1ec5`, Superpowers
+`b36e0829c6d0140e93cfef2ca599b1b07d4a7797`, and Cursor plugins containing
+pstack `60c641e4fad674784b30abcf9f8915dea39df38d`.
+
+Current ownership is:
+
+| Concern | Owner |
+| --- | --- |
+| Admission, RED, GREEN, REFACTOR, and completion | `skills/custom/tdd/SKILL.md` |
+| Unclear test boundary or oracle | `skills/custom/tdd/references/TEST-SHAPE.md` |
+| Test-specific substitute | `skills/custom/tdd/references/TEST-DOUBLES.md` |
+| Invocation policy | `skills/custom/tdd/agents/openai.yaml` |
+| Ordinary testing and proof breadth | caller plus `docs/agents/engineering-contract.md` |
+| Active callers and topology | `docs/synthesis/skill-context-relationships.md` and pack contract revision 16 |
+
+The remaining baseline, ledgers, and campaign evidence describe the earlier
+promotion. They are historical, not current instructions, and do not prove the
+revision 16 wording.
+
+## Historical pruning record
+
+The earlier synthesis selected this bounded inner loop:
 
 ```text
 TRACE -> RED -> GREEN -> REFACTOR -> RETURN
 ```
 
-It proves one observable behavior through an observed behavioral RED, the
-smallest GREEN implementation, GREEN-only refactoring, and an inspectable
-packet returned to the original caller.
+## Promotion-era viability floor
 
-The completed minimum-runtime decision is:
-
-- the pre-prune package was behaviorally close to B0 but contained the
-  unadmitted `## Async Waiting` mechanism;
-- exact B0 removes only that complete section from `tests.md`;
-- the accepted C1 was exactly B0, with no behavior-changing additions;
-- typed result schemas, transition tables, and expanded packet machinery are
-  rejected from runtime; and
-- async-waiting mechanics remain deferred until an observed canonical failure
-  supplies a new admission basis.
-
-## Viability Floor
-
-B0 must preserve all of the following:
+The promotion candidate preserved all of the following:
 
 1. implicit discovery for settled red-testable new behavior and for bugs only
    after expected behavior, exact symptom, cause, and a trusted red-capable
@@ -64,11 +87,11 @@ B0 must preserve all of the following:
 12. a compact proof packet and completion criterion that return inner-loop
     evidence without claiming caller-owned closeout.
 
-## Evidence Registry And Freshness
+## Promotion-era evidence registry and freshness
 
 | Evidence | Identity or access depth | Role | Freshness limit |
 | --- | --- | --- | --- |
-| Canonical TDD package | `skills/custom/tdd/`; tree hash `35bbe08d4f3ce1d137ae12bf3fd1e2a8bc1b75dd3f234d2266c020467e1e3e7c` | Current runtime authority and accepted B0/C1 | Recompute after any byte change |
+| Promotion-era TDD package | Tree hash `35bbe08d4f3ce1d137ae12bf3fd1e2a8bc1b75dd3f234d2266c020467e1e3e7c` | Accepted B0/C1 historical identity | Superseded by revision 16 runtime |
 | Retired pre-prune control | Tree hash `2c54693e3c51ed5785430943786bfdd578a6fc4e99f0746de2f027ee16f286ae` | Historical control identity and exact deletion source | Fixture retired after terminal decision |
 | Matt Pocock TDD | `.tmp/mattpocock-skills` at `ed37663cc5fbef691ddfecd080dff42f7e7e350d`; complete package and named documentation read | Simplest credible baseline | Clean local `main`; not network-refreshed |
 | Superpowers TDD | `.tmp/superpowers` at `d884ae04edebef577e82ff7c4e143debd0bbec99`; complete package read | Stricter comparison | Clean local `main`; not network-refreshed |
@@ -83,7 +106,7 @@ No skill-specific source packet beyond the prior synthesis source list was
 found. The book and article references below are rationale, not current local
 runtime authority or behavioral proof.
 
-## Simplest Credible Baseline
+## Promotion-era baseline comparison
 
 Matt's TDD package is the smallest inspected coherent control. It supplies:
 
@@ -112,9 +135,9 @@ no-exceptions rhetoric, per-function checklist, and rationalization catalogue
 add load and can violate unrelated-work preservation. Ponytail supplies no
 matching baseline.
 
-## Current-Runtime Disposition
+## Promotion-era runtime disposition
 
-This ledger classifies the complete current package by behavior-bearing unit.
+This ledger classified the complete promotion package by behavior-bearing unit.
 
 | Surface and behavior | Disposition | Canonical treatment |
 | --- | --- | --- |
@@ -148,7 +171,7 @@ This ledger classifies the complete current package by behavior-bearing unit.
 | `refactoring.md`: depth, leverage, and locality pressures | Supporting branch guidance | Preserve exact bytes; no contribution claim |
 | `refactoring.md`: Simplify Code, Codebase Design, and Improve Codebase recommendations | Protect and disclose | Preserve exact bytes |
 
-No current canonical typed outcome schema, persistent state, helper, or
+At promotion, no canonical typed outcome schema, persistent state, helper, or
 transition table exists. Their appearance in the superseded synthesis created
 no protected runtime behavior.
 
@@ -207,9 +230,9 @@ improve this skill.
 | Async waiting mechanics | Missing from Matt core; present pre-prune | Defer | Prior local synthesis only | None; no observed canonical failure | `tests.md` only if later admitted | No runtime expression now | Deferred | Observed canonical failure plus fresh claim-matched proof | Defer; absent canonically |
 | Persistent ledger, helper, or schema | Missing | Reject | No supporting local evidence | None | None | Plain Markdown Return | None | Not applicable | Reject |
 
-## Exact Canonical Pruning Identity
+## Historical exact pruning identity
 
-The accepted runtime is not a conceptual rewrite. It is the pre-prune TDD
+The promotion-era runtime was not a conceptual rewrite. It was the pre-prune TDD
 package transformed by exactly one deletion:
 
 > Remove from `skills/custom/tdd/tests.md` the complete section beginning with
@@ -221,11 +244,11 @@ The canonical package contains exactly these paths and hashes:
 
 | Relative path | Canonical SHA-256 | Identity rule |
 | --- | --- | --- |
-| `SKILL.md` | `3c40b46601971434c5a0ab437e3172b02ad59880c06d3c50e6058f74251c3806` | Preserve current bytes |
+| `SKILL.md` | `3c40b46601971434c5a0ab437e3172b02ad59880c06d3c50e6058f74251c3806` | Preserved promotion bytes |
 | `tests.md` | `b3738122d3b3b72a66d9e40bd22ec252549ef7077b4d9914cb68f5b8dea67465` | Exact deletion above |
-| `mocking.md` | `9523c1371ef4c711c69932a42214eef21159f5c20baf36cb1fdcf3e8fd2efa5e` | Preserve current bytes |
-| `refactoring.md` | `4d1ae71d594a02cdd09f0cef42224969d5deab39091149ab057edae5838097e4` | Preserve current bytes |
-| `agents/openai.yaml` | `d9ef3372e04c488b227009cd14ef0ed84fa4335056d48219bc6cbf8a80a970bd` | Preserve current bytes |
+| `mocking.md` | `9523c1371ef4c711c69932a42214eef21159f5c20baf36cb1fdcf3e8fd2efa5e` | Preserved promotion bytes |
+| `refactoring.md` | `4d1ae71d594a02cdd09f0cef42224969d5deab39091149ab057edae5838097e4` | Preserved promotion bytes |
+| `agents/openai.yaml` | `d9ef3372e04c488b227009cd14ef0ed84fa4335056d48219bc6cbf8a80a970bd` | Preserved promotion bytes |
 
 The frozen pre-prune package tree hash is
 `2c54693e3c51ed5785430943786bfdd578a6fc4e99f0746de2f027ee16f286ae`.
@@ -271,10 +294,10 @@ The protected set is:
 - scoped out-of-slice recommendations that stop; and
 - the compact proof packet and inner-loop completion boundary.
 
-Exact current sentences and the Async Waiting section are not protected merely
+Exact promotion sentences and the Async Waiting section were not protected merely
 because they exist.
 
-## Current Placement And Ownership
+## Historical placement at promotion
 
 | Concern | Owner and destination |
 | --- | --- |

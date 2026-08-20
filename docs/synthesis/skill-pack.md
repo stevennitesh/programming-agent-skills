@@ -119,6 +119,11 @@ Revision 27 materializes machine contract revision 15 by rewriting Domain
 Modeling as five direct actions, removing its universal status packet, and
 retaining meaning authority, reconciliation, conditional capture, separate ADR
 approval, cumulative composed deltas, and verified partial-write handling.
+Revision 28 materializes machine contract revision 16 by rewriting TDD as one
+optional RED-GREEN-REFACTOR inner loop. It removes diagnosis and design status
+packets, the mandatory proof receipt, and the separate refactoring guide while
+retaining explicit admission, observed behavioral RED, independent expectations,
+smallest GREEN, conditional test guidance, and green-only cleanup.
 It binds the complete fingerprinted pre-discovery fixed point, then freezes the
 tested environment, finite research order, capability
 owners, roles, relationships, exclusions, resolved collisions, acceptance
@@ -255,7 +260,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       ],
       "allowed_contributor_skill_ids": [],
       "capability_id": "CAP-006",
-      "completion_return": "A complete TDD proof packet or a typed handoff",
+      "completion_return": "Observed RED, final GREEN and relevant proof, plus any material gap",
       "disposition": "selected",
       "entry_conditions": [
         "The user explicitly requests TDD, test-first work, or RED-GREEN-REFACTOR, or applicable repository policy requires TDD; intended behavior and its independent oracle are settled"
@@ -1024,7 +1029,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       }
     ],
     "composition_epoch_id": "FCE-20260727-01",
-    "contract_revision": 15,
+    "contract_revision": 16,
     "epoch_lock": null,
     "exclusions": [
       "Per-skill H1 or candidate wording",
@@ -1727,18 +1732,18 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-022",
       "combined_exit_owner_skill_id": "SK-022",
       "context_loaded": [
-        "tdd caller-facing interface and branch-required reference only"
+        "tdd caller-facing interface; test-shape or test-double reference only when its condition applies"
       ],
-      "entry_condition": "The selected work explicitly requires TDD, test-first work, or RED-GREEN-REFACTOR, or applicable repository policy requires TDD; intended behavior and its independent oracle are settled, and a bug also has known expected behavior, exact symptom, cause, and trusted red-capable reproduction. TDD TRACE owns harness readiness.",
+      "entry_condition": "The selected work explicitly requires TDD, test-first work, or RED-GREEN-REFACTOR, or applicable repository policy requires TDD, and one accepted observable behavior and independent oracle are settled. TDD owns the RED-GREEN-REFACTOR inner loop.",
       "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
-      "input_packet": "Caller-owned bounded Source Trace for implement and the declared tdd input",
+      "input_packet": "The explicit TDD trigger, one accepted observable behavior, its independent oracle, focused proof context, and mutation authority",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-017",
       "required_proof_ids": [
         "PROOF-REL-017"
       ],
       "resume_owner_skill_id": "SK-022",
-      "return_packet": "The declared tdd Return packet plus evidence, limits, and residual state",
+      "return_packet": "Observed RED, final GREEN and relevant proof, plus any material gap",
       "target_skill_id": "SK-006",
       "verb": "Invoke",
       "wrong_condition": "The request asks only for tests, integration tests, regression tests, coverage, or ordinary implementation; the TDD requirement or readiness gate is absent or ambiguous; or another selected owner has the bounded outcome."
@@ -2138,18 +2143,18 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-023",
       "combined_exit_owner_skill_id": "SK-023",
       "context_loaded": [
-        "tdd caller-facing interface and branch-required reference only"
+        "tdd caller-facing interface; test-shape or test-double reference only when its condition applies"
       ],
-      "entry_condition": "The accepted parent or selected ticket explicitly requires TDD, test-first work, or RED-GREEN-REFACTOR, or applicable repository policy requires TDD; the mutation-owning lane worker has settled intended behavior and its independent oracle, and a bug also has known expected behavior, exact symptom, cause, and trusted red-capable reproduction. TDD TRACE owns harness readiness.",
+      "entry_condition": "The accepted parent or selected ticket explicitly requires TDD, test-first work, or RED-GREEN-REFACTOR, or applicable repository policy requires TDD, and the mutation-owning worker has one accepted observable behavior and independent oracle settled. TDD owns that worker's inner loop; the root does not repeat it.",
       "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
-      "input_packet": "Caller-owned bounded Source Trace for parallel-implement and the declared tdd input",
+      "input_packet": "The explicit TDD trigger, one accepted observable behavior, its independent oracle, focused proof context, and worker mutation authority",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-035",
       "required_proof_ids": [
         "PROOF-REL-035"
       ],
       "resume_owner_skill_id": "SK-023",
-      "return_packet": "The declared tdd Return packet plus evidence, limits, and residual state",
+      "return_packet": "Observed RED, final GREEN and relevant proof, plus any material gap",
       "target_skill_id": "SK-006",
       "verb": "Invoke",
       "wrong_condition": "The accepted work asks only for tests, integration tests, regression tests, coverage, or ordinary implementation; the TDD requirement or readiness gate is absent or ambiguous; or another selected owner has the bounded outcome."
@@ -2567,7 +2572,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [],
       "entry_condition": "The user explicitly requests TDD, test-first work, or RED-GREEN-REFACTOR, or applicable repository policy requires TDD; intended behavior and its independent oracle are settled; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for skill-router and the declared tdd input",
+      "input_packet": "The explicit TDD trigger, one accepted observable behavior, and its independent oracle",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-064",
       "required_proof_ids": [
@@ -3628,7 +3633,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "completion_condition": "RED and GREEN were observed through the selected seam and relevant proof remains green",
       "contract_order": 6,
       "essential_outcome": "Deliver one red-green-refactor tracer for settled red-testable behavior",
-      "failure_return": "Return uncertain bugs, design questions, and out-of-slice follow-ups to the caller without claiming TDD or choosing a successor",
+      "failure_return": "Stop before production mutation and return any unsettled behavior, oracle, authority, or safe-RED gap without claiming TDD",
       "invocation_mode": "implicit",
       "load_budget_class": "conditional-leaf",
       "negative_exclusion_predicates": [
@@ -3650,8 +3655,8 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Pack integration acceptance, epoch Lock, cleanup, installation, or Git delivery unless explicitly owned"
       ],
       "relationship_ids": [],
-      "required_input": "A bounded caller-owned Source Trace, the applicable explicit user or repository TDD requirement, settled intended behavior and independent oracle, and mutation authority; TDD TRACE owns harness readiness",
-      "return_packet": "A complete TDD proof packet or a typed caller return",
+      "required_input": "The applicable explicit user or repository TDD requirement, one accepted observable behavior, its independent oracle, focused proof context, and mutation authority",
+      "return_packet": "Observed RED, final GREEN and relevant proof, plus any material gap",
       "skill_id": "SK-006"
     },
     {

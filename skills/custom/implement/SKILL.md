@@ -52,9 +52,11 @@ that removal is safe and in scope.
 
 Use these branches only when their condition is present:
 
-- Invoke `$tdd` only when the user explicitly requests TDD or repository policy
-  requires it. Otherwise implement directly and use ordinary tests as useful
-  proof.
+- Invoke `$tdd` for each materially distinct settled behavior and independent
+  oracle only when the user explicitly requests TDD, test-first work, or
+  RED-GREEN-REFACTOR, or repository policy requires TDD. A material gap returns
+  before that behavior is mutated. Otherwise implement directly and use
+  ordinary tests as useful proof.
 - If the user explicitly requests subagents, load
   [Plain Worker Handoff](references/WORKER-HANDOFF.md) and
   [Runtime Profiles](../parallel-implement/references/RUNTIME-PROFILES.md), then

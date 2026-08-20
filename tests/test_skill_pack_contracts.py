@@ -2062,54 +2062,45 @@ def test_review_policy_is_consistent_across_delivery_metadata() -> None:
 
 def test_tdd_discloses_test_reference_only_for_an_evidence_gap() -> None:
     tdd = (CUSTOM / "tdd/SKILL.md").read_text(encoding="utf-8")
-    tests = (CUSTOM / "tdd/tests.md").read_text(encoding="utf-8")
-    mocking = (CUSTOM / "tdd/mocking.md").read_text(encoding="utf-8")
+    tests = (CUSTOM / "tdd/references/TEST-SHAPE.md").read_text(encoding="utf-8")
+    doubles = (CUSTOM / "tdd/references/TEST-DOUBLES.md").read_text(
+        encoding="utf-8"
+    )
+    synthesis = (ROOT / "docs/synthesis/skills/tdd.md").read_text(encoding="utf-8")
+    relationships = (
+        ROOT / "docs/synthesis/skill-context-relationships.md"
+    ).read_text(encoding="utf-8")
+    tdd_flat = " ".join(tdd.split())
 
     description = tdd.split("---", 2)[1]
     assert "explicitly requests TDD" in description
     assert "repository policy requires TDD" in description
     assert "integration tests" in description
     assert "alone do not trigger it" in description
-    assert "Own one inner loop:" in tdd
-    assert "The caller owns bounded scope" in tdd
-    assert re.findall(r"(?m)^## \d+\. ([A-Z]+)$", tdd) == [
-        "TRACE",
-        "RED",
-        "GREEN",
-        "REFACTOR",
-        "RETURN",
-    ]
-    for helper in ("tests.md", "mocking.md", "refactoring.md"):
-        assert (CUSTOM / "tdd" / helper).is_file()
-        assert f"[{helper}]({helper})" in tdd
-    assert "existing behavior test, case table, or contract suite" in tdd
-    assert "Add a test only when the tracer has a distinct proof" in tdd
-    return_fields = set(
-        re.findall(
-            r"(?m)^- \*\*([^*]+):\*\*",
-            tdd.split("## 5. RETURN", 1)[1],
-        )
-    )
-    assert return_fields == {
-        "Source Trace",
-        "RED",
-        "GREEN",
-        "Test portfolio",
-        "Coverage",
-        "Refactor",
-        "Residual risk",
-    }
+    assert re.findall(r"(?m)^## ([A-Z]+)$", tdd) == ["RED", "GREEN", "REFACTOR"]
+    assert "No observed behavioral RED, no TDD" in tdd
+    assert "realistic production break it should catch" in tdd_flat
+    assert "An honest gap is better than a bad test" in tdd_flat
+    assert "observed RED, final GREEN and nearby proof" in tdd_flat
+    assert "references/TEST-SHAPE.md" in tdd
+    assert "references/TEST-DOUBLES.md" in tdd
+    assert (
+        'TDD --> TddRefs["references/TEST-SHAPE.md<br/>'
+        'references/TEST-DOUBLES.md"]'
+    ) in relationships
+    assert 'TddRefs["tests.md / mocking.md / refactoring.md"]' not in relationships
+    for retired in ("tests.md", "mocking.md", "refactoring.md"):
+        assert not (CUSTOM / "tdd" / retired).exists()
     tests_flat = " ".join(tests.split())
-    assert "Independent:" in tests and "not the implementation under test" in tests_flat
-    assert "establishes actuality, not correctness" in tests_flat
-    assert "broad or combinatorial domain" in tests_flat
-    assert "Otherwise prefer focused examples or an exhaustive small table" in tests_flat
-    assert mocking.index("1. Real in-process code") < mocking.index(
-        "2. Local substitute"
-    )
-    mocking_flat = " ".join(mocking.split())
-    assert "otherwise record the unverified fidelity risk" in mocking_flat
-    assert "Reconsider the seam when fidelity is unclear" in mocking_flat
+    assert "Derive the expected result independently" in tests_flat
+    assert "does not establish correctness" in tests_flat
+    assert "Test count and coverage percentage are not targets" in tests_flat
+    doubles_flat = " ".join(doubles.split())
+    assert "Keep owned in-process code real" in doubles_flat
+    assert "only at a real boundary adapter" in doubles_flat
+    assert "interaction is part of the contract" in doubles_flat
+    assert skill_pack_contract.tree_hash(CUSTOM / "tdd") in synthesis
+    assert "Pack composition revision 16" in synthesis
 
 
 def test_tdd_invocation_gate_is_consistent_across_active_owners() -> None:
@@ -2137,18 +2128,22 @@ def test_tdd_invocation_gate_is_consistent_across_active_owners() -> None:
     for owner in (tdd, implement, parallel, router, relationships):
         assert "explicit" in owner.lower()
         assert "repository policy" in owner.lower()
+        for trigger in ("TDD", "test-first work", "RED-GREEN-REFACTOR"):
+            assert trigger in owner
     assert "integration tests, regression tests, or coverage alone do not trigger" in tdd
-    assert "TRACE owns finding or creating" in " ".join(tdd.split())
+    assert "safe red-capable check" in " ".join(tdd.split())
     assert "Otherwise implement directly and use ordinary tests" in " ".join(
         implement.split()
     )
-    assert "never runs a second TDD loop" in " ".join(parallel.split())
+    assert "for each materially distinct settled behavior and independent oracle" in (
+        " ".join(implement.split())
+    )
+    assert "never repeats the worker's TDD loop" in " ".join(parallel.split())
     assert "Ordinary bug investigation stays with the worker" in parallel
     assert "`diagnosis-required` to the root" in parallel
-    assert "resumes implementation only from a complete TDD proof" in " ".join(
-        parallel.split()
+    assert "A material gap returns to the root before that behavior is mutated" in (
+        " ".join(parallel.split())
     )
-    assert "stops that lane before behavior mutation" in " ".join(parallel.split())
     assert (
         "ordinary test, integration-test, regression-test, or coverage work to "
         "`$implement`"
@@ -2184,33 +2179,18 @@ def test_tdd_invocation_gate_is_consistent_across_active_owners() -> None:
         assert "requires TDD" in relationship["entry_condition"]
         assert "independent oracle" in relationship["entry_condition"]
         if relationship["verb"] == "Invoke":
-            assert "TRACE owns harness readiness" in relationship["entry_condition"]
+            assert "inner loop" in relationship["entry_condition"]
         assert "asks only for tests" in relationship["wrong_condition"]
 
 
-def test_tdd_returns_every_outbound_gap_to_its_caller() -> None:
+def test_tdd_stops_at_a_material_gap_without_routing() -> None:
     tdd = (CUSTOM / "tdd/SKILL.md").read_text(encoding="utf-8")
-    refactoring = (CUSTOM / "tdd/refactoring.md").read_text(encoding="utf-8")
-    refactoring_flat = " ".join(refactoring.split())
-
-    assert "`design-evidence-required`" in tdd
-    assert "with the intact facts" in tdd
-    assert "to the caller and stop" in tdd
     tdd_flat = " ".join(tdd.split())
-    assert "no hard failure requires diagnosis" in tdd_flat
-    assert "RED would encode an unmade design decision" in tdd_flat
-    assert (
-        "no single accepted behavior and independent oracle yet decide" in tdd_flat
-    )
-    for field in (
-        "settled source, constraints, and non-diagnostic facts",
-        "exact unresolved design question and live alternatives",
-        "decision owner and return owner",
-        "discriminating cases, observation, and verdict criteria",
-        "why an implementation RED cannot answer",
-    ):
-        assert field in tdd_flat
-    assert "The caller owns any later route" in refactoring_flat
+    assert "stop before production mutation and report that material gap" in tdd_flat
+    assert "behavior, oracle, authority, or a safe red-capable check" in tdd_flat
+    assert "do not claim TDD" in tdd_flat
+    for retired_status in ("diagnosis-required", "design-evidence-required"):
+        assert retired_status not in tdd
     for callee in (
         "$audit-codebase",
         "$codebase-design",
@@ -2219,7 +2199,6 @@ def test_tdd_returns_every_outbound_gap_to_its_caller() -> None:
         "$simplify-code",
     ):
         assert callee not in tdd
-        assert callee not in refactoring
 
 
 def test_simplify_code_is_explicit_bounded_and_behavior_preserving() -> None:
@@ -2280,25 +2259,25 @@ def test_bug_routing_is_disjoint_and_non_bouncing() -> None:
     implement_flat = " ".join(implement.split())
     tdd = (CUSTOM / "tdd/SKILL.md").read_text(encoding="utf-8")
     tdd_flat = " ".join(tdd.split())
-    tdd_tests = (CUSTOM / "tdd/tests.md").read_text(encoding="utf-8")
+    tdd_tests = (CUSTOM / "tdd/references/TEST-SHAPE.md").read_text(
+        encoding="utf-8"
+    )
 
     assert [
         match.group(1)
         for match in re.finditer(r"(?m)^## \d+\. ([A-Za-z]+)$", diagnosing)
     ] == ["Reproduce", "Discriminate", "Resolve", "Return"]
-    assert "[SKILL.md](SKILL.md)" in tdd_tests
-    assert "`diagnosis-required`" in tdd
+    assert "corrective RED" in tdd_tests
+    assert "`diagnosis-required`" not in tdd
     assert "$diagnosing-bugs" not in tdd
-    assert "observed failing result" in tdd
+    assert "No observed behavioral RED" in tdd
     assert "Ordinary bug investigation" in implement_flat
-    assert "initially unknown cause" in tdd_flat
     assert "original feedback loop" in diagnosing_flat
-    assert "intact facts" in tdd_flat
+    assert "stop before production mutation" in tdd_flat
 
     diagnosis_producers = (
         CUSTOM / "implement/SKILL.md",
         CUSTOM / "parallel-implement/SKILL.md",
-        CUSTOM / "tdd/SKILL.md",
         CUSTOM / "simplify-code/SKILL.md",
         CUSTOM / "resolving-merge-conflicts/SKILL.md",
         CUSTOM / "audit-codebase/CANDIDATE-FOLLOWUP.md",
