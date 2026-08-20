@@ -88,6 +88,11 @@ intermittent, performance, environment-only, production-only, or otherwise
 causally ambiguous failures. Diagnosis keeps an authorized causal-fix branch,
 uses proportionate evidence instead of mandatory ledgers and test-first work,
 and returns concerns to its caller without an Audit recommendation.
+Revision 20 materializes machine contract revision 8 by rewriting Simplify Code
+around behavior-preserving simplification of one selected target or a truthful
+no-change result. It removes mandatory baseline and campaign machinery, keeps
+subtraction and real-caller proof as judgment, and returns broad discovery to
+the caller without an Audit recommendation.
 It binds the complete fingerprinted pre-discovery fixed point, then freezes the
 tested environment, finite research order, capability
 owners, roles, relationships, exclusions, resolved collisions, acceptance
@@ -516,10 +521,10 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       ],
       "allowed_contributor_skill_ids": [],
       "capability_id": "CAP-018",
-      "completion_return": "A smaller proved implementation or a no-safe-reduction result",
+      "completion_return": "Proved behavior-preserving simplification of one selected target or a truthful no-change result",
       "disposition": "selected",
       "entry_conditions": [
-        "One named region has settled behavior and needs behavior-preserving reduction"
+        "One user-selected existing-code target has accepted behavior and needs behavior-preserving simplification"
       ],
       "essential": true,
       "exclusions": [
@@ -527,11 +532,11 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Unbounded foreign procedure loading",
         "Automated semantic acceptance"
       ],
-      "observable_outcome": "Simplify one bounded existing-code region without changing behavior",
+      "observable_outcome": "Simplify one selected existing-code target without changing accepted behavior",
       "primary_owner_skill_id": "SK-018",
       "proof_class": "fresh behavioral proof plus structural identity and boundary proof",
       "required_authority_mutation": [
-        "Reduction boundary, preserved behavior, focused proof, and finite simplification"
+        "Selected target, behavior-preserving local source change, displaced-path removal, and proportionate proof"
       ]
     },
     {
@@ -787,7 +792,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "scenario_id": "PS-017"
       },
       {
-        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for simplify-code: Simplify one bounded existing-code region without changing behavior",
+        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for simplify-code: Simplify one selected existing-code target without changing accepted behavior",
         "expected_owner_skill_id": "SK-018",
         "scenario_id": "PS-018"
       },
@@ -993,7 +998,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       }
     ],
     "composition_epoch_id": "FCE-20260727-01",
-    "contract_revision": 7,
+    "contract_revision": 8,
     "epoch_lock": null,
     "exclusions": [
       "Per-skill H1 or candidate wording",
@@ -2250,31 +2255,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
     },
     {
       "affected_capability_ids": [
-        "CAP-018",
-        "CAP-017"
-      ],
-      "callee_owned_gates_mutations": [
-        "No callee execution, mutation, resumption, or completion is authorized by this edge"
-      ],
-      "caller_skill_id": "SK-018",
-      "combined_exit_owner_skill_id": "SK-018",
-      "context_loaded": [],
-      "entry_condition": "The request needs repository mapping, wide discovery, or multi-subsystem audit coverage.",
-      "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace and declared audit-codebase input",
-      "ordering_impact": "none",
-      "relationship_id": "REL-046",
-      "required_proof_ids": [
-        "PROOF-REL-046"
-      ],
-      "resume_owner_skill_id": "SK-018",
-      "return_packet": "One named target and reason with downstream work unstarted",
-      "target_skill_id": "SK-017",
-      "verb": "Recommend and stop",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
-    },
-    {
-      "affected_capability_ids": [
         "CAP-025",
         "CAP-017"
       ],
@@ -2634,9 +2614,9 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-025",
       "combined_exit_owner_skill_id": "SK-025",
       "context_loaded": [],
-      "entry_condition": "The situation satisfies one named region has settled behavior and needs behavior-preserving reduction; return that route and leave it unstarted.",
+      "entry_condition": "One user-selected existing-code target has accepted behavior and needs behavior-preserving simplification; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for skill-router and the declared simplify-code input",
+      "input_packet": "User-stated situation, selected target, and the declared simplify-code input",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-063",
       "required_proof_ids": [
@@ -4181,35 +4161,33 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "PS-018"
       ],
       "canonical_name": "simplify-code",
-      "completion_condition": "The bounded behavior is unchanged and accidental complexity is reduced",
+      "completion_condition": "Every applied reduction removes rather than moves complexity, accepted behavior remains, and relevant proof passes; or current evidence supports no worthwhile safe reduction in the selected target",
       "contract_order": 18,
-      "essential_outcome": "Simplify one bounded existing-code region without changing behavior",
-      "failure_return": "Return the behavior uncertainty, interface decision, or wider-discovery need",
+      "essential_outcome": "Simplify one selected existing-code target without changing accepted behavior",
+      "failure_return": "Return the target mismatch, behavior uncertainty, unsettled design, wider-discovery need, or proof failure without starting a successor",
       "invocation_mode": "explicit-only",
       "load_budget_class": "conditional-leaf",
       "negative_exclusion_predicates": [
-        "The request does not satisfy: One named region has settled behavior and needs behavior-preserving reduction",
+        "The request does not satisfy: One user-selected existing-code target has accepted behavior and needs behavior-preserving simplification",
         "Another selected skill owns the requested outcome",
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
       "owned_authority_mutation_surfaces": [
-        "Reduction boundary, preserved behavior, focused proof, and finite simplification"
+        "Selected target, behavior-preserving local source change, displaced-path removal, and proportionate proof"
       ],
       "owned_capability_ids": [
         "CAP-018"
       ],
-      "positive_entry_predicate": "One named region has settled behavior and needs behavior-preserving reduction",
+      "positive_entry_predicate": "One user-selected existing-code target has accepted behavior and needs behavior-preserving simplification",
       "primary_role": "leaf",
       "prohibited_ownership": [
         "Another selected skill's semantic decision, local mutation, proof judgment, Return, or completion",
         "Per-skill H1 outside this immutable contract slice",
         "Pack integration acceptance, epoch Lock, cleanup, installation, or Git delivery unless explicitly owned"
       ],
-      "relationship_ids": [
-        "REL-046"
-      ],
-      "required_input": "A bounded caller-owned Source Trace and authority for: Simplify one bounded existing-code region without changing behavior",
-      "return_packet": "A smaller proved implementation or a no-safe-reduction result",
+      "relationship_ids": [],
+      "required_input": "One user-selected existing-code target, its accepted behavior, and local mutation authority",
+      "return_packet": "Applied reductions and proof, a truthful no-change reason, or the exact failed state and recovery needed",
       "skill_id": "SK-018"
     },
     {

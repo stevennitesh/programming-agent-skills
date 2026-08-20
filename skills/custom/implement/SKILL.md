@@ -63,9 +63,9 @@ Use these branches only when their condition is present:
 - For tracker-backed work, follow the repository's claim and closeout rules.
   Direct work creates no tracker state. Commit only when the user or repository
   requires Git delivery; do not push without separate authority.
-- Before a destructive or external mutation, confirm the exact target and
-  authority. Read the result back when the operation can partially succeed or
-  another writer can change it.
+- Before a destructive action or durable external mutation, confirm the exact
+  target and authority. Read back every durable external mutation. Establish a
+  recovery path before an operation that can partially succeed.
 
 ## 4. Prove
 

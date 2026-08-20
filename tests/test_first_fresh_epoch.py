@@ -127,7 +127,7 @@ def test_first_epoch_contract_freezes_complete_h1_free_composition() -> None:
 
     assert pack_contract.validate_contract(contract) == []
     assert contract["epoch_header"]["composition_epoch_id"] == EPOCH
-    assert contract["epoch_header"]["contract_revision"] == 7
+    assert contract["epoch_header"]["contract_revision"] == 8
     assert contract["epoch_header"]["status"] == "frozen"
     assert contract["epoch_header"]["integration_result"] == {
         "decision": None,
@@ -178,7 +178,7 @@ def test_first_epoch_contract_freezes_complete_h1_free_composition() -> None:
     }
 
 
-def test_first_epoch_revision_preserves_history_and_derives_r7_blueprints() -> None:
+def test_first_epoch_revision_preserves_history_and_derives_r8_blueprints() -> None:
     contract = pack_contract.parse_contract(
         (ROOT / "docs/synthesis/skill-pack.md").read_text(encoding="utf-8")
     )
@@ -213,7 +213,7 @@ def test_first_epoch_revision_preserves_history_and_derives_r7_blueprints() -> N
             skill_id,
         )
         assert projected["slice"]["slice_id"].startswith(
-            f"{EPOCH}:r7:"
+            f"{EPOCH}:r8:"
         )
         assert projected["slice"]["skill"] == skill_by_id[skill_id]
     assert {
@@ -230,7 +230,7 @@ def test_current_contract_preserves_review_and_tdd_topology() -> None:
         skill["canonical_name"]: skill for skill in contract["selected_skills"]
     }
     assert contract["epoch_header"]["status"] == "frozen"
-    assert contract["epoch_header"]["contract_revision"] == 7
+    assert contract["epoch_header"]["contract_revision"] == 8
     assert {
         name: (skill_by_name[name]["skill_id"], skill_by_name[name]["invocation_mode"])
         for name in (

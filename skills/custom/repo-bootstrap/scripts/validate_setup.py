@@ -22,7 +22,7 @@ REQUIRED_FILES = (
     "docs/agents/engineering-contract.md",
 )
 
-SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:521a26efab9e -->"
+SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:d8b501d28404 -->"
 SETUP_SCHEMA_MARKER_RE = re.compile(
     r"<!-- programming-agent-skills setup-schema: \d+:[0-9a-f]{12} -->"
 )

@@ -1,183 +1,71 @@
 ---
 name: simplify-code
-description: Simplify one explicitly selected existing-code target without changing behavior, or run a finite serial until-clean campaign in one named region. Use only when explicitly invoked; exclude features, uncertain bugs, public-contract changes, wide discovery, and new interface or ownership design.
+description: Simplify one user-selected existing-code target without changing accepted behavior. Use only when explicitly selected; exclude new behavior, bug fixes, broad discovery, and unsettled interface or ownership decisions.
 ---
 
 # Simplify Code
 
-Return exactly one outcome: `simplified`, `no-safe-simplification`, or
-`blocked`. Default to one unstaged, behavior-preserving cut. Run multiple cuts
-only in an explicitly requested finite serial `until-clean` campaign.
+Remove concrete complexity from one named target without changing
+accepted behavior. If no worthwhile safe reduction exists, leave the code
+unchanged and say why.
 
-Each admitted cut is refactoring: change code structure without changing
-observable behavior.
+Apply the repository instructions and engineering contract. The invocation
+authorizes local source changes inside the target and the code they directly
+displace. It does not authorize staging, commit, external mutation, or unrelated
+cleanup.
 
-**Bound -> Baseline -> Reduce -> Prove -> Return.**
+## 1. Understand
 
-## Bound
+Accept a target named by the user or selected in an Audit Codebase pickup. If
+the target is missing, too broad, requires new behavior or bug repair, or
+depends on an unsettled interface or ownership decision, return the mismatch
+without changing code.
 
-Accept only an exact `$audit-codebase` candidate selected by the user or a
-user-named target. The user may name the current diff as that target; never
-infer or replace the target. Verify an Audit candidate's report digest,
-subsystem, current Source Trace, supported behavior, Proof Seam, and selected
-behavior-preserving direction against current bytes. An invalid, stale, blocked,
-disproved, or incomplete target returns `blocked` unchanged. Without a target,
-return `blocked` with the exact target needed; recommend `$audit-codebase` only
-when wide discovery or repository mapping is needed.
+Read the target and its real callers. Name the accepted behavior and the
+concrete complexity to remove. Reuse an Audit pickup's current evidence and
+refresh only facts that may have changed.
 
-Return feature work, ordinary bug repair, public-contract decisions, reviews,
-Git delivery, tracker mutation, installation, and external-system work to their
-owners. Return a hard, intermittent, performance, environment-only,
-production-only, or causally ambiguous failure that needs dedicated
-investigation as `diagnosis-required`. Return a required new Interface,
-dependency direction, Proof Seam, or ownership decision to the caller as a
-design gap. Stop before copying a foreign owner's procedure.
+## 2. Choose
 
-The user owns the target, mode, budget, and commitment decisions. Simplify Code
-owns selection, local edits, proof, and Return only inside the admitted region.
+Choose one coherent reduction. Prefer deletion, reuse of an existing owner or
+native capability, collapsing an unearned layer, then simpler control flow or
+state. Pick the clearest total design, not the fewest lines.
 
-Load the applicable repository instructions, Engineering Contract, domain
-commitments, and supported compatibility. Trace the target's operational
-callers, callees, entries, configuration, registration paths, work state, and
-one caller-facing Proof Seam. For a valid Audit candidate, reuse its trace and
-selected direction; refresh only affected evidence. In default mode, do not
-repeat wide tracing or reopen the full ladder unless refreshed evidence
-invalidates that direction. An `until-clean` request names its region and uses
-the full ordered inspection.
+A reduction must remove maintenance work rather than move it into callers,
+configuration, tests, or another wrapper.
 
-## Baseline
+Return unchanged only when the current owner and callers expose no credible cut
+that preserves behavior, removes rather than moves complexity, and can be
+proved with available evidence.
 
-Record the starting ref, status, relevant diff, and staged-state shape without
-disturbing existing work. Run the smallest trusted proof that can detect a
-behavior change against the exact starting state. A failing, ambiguous, or
-semantically inadequate baseline returns `blocked` with the exact proof gap and
-no source mutation. An adequate baseline is required for a
-`no-safe-simplification` verdict.
+## 3. Simplify
 
-When intended behavior is unavailable, an otherwise adequate baseline may use
-a characterization test to record actual legacy behavior at the bounded Proof
-Seam. It establishes actuality, not correctness or a wider preservation
-contract; the same adequacy gate and `blocked` outcome apply.
+Apply the reduction completely. Migrate affected callers and remove displaced
+code, configuration, tests, or documentation.
 
-## Reduce
+## 4. Prove and return
 
-Prefer source-supported deletion and an already-sufficient owner or native
-capability over locally attractive rewriting. For an admitted Audit candidate,
-choose the smallest concrete cut inside its selected reduction direction in
-default mode. For other targets and each `until-clean` cycle, inspect the region
-in this order. The first safe rung wins:
+Run the nearest useful check through the real caller or artifact. Use a
+before-and-after comparison only when the behavior-preservation claim needs it.
+Broaden proof only for shared impact, repository policy, or a concrete risk.
 
-1. **Delete** behavior, configuration, compatibility, or abstraction proved
-   unreachable, expired, or unsupported within preserved contracts. When
-   observable behavior has evidenced actual dependents, treat it as a
-   compatibility risk; dependence informs migration without automatically
-   expanding the intended contract.
-2. **Reuse** an existing project-owned semantic match.
-3. **Standardize, native-first** through standard/runtime, platform/framework,
-   then already-installed dependency capability.
-4. **Collapse** an unearned abstraction or duplicated decision at its narrowest
-   existing owner. When one shared abstraction forces distinct meanings, treat
-   it as a wrong abstraction: unshare it by restoring bounded duplication at
-   those narrow owners before seeking another abstraction. Otherwise deepen,
-   merge, or inline only within settled existing boundaries.
-5. **Shrink** branching or data movement with ordinary readable constructs.
+Inspect the reduction's diff. Confirm that accepted behavior remains and the
+named complexity is gone rather than relocated.
 
-An earlier rung yields when its semantics, compatibility, edge behavior,
-coherence, or proof fails. Select one coherent candidate only when:
+For an explicitly requested repeated pass, run Choose, Simplify, and Prove
+serially inside the same target. Continue only after the current reduction
+passes both checks. Stop when no worthwhile cut remains, the user's stated
+limit is reached, or proof or scope fails.
 
-- preserved behavior and its proof seam are explicit;
-- the cut fits the admitted region and needs no new commitment;
-- caller and maintainer burden strictly decreases; and
-- the proof and work-state boundaries are credible.
+Before returning, inspect the complete invocation diff and confirm unrelated
+work is untouched. If proof fails, remove only the current reduction's changes
+when they can be isolated safely. If they cannot, preserve the exact state and
+report it.
 
-Preserve product intent, accepted behavior, public and data contracts, domain
-decisions, trust-boundary validation, data-loss controls, security, privacy,
-accessibility, concurrency, durability, ordering, timing, and required
-compatibility. Simplicity never overrides one of these floors.
+Return the reductions and proof, the concrete reason the code stayed unchanged,
+or a failed check with the exact current state and recovery needed. A failed
+check is not completion. Start no successor.
 
-Do not add a dependency. Remove one only after repository-wide source,
-configuration, and runtime-entry evidence proves no use remains, then reconcile
-its manifest, lockfile, and repository-owned installation proof.
-
-If the complete applicable inspection finds no safe cut under an adequate
-baseline, return `no-safe-simplification` with candidate rejections. The
-applicable inspection is the selected Audit direction in default mode or the
-full ladder for other targets and `until-clean`. Name an evidenced **Known
-Ceiling** and concrete **Revisit Trigger** when supported; invent neither.
-
-Otherwise make one bounded unstaged cut. Remove only fallout created by that
-cut: imports, helpers, files, configuration, dependencies, and
-implementation-detail tests displaced by stronger caller-facing proof. Preserve
-correct behavior proof, unrelated work, the index, trackers, installed state,
-and external state.
-
-## Prove
-
-Rerun the same focused proof, then the nearest relevant tests and proportionate
-repository checks. Establish a strict net reduction across concepts, branch
-families, coordination, indirection, file responsibilities, dependencies,
-callers, tests, configuration, and operations. When relevant, explain the net
-reduction as lower change amplification or cognitive load. Counts are receipts,
-not correctness or productivity proof; a shorter patch that merely relocates
-maintenance burden, exposes required complexity to callers, or transfers
-equivalent burden is not simpler.
-
-Refresh changed paths and work state after proof. Confirm the patch preserves
-commitments, changes only the admitted cut and its created fallout, keeps the
-index and unrelated state as found, and leaves no invocation-created artifacts.
-
-If proof fails, revert only cut-created bytes that can be isolated without
-touching pre-existing or concurrent work; otherwise preserve current state.
-Return `blocked` with the failed proof, changed paths, work state, and exact
-recovery required.
-
-## Until Clean
-
-Enter only when the user explicitly requests `until-clean`, names one region,
-and has a finite positive successful-cut budget; use exactly `3` successful cuts
-when omitted. Hold one invariant behavior contract and Proof Seam. Repeat
-`Baseline -> Reduce -> Prove` serially, recording removed and introduced
-maintenance obligations after each successful cut, decrementing the budget, and
-using the proved result as the next baseline. Continue only while the ledger
-shows strict monotonic reduction. A failed attempt consumes no successful-cut
-budget.
-
-Stop at the first applicable terminal:
-
-1. **Clean:** one complete five-rung inspection finds no admissible cut.
-2. **Budget exhausted:** no successful-cut budget remains; report eligible
-   residuals.
-3. **Diminishing return:** the strongest move lacks a progress unit or changes
-   presentation only.
-4. **Oscillation:** a move recreates, undoes, or exchanges an earlier
-   obligation for an equivalent one.
-5. **Failed cut:** an attempted cut fails proof; preserve current state and
-   report the failed proof, work state, and owning residual.
-6. **Boundary stop:** drift, proof limits, region limits, or foreign ownership
-   prevents the next cut.
-
-Do not widen or parallelize the region, renew the budget, or count formatting
-and presentation-only changes as progress.
-
-## Return
-
-Return exactly one:
-
-- `simplified`: cut or cuts, net obligation reduction, preserved contract and
-  Proof Seam, before and after proof, changed paths, starting and ending work
-  state, residuals, and any skipped proof or risk.
-- `no-safe-simplification`: target, adequate baseline, complete applicable
-  candidate accounting, rejection reasons, and any supported Known Ceiling
-  and Revisit Trigger.
-- `blocked`: missing or invalid target, drift, proof gap or failure, or foreign
-  owner; include exact state, changed paths if any, and recovery or owner.
-
-For `until-clean`, also return the initial budget, successful-cut ledger,
-remaining budget, and first applicable campaign terminal. A campaign with any
-proved cut returns `simplified`; one with no cut and a `Clean` terminal returns
-`no-safe-simplification`; a failed or boundary stop returns `blocked`.
-
-The result remains unstaged. Complete only when the target, commitments, Proof
-Seam, candidate accounting, proof, work state, changed paths, preservation
-checks, residuals, and selected outcome agree with current evidence. Start no
-successor.
+Complete when every applied reduction removes rather than moves complexity,
+accepted behavior remains, and relevant proof passes, or when current evidence
+supports no worthwhile safe reduction in the selected target.

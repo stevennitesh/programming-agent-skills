@@ -73,10 +73,10 @@ Implement decides whether each frontier runs serially or concurrently.
 | An active merge, rebase, cherry-pick, or revert is conflicted, an index is unmerged, or plausible markers need inspection | `$resolving-merge-conflicts` |
 | A branch, WIP, staged, since-X diff, PR, release candidate, or supported-risk candidate needs read-only judgment | `$change-review` |
 | A repository needs a whole-system map, one selected subsystem audit, one selected audit-candidate analysis, or one selected analyzed-candidate closeout | `$audit-codebase` |
-| Existing behavior in one bounded region should be simplified under proof | `$simplify-code` |
+| One user-selected existing-code target has accepted behavior and needs behavior-preserving simplification | `$simplify-code` |
 
 **Existing-code tie-breaker:** route repository-wide discovery or baseline
-judgment to `$audit-codebase`; one bounded behavior-preserving reduction to
+judgment to `$audit-codebase`; one user-selected target with accepted behavior to
 `$simplify-code`; and one module, interface, or seam decision to
 `$codebase-design`. Route a selected ready item to `$implement`, which invokes
 TDD only under an explicit user or repository-policy requirement. Route one

@@ -2180,96 +2180,42 @@ def test_tdd_returns_every_outbound_gap_to_its_caller() -> None:
 def test_simplify_code_is_explicit_bounded_and_behavior_preserving() -> None:
     skill_dir = CUSTOM / "simplify-code"
     skill = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
-    skill_flat = " ".join(skill.split())
-    bound = skill.split("## Bound", 1)[1].split("## Baseline", 1)[0]
-    bound_flat = " ".join(bound.split())
-    baseline = skill.split("## Baseline", 1)[1].split("## Reduce", 1)[0]
-    reduce = skill.split("## Reduce", 1)[1].split("## Prove", 1)[0]
-    reduce_flat = " ".join(reduce.split())
-    returned = skill.split("## Return", 1)[1]
-    returned_flat = " ".join(returned.split())
+    contract = pack_contract.parse_contract(
+        (ROOT / "docs/synthesis/skill-pack.md").read_text(encoding="utf-8")
+    )
+    simplify = next(
+        selected
+        for selected in contract["selected_skills"]
+        if selected["canonical_name"] == "simplify-code"
+    )
 
     assert not implicit_policy(skill_dir)
-    assert "one explicitly selected existing-code target" in skill
-    assert "**Bound -> Baseline -> Reduce -> Prove -> Return.**" in skill
-    assert "Return exactly one outcome" in skill
-    for outcome in ("`simplified`", "`no-safe-simplification`", "`blocked`"):
-        assert outcome in returned
-    assert "The user may name the current diff as that target" in bound
-    assert "never infer or replace the target" in bound_flat.lower()
-    assert "one coherent current diff" not in skill
-    assert "Without a target, return `blocked`" in bound_flat
-    assert "exact `$audit-codebase` candidate selected by the user" in bound
-    assert "reuse its trace and selected direction" in bound_flat
-    assert "In default mode, do not repeat wide tracing" in bound_flat
-    assert "An `until-clean` request names its region" in bound_flat
-    assert "smallest trusted proof" in skill
-    assert "semantically inadequate baseline returns `blocked`" in " ".join(
-        baseline.split()
+    assert [
+        match.group(1)
+        for match in re.finditer(r"(?m)^## \d+\. (.+)$", skill)
+    ] == ["Understand", "Choose", "Simplify", "Prove and return"]
+    assert simplify["invocation_mode"] == "explicit-only"
+    assert simplify["relationship_ids"] == []
+    assert {
+        relationship["caller_skill_id"]
+        for relationship in contract["relationships"]
+        if relationship["target_skill_id"] == simplify["skill_id"]
+    } == {"SK-017", "SK-025"}
+    assert all(
+        relationship["caller_skill_id"] != simplify["skill_id"]
+        for relationship in contract["relationships"]
     )
-    assert "adequate baseline is required for a `no-safe-simplification`" in " ".join(
-        baseline.split()
-    )
-    assert "before and after proof" in returned_flat
-    assert "Refresh changed paths and work state after proof" in skill
-    assert "evidence proves no use remains" in skill
-    assert "staged-state shape" in skill
-    assert "keeps the index and unrelated state as found" in skill_flat
-    assert "verified `$audit-codebase` atlas" not in skill
-    assert "configuration, compatibility, or abstraction proved" in reduce
-    assert "deepen, merge, or inline only within settled existing boundaries" in (
-        reduce_flat
-    )
-    assert "complete applicable inspection" in reduce
-    assert "selected Audit direction in default mode or the" in reduce_flat
-    assert "full ladder for other targets and `until-clean`" in reduce_flat
-    assert "Enter only when the user explicitly requests `until-clean`" in skill
-    assert re.findall(r"(?m)^\d\. \*\*([^*]+)\*\*", reduce)[:5] == [
-        "Delete",
-        "Reuse",
-        "Standardize, native-first",
-        "Collapse",
-        "Shrink",
-    ]
-    standardize = skill.split("3. **Standardize, native-first**", 1)[1].split(
-        "4. **Collapse**", 1
-    )[0]
-    assert standardize.index("standard/runtime") < standardize.index(
-        "platform/framework"
-    )
-    assert standardize.index("platform/framework") < standardize.index(
-        "already-installed dependency"
-    )
-
-
-def test_simplify_code_until_clean_has_a_finite_convergence_contract() -> None:
-    skill = (CUSTOM / "simplify-code/SKILL.md").read_text(encoding="utf-8")
-    branch = skill.split("## Until Clean", 1)[1].split("## Return", 1)[0]
-    branch_flat = " ".join(branch.split())
-
-    assert "names one region" in branch
-    assert "finite positive successful-cut budget" in branch
-    assert "Hold one invariant behavior contract and Proof Seam" in branch_flat
-    assert "use exactly `3` successful cuts when omitted" in branch_flat
-    assert "`Baseline -> Reduce -> Prove`" in branch
-    assert "strict monotonic reduction" in branch_flat
-    assert "complete five-rung inspection" in branch_flat
-    assert "presentation-only changes as progress" in branch_flat
-    assert "A failed attempt consumes no successful-cut budget" in branch_flat
-    assert "Do not widen or parallelize the region, renew the budget" in branch_flat
-    assert re.findall(r"(?m)^\d\. \*\*([^*]+):\*\*", branch) == [
-        "Clean",
-        "Budget exhausted",
-        "Diminishing return",
-        "Oscillation",
-        "Failed cut",
-        "Boundary stop",
-    ]
-    returned = skill.split("## Return", 1)[1]
-    returned_flat = " ".join(returned.split())
-    assert "initial budget, successful-cut ledger, remaining budget" in returned_flat
-    assert "with no cut and a `Clean` terminal returns" in returned_flat
-    assert "failed or boundary stop returns `blocked`" in returned_flat
+    for old_contract in (
+        "until-clean",
+        "finite positive successful-cut budget",
+        "successful-cut ledger",
+        "Known Ceiling",
+        "Revisit Trigger",
+        "Return exactly one outcome",
+        "staged-state shape",
+        "complete applicable inspection",
+    ):
+        assert old_contract not in skill
 
 
 def test_codebase_design_compares_replacement_with_incremental_evolution() -> None:
@@ -2875,7 +2821,8 @@ def test_mutating_workflows_require_proportional_readback() -> None:
     parallel = " ".join(
         (CUSTOM / "parallel-implement/SKILL.md").read_text(encoding="utf-8").split()
     )
-    assert "Read the result back when the operation can partially succeed" in implement
+    assert "Read back every durable external mutation" in implement
+    assert "recovery path before an operation that can partially succeed" in implement
     assert "mutation read-back" in parallel
 
     for name in ("to-spec", "to-tickets", "triage", "wayfinder"):
@@ -3080,15 +3027,16 @@ def test_parallel_uses_current_landed_state_without_a_dependency_overlay() -> No
         assert token not in parallel
 
 
-def test_state_boundary_reasoning_is_proportional_and_has_one_owner() -> None:
+def test_shared_protection_uses_a_concrete_trigger_not_a_state_catalog() -> None:
     contract = (ROOT / "docs/agents/engineering-contract.md").read_text(encoding="utf-8")
     seed = (CUSTOM / "repo-bootstrap/engineering-contract.md").read_text(encoding="utf-8")
     tickets = (CUSTOM / "to-tickets/SKILL.md").read_text(encoding="utf-8")
 
     for shared in (contract, seed):
         normalized = " ".join(shared.split())
-        assert "Handle state, retry, recovery, cancellation, concurrency" in normalized
-        assert "only when reachable behavior or a supported requirement" in normalized
+        assert "active trust or effect boundary" in normalized
+        assert "Local or personal use alone is not a trigger" in normalized
+        assert "Handle state, retry, recovery, cancellation, concurrency" not in normalized
     flat = " ".join(tickets.split())
     assert "whose behavior materially changes by state" in flat
     assert "Use a matrix only when it is clearer than prose" in flat
@@ -3123,7 +3071,8 @@ def test_implement_closeout_locks_exact_candidate_and_preserves_custody() -> Non
     assert "Direct work creates no tracker state" in flat
     assert "follow the repository's claim and closeout rules" in flat
     assert "do not push without separate authority" in flat
-    assert "Read the result back when the operation can partially succeed" in flat
+    assert "Read back every durable external mutation" in flat
+    assert "recovery path before an operation that can partially succeed" in flat
     assert "Call the item complete only when the requested behavior works" in flat
     assert "Return a concise summary" in flat
     assert "Outcome: complete | partial | blocked" not in flat

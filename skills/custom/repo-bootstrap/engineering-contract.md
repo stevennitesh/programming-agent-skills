@@ -32,11 +32,11 @@ An abstraction earns its cost by hiding meaningful complexity or owning
 policy. Collapse pass-through wrappers and seams that support no real
 variation.
 
-Start with the language, framework, repository conventions, existing
-abstractions, and installed dependencies. Add an abstraction, dependency,
-adapter, cache, configuration option, concurrency mechanism, or compatibility
-path only for supported variation or demonstrated value. Prefer bounded
-duplication to an abstraction that joins different meanings or owners.
+Apply YAGNI: add machinery only for a current requirement, supported variation,
+or demonstrated value. Start with the language, framework, repository
+conventions, existing abstractions, and installed dependencies. Do not unify
+code merely because it looks similar. Prefer small local duplication when a
+shared abstraction would couple different meanings or owners.
 
 Fix the cause across affected callers instead of guarding one symptom. Trust
 internal types and established invariants. Validate untrusted,
@@ -51,9 +51,6 @@ copies.
 ## Implement the whole change
 
 Preserve the behavior and failure semantics the accepted contract exposes.
-Handle state, retry, recovery, cancellation, concurrency, compatibility, and
-observability only when reachable behavior or a supported requirement makes
-them relevant.
 
 Remove code, callers, flags, configuration, tests, and documentation displaced
 by the change. Keep an older path only for a named compatibility, migration,
@@ -77,8 +74,14 @@ state what remains unproved.
 
 ## Activate protection from evidence
 
-Protection follows a concrete trigger. Destructive work needs an exact target
-and approval. External durable mutation needs authority and read-back.
+Add the smallest protection required by the request, repository, or accepted
+behavior, including correctness at an active trust or effect boundary. Ask only
+when evidence leaves an unresolved choice that would create or change a
+consequential product or operating commitment. Otherwise omit it. Local or
+personal use alone is not a trigger.
+
+Destructive work needs an exact target and approval. External durable mutation
+needs authority and read-back.
 Concurrent writers need isolated ownership and one integrator. Formal review
 needs a fixed candidate. Operations that can partially succeed need a recovery
 path. Consequential performance, capacity, reliability, latency, cost, or

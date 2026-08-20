@@ -128,7 +128,7 @@ Representative routes:
 - Bounded multi-session fog -> `$wayfinder` until the map closes -> terminal decision or settled source for `$to-spec`
 - Explicit test-first, TDD, or RED-GREEN-REFACTOR work -> `$tdd`; ordinary implementation with tests -> `$implement`; route uncertain bugs through `$skill-router`.
 - Whole-repository correctness, robustness, or quality discovery -> `$audit-codebase` builds, continues, or refreshes one linked HTML map, audits one user-selected subsystem, then can analyze one user-selected improvement candidate or returned evidence
-- Existing behavior in one bounded region -> `$simplify-code` for one proved reduction, a finite `until-clean` campaign, or a no-safe-cut verdict
+- Existing behavior in one selected target -> `$simplify-code` for proved behavior-preserving simplification or a truthful no-change result
 - An explicit read-only change judgment or implementation candidate whose independent-review trigger applies -> `$change-review`; an explicitly selected two-lane assurance review -> `$high-assurance-review`
 - Bounded correctness, domain robustness, performance, structural, or simplification discovery over an immutable repository baseline -> `$audit-codebase`, with repo-backed candidate decisions returned through `$grill-with-docs`
 
