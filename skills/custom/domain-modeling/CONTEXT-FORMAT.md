@@ -5,6 +5,12 @@ use the fallbacks below for settled, context-scoped language, behavior,
 invariants, responsibilities, and relationships. Keep unresolved meaning in the
 Domain Delta.
 
+A routed context record owns the current semantic contract for its bounded
+context. It does not own executable procedures or algorithm specifications,
+commands, mutable work state, implementation inventories, change history, or
+decision rationale. It may own a settled domain rule an algorithm must preserve.
+Route foreign material to its current owner.
+
 ## Single-Context Fallback
 
 Use root `CONTEXT.md`:
@@ -85,8 +91,14 @@ Select patterns from model behavior, not organizational influence alone:
 
 ## Representation Rules
 
+- Before adding material, compare it with routed current records. Leave one
+  coherent current statement by revising or removing covered or conflicting
+  material in the same authorized delta.
 - Record only settled canonical meaning, ownership, material conflicts, and
   decision authority.
+- Admit a term only when its project-specific meaning changes how the model is
+  understood. Admit an invariant only when it distinguishes valid from invalid
+  domain behavior or responsibility across implementation changes.
 - Define domain behavior and boundaries independently of implementation.
 - Use one canonical term inside its context; list rejected synonyms under
   `_Avoid_`.

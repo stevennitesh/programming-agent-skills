@@ -5,6 +5,11 @@ interface, architecture, or engineering owner settles the decision. Follow the
 repository's routed ADR convention, using the fallback below only when none
 exists.
 
+An ADR owns durable rationale, the chosen trade-off, and material consequences,
+including a hard-to-reverse algorithm choice when worthy. It does not own the
+current executable algorithm specification, procedure, commands, mutable state,
+or implementation inventory.
+
 ## Worthiness
 
 Offer an ADR only when all three are true:
@@ -33,6 +38,16 @@ Create the directory lazily. Scan the target directory for the highest number
 and create the next `NNNN-slug.md`; ambiguous or concurrent numbering returns a
 blocker instead of overwriting.
 
+Before numbering a new ADR, inspect applicable ADRs for the same
+decision. A successor names its predecessor and the exact scope it replaces,
+including retained bounded decisions. Mark the predecessor `superseded by
+ADR-NNNN` only when the successor replaces it as a whole; otherwise state the
+exact replaced and retained scope in the successor and update one predecessor
+applicability note with every partial successor and the scope that remains. The
+predecessor stays `accepted` only for that retained scope. Preserve the
+predecessor file as history. Update authorized current routes in the same
+change, and return every foreign route consequence to its owner.
+
 ## Record
 
 ```md
@@ -47,6 +62,8 @@ Add only sections that preserve material information:
 
 - **Status:** `accepted`, `deprecated`, or `superseded by ADR-NNNN` when
   lifecycle matters.
+- **Applicability:** all partial-successor links and the predecessor scope that
+  remains current, when partially replaced.
 - **Considered Options:** when rejected alternatives remain instructive.
 - **Consequences:** when non-obvious effects, obligations, or risks matter
   downstream.

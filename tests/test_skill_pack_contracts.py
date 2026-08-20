@@ -1342,11 +1342,27 @@ def test_domain_modeling_owns_durable_domain_truth() -> None:
         "implementation defect, model correction, or intentional migration",
     ):
         assert contract in domain_flat
+    assert domain.count("Reconcile proposed material") == 1
     assert (
         "Within one context, its local model owns canonical meaning. Across "
         "contexts, preserve independent meanings unless an explicit "
         "relationship contract or Shared Kernel says otherwise."
     ) in context_format_flat
+    assert context_format.count("routed current records") == 1
+    assert "executable procedures or algorithm specifications" in context_format_flat
+    adr_format = (CUSTOM / "domain-modeling/ADR-FORMAT.md").read_text(
+        encoding="utf-8"
+    )
+    adr_format_flat = " ".join(adr_format.split())
+    assert domain.count("(./ADR-FORMAT.md)") == 1
+    assert "`superseded by ADR-NNNN`" in adr_format
+    assert "- **Applicability:**" in adr_format
+    assert "all partial-successor links" in adr_format_flat
+    assert "algorithm choice" in adr_format_flat
+    assert "executable algorithm specification" in adr_format_flat
+    root_context = (ROOT / "CONTEXT.md").read_text(encoding="utf-8")
+    assert "Reconcile proposed material with routed current records" not in root_context
+    assert "partial-successor links" not in root_context
 
 
 def test_instantiated_domain_helper_preserves_routing_and_ownership() -> None:
@@ -1685,6 +1701,7 @@ def test_review_family_shares_one_bounded_quality_and_risk_model() -> None:
 
 def test_review_assurance_route_has_one_domain_decision() -> None:
     context = (ROOT / "CONTEXT.md").read_text(encoding="utf-8")
+    normalized_context = " ".join(context.split())
     adr = (
         ROOT / "docs/adr/0015-independent-change-review-is-condition-triggered.md"
     ).read_text(encoding="utf-8")
@@ -1697,6 +1714,9 @@ def test_review_assurance_route_has_one_domain_decision() -> None:
     ):
         assert context.count(term) == 1
     assert "ADR-0015" in context
+    assert "The caller owns activation" in normalized_context
+    assert "each review skill validates its admitted candidate" in normalized_context
+    assert "after an applicable review is admitted" in normalized_context
     assert "**Status**: accepted" in adr
     assert "Supported facts expand ordinary candidate-scoped coverage" in normalized_adr
     assert "Candidate size, PR or release packaging" in normalized_adr

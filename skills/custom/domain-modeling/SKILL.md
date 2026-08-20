@@ -71,17 +71,26 @@ Trace -> Challenge -> Resolve -> (Persist -> Verify | Render) -> Return
    optional recognized patterns live in
    [CONTEXT-FORMAT.md](./CONTEXT-FORMAT.md).
 
+   Reconcile proposed material with routed current records before adding it.
+   Leave one coherent current model: revise or remove existing material when it
+   already covers or conflicts with the proposal, and add only a settled
+   distinction current records cannot express. Keep procedure, commands,
+   mutable state, implementation inventories, and decision rationale with their
+   owners.
+
 4. **Persist -> Verify | Render.** Read [CONTEXT-FORMAT.md](./CONTEXT-FORMAT.md)
    only to render or persist language, invariants, context maps, or
    relationships. Read [ADR-FORMAT.md](./ADR-FORMAT.md) only for a plausible
    already-settled ADR candidate.
 
    For `persist authorized`, refresh routing and every target, preflight the
-   bounded set, write only accepted changes, and reread each attempted and
-   changed record. On the first write or verification failure, preserve verified
-   changes, stop mutation, and return exact partial state. For `render only`,
-   return directly applicable wording, target, placement, and relationship
-   effects without writing.
+   bounded set, and persist one coherent accepted delta. Remove or consolidate
+   displaced material in the same authorized records; return foreign-owner
+   consequences without mutating them. Reread each attempted and changed record.
+   On the first write or verification failure, preserve verified changes, stop
+   mutation, and return exact partial state. For `render only`, return directly
+   applicable wording, target, placement, and relationship effects without
+   writing.
 
 5. **Return.** Return the Domain Delta to the direct user, caller, or
    `$grill-with-docs` and stop:
@@ -109,4 +118,5 @@ Complete when Trace is current; every in-scope consequence is resolved,
 no-change, or an exact blocker; each intended target is verified, rendered, or
 returned with exact failure state; every plausible ADR candidate has an outcome;
 mutation stayed inside routed domain records and approved ADRs; the Domain Delta
-is complete; and Return starts nothing.
+is complete; no in-scope parallel truth or displaced active material remains;
+and Return starts nothing.

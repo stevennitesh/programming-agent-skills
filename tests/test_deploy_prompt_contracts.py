@@ -40,12 +40,17 @@ def test_active_method_exposes_one_controllerless_four_obligation_path() -> None
     assert "not persisted semantic lifecycle state" in deploy
     assert "controllerless" in deploy
 
-    for active in (AGENTS, CONTEXT, ADR, SYNTHESIS_README, METHODS_README):
+    for active in (AGENTS, ADR, SYNTHESIS_README, METHODS_README):
         text = _normalized(active)
         assert "Contract Lock" in text
         assert "Candidate Lock" in text
         assert "Behavioral Proof" in text
         assert "Release" in text
+
+    context = _normalized(CONTEXT)
+    assert "Skill Change-Control Method" in context
+    assert "docs/synthesis/methods/deploy-prompts.md" in context
+    assert "ordered reasoning and proof obligations" in context
 
 
 def test_dependency_ready_fce_slice_is_an_authorized_method_caller() -> None:

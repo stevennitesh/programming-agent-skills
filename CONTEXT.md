@@ -11,41 +11,7 @@ This repository packages a shared engineering discipline as skills, setup contra
 - `docs/agents/issue-tracker.md`, `triage-labels.md`, and `domain.md` own tracker mechanics, state roles, and domain routing.
 - `skills/custom/` is the active supported install set and the only source for managed installation. `skills/experimental/` holds inactive named alternatives to active skills. `skills/extra/` is optional, and `skills/.archive/` is retired history.
 - Historical research, synthesis, transcripts, issue notes, and run logs remain evidence. They become current instructions only when an owning README or `docs/plans/README.md` says so.
-- A Fresh Composition Epoch treats prior research, synthesis, validation, and
-  one-skill change conclusions as historical by default. It admits them only
-  after independent rediscovery or explicit revalidation against the epoch's
-  fixed identities and claims.
 - Mechanical rules belong in scripts or config. Prose owns routing, judgment, and behavior that cannot be enforced directly.
-- A delegated implementation handoff is fresh ordinary task context. It never
-  replaces its authoritative ticket, source, or live repository evidence and
-  requires no worker-side schema, capsule, hash, transcript, or receipt check.
-- An implementation worker owns only its assigned write scope and evidence
-  return. It never gains delivery, scheduling, integration, review, candidate
-  baselining, promotion, or closeout authority and never spawns another worker.
-- Worker completion is provisional until the coordinator inspects the scoped
-  diff, requested commit, and observed proof. Formal review judges the
-  recombined candidate independently.
-- A concurrent writer starts only after one helper creates a clean exact-base
-  worktree and prepares reusable pytest temp/cache paths. When the checkout
-  declares pytest, the same preflight must pass a quick collection smoke. A
-  newly created untouched lane is reclaimed after failed preflight; reused,
-  changed, dirty, or uncertain lanes are preserved. A serial writer needs no
-  worktree automation.
-- The runtime owns numeric worker capacity. Delivery coordination qualifies
-  each use of that capacity through semantic ownership, write and proof
-  independence, dependencies, integration bandwidth, and expected benefit.
-- Delivery starts from the intended outcome, current behavior owner, real
-  callers, and relevant constraints, then selects and simplifies the smallest
-  repository-native path through that owner and its real callers. Novelty and
-  familiarity are neutral.
-- Ordinary implementation completes through final diff and state read-back,
-  claim-matched proof, and Change Closure. Change Review activates only for an
-  explicit user or repository requirement, mutations from two or more
-  independent authors, or a proved material shared-contract or irreversible-
-  migration acceptance judgment that still warrants fresh independent
-  judgment and for which review is the lowest-burden way to obtain it. Missing
-  proof stops rather than activating review. High-Assurance
-  Review, security specialist work, and production/SRE work are explicit-only.
 
 ## Context Trace
 
@@ -88,21 +54,6 @@ publishing, and Git delivery resume only under their own authority.
 
 The installer records pack-managed names in `.programming-agent-skills-manifest.json`. It may update or retire those names while preserving unrelated skills in the shared install directory.
 
-## Work State
-
-- `.tmp/` holds disposable local work. Delete it before delivery or name each intentionally preserved path.
-- `.scratch/` holds durable, version-controlled local work state. Include in-scope changes in review and staging.
-- Prompt outputs under `docs/synthesis/facets/` are synthesis evidence, not boot instructions.
-- Generated data, caches, downloads, and bulky outputs stay untracked unless the repository explicitly needs them.
-
-## Stable Defaults
-
-- Activate `.venv`, then use portable `python -m ...` commands.
-- Keep pytest defaults in `pyproject.toml`.
-- Use `python -m scripts.pytest_focused` for narrow tests without full-suite fanout.
-- Use `python -m scripts.validate_skills` for repo integrity.
-- Use `python -m scripts.install_skills` for managed install or update, then validate the installed root.
-
 ## Pack Vocabulary
 
 **Skill pack**
@@ -112,43 +63,33 @@ _Avoid_: prompt collection, script bundle
 
 **Fresh Composition Epoch**
 
-A pack-wide epistemic reset that freezes intended composition before prior
-research, synthesis, validation, change-control conclusions, or current skill
-bodies can steer discovery. It rebuilds a Pack Composition Baseline and
-Evidence Catalog, runs the Skill Change-Control Method for each selected skill
-under that baseline, proves the composed pack, and cleans up superseded
-material only after an Epoch Acceptance Record. Prior artifacts are historical
-intake until Define and Authorize Change independently binds current intent and
-explicitly revalidates their complete identities.
+A pack-wide epistemic reset in which prior research, synthesis, validation, and
+change conclusions are historical intake until independently rediscovered or
+explicitly revalidated. The active method lives in
+[`fresh-composition-epoch.md`](docs/synthesis/methods/fresh-composition-epoch.md).
 _Avoid_: clean slate, destructive reset, pack-wide change-control method
 
 **Pack Composition Baseline**
 
-The approved pack-level synthesis baseline for selected capabilities, each skill's
-essential outcome and router, executable-aggregate, or leaf role, ownership
+The approved pack-level synthesis of selected capabilities, roles, ownership
 boundaries, relationships, exclusions, collisions, gaps, and required
-integration proof. It constrains one-skill change-control work without
-selecting its H1 behavior or copying its procedures.
+integration proof. It constrains one-skill work without copying its procedure.
 _Compatibility alias_: Pack Composition Contract
 _Avoid_: skill inventory, route list, change-control charter
 
 **Evidence Catalog**
 
-The change-control-facing index of reusable Evidence Records, organized by the
-behavior or failure they address, conditions, evidence class, freshness,
-limits, and source pointers. One-skill work opens it only when Define and
-Authorize Change finds a decision-relevant method, concept, hypothesis, or
-source-evidence gap, and only after recording an independent problem-first
-packet. It supports retrieval and never selects skill composition or admits H1.
+An index of reusable Evidence Records by the behavior or failure they address,
+conditions, evidence class, freshness, limits, and source pointers. It supports
+retrieval and never selects skill composition or behavior.
 _Compatibility alias_: Research Catalog
 _Avoid_: recommendation engine, synthesis index, source dump
 
 **Evidence Record**
 
 A reusable evidence unit describing one behavior or method, the failure it may
-prevent, applicability and counterconditions, claim-owning evidence,
-freshness, limits, and source-packet pointers. Per-skill synthesis decides
-whether a record contributes to H1.
+prevent, applicability, counterconditions, claim-owning evidence, freshness,
+limits, and source pointers.
 _Compatibility alias_: Research Card
 _Avoid_: adopted behavior, H1 unit, source summary
 
@@ -190,52 +131,42 @@ _Avoid_: duplicated contract
 
 **Delegated implementation handoff**
 
-The plain ticket-specific context a delivery coordinator sends to one fresh
-implementation worker: outcome, fixed decisions and relevant references,
-acceptance, owned scope and exclusions, base and checkout, validation, stop
-conditions, and expected evidence. It is neither an editable plan nor a
-machine-validated execution protocol.
+Plain ticket-specific context sent by a delivery coordinator to one fresh
+implementation worker. `$implement` owns its contents and return contract; it
+is not a machine-validated execution protocol.
 _Avoid_: capsule, assignment schema, planner transcript
 
 **Implementation worker**
 
-The delegated agent that implements one bounded handoff and returns changed
-files, observed validation, acceptance evidence, risk, and a task commit when
-requested. Its return remains provisional until coordinator verification.
+The delegated agent that implements one bounded handoff. The coordinator owns
+acceptance and delivery; `$implement` owns the worker contract.
 _Avoid_: delivery coordinator, change-control owner, reviewer
 
 **Concurrent worker lane**
 
-One isolated Git worktree prepared at an exact base for a writer that may overlap
-another writer in time. Its helper owns mechanical preparation, pytest-ready
-temp/cache setup, and conservative cleanup; the coordinator owns whether and
-when to dispatch or remove it.
+An isolated exact-base Git worktree for a writer that may overlap another
+writer in time. The lane helper owns preparation and cleanup;
+`$parallel-implement` owns scheduling and integration.
 _Avoid_: worker runtime, scheduler, execution ledger
 
 **Change review candidate**
 
 A caller-admitted fixed-snapshot implementation diff or PR. `$change-review`
-owns its separate Spec and Standards gate and scales coverage to supported
-facts after review activates. Candidate kind, size, release status, and risk do
-not activate it.
+owns admission, coverage, and its separate Spec and Standards judgment.
 _Avoid_: low-priority review, risk-free review
 
 **High-assurance review candidate**
 
-A fixed-snapshot candidate explicitly sent to `$high-assurance-review` by the
-user or one exact caller-owned approved invocation. Risk does not implicitly
-select it.
+A fixed-snapshot candidate explicitly sent to `$high-assurance-review`; risk
+does not implicitly select it.
 _Avoid_: automatic escalation, every risky change
 
 **Supported high-risk trigger**
 
-A changed surface with a supported scenario, reachable behavior or failure
-path, and concrete impact involving a trust boundary, irreversible effect or
-migration, concurrency or recovery, high-impact domain or model invariant, or
-measured performance obligation. It modifies coverage only after review is
-admitted. It never invokes Change Review, High-Assurance Review, security work,
-production/SRE work, or a specialist; PR existence, size, and labels do not
-qualify.
+A supported reachable scenario with concrete material impact. After review is
+admitted, it may expand candidate-scoped coverage; it never activates review.
+The `$change-review` [Finding Contract](skills/custom/change-review/FINDING-CONTRACT.md)
+owns its classification after an applicable review is admitted.
 _Avoid_: hypothetical edge case, risk label, PR route
 
 **Router skill**
@@ -245,21 +176,9 @@ _Avoid_: dispatcher, automatic router
 
 **Skill Change-Control Method**
 
-An explicitly invoked controllerless one-skill authoring method, owned by
-[`deploy-prompts.md`](docs/synthesis/methods/deploy-prompts.md), organized by
-four ordered reasoning and proof obligations: Define and Authorize Change,
-Baseline and Verify Candidate, conditional Validate Behavior, and Promote
-Canonical Skill. The obligations are not persisted semantic lifecycle state.
-
-Define and Authorize Change binds the issue, specification, applicable current
-authority, callers, relationships, compatibility, and delivery authority.
-Baseline and Verify Candidate freezes exact bytes and completes applicable
-deterministic and integration verification before behavioral dispatch or
-promotion. Validate Behavior uses the existing conditional evaluation owner
-only for wording-dependent claims and real disposable state for effect claims.
-Promote Canonical Skill moves only the exact tested candidate into the
-canonical package. Research, behavioral sampling, pruning, installation, and
-Git delivery occur only when their conditions and authorities apply.
+The controllerless one-skill authoring method owned by
+[`deploy-prompts.md`](docs/synthesis/methods/deploy-prompts.md). Its ordered
+reasoning and proof obligations are not persisted semantic lifecycle state.
 _Compatibility aliases_: Deploy Campaign; Contract Lock; Candidate Lock;
 Behavioral Proof; Release (for this method stage only)
 _Avoid_: mega-prompt, self-chaining prompt, pack-wide method
@@ -288,6 +207,9 @@ _Avoid_: pack manual, copied route map
 - Change review candidate, High-assurance review candidate, and Supported
   high-risk trigger belong to this context and
   [ADR-0015](docs/adr/0015-independent-change-review-is-condition-triggered.md).
+  The caller owns activation, each review skill validates its admitted
+  candidate, and the Change Review Finding Contract owns supported-risk
+  classification only after an applicable review is admitted.
 - Agent-instruction vocabulary—context pointers, context and cognitive load,
   information hierarchy, completion criteria, leading words, environment
   caches, and pruning—belongs to
