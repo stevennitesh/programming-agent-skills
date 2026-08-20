@@ -56,7 +56,7 @@ flowchart TD
   Shape --> ToSpec["to-spec"]
   ToSpec --> DomainRouter
   ToSpec --> Contract
-  ToSpec -. "material module or interface vocabulary or question" .-> CodeDesign
+  ToSpec -. "one unresolved architecture question" .-> CodeDesign
   ToSpec -. "new or updated durable spec" .-> TmpSpec[".tmp/to-spec/*.md<br/>draft until publication is verified"]
   ToSpec --> Tracker
   ToSpec --> Labels
@@ -147,8 +147,7 @@ flowchart TD
 
   TDD --> TddRefs["tests.md / mocking.md / refactoring.md"]
   Audit -. "selected design candidate" .-> CodeDesign
-  CodeDesign --> DirectDesign["DIRECT-DESIGN.md"]
-  DirectDesign --> DesignRefs["DEEPENING.md / DESIGN-IT-TWICE.md"]
+  CodeDesign --> DesignRefs["DEEPENING.md / DESIGN-IT-TWICE.md"]
   CodeDesign -. "wide scan" .-> Audit
   Writing["writing-for-agents"] --> SkillMechanics["references/SKILL-MECHANICS.md<br/>skill-only mechanics"]
   Writing -. "user requests behavioral testing" .-> BehaviorEvals["references/BEHAVIOR-EVALS.md<br/>counterfactual wording evaluation"]
@@ -214,12 +213,11 @@ Return.
 | `to-questionnaire` | Recommend and stop | `$research` | Inspectable primary sources can answer the gap. |
 | `to-questionnaire` | Recommend and stop | `$grilling` | The current user owns the unresolved conversation-only decision. |
 | `to-questionnaire` | Recommend and stop | `$repo-bootstrap` | The default artifact path cannot be proved ignored; return the exact setup precondition with Repo Bootstrap unstarted. |
-| `research` | Recommend and stop | `$prototype` | Admission shows the question needs one runnable design or behavior verdict. |
 | `research` | Recommend and stop | `$grilling` | The current user owns the unresolved conversation-only decision. |
 | `research` | Recommend and stop | `$grill-with-docs` | The current user owns the unresolved repo-backed decision and durable domain capture must remain active. |
 | `research` | Recommend and stop | `$wayfinder` | Admission directly identifies several interdependent decisions and non-conversational prerequisites needing a durable route; Research returns only the deterministic match and leaves route choice to the caller. |
 | `wayfinder` | Invoke | `$research` | Pass the question, supported map use, scope, exact state, approved note path and write mode, and Wayfinder return owner; normalize the intact answer or blocker. |
-| `wayfinder` | Invoke | `$prototype` | Pass decision owner, result recipient, claim level, judgment mode, evidence surface, verdict basis, representative cases, authorized paths and effects, entry point or recipe, finite bound, limits, disposition, and the human judge or objective criteria; normalize the intact verdict or residual. |
+| `wayfinder` | Invoke | `$prototype` | Pass the question, resolution and return owners, named human judge or predeclared objective rule, representative evidence, mutation boundary with authority evidence, run bound, cleanup or accepted custody, and Wayfinder re-entry; normalize the intact answer or residual. |
 | `wayfinder` | Invoke | `$grilling` | One HITL ticket or Chart bound needs a conversation-only user decision; receive the intact decision or gap packet and retain map ownership. |
 | `wayfinder` | Invoke | `$grill-with-docs` | One HITL ticket or Chart bound needs a user decision while durable domain capture remains active; receive the intact Grilling packet and Domain Delta. |
 | `wayfinder` | Invoke | `$to-questionnaire` | One external Questionnaire prerequisite needs asynchronous attributable answers and the user approved the exact recipient, needed-back, sensitivity, effort, durable path, retention owner, answer-return destination, overwrite, no-send, origin, and return packet. The questionnaire path returns as Waiting. Without approval, no edge fires: Wayfinder returns `incomplete` with the packet and exact re-entry. |
@@ -227,7 +225,7 @@ Return.
 | `wayfinder` | Recommend and stop | `$implement` | The closed map produced one settled bounded implementation and no durable parent contract is useful. |
 | `wayfinder` | Recommend and stop | `$to-spec` | The closed map produced settled parent-spec source. |
 | `wayfinder` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
-| `to-spec` | Load | `$codebase-design` | The source uses material module or interface vocabulary, or delegates one consequential internal design question. Apply Direct Design only for that unresolved question and fold the supported result into the specification. To Spec retains artifact and completion; gaps return `source-gap`. |
+| `to-spec` | Load | `$codebase-design` | The source delegates one consequential unresolved architecture question about ownership, data shape, interface, state or failure policy, seam, or migration. Fold the recommendation, retain judgment, or exact gap into the specification. To Spec retains artifact and completion; gaps return `source-gap`. |
 | `to-spec` | Recommend and stop | `$implement` | The settled source is one bounded complete implementation and a durable parent contract would add no useful coordination or lasting decision record. |
 | `to-spec` | Recommend and stop | `$to-tickets` | `ready-spec` verifies purpose, boundaries, limitations, settled decisions and owners, required outcomes, acceptance, and Source Trace; To Tickets owns bounded repository grounding, child slicing, and graph publication. |
 | `to-spec` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
@@ -257,9 +255,9 @@ Return.
 | `audit-codebase` | Recommend and stop | `$grill-with-docs` | One candidate decision belongs to the current user and also requires current domain language, Invariants, relationships, or ADR handling; Audit publishes the decision brief and exact Analyze re-entry, then leaves composition unstarted. |
 | `audit-codebase` | Recommend and stop | `$grilling` | One candidate decision belongs to the current user but needs no domain-record maintenance; Audit publishes the decision brief and exact Analyze re-entry, then leaves Grilling unstarted. |
 | `audit-codebase` | Recommend and stop | `$research` | One analyzed candidate needs one non-diagnostic source-answerable authoritative fact; Audit publishes an exact report-backed pickup and leaves Research unstarted. |
-| `audit-codebase` | Recommend and stop | `$prototype` | One settled candidate design question needs one disposable runnable probe or performance experiment; Audit publishes an exact report-backed pickup and leaves Prototype unstarted. |
+| `audit-codebase` | Recommend and stop | `$prototype` | One selected candidate has an unresolved runnable-evidence question needing a disposable probe or comparative design measurement; Audit publishes an exact report-backed pickup and leaves Prototype unstarted. |
 | `audit-codebase` | Recommend and stop | `$to-questionnaire` | One identifiable external stakeholder holds candidate knowledge unavailable from sources or the current user; Audit publishes an exact report-backed pickup and leaves questionnaire creation unstarted. |
-| `audit-codebase` | Load | `$codebase-design` | During Analyze of one selected design or mixed candidate after user decisions settle, apply Direct Design and fold its result into the HTML. Audit retains artifact and completion and creates no second design step. |
+| `audit-codebase` | Load | `$codebase-design` | During Analyze of one selected design or mixed candidate after user decisions settle, resolve its one bounded architecture question and fold the result into the HTML. Audit retains artifact and completion and creates no second design step. |
 | `audit-codebase` | Recommend and stop | `$wayfinder` | Multiple interdependent unresolved candidate decisions or prerequisites need a configured tracker-backed route; Audit publishes an exact pickup and leaves Wayfinder unstarted. |
 | `audit-codebase` | Recommend and stop | `$to-spec` | One analyzed candidate has settled direction and commitments but needs a durable parent specification; Audit publishes an exact report-backed pickup and leaves specification work unstarted. |
 | `audit-codebase` | Invoke | `$to-tickets` | The generated candidate Analyze prompt includes To Tickets and the candidate is implementation-ready. Without that exact authority Audit publishes `authority-required`, returns its linked Analyze re-entry, and invokes nothing. With authority, To Tickets returns a ready/reused graph or recovery state. |
@@ -289,7 +287,7 @@ every terminal result directly to its current caller or the user.
 | `docs/agents/domain.md` | Context-sensitive routing plus the preserve-or-return posture for domain language, invariants, relationships, and ADR conflicts | `to-spec`, `triage`, `tdd`, `diagnosing-bugs`, `codebase-design`, `audit-codebase`, `parallel-implement` |
 | `docs/agents/engineering-contract.md` | Shared engineering judgment: bounded slices, causal ownership, explicit data shapes, small interfaces, local state, subtractive design, native capabilities, root-cause correction, trust-boundary validation, displaced-path removal, proportional proof, and concrete protection triggers. Skills retain procedures, checks, stopping conditions, and outputs. | `to-spec`, `to-tickets`, `implement`, `tdd`, `diagnosing-bugs`, `codebase-design`, `prototype`, `simplify-code`, `audit-codebase`, `parallel-implement`, `resolving-merge-conflicts`, `change-review`, `high-assurance-review` |
 | `domain-modeling` | Resolves domain semantics; exclusively accumulates and returns the authoritative current cumulative Domain Delta; renders or persists routed `CONTEXT.md` and `CONTEXT-MAP.md` changes under `render only` or `persist authorized`; assesses plausible ADR candidates; and records approved ADR truth | `skill-router`, `grill-with-docs`, `wayfinder`, `repo-bootstrap` |
-| `codebase-design` | Bounded module-design procedure and detailed Responsibility, Interface, Seam, Adapter, Proof Seam, correctness, robustness, migration, and replacement vocabulary | `to-spec`, `audit-codebase`, direct architecture/design work |
+| `codebase-design` | One bounded module or interface architecture decision using deep-module, caller-first, data-shape, ownership, seam, migration, and proof judgment | `to-spec`, `audit-codebase`, direct architecture/design work |
 | `research` | Claim-owning source legwork and one authorized cited note or verified inline evidence | `skill-router`, `grilling`, `wayfinder` |
 | `to-questionnaire` | One recipient-ready async discovery artifact for one external stakeholder and downstream decision | `skill-router`, `grilling`, `wayfinder`, humans collecting stakeholder evidence |
 | `resolving-merge-conflicts` | Read-only three-way inspection, authorized reconciliation, and the separate finish boundary | Git operations and implementation or integration work that enters a conflicted state |
@@ -302,7 +300,7 @@ every terminal result directly to its current caller or the user.
 | Skill | Supporting files own |
 | --- | --- |
 | `writing-for-agents` | `references/SKILL-MECHANICS.md`: skill-only invocation, packaging, routing, and structural checks; `references/BEHAVIOR-EVALS.md`: fresh-context wording evaluation loaded only when the user explicitly requests behavioral testing |
-| `codebase-design` | `DIRECT-DESIGN.md`: direct pass, material Interface, safe Return, and packet; `DEEPENING.md`: dependency/Seam, test-portfolio, Change Closure, and migration discipline; `DESIGN-IT-TWICE.md`: alternative Interface exploration |
+| `codebase-design` | `DEEPENING.md`: dependency-driven seam, proof, and migration judgment; `DESIGN-IT-TWICE.md`: consequential alternative-shape exploration |
 | `domain-modeling` | `CONTEXT-FORMAT.md`: glossary and context-map format; `ADR-FORMAT.md`: ADR gate and format |
 | `tdd` | `tests.md`, `mocking.md`, `refactoring.md`: examples and branch mechanics |
 | `prototype` | `LOGIC.md`, `UI.md`, and `MEASURE.md`: decision-bearing branch mechanics. One decision branch loads; `SKILL.md` owns the universal lifecycle, reconciliation, and Return. |

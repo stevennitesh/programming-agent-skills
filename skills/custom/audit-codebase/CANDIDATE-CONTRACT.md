@@ -110,9 +110,10 @@ Name observable success and proof. Bound change-created fallout and leave
 unrelated cleanup separate.
 
 For a design or mixed candidate, settle current-user decisions first. Then load
-`$codebase-design` Direct Design and fold its comparison, material Interface,
-Seams, Proof Seams, migration, and safe gaps into these fields. Audit retains
-the HTML; no second design artifact or later Codebase Design step exists.
+`$codebase-design` for the one bounded architecture question and fold its
+recommendation, ownership, data and interface shape, applicable migration,
+proof, or exact gap into these fields. Audit retains the HTML; no second design
+artifact or later Codebase Design step exists.
 
 ## Conditional Follow-up
 

@@ -61,13 +61,12 @@ current-state wording, and why the commitments are unchanged. A
 decision-changing correction is a `source-gap`, not editorial license.
 
 Preserve routed domain terms and ADR decisions and point to their owners; change
-no domain truth. Load `$codebase-design` only when the source uses its shared
-module or interface vocabulary or delegates one consequential Responsibility,
-Interface, Seam, migration, or Proof Seam question. Apply Direct Design only
-for that unresolved question, fold its supported result into the specification,
-and create no separate design packet. A `decision-needed` or `evidence-gap`
-result, new public or ownership choice, or unsupported trade-off returns
-`source-gap`.
+no domain truth. Load `$codebase-design` only when the source delegates one
+consequential unresolved architecture question about ownership, data shape,
+interface, state or failure policy, seam, or migration. Fold its recommendation,
+retain judgment, or exact gap into the specification and create no separate
+design artifact. A new public or ownership choice, missing evidence, or
+unsupported trade-off returns `source-gap`.
 
 Cover every applicable requirement, exclusion, deferral, constraint,
 dependency, risk, and nonblocking open note and trace each specification

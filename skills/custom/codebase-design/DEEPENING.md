@@ -1,89 +1,43 @@
 # Deepening
 
-Use this branch when dependency shape changes the seam, substitute, test
-migration, or verification strategy.
+Load this reference only when dependency shape changes seam placement,
+substitution, testing, or migration. `SKILL.md` owns the architecture decision.
 
-[`SKILL.md`](SKILL.md) owns vocabulary and taste.
-[DIRECT-DESIGN.md](DIRECT-DESIGN.md) owns the direct pass and design packet.
-This file owns dependency classification, Seam placement, test
-responsibilities, coverage parity, Change Closure, and bounded migration.
+## Place the seam
 
-Classify -> Place -> Substitute -> Replace -> Migrate.
+Classify only dependencies that can change the design:
 
-## 1. Classify
+- **In-process:** keep computation and memory inside the module unless distinct
+  ownership or change rates justify separation.
+- **Local-substitutable:** use a realistic local implementation when it proves
+  the required behavior without widening the public interface.
+- **Remote-owned:** keep domain policy local and isolate transport where it can
+  vary independently.
+- **True external:** isolate vendor translation at the third-party edge.
 
-Classify every dependency whose shape affects the proposed interface, seam,
-substitute, migration, or proof:
+Place the narrowest seam earned by production behavior, ownership, supported
+variation, or a real external boundary. Do not expose an internal seam or add
+dependency injection only to make testing convenient.
 
-| Category | Design and proof consequence |
-| --- | --- |
-| **In-process** | Keep computation and memory inside the module. Add no adapter; prove behavior through the deeper interface. Test an internal rule directly only when it is independently meaningful. |
-| **Local-substitutable** | Use a realistic local substitute such as memory, an isolated filesystem, an emulator, SQLite, or a deterministic queue. Inject it only at a real caller concern or I/O edge. |
-| **Remote-owned** | Put an interface where transport varies. Keep domain decisions in the module; use the supported transport adapter and a fake or in-memory adapter. Add contract proof when the remote contract carries risk. |
-| **True external** | Put an adapter at the third-party seam. Keep vendor translation in the adapter and domain decisions in the module. Use the smallest fake, stub, or mock that proves the risk. |
+## Prove through the interface
 
-## 2. Place
+Use the deeper caller-facing interface as the normal proof boundary. Test an
+internal rule directly only when it has independent meaning. Add separate
+adapter or substitute proof only when fidelity, translation, or interchange
+carries its own risk.
 
-Place the narrowest Seam earned by locality, dependency isolation, domain
-ownership, supported variation, or a real external boundary. A substitute,
-emulator, or second integration can demonstrate variation; a test double alone
-cannot. Keep internal Seams private and treat a test-only patch point as
-Interface pressure.
+When stronger caller-facing proof covers the same meaningful behavior, remove
+obsolete pass-through and implementation-detail tests. Keep distinct rules,
+regressions, boundary contracts, and necessary failure isolation. Do not create
+a test census or parallel proof owner merely to document the migration.
 
-When a required Seam is absent in legacy code, use the smallest
-behavior-preserving enabling point that exposes it. Do not widen the public
-Interface merely to make testing convenient.
+## Move callers and remove the old path
 
-## 3. Substitute
+Name the first bounded caller migration and the proof that preserves accepted
+behavior. Remove displaced implementations, exports, registrations, tests,
+configuration, and documentation in the same supported change. Retain an old
+path only for a demonstrated external compatibility, migration, recovery, or
+ownership need with a removal condition.
 
-Choose substitutes by behavior risk, not convenience. Prove domain behavior
-through the deeper interface. Add separate substitute or supported-adapter
-contract tests only when their fidelity or translation carries independent risk.
-
-When callers rely on implementations interchangeably, require behavioral
-subtyping: substitutes must preserve applicable public preconditions,
-postconditions, and class invariants. Do not require implementation matching.
-
-## 4. Replace, Don't Layer
-
-Establish **coverage parity** through the deeper Interface before removing
-shallow tests. Map each distinct behavior, Invariant, branch, or risk to one
-canonical test owner. Reuse or extend that owner before adding a test; keep a
-separate test only for a distinct responsibility or necessary failure
-isolation. Classify every affected test as **add, rewrite, keep, or delete**:
-
-- **Add** caller-facing behavior proof that is missing.
-- **Rewrite** behavior whose current test surface becomes obsolete.
-- **Keep** dense rules, adapter contracts, regressions, or behavior not yet
-  covered through the deeper interface.
-- **Delete** pass-through, call-order, or implementation-detail assertions
-  superseded by stronger behavior proof.
-
-Prefer state verification through observable outcomes; use behavior
-verification only when the interaction is the contract or provides necessary
-failure isolation. A test that changes only because Implementation moved is
-testing past the Interface.
-Remove shallow implementation and test paths only after stronger proof owns their
-Responsibilities.
-
-## 5. Migrate
-
-Name the first behavior-preserving migration step, verification evidence, applicable
-Change Closure, stop boundary, and follow-ups. Account for displaced
-Implementation, callers, registrations, exports, flags, tests, configuration,
-docs, and migrations. A retained compatibility path needs an owner, reason,
-proof, and removal condition. Keep migration inside the bounded slice.
-
-## Contribution To The Design Packet
-
-Return the dependency classifications; Seam, Adapters, and substitutes;
-canonical test owners, test disposition, and coverage-parity evidence; bounded
-migration and Change Closure; verification evidence; and stop boundary.
-
-## Completion
-
-Complete when every relevant dependency is classified; Seam and substitute
-choices match those categories; the proposed Interface is smaller and useful;
-coverage parity and canonical ownership account for every affected test;
-Change Closure accounts for every displaced path; verification evidence is named;
-and migration stops at the bounded-slice edge.
+Return the seam decision, relevant dependency consequences, caller migration,
+and proof to `SKILL.md`.

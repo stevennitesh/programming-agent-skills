@@ -121,9 +121,9 @@ return, mutation boundary, and `$wayfinder` re-entry:
 | Questionnaire | External; `$to-questionnaire` only after the user approves its [Questionnaire fields](MAP-FORMAT.md#questionnaire-fields) and `Delivery: not performed`. |
 | Task | AFK for one bounded objectively provable repository or operational fact; HITL only for required live human action; no durable mutation. |
 
-Prototype `shape/feel` uses HITL, human judgment, and a named judge. Objective
-`design evidence` defaults to AFK/rule-based; a named human verdict owner makes
-it HITL.
+A Prototype ticket with a named human judge uses HITL. One with a predeclared
+objective rule may use AFK. Its mutation boundary transports named authority
+evidence; it does not create authority.
 
 Wayfinder normalizes the intact resolver Return; it never copies callee status
 labels blindly:

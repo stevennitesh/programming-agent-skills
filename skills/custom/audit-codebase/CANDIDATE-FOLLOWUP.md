@@ -25,7 +25,7 @@ Choose the first unresolved work, not an eventual workflow:
 | Remaining work | Suggested owner |
 | --- | --- |
 | One non-diagnostic source-answerable authoritative fact | `$research` |
-| One settled design question needing a disposable runnable probe or performance experiment | `$prototype` |
+| One selected candidate with an unresolved runnable-evidence question needing a disposable probe or comparative design measurement | `$prototype` |
 | Hard, intermittent, performance, environment-only, production-only, or causally ambiguous failure needing dedicated investigation | `none`; return `blocked` with result `diagnosis-required`, the evidence limit, and exact re-entry |
 | Settled domain language, Invariant, Bounded Context, Context Relationship, or ADR candidate needing durable capture | `$domain-modeling` |
 | One current-user decision that also requires domain-record maintenance | `$grill-with-docs` |

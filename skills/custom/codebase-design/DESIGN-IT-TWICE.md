@@ -1,87 +1,32 @@
 # Design It Twice
 
-Use this branch for a consequential interface choice. The first plausible
+Load this reference only when two or more materially different architecture
+shapes remain credible and the choice is consequential. The first plausible
 interface is an anchor, not a conclusion.
 
-Frame -> Diverge -> Compare -> Recommend.
+## Frame
 
-Use [`SKILL.md`](SKILL.md) for vocabulary and
-[DIRECT-DESIGN.md](DIRECT-DESIGN.md) for the design packet. Read
-[DEEPENING.md](DEEPENING.md) only when dependency shape changes the seam,
-substitute, test migration, or verification strategy; it owns those mechanics,
-while this branch compares migration implications across alternatives.
+Give every alternative the same behavior, callers, data flow, ownership,
+dependencies, constraints, and accepted contracts. A sketch may make those
+facts concrete, but it is not evidence.
 
-## 1. Frame
+## Shape alternatives
 
-Frame the problem from the Source Trace: candidate Module or shallow cluster,
-spread behavior or decision, constraints, dependencies, painful callers and
-tests, public-contract commitments, applicable engineering and domain
-obligations, and bounded-slice edge. Use a sketch only to make settled
-constraints concrete; label it illustrative, not a proposal or evidence.
+Produce at least two genuinely different shapes. Include the simplest
+no-new-seam option when credible. Start with ordinary caller usage, then show
+the data representation, interface, hidden decisions, state and failure policy,
+earned seams, and first bounded change.
 
-## 2. Diverge
+When the user explicitly requests subagents, fresh independent scouts may each
+take one distinct architecture pressure. Give them the same factual brief, no
+preferred solution, no peer proposals, and no mutation authority. The main
+agent owns comparison and recommendation. Otherwise work directly.
 
-Produce at least two credible materially different candidate shapes. Each must
-make its caller-facing interface explicit; include the simplest no-new-seam
-shape when it is credible. Add a third shape only when it tests a distinct
-consequential pressure that could change the decision.
+## Compare and choose
 
-Use a direct fresh-context scout only when the user explicitly requested
-subagents and independent judgment on a distinct consequential pressure could
-change the decision. Start each
-with `fork_turns="none"` when supported. Give every scout the same
-self-contained factual brief: objective, settled constraints, applicable
-engineering and domain obligations, scope, source pointers, one distinct design
-pressure, mutation boundary, and output contract. Exclude parent hypotheses,
-preferred solutions, other candidates, and peer results.
+Compare caller effort, depth, locality, information leakage, data flow, reader
+load, change cost, migration, and proof. Merge alternatives that differ only in
+names or cosmetic layering.
 
-Scouts inspect and propose only; they never edit files, mutate external state,
-or spawn. Keep alternatives private until every scout returns. The main agent
-owns comparison, recommendation, and completion.
-
-When the user requested subagents but continuity matters more than independence,
-fork only the minimum necessary recent context and do not call the result
-independent. Without that request, produce alternatives sequentially under
-different pressures.
-
-Use pressures that force structural variety:
-
-- **Minimal** — smallest useful surface;
-- **Caller-first** — trivial common call;
-- **Domain-owned** — decisions move to their domain owner;
-- **Seam-first** — real adapters or substitutes shape the interface;
-- **Migration-first** — first safe step fits the bounded slice.
-- **No-new-seam** — merge, inline, retain, or simplify before introducing
-  another abstraction.
-
-For each alternative, show:
-
-- candidate shape, caller-facing interface, and caller experience;
-- behavior and decisions hidden or deliberately left with callers;
-- any earned seam and relevant dependencies, adapters, or substitutes;
-- caller-facing test surface and verification evidence;
-- first change step, applicable migration, trade-offs, and risks.
-
-## 3. Compare
-
-Compare Depth, information hiding, change amplification, cognitive load,
-unknown unknowns, caller ergonomics, Seam placement, dependency strategy,
-Semantic Correctness, Robustness, test responsibilities, Change Closure,
-applicable migration cost, and risk under the same obligations. Merge alternatives that differ only
-by names, parameter reshuffling, or cosmetic layering; replace fake variety
-with a genuinely different design.
-
-## 4. Recommend
-
-Recommend one design. Explain why it wins, why credible alternatives lose, any
-useful hybrid, the first bounded change step, applicable migration, verification
-evidence, risks, and follow-ups. Name behavior-preserving prerequisites as support
-slices.
-
-## Completion
-
-Complete when the frame is source-traced; at least two credible materially
-different candidate shapes exist; fake variety was removed; every alternative covers
-callers, hidden behavior, any earned seam, dependencies, tests, applicable
-migration, trade-offs, and risk; one design was recommended; and the bounded
-first step, applicable migration, and proof were returned.
+Return one recommendation to `SKILL.md`, including why the other credible shape
+loses. Do not return a menu, comparison matrix, or separate rationale artifact.

@@ -78,14 +78,9 @@ Research note path and write mode: <approved repo-local path; create | update | 
 When `Type: Prototype`, append only:
 
 ```text
-Decision owner: <Prototype decision owner>
-Result recipient: <Prototype return recipient>
-Claim level: shape/feel | design evidence
-Judgment mode: human | rule-based
-Human judge: <who> | Verdict criteria: <objective caller-locked criteria>
-Prototype evidence surface and representative cases: <selected surface; cases, variants, workload, or interactions>
-Prototype paths and final disposition: <authorized roots; cleanup or preservation>
-Prototype effects, entry, bound, and limits: <authorized effects; entry point or recipe; finite bound; known limits>
+Judgment: human: <named judge> | rule: <predeclared objective rule>
+Representative evidence: <cases, variants, workload, or interactions>
+Run and cleanup: <entry point or smallest recipe; finite bound; authorized scratch or durable path; cleanup or accepted custody>
 ```
 
 ### Questionnaire Fields

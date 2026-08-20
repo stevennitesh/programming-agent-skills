@@ -93,6 +93,12 @@ around behavior-preserving simplification of one selected target or a truthful
 no-change result. It removes mandatory baseline and campaign machinery, keeps
 subtraction and real-caller proof as judgment, and returns broad discovery to
 the caller without an Audit recommendation.
+Revision 21 materializes machine contract revision 9 by keeping Codebase Design
+as one bounded architecture decision, narrowing To Spec and Audit loads to one
+unresolved architecture question, and removing the former Direct Design layer.
+Revision 22 materializes machine contract revision 10 by rewriting Prototype
+as one five-action evidence loop, removing Research's stale Prototype route,
+and reducing Wayfinder's Prototype packet to decision-bearing caller facts.
 It binds the complete fingerprinted pre-discovery fixed point, then freezes the
 tested environment, finite research order, capability
 owners, roles, relationships, exclusions, resolved collisions, acceptance
@@ -998,7 +1004,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       }
     ],
     "composition_epoch_id": "FCE-20260727-01",
-    "contract_revision": 8,
+    "contract_revision": 10,
     "epoch_lock": null,
     "exclusions": [
       "Per-skill H1 or candidate wording",
@@ -1044,7 +1050,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "github-issue-body:stevennitesh/programming-agent-skills#39#sha256-v1:f8115df444ab80f15fdb49610d96152cdff2edc12a5f03bb50efaba308a840a3",
       "github-issue-body:stevennitesh/programming-agent-skills#50#sha256-v1:21d89976101c1815c6e08f921d6045f97615bfdad8b3a3babc6ed40ca9d463bb",
       "git-commit:2710890325c51a2120656a8d1233d442f6454c1a",
-      "docs/synthesis/skill-context-relationships.md#sha256-v1:99935160bc0b4053282763dd6857add487425cf7c9fc3c55f5284de7f6bd027e"
+      "docs/synthesis/skill-context-relationships.md#sha256-v1:28ca7905e36a653747e1a961146069cfd2b0cc19595086b3594327afbd34beed"
     ],
     "status": "frozen"
   },
@@ -1551,7 +1557,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [],
       "entry_condition": "A design evidence gap needs a runnable verdict.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for grilling and the declared prototype input",
+      "input_packet": "The intact runnable-evidence gap, its decision owner, and the Grilling return boundary",
       "ordering_impact": "none",
       "relationship_id": "REL-009",
       "required_proof_ids": [
@@ -1778,7 +1784,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-017",
       "combined_exit_owner_skill_id": "SK-017",
       "context_loaded": [],
-      "entry_condition": "One settled candidate design question needs one disposable runnable probe or performance experiment; Audit publishes an exact report-backed pickup and leaves Prototype unstarted.",
+      "entry_condition": "One selected candidate has an unresolved runnable-evidence question needing a disposable probe or comparative design measurement; Audit publishes an exact report-backed pickup and leaves Prototype unstarted.",
       "failure_behavior": "Return the recommendation without invoking the target; preserve the candidate and report for user-selected continuation",
       "input_packet": "Durable audit report, candidate identity, analysis, route prerequisite, and exact suggested invocation",
       "ordering_impact": "none",
@@ -1853,21 +1859,21 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-017",
       "combined_exit_owner_skill_id": "SK-017",
       "context_loaded": [
-        "codebase-design caller-facing interface and DIRECT-DESIGN.md"
+        "codebase-design caller-facing interface and branch-required reference only"
       ],
-      "entry_condition": "During Analyze, one selected design or mixed candidate still needs bounded internal design after user-owned decisions settle.",
-      "failure_behavior": "Fold decision-needed or evidence-gap state into the candidate and preserve the Audit-owned report and resumption boundary",
-      "input_packet": "Durable audit report, selected candidate identity, settled decisions, Source Trace, proof seams, and implicated contracts",
+      "entry_condition": "During Analyze, one selected design or mixed candidate has one bounded unresolved architecture question after user-owned decisions settle.",
+      "failure_behavior": "Fold the exact user-owned decision or evidence gap into the candidate and preserve the Audit-owned report and resumption boundary",
+      "input_packet": "Durable audit report, selected candidate identity, settled decisions, Source Trace, implicated contracts, and one bounded architecture question",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-024",
       "required_proof_ids": [
         "PROOF-REL-024"
       ],
       "resume_owner_skill_id": "SK-017",
-      "return_packet": "Bounded comparison, material Responsibilities, Interfaces, Seams, Proof Seams, migration, and safe gaps folded into the Audit candidate",
+      "return_packet": "One recommendation, retain judgment, or exact gap with ownership, caller usage, data and interface shape, applicable migration, and proof folded into the Audit candidate",
       "target_skill_id": "SK-007",
       "verb": "Load",
-      "wrong_condition": "The candidate is not design or mixed, a user-owned decision remains unsettled, or Audit does not retain the artifact and completion"
+      "wrong_condition": "No consequential bounded architecture question remains, a user-owned decision is unsettled, or Audit does not retain the artifact and completion"
     },
     {
       "affected_capability_ids": [
@@ -2206,31 +2212,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
     {
       "affected_capability_ids": [
         "CAP-003",
-        "CAP-004"
-      ],
-      "callee_owned_gates_mutations": [
-        "No callee execution, mutation, resumption, or completion is authorized by this edge"
-      ],
-      "caller_skill_id": "SK-003",
-      "combined_exit_owner_skill_id": "SK-003",
-      "context_loaded": [],
-      "entry_condition": "Admission shows the question needs one runnable design or behavior verdict.",
-      "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for research and the declared prototype input",
-      "ordering_impact": "none",
-      "relationship_id": "REL-041",
-      "required_proof_ids": [
-        "PROOF-REL-041"
-      ],
-      "resume_owner_skill_id": "SK-003",
-      "return_packet": "One named target and reason with downstream work unstarted",
-      "target_skill_id": "SK-004",
-      "verb": "Recommend and stop",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
-    },
-    {
-      "affected_capability_ids": [
-        "CAP-003",
         "CAP-021"
       ],
       "callee_owned_gates_mutations": [
@@ -2491,8 +2472,8 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [],
       "entry_condition": "The situation satisfies one design choice needs runnable evidence rather than production proof; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for skill-router and the declared prototype input",
-      "ordering_impact": "callee-before-caller",
+      "input_packet": "The bounded situation, matched Prototype predicate, and Router return boundary",
+      "ordering_impact": "none",
       "relationship_id": "REL-058",
       "required_proof_ids": [
         "PROOF-REL-058"
@@ -2866,19 +2847,19 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [
         "codebase-design caller-facing interface and branch-required reference only"
       ],
-      "entry_condition": "Apply deep-module vocabulary while the spec remains authoritative.",
-      "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
-      "input_packet": "Caller-owned bounded Source Trace for to-spec and the declared codebase-design input",
+      "entry_condition": "The source delegates one consequential unresolved architecture question while To Spec remains authoritative.",
+      "failure_behavior": "Fold the target's exact user-owned decision or evidence gap into the specification as source-gap and preserve the caller-owned resumption boundary",
+      "input_packet": "Caller-owned bounded Source Trace and one delegated architecture question about ownership, data shape, interface, state or failure policy, seam, or migration",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-078",
       "required_proof_ids": [
         "PROOF-REL-078"
       ],
       "resume_owner_skill_id": "SK-011",
-      "return_packet": "The declared codebase-design Return packet plus evidence, limits, and residual state",
+      "return_packet": "One recommendation, retain judgment, or exact gap folded into the caller-owned specification without a separate design artifact",
       "target_skill_id": "SK-007",
       "verb": "Load",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
+      "wrong_condition": "The source does not delegate a consequential unresolved architecture question, a public or ownership choice remains user-owned, evidence is missing, or another selected owner has the bounded outcome"
     },
     {
       "affected_capability_ids": [
@@ -3122,9 +3103,9 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [
         "prototype caller-facing interface and branch-required reference only"
       ],
-      "entry_condition": "One Wayfinder Prototype ticket needs runnable evidence under its locked participation and judgment mode.",
+      "entry_condition": "One Wayfinder Prototype ticket needs runnable evidence under a named human judge or predeclared objective rule.",
       "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
-      "input_packet": "Wayfinder ticket, Source Trace, decision owner, result recipient, claim level, judgment mode, human judge or objective criteria, evidence surface, verdict basis, representative cases, authorized paths and effects, entry point or recipe, finite bound, known limits, final disposition, and return owner",
+      "input_packet": "Wayfinder ticket, Source Trace, question, resolution and return owners, named human judge or predeclared objective rule, representative evidence, mutation boundary with authority evidence, entry point or smallest recipe, finite bound, cleanup or accepted custody, and Wayfinder re-entry",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-088",
       "required_proof_ids": [
@@ -3622,7 +3603,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "relationship_ids": [
         "REL-039",
         "REL-040",
-        "REL-041",
         "REL-042"
       ],
       "required_input": "A bounded caller-owned Source Trace and authority for: Answer one bounded source-answerable question with cited evidence for a caller-owned decision",
@@ -3634,7 +3614,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "PS-004"
       ],
       "canonical_name": "prototype",
-      "completion_condition": "Fit is resolved, the admitted question has a supported result or truthful residual, and no prototype state is promoted",
+      "completion_condition": "The question is answered or truthfully unresolved, the caller has judgeable evidence, and no unauthorized or live Prototype state remains",
       "contract_order": 4,
       "essential_outcome": "Produce one disposable runnable verdict for one bounded design question",
       "failure_return": "Return the untestable question, authority gap, or residual uncertainty",
@@ -3661,8 +3641,8 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "relationship_ids": [
         "REL-102"
       ],
-      "required_input": "A bounded caller-owned Source Trace and authority for: Produce one disposable runnable verdict for one bounded design question",
-      "return_packet": "A supported answer or truthful residual with supported decision implications, evidence, limits, and cleanup state",
+      "required_input": "One unsettled design question, its caller use, named human judge or predeclared objective rule, representative evidence, and authority for any Prototype effects",
+      "return_packet": "A supported answer or exact residual with observation, material limits, cleanup state, and any authorized retained artifact",
       "skill_id": "SK-004"
     },
     {

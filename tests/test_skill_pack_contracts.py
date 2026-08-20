@@ -866,15 +866,13 @@ def test_branch_heavy_skills_disclose_branch_procedure() -> None:
     assert "tracker state stayed unchanged" in attention
     assert "Skip ordinary request verification" in quick
     assert "unseen mutation packet" in quick
-    assert "[DIRECT-DESIGN.md](DIRECT-DESIGN.md)" in design
-    assert "## 1. Orient" not in design
+    assert "[DEEPENING.md](DEEPENING.md)" in design
+    assert "[DESIGN-IT-TWICE.md](DESIGN-IT-TWICE.md)" in design
+    assert "## 1. Understand" in design
 
 
 def test_codebase_design_preserves_lean_branch_contracts() -> None:
     design = (CUSTOM / "codebase-design/SKILL.md").read_text(encoding="utf-8")
-    direct = (CUSTOM / "codebase-design/DIRECT-DESIGN.md").read_text(
-        encoding="utf-8"
-    )
     deepening = (CUSTOM / "codebase-design/DEEPENING.md").read_text(
         encoding="utf-8"
     )
@@ -888,37 +886,28 @@ def test_codebase_design_preserves_lean_branch_contracts() -> None:
     deepening_flat = " ".join(deepening.split())
     alternatives_flat = " ".join(alternatives.split())
 
-    assert "[DIRECT-DESIGN.md](DIRECT-DESIGN.md)" in design
-    assert (
-        "before planning or implementation only when one consequential"
-        in design_flat
-    )
-    assert "test double alone does not earn one" in design_flat
-    assert len(re.findall(r"(?m)^## \d+\. ", direct)) == 5
-    shape = direct.split("## 3. Shape", 1)[1].split("## 4. Compare", 1)[0]
-    assert "only when reachable state or transitions can change" in " ".join(
-        shape.split()
-    )
-    assert "A dormant concern creates no packet field or `N/A` entry" in " ".join(
-        shape.split()
-    )
-    assert "every dependency whose shape affects" in deepening
-    assert len(re.findall(r"(?m)^## \d+\. ", deepening)) == 5
-    assert "coverage parity" in deepening_flat
-    assert "canonical test owner" in deepening_flat
-    assert "at least two credible materially different candidate shapes" in (
-        alternatives_flat
-    )
-    assert "include the simplest no-new-seam shape when it is credible" in (
-        alternatives_flat
-    )
-    assert re.findall(r"(?m)^## \d+\. ([A-Za-z]+)$", alternatives) == [
-        "Frame",
-        "Diverge",
+    assert re.findall(r"(?m)^## \d+\. ([A-Za-z]+)$", design) == [
+        "Understand",
+        "Diagnose",
+        "Shape",
         "Compare",
         "Recommend",
     ]
-    assert "create no separate workflow step" in design_flat
+    assert "Write the ordinary caller usage first" in design
+    assert "dominant reads, writes, and transitions" in design_flat
+    assert "phase-shaped modules" in design
+    assert "current shape and the simplest credible no-new-seam option" in design_flat
+    assert "test double alone does not earn one" in design_flat
+    assert "resolve only the applicable lifecycle" in design_flat
+    assert "representative allowed and forbidden callers" in design_flat
+    assert "a check capable of failing" in design_flat
+    assert "Classify only dependencies that can change the design" in deepening
+    assert "Do not create a test census" in deepening_flat
+    assert "two or more materially different architecture shapes" in alternatives_flat
+    assert "simplest no-new-seam option" in alternatives_flat
+    assert "Do not return a menu" in alternatives_flat
+    assert "Create no separate design packet" in design_flat
+    assert not (CUSTOM / "codebase-design/DIRECT-DESIGN.md").exists()
     assert 'CodeDesign["codebase-design"] --> Contract' in relationships
     assert "CodeDesign --> DomainRouter" in relationships
     assert "| `to-spec` | Load | `$codebase-design` |" in relationships
@@ -1047,7 +1036,7 @@ def test_wayfinder_chart_preserves_unresolved_child_decisions() -> None:
     assert "independently selects `Closure`" in closure
 
 
-def test_wayfinder_prototype_participation_matches_judgment() -> None:
+def test_wayfinder_prototype_preserves_judgment_and_authority() -> None:
     skill_dir = CUSTOM / "wayfinder"
     wayfinder = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
     map_format = (skill_dir / "MAP-FORMAT.md").read_text(encoding="utf-8")
@@ -1055,9 +1044,10 @@ def test_wayfinder_prototype_participation_matches_judgment() -> None:
     resolver = wayfinder.split("## Resolver Gate", 1)[1].split("## Reconcile", 1)[0]
     resolver_flat = " ".join(resolver.split())
     for contract in (
-        "`shape/feel` uses HITL, human judgment",
-        "Objective `design evidence` defaults to AFK/rule-based",
-        "named human verdict owner makes it HITL",
+        "named human judge uses HITL",
+        "predeclared objective rule may use AFK",
+        "transports named authority evidence",
+        "does not create authority",
         "[Prototype fields](MAP-FORMAT.md#prototype-fields)",
     ):
         assert contract in resolver_flat
@@ -1072,15 +1062,10 @@ def test_wayfinder_prototype_participation_matches_judgment() -> None:
     assert "resolver fields" in approve_flat
 
     for field in (
-        "Decision owner:",
-        "Result recipient:",
-        "Claim level:",
-        "Judgment mode:",
-        "Human judge:",
-        "Verdict criteria:",
-        "Prototype evidence surface and representative cases:",
-        "Prototype paths and final disposition:",
-        "Prototype effects, entry, bound, and limits:",
+        "Judgment: human:",
+        "rule: <predeclared objective rule>",
+        "Representative evidence:",
+        "Run and cleanup:",
     ):
         assert field in map_format
     prototype_fields = map_format.split("### Prototype Fields", 1)[1].split(
@@ -1432,7 +1417,7 @@ def test_grilling_preserves_one_decision_confirmed_exit_and_evidence_routes() ->
     assert "$to-spec" not in gap
 
 
-def test_prototype_preserves_lifecycle_boundaries_and_branch_gates() -> None:
+def test_prototype_preserves_lean_evidence_and_branch_gates() -> None:
     skill_dir = CUSTOM / "prototype"
     prototype = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
     prototype_flat = " ".join(prototype.split())
@@ -1442,23 +1427,42 @@ def test_prototype_preserves_lifecycle_boundaries_and_branch_gates() -> None:
     ui_flat = " ".join(ui.split())
     measure = (skill_dir / "MEASURE.md").read_text(encoding="utf-8")
     measure_flat = " ".join(measure.split())
+    relationships = (
+        ROOT / "docs/synthesis/skill-context-relationships.md"
+    ).read_text(encoding="utf-8")
+    audit_followup = (
+        CUSTOM / "audit-codebase/CANDIDATE-FOLLOWUP.md"
+    ).read_text(encoding="utf-8")
+    pack = pack_contract.parse_contract(
+        (ROOT / "docs/synthesis/skill-pack.md").read_text(encoding="utf-8")
+    )
+    prototype_followup = next(
+        relationship
+        for relationship in pack["relationships"]
+        if relationship["relationship_id"] == "REL-020"
+    )
 
+    assert re.findall(r"(?m)^## \d+\. (.+)$", prototype) == [
+        "Frame",
+        "Choose",
+        "Build",
+        "Observe and decide",
+        "Clear and return",
+    ]
     for contract in (
-        "Before mutation, read back:",
-        "claim level: shape/feel | design evidence",
-        "judgment mode: human | rule-based",
-        "Decision owner and human judge are independent authorities",
+        "one unsettled design choice",
+        "If the answer needs human judgment, name the judge",
+        "objective rule before observing results",
         ".tmp/prototype/<question-slug>/",
-        "Read only the decision-bearing branch",
+        "authority for the allowed paths and effects is present and verified",
+        "A caller packet transports authority; it does not create it",
+        "Read only the branch that owns the needed evidence",
         "[MEASURE.md](MEASURE.md)",
-        "preserve-for-verdict",
-        "authorized-durable-evidence",
-        "No terminal return leaves a live resource",
-        "Never carry caller identity from a preceding request or supplied result",
-        "Except for the named Fit mismatch above, do not select, recommend, or invoke a downstream route",
+        "smallest artifact that could change the answer",
+        "Source inspection and a successful start are not a verdict",
+        "no unauthorized or live Prototype state remains",
         "recommend `$diagnosing-bugs` and stop before mutation",
-        "resolved by judgeable disposable evidence or returned with a truthful residual",
-        "supported answer or residual, supported decision implications, evidence, limitations, and artifact dispositions",
+        "Start no downstream work",
     ):
         assert contract in prototype_flat
 
@@ -1470,23 +1474,18 @@ def test_prototype_preserves_lifecycle_boundaries_and_branch_gates() -> None:
     ):
         assert removed not in prototype
 
-    assert "happy, boundary, and rejected cases" in logic_flat
-    assert "repeated runs are equivalent" in logic_flat
-    assert "positively isolates the whole prototype surface" in ui_flat
+    assert "happy, boundary, and rejected behavior" in logic_flat
+    assert "Repeated deterministic runs should agree" in logic_flat
+    assert "Omitting links does not prove production isolation" in ui_flat
+    assert "one representative UI" in ui_flat
+    assert "two or three structurally different variants" in ui_flat
     assert "actual browser or target UI" in ui_flat
-    assert "variance and worst observed result" in measure_flat
+    assert "Do not report only the best run" in measure_flat
     assert "does not diagnose an unexplained slowdown" in measure_flat
-    assert {
-        path.relative_to(skill_dir).as_posix()
-        for path in skill_dir.rglob("*")
-        if path.is_file()
-    } == {
-        "LOGIC.md",
-        "MEASURE.md",
-        "SKILL.md",
-        "UI.md",
-        "agents/openai.yaml",
-    }
+    unresolved = "unresolved runnable-evidence question"
+    assert unresolved in relationships
+    assert unresolved in audit_followup
+    assert unresolved in prototype_followup["entry_condition"]
 
 
 def test_review_baselines_are_discovered_and_independence_is_honest() -> None:
@@ -2238,13 +2237,14 @@ def test_simplify_code_is_explicit_bounded_and_behavior_preserving() -> None:
         assert old_contract not in skill
 
 
-def test_codebase_design_compares_replacement_with_incremental_evolution() -> None:
-    direct = (CUSTOM / "codebase-design/DIRECT-DESIGN.md").read_text(encoding="utf-8")
+def test_codebase_design_bounds_replacement_and_compatibility() -> None:
+    design = (CUSTOM / "codebase-design/SKILL.md").read_text(encoding="utf-8")
+    flat = " ".join(design.split())
 
-    assert "deepen, merge, inline, retain, replace" in direct
-    assert "compare it explicitly with incremental evolution" in direct
-    for gate in ("parity", "migration", "cutover", "rollback"):
-        assert gate in direct
+    assert "retain, delete, inline, merge, deepen, replace" in flat
+    assert "actual dependents and intended behavior are traceable" in flat
+    assert "real interface provides parity proof" in flat
+    assert "named compatibility or migration need" in flat
 
 
 def test_bug_routing_is_disjoint_and_non_bouncing() -> None:
@@ -2476,7 +2476,10 @@ def test_interface_alternatives_receive_curated_fresh_context() -> None:
     research = (CUSTOM / "research/SKILL.md").read_text(encoding="utf-8")
     audit = (CUSTOM / "audit-codebase/SKILL.md").read_text(encoding="utf-8")
 
-    assert 'fork_turns="none"' in design
+    design_flat = " ".join(design.split())
+    assert "When the user explicitly requests subagents" in design_flat
+    assert "fresh independent scouts" in design_flat
+    assert "Otherwise work directly" in design_flat
     assert 'fork_turns="none"' not in research
     assert 'fork_turns="none"' in audit
     audit_flat = " ".join(audit.split())
