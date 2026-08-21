@@ -96,6 +96,7 @@ flowchart TD
   Review --> FindingContract
   Review -. "repository-baseline audit" .-> Audit
   CPR["high-assurance-review<br/>explicit user invocation"] --> Contract
+  CPR -. "two fresh whole-candidate passes" .-> Review
   CPR --> SpecSources
   CPR --> StandardsSources
   CPR --> FindingContract
@@ -231,6 +232,7 @@ Return.
 | `prototype` | Recommend and stop | `$diagnosing-bugs` | Fit finds that an existing built system has a hard failure needing dedicated causal investigation rather than one disposable design question; return the intact symptom evidence and leave Diagnosis unstarted. |
 | `change-review` | Recommend and stop | `$audit-codebase` | The request targets an immutable repository baseline rather than a pending implementation candidate. |
 | `high-assurance-review` | Recommend and stop | `$audit-codebase` | The request targets a bounded repository correctness, domain-robustness, methodology, or performance baseline rather than a pending candidate diff. |
+| `high-assurance-review` | Load | `$change-review` | After one fixed heavy-review candidate and factual brief are ready, run exactly two fresh whole-candidate reviews with behavior/integration and engineering-quality emphasis. High Assurance verifies the returned finding candidates and retains the terminal decision. |
 | `audit-codebase` | Recommend and stop | `$domain-modeling` | One analyzed candidate has settled domain meaning or an ADR candidate needing durable capture. Audit records the need and leaves mutation unstarted. |
 | `audit-codebase` | Recommend and stop | `$grill-with-docs` | One candidate decision belongs to the user and also requires current domain records. Audit records the exact question and leaves composition unstarted. |
 | `audit-codebase` | Recommend and stop | `$grilling` | One material candidate decision belongs to the current user and needs no domain-record maintenance. |
@@ -270,7 +272,7 @@ every terminal result directly to its current caller or the user.
 | `research` | Claim-owning source legwork and one authorized cited note or verified inline evidence | `skill-router`, `grilling`, `wayfinder` |
 | `to-questionnaire` | One recipient-ready async discovery artifact for one external stakeholder and downstream decision | `skill-router`, `grilling`, `wayfinder`, humans collecting stakeholder evidence |
 | `resolving-merge-conflicts` | Read-only inspection, requested conflict resolution, and separately requested exact-path continuation of one active Git operation | Git operations and implementation or integration work that enters a conflicted state |
-| `change-review` | Read-only review of one identified code change through accepted-behavior and engineering-quality judgment; formal delivery conditionally adds fixed-candidate gating, independence, remediation, and a terminal decision | `implement`, `parallel-implement`, direct callers |
+| `change-review` | Read-only review of one identified code change through accepted-behavior and engineering-quality judgment; formal delivery conditionally adds fixed-candidate gating, independence, remediation, and a terminal decision | `implement`, `parallel-implement`, `high-assurance-review`, direct callers |
 | `audit-codebase` | Organized HTML repository atlas plus current-source, user-selected subsystem Audit and candidate Analyze; six-class coverage loads detailed owners on observable triggers, records cross-subsystem patterns, and stops before tickets or implementation | `skill-router`, `change-review`, `high-assurance-review`, returned evidence, and humans explicitly invoking repository audits |
 | `simplify-code` | Proved behavior-preserving simplification of one user-selected target or a truthful no-change result | `skill-router`, `audit-codebase`, humans invoking bounded cleanup |
 
@@ -336,7 +338,7 @@ every terminal result directly to its current caller or the user.
   modifies coverage only after review admission. `$high-assurance-review` and
   security or production/SRE specialist work are explicit-only.
 - Ordinary `change-review` returns evidence-backed findings or no findings; its formal branch and `high-assurance-review` return terminal read-only decisions. No review grants mutation or successor-snapshot authority; the implementation caller's accepted commitments and scope govern continuation.
-- `high-assurance-review` may run its own bounded read-only reviewer passes only when explicitly invoked; it is not a second implementation orchestrator.
+- `high-assurance-review` may run exactly two fresh whole-candidate Change Review passes only when explicitly invoked. It verifies their finding candidates and returns one decision without becoming an implementation or merge orchestrator.
 - `audit-codebase` owns the exhaustive system/subsystem map and exactly one user-selected Map, Audit, or Analyze mode per invocation over current-source identity. It accumulates coverage, verified findings, retained complexity, cross-subsystem patterns, candidates, decisions, and history in one offline HTML report. It may suggest audit order and rank candidates across audited evidence, but it never selects the next item, publishes tickets, starts implementation, or makes a release decision.
 - `simplify-code` owns proved behavior-preserving simplification of one selected target or a truthful no-change result. An explicitly requested repeated pass proves each reduction before choosing the next. It does not own feature work, bug diagnosis, public-contract decisions, wide improvement surveys, staging, commits, or tracker closeout.
 - `handoff` is an explicit transport leaf: it carries exact pointers across a shared work root, preserves the active owner, and never duplicates durable truth, routes new work, or resumes from stale state.

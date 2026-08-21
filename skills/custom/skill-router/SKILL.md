@@ -84,8 +84,9 @@ standalone explicitly test-first behavior to `$tdd`, ordinary test,
 integration-test, regression-test, or coverage work to `$implement`, uncertain
 broken behavior that needs dedicated investigation to `$diagnosing-bugs`, and
 an existing diff needing judgment to `$change-review`.
-High Assurance Review is an explicit user-selected alternative, never an
-automatic route.
+High Assurance Review is an explicit user-selected heavy review of a fixed
+code candidate, commonly after a ticket graph or before merging a PR. It
+is never an automatic route.
 
 **Conflict tie-breaker:** route an active unresolved operation or unmerged index
 to `$resolving-merge-conflicts`; an already-resolved candidate to review; a

@@ -4,12 +4,15 @@ Status: current runtime summary.
 
 Runtime authority is `skills/custom/high-assurance-review/`.
 
-High-Assurance Review owns one explicitly user-selected immutable candidate and
-returns one terminal read-only assurance decision through two fresh core
-reviewers. Release and supported-risk facts may expand coverage but neither
-select nor exclude this route. Immutable repository-baseline audits recommend
-`$audit-codebase` and stop.
+High-Assurance Review owns one explicitly user-selected fixed code candidate and
+returns one terminal read-only decision through two fresh whole-candidate
+Change Review passes. Typical candidates are the integrated result of a ticket
+graph or an exact PR before merge. Both reviewers inspect behavior and
+engineering quality with different primary emphasis; the coordinator verifies
+their finding candidates against the shared Finding Contract. The result names
+the reviewers and the fresh-context and author-separation basis for the claimed
+independence.
 
 No workflow selects High-Assurance Review automatically. The user owns its
-invocation; the coordinator retains read-only finding admission and terminal
-decision authority.
+invocation. PR presence, release status, and risk do not select it. The
+coordinator retains read-only finding admission and terminal decision authority.

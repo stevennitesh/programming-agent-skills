@@ -3,5 +3,5 @@ policy:
 
 interface:
   display_name: "High-Assurance Review"
-  short_description: "Explicit two-lane assurance review"
-  default_prompt: "Explicitly use $high-assurance-review as the top-level coordinator to review this immutable candidate through exactly two fresh core reviewer lanes and return one verified read-only decision."
+  short_description: "Heavy two-reviewer code judgment"
+  default_prompt: "Explicitly use $high-assurance-review for a thorough read-only review of this fixed code candidate before I accept or merge it."

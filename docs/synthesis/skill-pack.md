@@ -163,6 +163,13 @@ subsystem coverage, and user-selected candidate analysis while removing
 tracker publication, generated implementation pickups, and implementation
 Close. Audit may suggest order or one later owner, but it never selects the
 next item or starts downstream work.
+Revision 36 materializes machine contract revision 24 by rewriting
+High-Assurance Review as one explicit heavy review of a fixed code
+candidate. It keeps two fresh whole-candidate reviews, coordinator-verified
+finding admission, drift-safe gating, and one terminal decision while removing
+invocation packets, runtime receipts, replacement rounds, quorum vocabulary,
+and the universal finding-state ledger. Typical use follows an implemented
+ticket graph or precedes PR merge; neither condition activates it automatically.
 It binds the complete fingerprinted pre-discovery fixed point, then freezes the
 tested environment, finite research order, capability
 owners, roles, relationships, exclusions, resolved collisions, acceptance
@@ -489,12 +496,14 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "acceptance_scenario_ids": [
         "PS-014"
       ],
-      "allowed_contributor_skill_ids": [],
+      "allowed_contributor_skill_ids": [
+        "SK-015"
+      ],
       "capability_id": "CAP-014",
-      "completion_return": "One terminal assurance decision with admitted findings and residual risk",
+      "completion_return": "One terminal heavy-review decision with reviewer independence, admitted findings, material limits, residual risk, and drift",
       "disposition": "selected",
       "entry_conditions": [
-        "The user explicitly invokes High-Assurance Review for one immutable caller-selected candidate"
+        "The user explicitly requests a heavy or final review of one fixed code candidate, commonly an integrated ticket-graph result or exact pre-merge PR"
       ],
       "essential": true,
       "exclusions": [
@@ -502,11 +511,11 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Unbounded foreign procedure loading",
         "Automated semantic acceptance"
       ],
-      "observable_outcome": "Return one terminal assurance decision for one explicitly selected immutable candidate",
+      "observable_outcome": "Return one verified terminal decision after two fresh whole-candidate reviews of one explicitly selected fixed candidate",
       "primary_owner_skill_id": "SK-014",
       "proof_class": "fresh behavioral proof plus structural identity and boundary proof",
       "required_authority_mutation": [
-        "Immutable candidate pinning, independent review passes, coordinator finding admission, and terminal assurance decision"
+        "Fixed candidate pinning, two fresh Change Review passes, coordinator finding admission, and terminal assurance decision"
       ]
     },
     {
@@ -838,7 +847,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "scenario_id": "PS-013"
       },
       {
-        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for high-assurance-review: explicitly review one immutable caller-selected candidate through two fresh core reviewers",
+        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for high-assurance-review: explicitly review one fixed complete code candidate through two fresh whole-candidate reviews and one verified gate",
         "expected_owner_skill_id": "SK-014",
         "scenario_id": "PS-014"
       },
@@ -1008,6 +1017,10 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       },
       {
         "predecessor_skill_id": "SK-015",
+        "successor_skill_id": "SK-014"
+      },
+      {
+        "predecessor_skill_id": "SK-015",
         "successor_skill_id": "SK-022"
       },
       {
@@ -1060,7 +1073,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       }
     ],
     "composition_epoch_id": "FCE-20260727-01",
-    "contract_revision": 23,
+    "contract_revision": 24,
     "epoch_lock": null,
     "exclusions": [
       "Per-skill H1 or candidate wording",
@@ -1520,6 +1533,33 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "target_skill_id": "SK-017",
       "verb": "Recommend and stop",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
+    },
+    {
+      "affected_capability_ids": [
+        "CAP-014",
+        "CAP-015"
+      ],
+      "callee_owned_gates_mutations": [
+        "Change Review owns direct read-only candidate inspection and finding hypotheses; High Assurance retains dispatch, convergence, and the terminal decision"
+      ],
+      "caller_skill_id": "SK-014",
+      "combined_exit_owner_skill_id": "SK-014",
+      "context_loaded": [
+        "change-review caller-facing method and FINDING-CONTRACT.md"
+      ],
+      "entry_condition": "One fixed heavy-review candidate and factual brief are ready for exactly two fresh whole-candidate reviews with different primary emphasis.",
+      "failure_behavior": "Return incomplete when either fresh review cannot inspect the fixed candidate; do not substitute the coordinator or spawn recursive rounds",
+      "input_packet": "The fixed candidate, governing sources, relevant repository context, candidate-bound proof, material limits, and one primary review emphasis",
+      "ordering_impact": "callee-before-caller",
+      "relationship_id": "REL-109",
+      "required_proof_ids": [
+        "PROOF-REL-109"
+      ],
+      "resume_owner_skill_id": "SK-014",
+      "return_packet": "Reviewer identity and fresh-context and author-separation basis, independent whole-candidate coverage, material evidence limits or blockers, and evidence-backed finding candidates",
+      "target_skill_id": "SK-015",
+      "verb": "Load",
+      "wrong_condition": "The candidate is not fixed, the user did not explicitly request High Assurance, or ordinary single-review judgment owns the requested outcome"
     },
     {
       "affected_capability_ids": [
@@ -3776,24 +3816,24 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "PS-014"
       ],
       "canonical_name": "high-assurance-review",
-      "completion_condition": "The exact immutable candidate is judged through two valid fresh core reviewer returns and any required specialist",
+      "completion_condition": "Two proved-fresh, author-separated reviewers inspect the same fixed candidate, the coordinator dispositions every reviewer candidate and verifies every candidate that could be admitted, applicable commitments and interactions are covered, drift is clear, and one decision returns",
       "contract_order": 14,
-      "essential_outcome": "Return one terminal assurance decision for one explicitly selected immutable candidate",
-      "failure_return": "Return incomplete reviewer quorum or coverage, or admitted blockers without mutation",
+      "essential_outcome": "Return one terminal heavy-review decision for one explicitly selected fixed complete code candidate",
+      "failure_return": "Return incomplete source, reviewer, coverage, evidence, dispute, or drift state, or admitted blockers without mutation",
       "invocation_mode": "explicit-only",
       "load_budget_class": "conditional-leaf",
       "negative_exclusion_predicates": [
-        "The user did not explicitly invoke High-Assurance Review for one immutable caller-selected candidate",
+        "The user did not explicitly request High-Assurance Review for one fixed code candidate",
         "Another selected skill owns the requested outcome",
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
       "owned_authority_mutation_surfaces": [
-        "Immutable candidate pinning, fresh core reviewer dispatch, coordinator finding admission, and terminal assurance decision"
+        "Fixed candidate pinning, two fresh whole-candidate review passes, coordinator finding admission, and terminal assurance decision"
       ],
       "owned_capability_ids": [
         "CAP-014"
       ],
-      "positive_entry_predicate": "The user explicitly invokes High-Assurance Review for one immutable caller-selected candidate",
+      "positive_entry_predicate": "The user explicitly requests High-Assurance Review for one fixed code candidate, commonly after a ticket graph or before PR merge",
       "primary_role": "leaf",
       "prohibited_ownership": [
         "Another selected skill's semantic decision, local mutation, proof judgment, Return, or completion",
@@ -3801,10 +3841,11 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Pack integration acceptance, epoch Lock, cleanup, installation, or Git delivery unless explicitly owned"
       ],
       "relationship_ids": [
-        "REL-002"
+        "REL-002",
+        "REL-109"
       ],
-      "required_input": "A bounded caller-owned Source Trace, explicit invocation, and immutable candidate for one assurance decision",
-      "return_packet": "One terminal assurance decision with core reviewer provenance, admitted findings, and residual risk",
+      "required_input": "An explicit heavy-review request, one fixed complete code candidate, governing accepted sources, relevant repository context, and candidate-bound proof",
+      "return_packet": "One terminal decision with candidate identity, reviewer identities and independence basis, coverage, admitted findings, material limits, residual risk, and applicable drift",
       "skill_id": "SK-014"
     },
     {

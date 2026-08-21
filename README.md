@@ -129,7 +129,7 @@ Representative routes:
 - Explicit test-first, TDD, or RED-GREEN-REFACTOR work -> `$tdd`; ordinary implementation with tests -> `$implement`; route uncertain bugs through `$skill-router`.
 - Whole-repository architecture or code-quality discovery -> `$audit-codebase` builds or continues one linked HTML map, audits one user-selected subsystem at a time, then analyzes one user-selected candidate without starting implementation
 - Existing behavior in one selected target -> `$simplify-code` for proved behavior-preserving simplification or a truthful no-change result
-- An explicit read-only change judgment or implementation candidate whose independent-review trigger applies -> `$change-review`; an explicitly selected two-lane assurance review -> `$high-assurance-review`
+- An explicit read-only change judgment or implementation candidate whose independent-review trigger applies -> `$change-review`; an explicitly requested heavy review of a fixed code candidate, commonly an integrated ticket-graph result or pre-merge PR -> `$high-assurance-review`
 - Bounded correctness, domain robustness, performance, structural, or simplification discovery over a repository baseline -> `$audit-codebase`; the report preserves coverage and returns subsystem and candidate selection to the user
 
 These are examples. `$skill-router` owns the complete route map and tie-breakers.

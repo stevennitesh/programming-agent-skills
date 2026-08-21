@@ -127,7 +127,7 @@ def test_first_epoch_contract_freezes_complete_h1_free_composition() -> None:
 
     assert pack_contract.validate_contract(contract) == []
     assert contract["epoch_header"]["composition_epoch_id"] == EPOCH
-    assert contract["epoch_header"]["contract_revision"] == 23
+    assert contract["epoch_header"]["contract_revision"] == 24
     assert contract["epoch_header"]["status"] == "frozen"
     assert contract["epoch_header"]["integration_result"] == {
         "decision": None,
@@ -213,7 +213,7 @@ def test_first_epoch_revision_preserves_history_and_derives_r11_blueprints() -> 
             skill_id,
         )
         assert projected["slice"]["slice_id"].startswith(
-                f"{EPOCH}:r23:"
+                f"{EPOCH}:r24:"
         )
         assert projected["slice"]["skill"] == skill_by_id[skill_id]
     assert {
@@ -230,7 +230,7 @@ def test_current_contract_preserves_review_and_tdd_topology() -> None:
         skill["canonical_name"]: skill for skill in contract["selected_skills"]
     }
     assert contract["epoch_header"]["status"] == "frozen"
-    assert contract["epoch_header"]["contract_revision"] == 23
+    assert contract["epoch_header"]["contract_revision"] == 24
     assert {
         name: (skill_by_name[name]["skill_id"], skill_by_name[name]["invocation_mode"])
         for name in (
@@ -257,12 +257,14 @@ def test_current_contract_preserves_review_and_tdd_topology() -> None:
     relationship_ids = {
         relationship["relationship_id"] for relationship in contract["relationships"]
     }
+    assert "REL-109" in relationship_ids
     assert {"REL-013", "REL-018", "REL-030", "REL-049"}.isdisjoint(relationship_ids)
     graph_edges = {
         (edge["predecessor_skill_id"], edge["successor_skill_id"])
         for edge in contract["epoch_header"]["campaign_proof_graph"]
     }
     assert not any(predecessor == "SK-014" for predecessor, _ in graph_edges)
+    assert ("SK-015", "SK-014") in graph_edges
     assert ("SK-007", "SK-011") not in graph_edges
 
     skill_name_by_id = {
@@ -279,6 +281,7 @@ def test_current_contract_preserves_review_and_tdd_topology() -> None:
         for relationship in contract["relationships"]
     }
     assert {
+        ("REL-109", "high-assurance-review", "Load", "change-review"),
         ("REL-016", "implement", "Invoke", "change-review"),
         ("REL-017", "implement", "Invoke", "tdd"),
         ("REL-034", "parallel-implement", "Invoke", "change-review"),
@@ -286,6 +289,16 @@ def test_current_contract_preserves_review_and_tdd_topology() -> None:
         ("REL-064", "skill-router", "Recommend and stop", "tdd"),
     } <= relationship_topology
     assert {("SK-015", "SK-022"), ("SK-015", "SK-023")} <= graph_edges
+    assurance_review = next(
+        relationship
+        for relationship in contract["relationships"]
+        if relationship["relationship_id"] == "REL-109"
+    )
+    assert assurance_review["combined_exit_owner_skill_id"] == "SK-014"
+    assert assurance_review["resume_owner_skill_id"] == "SK-014"
+    assert "FINDING-CONTRACT.md" in " ".join(assurance_review["context_loaded"])
+    assert "Reviewer identity" in assurance_review["return_packet"]
+    assert "fresh-context and author-separation basis" in assurance_review["return_packet"]
 
     metadata = yaml.safe_load(
         (

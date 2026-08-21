@@ -158,8 +158,10 @@ _Avoid_: low-priority review, risk-free review
 
 **High-assurance review candidate**
 
-A fixed-snapshot candidate explicitly sent to `$high-assurance-review`; risk
-does not implicitly select it.
+A fixed code candidate explicitly sent to `$high-assurance-review` for two
+fresh whole-candidate reviews and one verified decision. Typical candidates are
+an integrated ticket-graph result or an exact PR before merge; neither PR
+presence nor risk implicitly selects the route.
 _Avoid_: automatic escalation, every risky change
 
 **Supported high-risk trigger**

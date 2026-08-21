@@ -51,7 +51,7 @@ def test_router_names_every_custom_skill() -> None:
         skill_names - {"skill-router"}
     )
     assert len(routed) == len(set(routed))
-    assert "High Assurance Review is an explicit user-selected alternative" in router
+    assert "High Assurance Review is an explicit user-selected heavy review" in router
 
 
 def test_handoff_compacts_context_without_advancing_work() -> None:
@@ -1518,8 +1518,9 @@ def test_review_baselines_are_discovered_and_independence_is_honest() -> None:
     assert "fresh task or context" in formal_flat
     assert "distinct from every implementation and integration author" in formal_flat
     assert "pass with residual risk" in formal
-    assert "Accept only when the user explicitly names" in convergent
-    assert "explicitly user-selected immutable candidate" in assurance_summary
+    assert "Use only when the user explicitly requests" in convergent
+    assert "fixed code candidate" in assurance_summary
+    assert "two fresh whole-candidate" in assurance_summary
     assert "No workflow selects High-Assurance Review automatically" in assurance_summary
     assert not (CUSTOM / "change-review/SMELL-BASELINE.md").exists()
     assert "formal review" in review_summary.lower()
@@ -1624,11 +1625,12 @@ def test_review_family_shares_one_bounded_quality_and_risk_model() -> None:
     assert "preference-only" in finding_flat
     assert "reviewer agreement does not establish a finding" in finding_flat
     assert "Reuse proof bound to the candidate" in review
-    assert "Reuse exact-snapshot proof" in convergent_flat
+    assert "Reuse valid candidate-bound proof" in convergent_flat
     assert "FINDING-CONTRACT.md" in convergent
-    assert "neither required nor sufficient for invocation" in convergent_flat
+    assert "Do not activate from PR presence" in convergent_flat
+    assert "novelty, or risk" in convergent_flat
     assert "supported-risk candidate needs read-only judgment" in router
-    assert "High Assurance Review is an explicit user-selected alternative" in router
+    assert "High Assurance Review is an explicit user-selected heavy review" in router
 
 
 def test_review_assurance_route_has_one_domain_decision() -> None:
@@ -1671,25 +1673,17 @@ def test_high_assurance_review_uses_fresh_context_and_root_only_fanout() -> None
         encoding="utf-8"
     )
 
-    assert (
-        "exactly two direct core reviewer lanes as fresh read-only collaboration subagents"
-        in " ".join(convergent.split())
-    )
-    assert "Record each lane's actor and task IDs" in convergent
-    contract = (
-        convergent.split("return contract:", 1)[1]
-        .split("```text", 1)[1]
-        .split("```", 1)[0]
-    )
-    assert set(re.findall(r"(?m)^([a-z ]+):", contract)) == {
-        "status",
-        "lane",
-        "axis",
-        "coverage",
-        "finding candidates",
-        "skipped checks",
-        "blockers",
-    }
+    flattened = " ".join(convergent.split())
+    assert "Dispatch exactly two fresh, read-only reviewers" in flattened
+    assert "same pinned candidate and factual brief" in flattened
+    assert "use a fresh task or context" in flattened
+    assert "separate from every identified author" in flattened
+    assert "freshness or required separation cannot be established" in flattened
+    assert "identity and independence basis" in flattened
+    assert "Each applies Change Review directly" in flattened
+    assert "without spawning another reviewer" in flattened
+    assert "actor and task IDs" not in flattened
+    assert "return contract:" not in flattened
 
 
 def test_high_assurance_review_has_root_guard_bounded_capacity_and_risk() -> None:
@@ -1698,36 +1692,26 @@ def test_high_assurance_review_has_root_guard_bounded_capacity_and_risk() -> Non
     )
     convergent_flat = " ".join(convergent.split())
 
-    assert "top-level root of its review run" in convergent_flat
-    assert "semantic assurance coordinator" in convergent_flat
-    assert "nested review lane that invokes this skill returns `incomplete` before Pin" in convergent_flat
-    assert "other nested review lane that invokes this skill" in convergent_flat
-    for mode in ("initial", "remediation"):
-        assert f"- `{mode}`" in convergent
-    assert "valid reviewer quorum" in convergent
-    assert "exactly two valid fresh core returns" in convergent
-    assert "coordinator never substitutes for a reviewer" in convergent
+    assert "Run as the top-level coordinator" in convergent_flat
+    assert "Reviewers do not invoke High-Assurance Review" in convergent_flat
+    assert "exactly two fresh" in convergent_flat
     assert (
-        "no Repair, candidate acceptance or closeout, or residual-risk acceptance authority"
+        "caller retains repair, merge, tracker, release, residual-risk acceptance"
         in convergent_flat
     )
-    assert "at most one `har-specialist`" in convergent
-    assert "explicitly names one bounded specialist objective" in convergent_flat
-    assert "Supported risk alone never selects a specialist" in convergent_flat
-    assert "at most one fresh unbiased replacement per invalid lane" in convergent
-    for agent_id in (
+    assert "Add at most one specialist" in convergent_flat
+    assert "user explicitly names one bounded specialist question" in convergent_flat
+    assert "Do not activate from PR presence" in convergent_flat
+    assert "novelty, or risk" in convergent_flat
+    for retired in (
+        "valid reviewer quorum",
+        "actor and task IDs",
+        "fresh unbiased replacement",
         "har-spec-reviewer",
         "har-standards-reviewer",
         "har-specialist",
     ):
-        assert agent_id in convergent
-    for overlap in (
-        "supported risk",
-        "failure and recovery paths",
-        "complete replacement or removal",
-        "evidence completeness",
-    ):
-        assert overlap in convergent
+        assert retired not in convergent
     assert not (CUSTOM / "change-review/ADVISORY-CONTRACT.md").exists()
 
 
@@ -1840,8 +1824,8 @@ def test_high_assurance_review_returns_a_caller_usable_decision() -> None:
     formal = (
         CUSTOM / "change-review/references/FORMAL-REVIEW.md"
     ).read_text(encoding="utf-8")
-    decision_section = convergent.split("Derive exactly one decision", 1)[1].split(
-        "Return one caller-bound packet", 1
+    decision_section = convergent.split("Return exactly one decision", 1)[1].split(
+        "Return the candidate identity", 1
     )[0]
     decisions = set(
         re.findall(
@@ -1855,7 +1839,8 @@ def test_high_assurance_review_returns_a_caller_usable_decision() -> None:
     )[0]
     for section in (formal_decision_section, decision_section):
         assert section.index("- `blocked`") < section.index("- `incomplete`")
-        assert "blocker takes precedence over unrelated" in section
+    assert "blocker takes precedence over unrelated" in formal_decision_section
+    assert "A blocker takes precedence over unrelated" in " ".join(convergent.split())
     formal_flat = " ".join(formal.split())
     for field in (
         "prior formal Return and candidate identity",
@@ -1866,9 +1851,23 @@ def test_high_assurance_review_returns_a_caller_usable_decision() -> None:
     ):
         assert field in formal_flat
     assert "partial remediation packet is `incomplete`" in formal_flat
-    ledger_sentence = convergent.split("and one state:", 1)[1].split(".", 1)[0]
-    ledger_states = set(re.findall(r"`([^`]+)`", ledger_sentence))
-    assert ledger_states == {"candidate", "accepted", "rejected", "duplicate", "disputed"}
+    for field in (
+        "candidate identity",
+        "coverage",
+        "admitted findings",
+        "material rejected or disputed claims",
+        "checks and evidence limits",
+        "residual risk",
+        "drift result",
+        "decision",
+    ):
+        assert field in convergent
+    assert "Carry prior admitted finding IDs" in convergent
+    assert "review the full new candidate" in " ".join(convergent.split())
+    assert "and one state:" not in convergent
+    assert "admitted `P0` or `P1`" in convergent
+    assert "Nonblocking findings remain visible" in " ".join(convergent.split())
+    assert "Disposition every reviewer finding candidate" in " ".join(convergent.split())
 
 
 def test_audit_stops_before_review_and_implementation_closeout() -> None:
@@ -1899,20 +1898,23 @@ def test_high_assurance_review_checks_snapshot_drift_not_baseline_drift() -> Non
     )
 
     pin = " ".join(
-        convergent.split("## 2. Pin", 1)[1].split("## 3. Review", 1)[0].split()
+        convergent.split("## 1. Fix", 1)[1].split("## 2. Ground", 1)[0].split()
     )
     for surface in (
+        "fixed point",
+        "head commit",
+        "tree",
+        "selected diff bytes",
+        "exact base, head, and diff",
         "`HEAD`",
-        "index tree",
-        "staged diff",
-        "unstaged diff",
+        "staged and unstaged changes",
         "status",
         "untracked path and its bytes",
     ):
         assert surface in pin
     verify = " ".join(convergent.split("## 5. Gate", 1)[1].split())
-    assert "every cell of the pinned candidate identity" in verify
-    assert "Do not recapture" in verify
+    assert "Recheck mutable candidate identity using the original resolution" in verify
+    assert "do not recapture" in verify
 
 
 def test_implement_uses_condition_triggered_change_review() -> None:
@@ -2258,8 +2260,13 @@ def test_implementation_closeout_requires_the_spec_axis() -> None:
     implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
     parallel = (CUSTOM / "parallel-implement/SKILL.md").read_text(encoding="utf-8")
 
-    for text in (formal, assurance):
-        assert "`Spec required: yes | no`" in text
+    assert "`Spec required: yes | no`" in formal
+    assurance_flat = " ".join(assurance.split())
+    assert "governing issue or specification" in assurance_flat
+    assert "missing or conflicting source" in assurance_flat
+    assert "Skip an optional absent source" in assurance_flat
+    assert "accepted request is always required" in assurance_flat
+    assert "record why it is optional" in assurance_flat
     assert "`Spec required: yes`" in parallel
 
 
