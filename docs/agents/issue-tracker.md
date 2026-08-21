@@ -29,7 +29,10 @@ the connector lacks the required operation.
   comment when applicable.
 - **Relationships:** use connector actions when exposed; otherwise use GitHub's
   sub-issue and issue-dependency REST endpoints through `gh api`. Resolve the
-  authenticated operation and read-back route before the first create.
+  authenticated operation and read-back route before the first create. To
+  Tickets may use its bundled
+  `skills/custom/to-tickets/scripts/github_issue_relationships.py` helper for
+  these fallback operations.
 When PR intake is enabled, fetch the PR body, comments, labels, author
 association, and diff. External candidates have author association
 `CONTRIBUTOR`, `FIRST_TIME_CONTRIBUTOR`, or `NONE`. GitHub issues and PRs share

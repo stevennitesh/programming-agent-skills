@@ -402,18 +402,12 @@ def test_github_relationship_modes_are_explicit_before_publication() -> None:
         assert "never switch representations during one publication" in normalized
         assert "when available" not in text
 
-    tickets = (CUSTOM / "to-tickets/SKILL.md").read_text(encoding="utf-8")
-    normalized_tickets = " ".join(tickets.split())
-    assert "resolve their operation and read-back routes once before" in (
-        normalized_tickets
+    tracker = (ROOT / "docs/agents/issue-tracker.md").read_text(encoding="utf-8")
+    assert "skills/custom/to-tickets/scripts/github_issue_relationships.py" in tracker
+    tickets = " ".join(
+        (CUSTOM / "to-tickets/SKILL.md").read_text(encoding="utf-8").split()
     )
-    assert "The first authorized child and its read-back prove live" in (
-        normalized_tickets
-    )
-    assert "first applicable blocking edge" in normalized_tickets
-    assert (
-        "Never switch the frozen relationship representation" in normalized_tickets
-    )
+    assert "configured relationship mutation and read-back route" in tickets
 
 
 def test_repo_bootstrap_rejects_unconfigured_github_relationship_modes() -> None:
@@ -1830,10 +1824,11 @@ def test_audit_codebase_is_thorough_incremental_html_atlas() -> None:
     assert "generated candidate Analyze prompt" in ticket_edge["entry_condition"]
     assert "authority-required" in ticket_edge["wrong_condition"]
     assert "Generated To Tickets invocation" in ticket_edge["input_packet"]
-    assert "configured tracker mutation" in " ".join(
+    assert "configured tracker publication" in " ".join(
         ticket_edge["callee_owned_gates_mutations"]
     )
-    assert "candidate-bundle-bound ready/reused graph" in ticket_edge["return_packet"]
+    assert "candidate-bundle-bound observed graph" in ticket_edge["return_packet"]
+    assert "Audit maps the result to its own tracker status" in ticket_edge["return_packet"]
     assert "verified tracker graph" in relationships["REL-056"]["input_packet"]
     assert "analyzed-candidate closeout" in relationships["REL-047"]["entry_condition"]
     for relationship_id in ("REL-021", "REL-026"):
@@ -2288,13 +2283,12 @@ def test_to_spec_handoff_keeps_ticket_design_downstream() -> None:
     ):
         assert downstream_concept.lower() in spec_lower
     for ticket_owner in (
-        "inspect enough code to ground",
-        "ticket boundaries",
-        "expected durable writes",
-        "dependency order",
-        "ready frontier",
-        "static execution facts",
-        "known overlap or serial tripwires",
+        "current behavior owner",
+        "fewest cohesive tickets",
+        "observable acceptance",
+        "true blockers",
+        "dependent consumes a required predecessor outcome",
+        "first actionable ticket",
     ):
         assert ticket_owner.lower() in tickets_lower
     assert "Paths may support a source claim" in spec
@@ -2398,7 +2392,7 @@ def test_planning_and_delivery_activate_lean_integrated_quality_contract() -> No
     ).read_text(encoding="utf-8")
 
     assert "one bounded implementation" in to_spec
-    assert "smallest execution packet" in tickets
+    assert "fewest cohesive tickets" in tickets
     assert "smallest integrated design" in implement
     assert "Remove code made obsolete by the change" in implement
     assert "complete replacement or removal" in review
@@ -2415,11 +2409,18 @@ def test_ticket_and_delivery_packets_are_compact_and_preserve_repairs() -> None:
     implement_flat = " ".join(implement.split())
     parallel_flat = " ".join(parallel.split())
 
-    for field in ("**Intent:**", "**Grounding:**", "**Scope and proof:**", "**Delivery:**"):
-        assert field in tickets
-    assert "Omit inapplicable optional sections" in tickets_flat
+    for field in (
+        "one outcome and observable acceptance",
+        "source identity, fixed decisions, scope",
+        "true blockers",
+        "material compatibility, migration, trust, authority, or recovery constraints",
+    ):
+        assert field in tickets_flat
+    assert "omit inapplicable sections" in tickets_flat
     assert "graph-level Repair generation budget" not in tickets_flat
-    assert "Create no graph or tracker state" in tickets_flat
+    assert "Create nothing" in tickets_flat
+    for retired in ("**Grounding:**", "5,500", "Ready-for-human", "state matrix"):
+        assert retired not in tickets
     assert "Use the caller's selection as the scope fence" in implement_flat
     assert "Direct work creates no tracker state" in implement_flat
     assert "Return a concise summary" in implement_flat
@@ -2427,6 +2428,8 @@ def test_ticket_and_delivery_packets_are_compact_and_preserve_repairs() -> None:
     assert "plain task context" in parallel_flat
     assert "Prose is evidence, not trusted state" in parallel_flat
     assert "one `$to-tickets` repair packet" in parallel_flat
+    assert "retaining campaign custody and claims" in parallel_flat
+    assert "A caller with campaign claims retains them throughout repair" in tickets_flat
 
 
 def test_interface_alternatives_receive_curated_fresh_context() -> None:
@@ -2653,26 +2656,36 @@ def test_merge_conflict_resolution_is_three_way_and_finish_bounded() -> None:
     skill = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
     skill_flat = " ".join(skill.split())
     operations = (skill_dir / "OPERATIONS.md").read_text(encoding="utf-8")
+    implement = " ".join(
+        (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8").split()
+    )
 
     assert implicit_policy(skill_dir)
-    read_only = re.search(r"\*\*Read-only: (.+?)\.\*\*", skill_flat)
-    reconcile = re.search(r"\*\*Reconcile: (.+?)\.\*\*", skill_flat)
-    assert read_only is not None and reconcile is not None
-    assert "Reconcile" not in read_only.group(1)
-    assert "Finish" not in read_only.group(1)
-    assert reconcile.group(1).index("Prove") < reconcile.group(1).index("Return")
-    assert "only with finish authority" in reconcile.group(1)
+    assert "status, explanation, or review request permits no mutation" in skill_flat
+    assert "Staging and native continuation require a separate explicit request" in skill_flat
+    assert "already-prepared or automatically staged resolution" in skill_flat
+    assert "When resolution was requested, repair" in skill_flat
+    assert "active conflicted operation or unmerged index" in implement
+    assert "hand off to `$resolving-merge-conflicts`" in implement
     assert "`git ls-files -u`" in skill
     assert "[OPERATIONS.md](OPERATIONS.md)" in skill
-    assert "## Operation Roles" in operations
-    assert "## Conflict Classes" in operations
-    assert "## Finish Checks" in operations
-    assert "prepared reconciliation" in skill
-    assert "finished operation" in skill
+    assert "## Operation roles" in operations
+    assert "## Special conflict types" in operations
     assert "Never use `git add -A`" in skill
     assert "Rebase" in operations and "commit being replayed" in operations
-    assert "## Guardrails" in skill
-    assert "## Return" in skill
+    assert "A stage may be absent" in operations
+    assert "Rename conflicts may span old and new paths" in operations
+    assert "`rerere`, mergetool, or automatic merge result" in operations
+    for retired in (
+        "Compose",
+        "Transform",
+        "Prefer",
+        "prepared reconciliation",
+        "finished operation",
+        "route mismatch",
+        "diagnosis-required",
+    ):
+        assert retired not in skill
 
 
 def test_portable_fallback_remains_standalone_from_the_repo_contract() -> None:
@@ -2702,8 +2715,10 @@ def test_portable_fallback_remains_standalone_from_the_repo_contract() -> None:
     for shared_term in (
         "bounded slice",
         "Subtract, reuse, or replace",
+        "Apply the deletion test",
         "Trust internal types and established invariants",
         "Run the nearest useful check",
+        "name the realistic behavior break it catches",
         "An inactive condition creates no checklist",
     ):
         assert shared_term in contract_flat
@@ -2720,6 +2735,25 @@ def test_portable_fallback_remains_standalone_from_the_repo_contract() -> None:
     )
     assert markerless_contract == seed
 
+
+def test_tracer_bullet_is_a_conditional_learning_role_not_a_slice_alias() -> None:
+    contract = " ".join(
+        (ROOT / "docs/agents/engineering-contract.md").read_text(encoding="utf-8").split()
+    )
+    tickets = " ".join(
+        (CUSTOM / "to-tickets/SKILL.md").read_text(encoding="utf-8").split()
+    )
+    parallel = " ".join(
+        (CUSTOM / "parallel-implement/SKILL.md").read_text(encoding="utf-8").split()
+    )
+    readme = " ".join((ROOT / "README.md").read_text(encoding="utf-8").split())
+
+    assert "tracer bullet** only when a named risk warrants early feedback" in contract
+    assert "learning role, not a substitute for acceptance" in contract
+    assert "Otherwise omit the learning role" in tickets
+    assert "When the graph assigns a tracer bullet" in parallel
+    assert "the terms are not synonyms" in readme
+    assert "deliver observable vertical slices" not in readme
 
 
 def test_readme_exposes_both_adoption_paths() -> None:
@@ -2813,25 +2847,65 @@ def test_mutating_workflows_require_proportional_readback() -> None:
         assert "read-back" in text.lower(), name
 
 
-def test_to_tickets_is_proportional_and_preserves_ready_frontiers() -> None:
+def test_to_tickets_is_proportional_and_preserves_actionable_frontier() -> None:
     tickets = (CUSTOM / "to-tickets/SKILL.md").read_text(encoding="utf-8")
     flat = " ".join(tickets.split())
+    synthesis = (ROOT / "docs/synthesis/skills/to-tickets.md").read_text(
+        encoding="utf-8"
+    )
 
     assert not implicit_policy(CUSTOM / "to-tickets")
-    assert "`direct-item`" in tickets
-    assert "Create no graph or tracker state" in flat
-    assert "smallest execution packet" in flat
-    assert "Omit inapplicable optional sections" in flat
-    assert "graph-level Repair generation budget" not in flat
-    assert "Use a matrix only when it is clearer than prose" in flat
-    assert "`$parallel-implement` decides live concurrency" in flat
-    assert "Separate packet readiness from frontier eligibility" in flat
-    assert "Ready-for-agent and Ready-for-human frontiers separately" in flat
-    assert "executor roles and static execution facts" in flat
-    assert "execution profiles" not in flat
-    assert flat.index("If the settled source is already one bounded implementation") < flat.index(
-        "Only after the direct branch is excluded"
+    assert "one bounded outcome and proof path" in tickets
+    assert "Create nothing" in flat
+    assert re.findall(r"(?m)^## ([A-Za-z]+)$", tickets) == [
+        "Admit",
+        "Trace",
+        "Slice",
+        "Approve",
+        "Publish",
+    ]
+    assert "one bounded fresh `$implement` run" in flat
+    assert "accept such a graph unchanged" in flat
+    assert "skip Slice, Approve, and Publish, then use the common return selection" in flat
+    assert "present the revised graph for approval" in flat
+    assert "already approved these exact effects or explicitly waived preview" in flat
+    assert "`reuse` or `create` or `update` disposition" in flat
+    assert "bind each new identity through immediate read-back" in flat
+    assert "apply and read back each approved Ready-for-agent change" in flat
+    assert "refetch the parent and children" in flat
+    assert "stop further mutation" in flat
+    assert "caller-held resumable ticket" in flat
+    assert "if it gates any ticket" in flat
+    assert "preserve any caller-held assignee" in flat
+    assert flat.index("If the settled source itself establishes") < flat.index(
+        "Once a graph is warranted, load the routed tracker and label contracts"
     )
+    assert flat.index("configured inspect and read-back routes") < flat.index(
+        "Inspect the intended parent and existing children"
+    )
+    contract = pack_contract.parse_contract(
+        (ROOT / "docs/synthesis/skill-pack.md").read_text(encoding="utf-8")
+    )
+    implement_edge = next(
+        edge for edge in contract["relationships"] if edge["relationship_id"] == "REL-081"
+    )
+    for field in ("entry_condition", "input_packet", "return_packet"):
+        assert "bounded direct item" in implement_edge[field].lower()
+    parallel_edge = next(
+        edge for edge in contract["relationships"] if edge["relationship_id"] == "REL-082"
+    )
+    assert "approved or exact-reuse verified graph" in parallel_edge["entry_condition"]
+    to_tickets_contract = next(
+        skill for skill in contract["selected_skills"] if skill["canonical_name"] == "to-tickets"
+    )
+    assert "approved or exact-reuse actionable graph" in to_tickets_contract[
+        "completion_condition"
+    ]
+    assert "approved or exact-reuse graph" in flat
+    current_reconciliation = synthesis.split(
+        "The decision-bearing content is bounded below", 1
+    )[0]
+    assert exact_tree_hash(CUSTOM / "to-tickets") in current_reconciliation
 
 
 def test_to_spec_canonical_is_lean_and_experimental_evidence_stays_frozen() -> None:
@@ -2929,13 +3003,14 @@ def test_parallel_implement_owns_recovery_authority_and_outcome_gates() -> None:
     assert "Retry only after an observed blocking condition changes" in flat
     assert "never duplicate an uncertain task" in flat
     assert "return one `$to-tickets` repair packet" in flat
-    assert "transfer only the exact verified campaign-owned claims" in flat
+    assert "retaining campaign custody and claims" in flat
     tickets = " ".join(
         (CUSTOM / "to-tickets/SKILL.md").read_text(encoding="utf-8").split()
     )
-    assert "On an explicit To Tickets repair invocation" in flat
-    assert "An admitted transferred claim remains expected custody" in tickets
-    assert "release transferred claims, verify the assignee state, and derive" in tickets
+    assert "An explicit To Tickets repair changes only verified graph facts" in flat
+    assert "A caller with campaign claims retains them throughout repair" in tickets
+    assert "transfer only the exact verified campaign-owned claims" not in flat
+    assert "release transferred claims" not in tickets
     assert "use `$resolving-merge-conflicts`" in flat
     assert "If the same blocker recurs" in flat
     assert "without a new authorized in-scope repair path" in flat
@@ -3012,8 +3087,8 @@ def test_parallel_implement_exposes_live_frontier_and_closeout_contracts() -> No
         router,
     )
     assert "selected directly or as a Ready-for-agent item" in router
-    assert "Recommend `$parallel-implement` only when the user explicitly requested" in tickets
-    assert "may run any frontier serially" in tickets_flat
+    assert "recommend `$parallel-implement` only when the user explicitly requested" in tickets_flat
+    assert "owns live concurrency and integration" in tickets_flat
     assert "`to-tickets` | Recommend and stop | `$parallel-implement`" in relationships
 
 
@@ -3036,11 +3111,13 @@ def test_shared_protection_uses_a_concrete_trigger_not_a_state_catalog() -> None
         normalized = " ".join(shared.split())
         assert "active trust or effect boundary" in normalized
         assert "Local or personal use alone is not a trigger" in normalized
+        assert "expected to retry, resume, or restart" in normalized
+        assert "converge on rerun without duplicate effects" in normalized
         assert "Handle state, retry, recovery, cancellation, concurrency" not in normalized
     flat = " ".join(tickets.split())
-    assert "whose behavior materially changes by state" in flat
-    assert "Use a matrix only when it is clearer than prose" in flat
-    assert "never add Cartesian or stateless padding" in flat
+    assert "material compatibility, migration, trust, authority, or recovery constraints" in flat
+    assert "Use a matrix" not in flat
+    assert "Cartesian" not in flat
 
 
 def test_implement_selection_preserves_one_ready_item_and_explicit_authority() -> None:
@@ -3093,19 +3170,16 @@ def test_current_relationships_preserve_candidate_commit_and_repair_claim_custod
     )
 
     assert "A repaired successor is reviewed only while the original trigger still applies" in flat
-    assert "retain campaign claims" in flat
-    assert "Only a later explicit To Tickets invocation" in flat
-    assert "releases those claims only after repaired graph read-back" in flat
-    assert "campaign claims retained pending later explicit admission" in repair["return_packet"]
-    assert "only after repaired graph read-back" in repair["return_packet"]
+    assert "retain campaign custody and claims" in flat
+    assert "A later explicit To Tickets repair" in flat
+    assert "Parallel Implement reconciles the read-back graph before resuming" in flat
+    assert "campaign custody retained" in repair["return_packet"]
+    assert "reconciles any later read-back graph before resuming" in repair["return_packet"]
 
 
 def test_diagnosis_is_an_explicit_leaf_with_bounded_recommendations() -> None:
     diagnosing = (CUSTOM / "diagnosing-bugs/SKILL.md").read_text(encoding="utf-8")
     prototype = (CUSTOM / "prototype/SKILL.md").read_text(encoding="utf-8")
-    resolver = (CUSTOM / "resolving-merge-conflicts/SKILL.md").read_text(
-        encoding="utf-8"
-    )
     relationships = (ROOT / "docs/synthesis/skill-context-relationships.md").read_text(
         encoding="utf-8"
     )
@@ -3125,14 +3199,12 @@ def test_diagnosis_is_an_explicit_leaf_with_bounded_recommendations() -> None:
     assert "Start no successor" in diagnosing_flat
     assert set(re.findall(r"\$[a-z0-9-]+", diagnosing)) == set()
     assert "recommend `$diagnosing-bugs` and stop before mutation" in prototype
-    assert "recommend `$diagnosing-bugs`" in resolver
     assert {
         (caller, verb, callee)
         for caller, verb, callee in rows
         if caller == "diagnosing-bugs" or callee == "diagnosing-bugs"
     } == {
         ("prototype", "Recommend and stop", "diagnosing-bugs"),
-        ("resolving-merge-conflicts", "Recommend and stop", "diagnosing-bugs"),
     }
     contract = pack_contract.parse_contract(
         (ROOT / "docs/synthesis/skill-pack.md").read_text(encoding="utf-8")
@@ -3149,13 +3221,11 @@ def test_diagnosis_is_an_explicit_leaf_with_bounded_recommendations() -> None:
     } == {
         ("skill-router", "Recommend and stop", "diagnosing-bugs"),
         ("prototype", "Recommend and stop", "diagnosing-bugs"),
-        ("resolving-merge-conflicts", "Recommend and stop", "diagnosing-bugs"),
     }
     for skill in CUSTOM.iterdir():
         if skill.is_dir() and skill.name not in {
             "diagnosing-bugs",
             "prototype",
-            "resolving-merge-conflicts",
             "skill-router",
         }:
             for path in skill.rglob("*.md"):
@@ -3198,6 +3268,7 @@ def test_runtime_composition_edges_respect_lean_review_and_planning_policy() -> 
         {caller, callee} == {"implement", "parallel-implement"}
         for caller, _, callee in edges
     )
+    assert ("implement", "Recommend and stop", "to-tickets") not in edges
     assert "mutations from two or more independent authors" in relationships_flat
     assert "Missing proof stops instead" in relationships_flat
     assert "Supported risk modifies coverage only after review admission" in relationships_flat

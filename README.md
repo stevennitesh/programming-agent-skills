@@ -139,7 +139,7 @@ These are examples. `$skill-router` owns the complete route map and tie-breakers
 Build faster without making the repository harder to trust. Move quickly through reversible exploration; slow down at the gates that protect commitments, correctness, and trust.
 
 - **Shape before build:** settle consequential intent before implementation.
-- **Tracer bullets:** deliver observable vertical slices that keep proof close to each change.
+- **Tracer bullets:** establish a thin real path for early feedback on a named risk. A ticket may also be a vertical slice, but the terms are not synonyms.
 - **Semantic proof:** prove that the result means the right thing; output existence alone is not correctness.
 - **Fixed-point review:** judge the actual diff against Spec and Standards instead of trusting the agent's story.
 - **Ubiquitous language:** preserve domain terms and decisions across code, tests, docs, tickets, and handoffs.

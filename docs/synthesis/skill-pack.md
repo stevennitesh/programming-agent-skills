@@ -140,6 +140,16 @@ returns one bounded item unchanged when a parent would add no
 value, removes architecture delegation and draft ceremony, publishes at most
 one parent with read-back, and recommends either To Tickets or Implement
 without starting either.
+Revision 32 materializes machine contract revision 20 by rewriting To Tickets
+as one proportional graph-publication job. It removes the proof-accounting,
+state-matrix, human-frontier, claim-transfer, and status machinery; keeps one
+direct-item escape, cohesive slicing, true blockers, approval, and verified
+external publication; and removes the stale Implement return edge.
+Revision 33 materializes machine contract revision 21 by rewriting Resolving
+Merge Conflicts as five direct actions. It removes decision and status
+taxonomies, marker-only admission, and the Diagnosis edge while retaining
+operation-aware roles, separate edit and finish permission, exact-path staging,
+unrelated-work protection, native continuation, and branch-only Git traps.
 It binds the complete fingerprinted pre-discovery fixed point, then freezes the
 tested environment, finite research order, capability
 owners, roles, relationships, exclusions, resolved collisions, acceptance
@@ -420,10 +430,10 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       ],
       "allowed_contributor_skill_ids": [],
       "capability_id": "CAP-012",
-      "completion_return": "A verified exhaustive Ready-for-agent graph and first frontier",
+      "completion_return": "One verified approved or exact-reuse graph, one bounded direct item, or one exact source, setup, conflict, or recovery result",
       "disposition": "selected",
       "entry_conditions": [
-        "A settled bounded source needs implementation slicing and dependency order"
+        "An explicit To Tickets selection supplies one identified settled source for a proportionality decision"
       ],
       "essential": true,
       "exclusions": [
@@ -431,11 +441,11 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Unbounded foreign procedure loading",
         "Automated semantic acceptance"
       ],
-      "observable_outcome": "Create one verified dependency-ordered Ready-for-agent ticket graph from settled source",
+      "observable_outcome": "Publish the smallest useful dependency-ordered implementation graph from settled source, or return one bounded item unchanged",
       "primary_owner_skill_id": "SK-012",
-      "proof_class": "fresh behavioral proof plus structural identity and boundary proof",
+      "proof_class": "proportionate structural, boundary, and consumer proof; fresh behavioral proof only when the user requests it",
       "required_authority_mutation": [
-        "Ticket boundaries, readiness contracts, dependencies, publication, and frontier read-back"
+        "Ticket boundaries, dependency order, approval, authorized publication, and read-back"
       ]
     },
     {
@@ -514,14 +524,12 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "acceptance_scenario_ids": [
         "PS-016"
       ],
-      "allowed_contributor_skill_ids": [
-        "SK-005"
-      ],
+      "allowed_contributor_skill_ids": [],
       "capability_id": "CAP-016",
-      "completion_return": "One typed inspection, prepared reconciliation, finished operation, decision required, blocked, or route mismatch packet",
+      "completion_return": "Exact current Git state after unchanged inspection, checked resolution, or explicitly requested native continuation",
       "disposition": "selected",
       "entry_conditions": [
-        "An already-conflicted merge, rebase, cherry-pick, revert, unmerged index, or plausible marker state needs inspection or reconciliation"
+        "An active conflicted merge, rebase, cherry-pick, revert, or unmerged index needs inspection or resolution"
       ],
       "essential": true,
       "exclusions": [
@@ -533,7 +541,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "primary_owner_skill_id": "SK-016",
       "proof_class": "fresh behavioral proof plus structural identity and boundary proof",
       "required_authority_mutation": [
-        "Conflict inspection, trace, scoped working-tree reconciliation, proof, optional exact-path finish, and typed exact-state return"
+        "Conflict inspection, scoped working-tree resolution, proof, optional exact-path continuation, and exact-state return"
       ]
     },
     {
@@ -807,7 +815,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "scenario_id": "PS-011"
       },
       {
-        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for to-tickets: Create one verified dependency-ordered Ready-for-agent ticket graph from settled source",
+        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for to-tickets: Publish the smallest useful dependency-ordered implementation graph from settled source, or return one bounded item unchanged",
         "expected_owner_skill_id": "SK-012",
         "scenario_id": "PS-012"
       },
@@ -827,7 +835,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "scenario_id": "PS-015"
       },
       {
-        "description": "Positive entry, nearest-negative exclusion, material failure, and typed completion for resolving-merge-conflicts: inspect or reconcile one observed conflict state and finish only under separate authority",
+        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for resolving-merge-conflicts: inspect or resolve one active conflict and continue only when separately requested",
         "expected_owner_skill_id": "SK-016",
         "scenario_id": "PS-016"
       },
@@ -1039,7 +1047,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       }
     ],
     "composition_epoch_id": "FCE-20260727-01",
-    "contract_revision": 19,
+    "contract_revision": 21,
     "epoch_lock": null,
     "exclusions": [
       "Per-skill H1 or candidate wording",
@@ -1760,31 +1768,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
     },
     {
       "affected_capability_ids": [
-        "CAP-022",
-        "CAP-012"
-      ],
-      "callee_owned_gates_mutations": [
-        "No callee execution, mutation, resumption, or completion is authorized by this edge"
-      ],
-      "caller_skill_id": "SK-022",
-      "combined_exit_owner_skill_id": "SK-022",
-      "context_loaded": [],
-      "entry_condition": "Verified landed implementation invalidated the selected ticket's commitments or graph facts.",
-      "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Implementation identity, before-and-after evidence, invalidated fields, affected ticket, and the declared to-tickets input",
-      "ordering_impact": "none",
-      "relationship_id": "REL-018",
-      "required_proof_ids": [
-        "PROOF-REL-018"
-      ],
-      "resume_owner_skill_id": "SK-022",
-      "return_packet": "The intact invalidation packet with To Tickets unstarted",
-      "target_skill_id": "SK-012",
-      "verb": "Recommend and stop",
-      "wrong_condition": "Work is malformed, unsettled, unsliced, ambiguous, or has not produced verified post-landing invalidation"
-    },
-    {
-      "affected_capability_ids": [
         "CAP-017",
         "CAP-003"
       ],
@@ -1991,7 +1974,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "CAP-012"
       ],
       "callee_owned_gates_mutations": [
-        "To Tickets retains source admission, execution-packet shaping, slicing, configured tracker mutation, relationship and readiness proof, recovery, Return, and completion"
+        "To Tickets retains source admission, cohesive slicing, exact graph approval, configured tracker publication, relationship and readiness read-back, and recovery"
       ],
       "caller_skill_id": "SK-017",
       "combined_exit_owner_skill_id": "SK-017",
@@ -2000,7 +1983,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       ],
       "explicit_target_authority": "exact-user-approved-packet",
       "entry_condition": "The generated candidate Analyze prompt includes To Tickets and the candidate is implementation-ready with settled execution source, proof, and Change Closure.",
-      "failure_behavior": "Return ready/reused or recovery state; recovery produces no Implement prompt",
+      "failure_behavior": "Return the observed graph, conflict, or recovery result; Audit owns status normalization and a non-ready result produces no Implement prompt",
       "input_packet": "Generated To Tickets invocation plus report, run, subsystem, candidate, current-source, and candidate-bundle digest identities; settled execution source; proof; Change Closure; and one-item constraint when applicable",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-028",
@@ -2008,7 +1991,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "PROOF-REL-028"
       ],
       "resume_owner_skill_id": "SK-017",
-      "return_packet": "One candidate-bundle-bound ready/reused graph or typed recovery packet with exact issue identities, relationships, first Ready-for-agent frontier identity, mutation/read-back identity, and residual state",
+      "return_packet": "One candidate-bundle-bound observed graph, conflict, or recovery result with applicable issue identities, relationships, first Ready-for-agent frontier identity, mutation/read-back identity, and residual state; Audit maps the result to its own tracker status",
       "target_skill_id": "SK-012",
       "verb": "Invoke",
       "wrong_condition": "The generated conditional authority is absent or the candidate is not implementation-ready; publish authority-required with the linked Analyze re-entry when only authority is absent, make zero tracker effects, and otherwise do not invoke To Tickets"
@@ -2049,7 +2032,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-017",
       "combined_exit_owner_skill_id": "SK-017",
       "context_loaded": [],
-      "entry_condition": "To Tickets returned a candidate-digest-bound ready/reused graph, verified mutation/read-back identity, exact provider-native tracker identities, and a non-empty Ready-for-agent frontier; To Tickets owns the first recommendation and Audit preserves it while appending candidate/report identity plus the exact Close-return schema without starting implementation.",
+      "entry_condition": "Audit mapped To Tickets' candidate-digest-bound observed graph to ready-graph or reused, with verified read-back, exact provider-native tracker identities, and a non-empty Ready-for-agent frontier; To Tickets owns the first recommendation and Audit preserves it while appending candidate/report identity plus the exact Close-return schema without starting implementation.",
       "failure_behavior": "Publish the tracker recovery state and Analyze re-entry without an implementation recommendation",
       "input_packet": "Durable audit report, candidate and candidate-bundle digest identities, verified tracker graph and first Ready-for-agent identity, mutation/read-back identity, analysis, requested Close-return fields, and exact uninvoked suggestion",
       "ordering_impact": "none",
@@ -2094,23 +2077,23 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "CAP-016"
       ],
       "callee_owned_gates_mutations": [
-        "The target retains all target-local admission, evidence, mutation, Return, and completion gates"
+        "Resolving Merge Conflicts retains live-state inspection, requested path resolution, proof, optional exact-path continuation, and completion"
       ],
       "caller_skill_id": "SK-023",
       "combined_exit_owner_skill_id": "SK-023",
       "context_loaded": [
-        "resolving-merge-conflicts caller-facing interface and only the observed operation and conflict-class branch in OPERATIONS.md"
+        "resolving-merge-conflicts caller-facing interface and only the observed operation and special conflict-type rows in OPERATIONS.md"
       ],
-      "entry_condition": "Serial landing enters preserved conflict or partial Git state; exact verified state and the authorized next boundary return to the root.",
-      "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
-      "input_packet": "Operation identity and goal, exact status and unmerged paths, scope, reconciliation and finish authorities, unrelated index and worktree state, proof expectation, and root Return owner",
+      "entry_condition": "Serial landing enters an active conflict; Parallel Implement preserves Git state and waits for the resolver's current-state result.",
+      "failure_behavior": "Return the unresolved decision or failing evidence and preserve the caller-owned resumption boundary",
+      "input_packet": "Requested conflict scope plus whether resolution and native continuation were requested; the resolver inspects live Git state",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-033",
       "required_proof_ids": [
         "PROOF-REL-033"
       ],
       "resume_owner_skill_id": "SK-023",
-      "return_packet": "One typed resolver packet with exact current state, evidence, limits, and residual risk; integration resumes only after reconciliation",
+      "return_packet": "Changed paths, proof, unresolved decisions, and exact current Git state; integration resumes only after resolution",
       "target_skill_id": "SK-016",
       "verb": "Invoke",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
@@ -2180,19 +2163,19 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-023",
       "combined_exit_owner_skill_id": "SK-023",
       "context_loaded": [],
-      "entry_condition": "Graph, readiness, execution-profile, or state-matrix input is incomplete or contradictory; return one exhaustive repair packet without tracker mutation and retain campaign claims until an explicit To Tickets invocation admits the exact packet.",
+      "entry_condition": "The admitted graph is incomplete or contradictory, or verified implementation invalidates remaining graph facts; return the exact defect without tracker mutation and retain campaign custody and claims.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Exact evidence-backed graph-repair packet naming every campaign-owned claim eligible for later explicit transfer",
+      "input_packet": "Parent and graph identities, exact defective facts, before-and-after evidence, affected tickets, settled source pointers, and retained campaign custody",
       "ordering_impact": "none",
       "relationship_id": "REL-036",
       "required_proof_ids": [
         "PROOF-REL-036"
       ],
       "resume_owner_skill_id": "SK-023",
-      "return_packet": "Exact repair packet with downstream work unstarted and campaign claims retained pending later explicit admission; admitted To Tickets releases transferred claims only after repaired graph read-back and returns outcome custody",
+      "return_packet": "Exact repair recommendation with downstream work unstarted and campaign custody retained; Parallel Implement reconciles any later read-back graph before resuming",
       "target_skill_id": "SK-012",
       "verb": "Recommend and stop",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
+      "wrong_condition": "The issue is an ordinary blocker, implementation defect, conflict, or review finding, or another selected owner has the bounded outcome"
     },
     {
       "affected_capability_ids": [
@@ -2505,9 +2488,9 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-025",
       "combined_exit_owner_skill_id": "SK-025",
       "context_loaded": [],
-      "entry_condition": "An active unresolved operation, unmerged index, or plausible marker state needs inspection or reconciliation; return that route and leave it unstarted.",
+      "entry_condition": "An active conflicted merge, rebase, cherry-pick, revert, or unmerged index needs inspection or resolution; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Observed unresolved operation, unmerged index, or plausible marker state and any known authority boundary",
+      "input_packet": "Observed active conflict or unmerged index and any known request for resolution or native continuation",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-061",
       "required_proof_ids": [
@@ -2855,19 +2838,19 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-012",
       "combined_exit_owner_skill_id": "SK-012",
       "context_loaded": [],
-      "entry_condition": "One ticket is ready, or overlap, a serial tripwire, uncertain independence, or uneconomic parallel dispatch requires the first ready ticket in tracker order.",
+      "entry_condition": "To Tickets returned one bounded direct item, or the verified graph has an actionable agent ticket and the user did not explicitly request delivery of the whole parent graph.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for to-tickets and the declared implement input",
+      "input_packet": "Bounded direct item or first actionable ticket identity, source pointer, outcome, acceptance, scope, blockers, and material constraints",
       "ordering_impact": "none",
       "relationship_id": "REL-081",
       "required_proof_ids": [
         "PROOF-REL-081"
       ],
       "resume_owner_skill_id": "SK-012",
-      "return_packet": "One named target and reason with downstream work unstarted",
+      "return_packet": "One exact Implement recommendation for the bounded direct item or first actionable ticket with downstream work unstarted",
       "target_skill_id": "SK-022",
       "verb": "Recommend and stop",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
+      "wrong_condition": "The user explicitly requested delivery of the whole verified parent graph, neither a bounded direct item nor an actionable agent ticket exists, or another owner has the bounded outcome"
     },
     {
       "affected_capability_ids": [
@@ -2880,19 +2863,19 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-012",
       "combined_exit_owner_skill_id": "SK-012",
       "context_loaded": [],
-      "entry_condition": "An explicitly requested top-level parent-delivery run has a non-empty exhaustive Ready-for-agent graph; Parallel Implement owns qualified serial or concurrent delivery.",
+      "entry_condition": "The user explicitly requested delivery of the whole parent graph and the approved or exact-reuse verified graph has a non-empty agent frontier; Parallel Implement owns serial or concurrent delivery.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for to-tickets and the declared parallel-implement input",
+      "input_packet": "Verified parent and ordered ticket identities, source pointers, acceptance, true blockers, actionable frontier, and explicit whole-parent delivery authority",
       "ordering_impact": "none",
       "relationship_id": "REL-082",
       "required_proof_ids": [
         "PROOF-REL-082"
       ],
       "resume_owner_skill_id": "SK-012",
-      "return_packet": "One named target and reason with downstream work unstarted",
+      "return_packet": "One exact Parallel Implement recommendation with downstream work unstarted",
       "target_skill_id": "SK-023",
       "verb": "Recommend and stop",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
+      "wrong_condition": "Whole-parent delivery was not explicitly requested, the graph or frontier is unverified, or another owner has the bounded outcome"
     },
     {
       "affected_capability_ids": [
@@ -3283,23 +3266,23 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "CAP-016"
       ],
       "callee_owned_gates_mutations": [
-        "Resolving Merge Conflicts retains inspection, reconciliation, finish, proof, Return, and completion authority within the supplied packet"
+        "Resolving Merge Conflicts retains live-state inspection, requested path resolution, proof, optional exact-path continuation, and completion"
       ],
       "caller_skill_id": "SK-022",
       "combined_exit_owner_skill_id": "SK-016",
       "context_loaded": [
-        "resolving-merge-conflicts caller-facing interface and only the observed operation and conflict-class branch in OPERATIONS.md"
+        "resolving-merge-conflicts caller-facing interface and only the observed operation and special conflict-type rows in OPERATIONS.md"
       ],
       "entry_condition": "Implement admission finds an existing conflict-only state rather than the selected ready item.",
       "failure_behavior": "Stop implementation and preserve the exact conflict state; return the resolver's decision or blocker without claiming item delivery",
-      "input_packet": "Operation identity and goal, exact preserved Git state, scope, reconciliation and finish authorities, unrelated state, proof expectation, and Return owner",
+      "input_packet": "Requested conflict scope plus whether resolution and native continuation were requested; the resolver inspects live Git state",
       "ordering_impact": "none",
       "relationship_id": "REL-100",
       "required_proof_ids": [
         "PROOF-REL-100"
       ],
       "resume_owner_skill_id": "SK-016",
-      "return_packet": "One typed resolver packet with exact current state, evidence, limits, and residual risk",
+      "return_packet": "Changed paths, proof, unresolved decisions, and exact current Git state",
       "target_skill_id": "SK-016",
       "verb": "Hand off",
       "wrong_condition": "The selected ready item remains implementable, the conflict is only a review concern, or behavior failed after the operation ended"
@@ -3328,31 +3311,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "target_skill_id": "SK-005",
       "verb": "Recommend and stop",
       "wrong_condition": "The question remains a bounded design question, the failure cause is already settled, or another owner has the requested outcome"
-    },
-    {
-      "affected_capability_ids": [
-        "CAP-016",
-        "CAP-005"
-      ],
-      "callee_owned_gates_mutations": [
-        "No callee execution, mutation, resumption, or completion is authorized by this edge"
-      ],
-      "caller_skill_id": "SK-016",
-      "combined_exit_owner_skill_id": "SK-016",
-      "context_loaded": [],
-      "entry_condition": "Resolver State finds no active conflict or unmerged entry and a hard post-operation failure needs dedicated causal investigation.",
-      "failure_behavior": "Return the recommendation and exact state without reconciliation, finish mutation, or starting Diagnosis",
-      "input_packet": "Repository and worktree identity, exact Git and operation state, observed symptom, available evidence, authorities, and Return owner",
-      "ordering_impact": "none",
-      "relationship_id": "REL-103",
-      "required_proof_ids": [
-        "PROOF-REL-103"
-      ],
-      "resume_owner_skill_id": "SK-016",
-      "return_packet": "One Diagnosis recommendation with exact Git state and symptom evidence, leaving downstream work unstarted",
-      "target_skill_id": "SK-005",
-      "verb": "Recommend and stop",
-      "wrong_condition": "An active conflict or unmerged entry remains, the request is operation planning, or the behavioral failure cause is already settled"
     },
     {
       "affected_capability_ids": [
@@ -3781,24 +3739,24 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "PS-012"
       ],
       "canonical_name": "to-tickets",
-      "completion_condition": "Every in-scope slice is represented once with safe execution order",
+      "completion_condition": "The skill returns either one bounded item unchanged, one exact observed blocker, or an approved or exact-reuse actionable graph whose bodies, relationships, and readiness were read back, with no delivery started",
       "contract_order": 12,
-      "essential_outcome": "Create one verified dependency-ordered Ready-for-agent ticket graph from settled source",
-      "failure_return": "Return the defective source, graph, readiness, or tracker boundary",
+      "essential_outcome": "Publish the smallest useful dependency-ordered implementation graph from settled source, or return one bounded item unchanged",
+      "failure_return": "Return the exact source, setup, existing-state, approval, or publication gap with observed state",
       "invocation_mode": "explicit-only",
       "load_budget_class": "conditional-leaf",
       "negative_exclusion_predicates": [
-        "The request does not satisfy: A settled bounded source needs implementation slicing and dependency order",
+        "The request does not supply one identified settled source for proportional graph design",
         "Another selected skill owns the requested outcome",
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
       "owned_authority_mutation_surfaces": [
-        "Ticket boundaries, readiness contracts, dependencies, publication, and frontier read-back"
+        "Ticket boundaries, dependency order, approval, authorized publication, and read-back"
       ],
       "owned_capability_ids": [
         "CAP-012"
       ],
-      "positive_entry_predicate": "A settled bounded source needs implementation slicing and dependency order",
+      "positive_entry_predicate": "An explicit To Tickets selection supplies one identified settled source for a proportionality decision",
       "primary_role": "leaf",
       "prohibited_ownership": [
         "Another selected skill's semantic decision, local mutation, proof judgment, Return, or completion",
@@ -3810,8 +3768,8 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "REL-082",
         "REL-083"
       ],
-      "required_input": "A bounded caller-owned Source Trace and authority for: Create one verified dependency-ordered Ready-for-agent ticket graph from settled source",
-      "return_packet": "A verified exhaustive Ready-for-agent graph and first frontier",
+      "required_input": "One identified settled source, its material decision-bearing pointers, and authority for any approved tracker publication or repair",
+      "return_packet": "One verified approved or exact-reuse graph, one bounded direct item, or one exact source, setup, conflict, or recovery result",
       "skill_id": "SK-012"
     },
     {
@@ -3931,10 +3889,10 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "PS-016"
       ],
       "canonical_name": "resolving-merge-conflicts",
-      "completion_condition": "The selected route returns exact unchanged inspection state, a proved prepared reconciliation, or a finished operation with no targeted operation or unmerged entries and current required proof",
+      "completion_condition": "The requested inspection remains unchanged, the requested resolution is checked with exact Git state reported, or the explicitly authorized operation exits with final state read back",
       "contract_order": 16,
       "essential_outcome": "Inspect or reconcile one observed conflict state while preserving traced intent and finishing only under separate authority",
-      "failure_return": "Return decision required, blocked, or route mismatch with exact state and the missing evidence, scope, or authority",
+      "failure_return": "Return the unresolved decision or failing evidence with exact current Git state",
       "invocation_mode": "implicit",
       "load_budget_class": "conditional-leaf",
       "negative_exclusion_predicates": [
@@ -3943,23 +3901,21 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
       "owned_authority_mutation_surfaces": [
-        "Conflict inspection, trace, scoped working-tree reconciliation, proof, optional exact-path finish, and typed exact-state return"
+        "Conflict inspection, scoped working-tree resolution, proof, optional exact-path continuation, and exact-state return"
       ],
       "owned_capability_ids": [
         "CAP-016"
       ],
-      "positive_entry_predicate": "An already-conflicted merge, rebase, cherry-pick, revert, unmerged index, or plausible marker state needs inspection or reconciliation",
+      "positive_entry_predicate": "An active conflicted merge, rebase, cherry-pick, revert, or unmerged index needs inspection or resolution",
       "primary_role": "leaf",
       "prohibited_ownership": [
         "Another selected skill's semantic decision, local mutation, proof judgment, Return, or completion",
         "Per-skill H1 outside this immutable contract slice",
         "Pack integration acceptance, epoch Lock, cleanup, installation, or Git delivery unless explicitly owned"
       ],
-      "relationship_ids": [
-        "REL-103"
-      ],
-      "required_input": "One repository worktree, observed conflict state, operation goal when known, bounded scope, and separately declared reconciliation and finish authorities",
-      "return_packet": "One typed inspection, prepared reconciliation, finished operation, decision required, blocked, or route mismatch packet with exact state",
+      "relationship_ids": [],
+      "required_input": "One repository worktree, active conflict state, bounded requested scope, and whether resolution and native continuation were requested",
+      "return_packet": "Changed paths, proof, unresolved decisions, and exact current Git state",
       "skill_id": "SK-016"
     },
     {
@@ -4188,7 +4144,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "REL-015",
         "REL-016",
         "REL-017",
-        "REL-018",
         "REL-100"
       ],
       "required_input": "A bounded caller-owned Source Trace and authority for one ready item plus its branch-applicable Git or tracker closeout",

@@ -1,6 +1,6 @@
 # Engineering Contract
 
-<!-- programming-agent-skills setup-file: engineering-contract.md:de16c272726d -->
+<!-- programming-agent-skills setup-file: engineering-contract.md:2e9820d9ae58 -->
 
 Explore imaginatively. Converge under proof. Simplify ruthlessly.
 
@@ -19,6 +19,11 @@ inventing product intent.
 Work in a **bounded slice**, the smallest useful change that preserves the
 requested outcome and can produce meaningful evidence.
 
+Use a **tracer bullet** only when a named risk warrants early feedback. Build
+the thinnest real path that produces an observable signal, learn from it, then
+complete the bounded outcome. It is a learning role, not a substitute for
+acceptance or a requirement to touch every layer.
+
 ## Design for simplicity
 
 Choose the smallest integrated design that makes the behavior clear. Subtract,
@@ -30,9 +35,9 @@ representations that make invalid states difficult to express. Prefer small
 interfaces, local state, readable control flow, and modules that hide their
 internal complexity.
 
-An abstraction earns its cost by hiding meaningful complexity or owning
-policy. Collapse pass-through wrappers and seams that support no real
-variation.
+Apply the deletion test. If removing an abstraction makes complexity
+disappear, collapse it. If meaningful behavior or policy spreads back across
+callers, the abstraction earns ownership.
 
 Apply YAGNI: add machinery only for a current requirement, supported variation,
 or demonstrated value. Start with the language, framework, repository
@@ -69,6 +74,9 @@ real caller or artifact over an isolated implementation detail. Add or change
 a test when repository policy requires it or when it is the cheapest durable
 protection for meaningful behavior.
 
+Before keeping a test, name the realistic behavior break it catches. Assert
+observable results or effects instead of source text or private structure.
+
 Broaden proof only for shared impact, repository policy, or a concrete risk.
 When the implementation could confirm its own mistake, use an independent
 oracle. If safe execution is unavailable, use the strongest safe proxy and
@@ -86,8 +94,9 @@ Destructive work needs an exact target and approval. External durable mutation
 needs authority and read-back.
 Concurrent writers need isolated ownership and one integrator. Formal review
 needs a fixed candidate. Operations that can partially succeed need a recovery
-path. Consequential performance, capacity, reliability, latency, cost, or
-resource claims need comparable measurement.
+path. An operation expected to retry, resume, or restart should converge on
+rerun without duplicate effects. Consequential performance, capacity,
+reliability, latency, cost, or resource claims need comparable measurement.
 
 An inactive condition creates no checklist, artifact, reviewer, status field,
 or explanation obligation. Use TDD only when the user explicitly requests

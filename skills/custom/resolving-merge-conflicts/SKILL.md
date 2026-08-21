@@ -1,95 +1,74 @@
 ---
 name: resolving-merge-conflicts
-description: Inspect or reconcile an already-conflicted merge, rebase, cherry-pick, revert, unmerged index, or plausible marker state. Status, explanation, or review is read-only. Exclude operation planning or start, ordinary diffs, clean completed merges, and post-operation bugs.
+description: Inspect or resolve an active conflicted merge, rebase, cherry-pick, revert, or unmerged index. Status, explanation, and review are read-only. Exclude operation planning or start, ordinary diffs, completed operations, marker-like text without Git conflict state, and post-operation bugs.
 ---
 
-# Resolving Merge Conflicts
+# Resolving merge conflicts
 
-Resolve meaning, not markers, across one repository worktree and one observed
-conflict state.
+Resolve intended behavior, not markers, in one repository worktree and one
+observed conflict state.
 
-**Read-only: State -> Trace -> Return.**
+A status, explanation, or review request permits no mutation. A request to
+resolve permits only the requested working-tree changes. Staging and native
+continuation require a separate explicit request. A finish request may inspect,
+prove, and continue an already-prepared or automatically staged resolution
+without requiring new working-tree edits.
 
-**Reconcile: State -> Trace -> Reconcile -> Prove -> Return; add Finish before
-Return only with finish authority.**
+## 1. See the conflict
 
-**Reconciliation authority** permits only requested in-scope working-tree
-changes. **Finish authority** separately permits exact-path staging and native
-continuation of the observed operation. The request or caller packet grants them
-separately; invocation alone grants neither.
+Inspect `git status`, operation metadata, `git ls-files -u`, the requested
+scope, and unrelated work. Identify the operation and its goal before changing
+anything. If no active operation or unmerged index remains, stop unchanged and
+report what Git shows. Marker-like text alone is not a Git conflict.
 
-## Process
+Reread this state before mutation whenever user, worker, tool, or continuation
+activity may have changed it.
 
-1. **State.** Read repo instructions and
-   `docs/agents/engineering-contract.md` when present. Inspect `git status`,
-   operation metadata, `git ls-files -u`, plausible markers, index, worktree,
-   untracked and unrelated state, operation goal, scope, and both authorities.
-   An unmerged index with unknown operation may be inspected or reconciled only
-   from proven object and intent roles and has no **Finish**. Markers are
-   signals, not proof of conflict.
-   When no active conflict or unmerged entry remains and a hard post-operation
-   failure needs dedicated causal investigation, recommend `$diagnosing-bugs`
-   and stop without reconciliation or finish mutation. Return the exact Git
-   state, symptom, available evidence, and Return owner; leave Diagnosis
-   unstarted. Route an ordinary selected repair to its implementation owner.
-2. **Trace.** Load [OPERATIONS.md](OPERATIONS.md) only for the observed
-   operation and relevant conflict-class rows. Inspect the base and sides in
-   their actual operation roles. Trace intent through the operation goal and
-   objects, then governing specs, ADRs, domain rules, tests, history, PRs,
-   issues, and callers as available. Classify each resolution as **Compose**,
-   **Transform**, or **Prefer** with evidence; when required intents conflict
-   without authority, return `decision required`.
+## 2. Understand the sides
 
-Without reconciliation authority, stop after **State** and **Trace** with no
-mutation. Refresh live State before every mutation, after user or worker input,
-after Diagnosis, and after every continuation.
+Read [OPERATIONS.md](OPERATIONS.md) only for the observed operation and any
+special conflict type present. Map index stages to their actual operation
+roles. Treat missing stages and multi-path topology as evidence, not malformed
+input.
 
-3. **Reconcile.** Author only the in-scope candidate working-tree and path
-   topology. Preserve compatible intents and keep only traced behavior. Inspect
-   every complete resolved artifact, its path and mode, generated or submodule
-   boundary when applicable, and remaining plausible markers. Do not stage.
-4. **Prove.** Run focused repo-owned checks and broader checks required by risk
-   or repo convention. Repair an obvious in-scope resolution defect and reprove.
-   When a hard, intermittent, performance, environment-only, production-only,
-   or causally ambiguous failure needs dedicated investigation, return
-   `diagnosis-required` with the operation, goal, exact state, evidence,
-   authorities, and Return owner. Return `blocked` for a required
-   out-of-scope, authority-gated, or blocking pre-existing correction. A proven
-   unrelated failure may remain explicit residual risk. Focused resolution
-   proof must pass before **Finish**.
-5. **Finish.** Only with finish authority, require all operation conflicts
-   resolved, stage exact authorized paths, inspect the full staged-index delta,
-   and exclude unrelated state. Never use `git add -A`. Continue through the
-   operation's native command. A new conflict returns to **State**; an empty
-   change, hook failure, edit request, or recovery choice returns
-   `decision required` or `blocked`. After operation exit, refresh State and run
-   proof invalidated or required by continuation.
+Trace intent from the Git objects and operation goal, then the nearest caller,
+contract, test, or history that explains why each side exists. Preserve
+compatible intent. When required intents conflict, follow the governing
+behavior or return the unresolved decision to its owner.
 
-## Guardrails
+For a status, explanation, or review request, stop here and report the observed
+state and intent without running resolution proof.
 
-Preserve unrelated dirty and index state. Abort, skip, quit, reset, whole-side
-selection, strategy replacement, todo or message-policy change, hook bypass, and
-allow-empty handling each require action-specific authority. Use a whole side
-only when Trace proves the other intent obsolete. An automatic or reused
-resolution remains unproved until inspected and tested.
+## 3. Resolve the requested paths
 
-## Return
+Change only the requested reconciliation scope, including traced dependent
+paths needed to make the result coherent. Stop before expanding that scope.
+Keep traced behavior. A whole-side result is valid only when the trace shows
+the other side obsolete. Inspect each complete resulting artifact, including
+its path, mode, references, and generated or submodule boundary when
+applicable. Do not stage unless finishing was explicitly requested.
 
-Return exactly one status: `inspection`, `prepared reconciliation`, `finished
-operation`, `decision required`, `blocked`, or `route mismatch`. Report
-repository/worktree, operation and goal, scope and both authorities, inspected
-and changed paths, Compose/Transform/Prefer decisions, proof and residual risk,
-exact current Git/index/worktree state, and the next owner or authorized
-command.
+## 4. Check the result
+
+Run the nearest useful repository check and inspect the resolved artifacts and
+remaining unmerged paths. When resolution was requested, repair a clear
+in-scope resolution defect and check again. Otherwise stop with the defect,
+failing evidence, and exact operation state.
+
+## 5. Finish only when requested
+
+Reread Git state, stage exact resolved paths, require `git ls-files -u` to be
+empty, and inspect the full staged delta so unrelated state cannot enter the
+operation. Never use `git add -A`. Continue with the operation's native command.
+A new conflict returns to step 1. After the operation exits, read final state
+back and rerun only proof invalidated by continuation. If continuation stops on
+an exceptional operation choice, read its `OPERATIONS.md` guidance and stop
+unless that action was explicitly requested.
 
 ## Completion
 
-`inspection` completes after **State** and **Trace** report exact unchanged
-state. `prepared reconciliation` requires every in-scope candidate traced,
-authored, fully inspected, and proved while index and operation state remain
-unfinished. `finished operation` additionally requires no targeted operation or
-unmerged entries, an audited index, final state read-back, and current required
-proof.
-
-A blocked path, unresolved resolution-caused failure, unapproved decision, or
-route mismatch never returns completion.
+Complete when the requested inspection remains unchanged, the requested
+resolution is checked with exact Git state reported, or the explicitly
+authorized operation has exited with final state read back. State which paths
+changed, what check ran, whether the operation remains active, and any decision
+still needed.

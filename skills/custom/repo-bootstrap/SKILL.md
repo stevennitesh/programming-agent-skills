@@ -79,7 +79,7 @@ preserved additions, conflicts or blockers, and proof plan. For selected
 parallel support, show one explicit external writable lane root, its permission
 delta, and the exact Luna template. The `AGENTS.md` result includes:
 
-`<!-- programming-agent-skills setup-schema: 1:c5f2a1bdebda -->`
+`<!-- programming-agent-skills setup-schema: 1:6941f75b40e8 -->`
 
 With zero delta, mutate nothing and continue to Verify. Otherwise wait for
 approval. Narrowing requires a new exact proposal; refusal or deferral returns

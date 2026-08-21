@@ -84,7 +84,6 @@ flowchart TD
   Implement --> FindingContract["FINDING-CONTRACT.md<br/>admission + remediation interface"]
   Implement --> Tracker
   Implement -. "unsettled work" .-> Shape
-  Implement -. "unsliced source" .-> ToTickets
   Implement -. "conflict-only admission" .-> Conflict
   Parallel --> Contract
   Parallel --> Tracker
@@ -134,7 +133,6 @@ flowchart TD
   Debug -. "post-fix architecture prevention" .-> Audit
   CodeDesign["codebase-design"] --> Contract
   CodeDesign --> DomainRouter
-  Conflict -. "uncertain post-resolution failure" .-> Debug
   Prototype -. "built behavior misbehaves" .-> Debug
   Simplify["simplify-code"] --> Contract
   Simplify -. "wide repository audit" .-> Audit
@@ -217,7 +215,7 @@ Return.
 | `to-spec` | Recommend and stop | `$implement` | The settled source is one bounded complete implementation and a durable parent adds no useful coordination, or the verified parent needs no ticket graph. Return the exact source or parent identity and leave implementation unstarted. |
 | `to-spec` | Recommend and stop | `$to-tickets` | The verified parent leaves several valuable implementation slices or needs durable tracker coordination. To Tickets owns repository grounding, child slicing, and graph publication. |
 | `to-spec` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
-| `to-tickets` | Recommend and stop | `$implement` | One standalone ticket is ready, or a verified graph lacks an explicit qualified parent-delivery request; return the first ready ticket in tracker order. |
+| `to-tickets` | Recommend and stop | `$implement` | The settled source is one bounded direct item, or a verified graph lacks an explicit whole-parent delivery request; return that item or the first actionable ticket. |
 | `to-tickets` | Recommend and stop | `$parallel-implement` | An explicitly requested top-level parent-delivery run has an exhaustive non-empty Ready-for-agent graph; Parallel Implement retains campaign custody and owns live serial or concurrent dispatch decisions. |
 | `to-tickets` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `triage` | Recommend and stop | `$grilling` | One maintainer-owned conversation-only decision needs direct resolution; stop before mutation and resume the same item with the intact result. |
@@ -227,16 +225,14 @@ Return.
 | `triage` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `implement` | Invoke | `$tdd` | The selected work explicitly requires TDD, test-first work, or RED-GREEN-REFACTOR, or applicable repository policy requires TDD, and one accepted observable behavior and independent oracle are settled. TDD owns the RED-GREEN-REFACTOR inner loop. |
 | `implement` | Invoke | `$change-review` | The user or repository explicitly requires independent review; the candidate contains mutations from two or more independent authors; or focused proof establishes behavior but a material shared-contract or irreversible-migration acceptance judgment still warrants fresh independent judgment and review is the lowest-burden way to obtain it. Implement freezes the proved candidate, dispatches one fresh `ordinary-reviewer`, and supplies `Formal review: yes`, mode, proof and skips, Spec requirement, author identities, and fresh-separation evidence; missing proof stops instead. A repaired successor is reviewed only while the original trigger still applies and includes the prior Return, both candidate identities, repair delta, carried IDs, and remaining acceptance. |
-| `implement` | Hand off | `$resolving-merge-conflicts` | Admission finds an existing conflict-only state rather than the selected ready item; supply the exact operation, goal, state, scope, authorities, proof expectation, and Return owner, then stop. |
-| `implement` | Recommend and stop | `$to-tickets` | A verified landed predecessor or post-publication implementation change invalidated the selected ticket's commitments or graph facts; return the implementation identity, before-and-after evidence, invalidated fields, and affected ticket. Ordinary malformed or unsettled source returns to its caller, source, or triage owner. |
+| `implement` | Hand off | `$resolving-merge-conflicts` | Admission finds an active conflict rather than an implementable ready item. Stop implementation, preserve Git state, and supply the requested scope plus whether resolution and finish were requested. The resolver inspects live state. |
 | `implement` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `parallel-implement` | Invoke | `$tdd` | The accepted parent or selected ticket explicitly requires TDD, test-first work, or RED-GREEN-REFACTOR, or applicable repository policy requires TDD, and the mutation-owning worker has one accepted observable behavior and independent oracle settled. TDD owns that worker's inner loop; the root does not repeat it. |
 | `parallel-implement` | Invoke | `$change-review` | The integrated candidate contains mutations from two or more independent authors, or either other Change Review trigger applies. Parallel Implement freezes the proved candidate, dispatches one fresh `integration-reviewer`, and supplies `Formal review: yes`, mode, proof and skips, required Spec, author identities, and fresh-separation evidence; several tickets or files authored by one mutation actor do not trigger review. Missing proof stops instead. A repaired successor includes the prior Return, both candidate identities, repair delta, carried IDs, and remaining acceptance. |
-| `parallel-implement` | Invoke | `$resolving-merge-conflicts` | Serial landing enters preserved conflict or partial Git state; supply operation identity and goal, exact state, scope, both authorities, unrelated state, proof expectation, and root Return owner. Resume only from the resolver's fresh exact-state Return. |
-| `parallel-implement` | Recommend and stop | `$to-tickets` | Admission finds an actually incomplete or contradictory graph, or verified implementation invalidates remaining graph semantics; return one exhaustive evidence-backed repair packet and retain campaign claims. Only a later explicit To Tickets invocation can admit the exact packet and transfer its named claims; To Tickets releases those claims only after repaired graph read-back, then returns outcome custody. Ordinary blockers, regressions, conflicts, and review findings remain in Parallel Implement. |
+| `parallel-implement` | Invoke | `$resolving-merge-conflicts` | Serial landing enters an active conflict. Preserve Git state and supply the requested scope plus whether resolution and finish were requested. Resume only after the resolver reports current state. |
+| `parallel-implement` | Recommend and stop | `$to-tickets` | Admission finds an actually incomplete or contradictory graph, or verified implementation invalidates remaining graph semantics. Return the exact graph defect and retain campaign custody and claims. A later explicit To Tickets repair may change only verified graph facts; Parallel Implement reconciles the read-back graph before resuming. |
 | `parallel-implement` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `prototype` | Recommend and stop | `$diagnosing-bugs` | Fit finds that an existing built system has a hard failure needing dedicated causal investigation rather than one disposable design question; return the intact symptom evidence and leave Diagnosis unstarted. |
-| `resolving-merge-conflicts` | Recommend and stop | `$diagnosing-bugs` | State finds no active conflict or unmerged entry and a hard post-operation failure needs dedicated causal investigation; return exact Git state and symptom evidence and leave Diagnosis unstarted. |
 | `change-review` | Recommend and stop | `$audit-codebase` | The request targets an immutable repository baseline rather than a pending implementation candidate. |
 | `high-assurance-review` | Recommend and stop | `$audit-codebase` | The request targets a bounded repository correctness, domain-robustness, methodology, or performance baseline rather than a pending candidate diff. |
 | `audit-codebase` | Recommend and stop | `$domain-modeling` | One analyzed candidate has settled domain language, Invariants, Bounded Contexts, Context Relationships, or an ADR candidate requiring durable capture or assessment; Audit publishes an exact report-backed pickup and leaves Domain Modeling unstarted. |
@@ -248,9 +244,9 @@ Return.
 | `audit-codebase` | Load | `$codebase-design` | During Analyze of one selected design or mixed candidate after user decisions settle, resolve its one bounded architecture question and fold the result into the HTML. Audit retains artifact and completion and creates no second design step. |
 | `audit-codebase` | Recommend and stop | `$wayfinder` | One bounded destination has several coupled unresolved questions or prerequisites, at least one non-conversational resolver, and needs tracker-backed multi-session sequencing; Audit publishes an exact pickup and leaves Wayfinder unstarted. |
 | `audit-codebase` | Recommend and stop | `$to-spec` | One analyzed candidate has settled direction and commitments but needs a durable parent specification; Audit publishes an exact report-backed pickup and leaves specification work unstarted. |
-| `audit-codebase` | Invoke | `$to-tickets` | The generated candidate Analyze prompt includes To Tickets and the candidate is implementation-ready. Without that exact authority Audit publishes `authority-required`, returns its linked Analyze re-entry, and invokes nothing. With authority, To Tickets returns a ready/reused graph or recovery state. |
+| `audit-codebase` | Invoke | `$to-tickets` | The generated candidate Analyze prompt includes To Tickets and the candidate is implementation-ready. Without that exact authority Audit publishes `authority-required`, returns its linked Analyze re-entry, and invokes nothing. With authority, To Tickets returns an observed graph, conflict, or recovery result; Audit owns its `ready-graph`, `reused`, or `recovery` projection. |
 | `audit-codebase` | Recommend and stop | `$simplify-code` | One analyzed candidate has a bounded behavior-preserving reduction, current report identity, supported behavior, Source Trace, and proof seam; Audit publishes an exact report-backed pickup and leaves simplification unstarted. |
-| `audit-codebase` | Recommend and stop | `$implement` | To Tickets returned a candidate-digest-bound ready/reused graph, verified mutation/read-back identity, exact provider-native tracker identities, and a non-empty Ready-for-agent frontier. To Tickets owns the first recommendation; Audit preserves it and appends candidate/report identity plus the exact Close-return schema without starting implementation. Close remains a separate user-selected Audit invocation. |
+| `audit-codebase` | Recommend and stop | `$implement` | Audit mapped To Tickets' candidate-digest-bound observed graph to `ready-graph` or `reused`, with verified read-back, exact provider-native tracker identities, and a non-empty Ready-for-agent frontier. To Tickets owns the first recommendation; Audit preserves it and appends candidate/report identity plus the exact Close-return schema without starting implementation. Close remains a separate user-selected Audit invocation. |
 | `codebase-design` | Recommend and stop | `$audit-codebase` | The request needs codebase-wide mapping and improvement discovery. |
 | `handoff` | Recommend and stop | `$repo-bootstrap` | The exact Handoff target cannot be proved ignored because the disposable-artifact setup is missing or incompatible; return the mismatch without a pickup and leave Repo Bootstrap unstarted. |
 
@@ -278,7 +274,7 @@ every terminal result directly to its current caller or the user.
 | `codebase-design` | One bounded module or interface architecture decision using deep-module, caller-first, data-shape, ownership, seam, migration, and proof judgment | `audit-codebase`, direct architecture/design work |
 | `research` | Claim-owning source legwork and one authorized cited note or verified inline evidence | `skill-router`, `grilling`, `wayfinder` |
 | `to-questionnaire` | One recipient-ready async discovery artifact for one external stakeholder and downstream decision | `skill-router`, `grilling`, `wayfinder`, humans collecting stakeholder evidence |
-| `resolving-merge-conflicts` | Read-only three-way inspection, authorized reconciliation, and the separate finish boundary | Git operations and implementation or integration work that enters a conflicted state |
+| `resolving-merge-conflicts` | Read-only inspection, requested conflict resolution, and separately requested exact-path continuation of one active Git operation | Git operations and implementation or integration work that enters a conflicted state |
 | `change-review` | Read-only review of one identified code change through accepted-behavior and engineering-quality judgment; formal delivery conditionally adds fixed-candidate gating, independence, remediation, and a terminal decision | `implement`, `parallel-implement`, direct callers |
 | `audit-codebase` | Deterministic JSON-state HTML repository atlas plus current-source, user-selected subsystem Audit, candidate Analyze, and explicit one-candidate Close through a tracker frontier or authorized already-landed direct recovery; mandatory six-class coverage loads detailed owners on observable triggers, and implementation-ready Analyze prompts invoke `to-tickets` without starting implementation or making a release decision | `skill-router`, `change-review`, `high-assurance-review`, `$grill-with-docs` decision returns, and humans explicitly invoking repository audits |
 | `simplify-code` | Proved behavior-preserving simplification of one user-selected target or a truthful no-change result | `skill-router`, `audit-codebase`, humans invoking bounded cleanup |
@@ -296,7 +292,7 @@ every terminal result directly to its current caller or the user.
 | `repo-bootstrap` | Tracker, label, domain, and engineering-contract seeds; optional repo-local parallel-lane permission and agent setup; `setup-schema.json`: aggregate compatibility fingerprint; `scripts/validate_setup.py`: target-repo structural compatibility validation |
 | `wayfinder` | `MAP-FORMAT.md`: lean map, ticket, resolution, closing, and termination shapes; `references/MUTATION.md`: claim and durable-write protection; `references/RESOLVERS.md`: selected-ticket routing and return interpretation |
 | `research` | Seven conditional evidence references; one authorized cited Markdown note or cited inline result |
-| `resolving-merge-conflicts` | `OPERATIONS.md`: branch-only operation roles, conflict classes, finish checks, and recovery decisions; `SKILL.md`: universal State/Trace/Reconcile/Prove/Finish contract, authority, typed Return, and completion |
+| `resolving-merge-conflicts` | `OPERATIONS.md`: branch-only operation roles, special conflict types, automatic-resolution traps, and exceptional operation choices; `SKILL.md`: five direct actions, mutation boundaries, and completion |
 | `change-review`, `high-assurance-review` | `change-review/FINDING-CONTRACT.md`: evidence-backed finding admission, concise severity, and no-authority boundary |
 | `change-review` | `change-review/references/FORMAL-REVIEW.md`: formal-only required-Spec, independence, remediation, decision, and Return rules |
 | `implement`, `parallel-implement` | `parallel-implement/references/RUNTIME-PROFILES.md`: implementation-worker profiles and bindings; review roles follow their review owner's fresh-context and separation rules |
@@ -326,16 +322,15 @@ every terminal result directly to its current caller or the user.
   and one authorized cited note or cited inline result. It reports a mismatch
   without choosing the next route. A user request or caller packet must
   authorize one note path before that tracked mutation.
-- `resolving-merge-conflicts` inspects State and Trace read-only by default.
-  Reconciliation authority permits only in-scope working-tree changes; finish
-  authority separately permits exact-path staging and native continuation.
-  Prepared and finished outcomes remain distinct. Recovery actions and
-  whole-side selection require action-specific authority.
+- `resolving-merge-conflicts` keeps status, explanation, and review read-only.
+  Requested resolution permits only in-scope working-tree changes; staging and
+  native continuation require a separate explicit request. Recovery actions
+  that alter operation policy require their own request.
 - Tracker docs own transport, tracker commands, Ready-for-agent state and
   navigation, and Mutation read-back. `triage` owns incoming classification,
   verification, its Codex-ready brief and Ready Gate, state transitions, and
-  the AI disclaimer; `$to-tickets` owns execution packets, slicing, dependency
-  order, proof-responsibility mapping, and graph readiness. Do not re-triage
+  the AI disclaimer; `$to-tickets` owns proportional slicing, true dependency
+  order, graph approval, safe publication, and graph read-back. Do not re-triage
   valid `$to-tickets` output.
 - `implement` owns one standalone selected item and its in-scope correction path, with Git delivery only when the selected branch requires it; `parallel-implement` owns one explicitly requested parent-backed exhaustive Ready-for-agent graph through concurrent and serial frontiers, serial integration, bounded in-scope correction, and verified child-first then parent-last closeout.
 - The `parallel-implement` root is the sole dispatcher, serial landing,

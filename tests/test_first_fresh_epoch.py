@@ -127,7 +127,7 @@ def test_first_epoch_contract_freezes_complete_h1_free_composition() -> None:
 
     assert pack_contract.validate_contract(contract) == []
     assert contract["epoch_header"]["composition_epoch_id"] == EPOCH
-    assert contract["epoch_header"]["contract_revision"] == 19
+    assert contract["epoch_header"]["contract_revision"] == 21
     assert contract["epoch_header"]["status"] == "frozen"
     assert contract["epoch_header"]["integration_result"] == {
         "decision": None,
@@ -213,7 +213,7 @@ def test_first_epoch_revision_preserves_history_and_derives_r11_blueprints() -> 
             skill_id,
         )
         assert projected["slice"]["slice_id"].startswith(
-                f"{EPOCH}:r19:"
+                f"{EPOCH}:r21:"
         )
         assert projected["slice"]["skill"] == skill_by_id[skill_id]
     assert {
@@ -230,7 +230,7 @@ def test_current_contract_preserves_review_and_tdd_topology() -> None:
         skill["canonical_name"]: skill for skill in contract["selected_skills"]
     }
     assert contract["epoch_header"]["status"] == "frozen"
-    assert contract["epoch_header"]["contract_revision"] == 19
+    assert contract["epoch_header"]["contract_revision"] == 21
     assert {
         name: (skill_by_name[name]["skill_id"], skill_by_name[name]["invocation_mode"])
         for name in (
@@ -250,13 +250,14 @@ def test_current_contract_preserves_review_and_tdd_topology() -> None:
         "skill-router": ("SK-025", "explicit-only"),
     }
     assert "REL-013" not in skill_by_name["implement"]["relationship_ids"]
+    assert "REL-018" not in skill_by_name["implement"]["relationship_ids"]
     assert "REL-030" not in skill_by_name["parallel-implement"]["relationship_ids"]
     assert "REL-049" not in skill_by_name["skill-router"]["relationship_ids"]
 
     relationship_ids = {
         relationship["relationship_id"] for relationship in contract["relationships"]
     }
-    assert {"REL-013", "REL-030", "REL-049"}.isdisjoint(relationship_ids)
+    assert {"REL-013", "REL-018", "REL-030", "REL-049"}.isdisjoint(relationship_ids)
     graph_edges = {
         (edge["predecessor_skill_id"], edge["successor_skill_id"])
         for edge in contract["epoch_header"]["campaign_proof_graph"]

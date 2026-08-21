@@ -70,7 +70,7 @@ Implement decides whether each frontier runs serially or concurrently.
 | Raw tracker issues or configured external PR/MR requests need sorting and readiness verification | `$triage` |
 | A hard, intermittent, performance, environment-only, production-only, or causally ambiguous failure needs dedicated investigation | `$diagnosing-bugs` |
 | The user explicitly requests TDD, test-first work, or RED-GREEN-REFACTOR, or applicable repository policy requires TDD, and one bounded behavior and independent oracle are settled | `$tdd` |
-| An active merge, rebase, cherry-pick, or revert is conflicted, an index is unmerged, or plausible markers need inspection | `$resolving-merge-conflicts` |
+| An active merge, rebase, cherry-pick, or revert is conflicted, or an index is unmerged | `$resolving-merge-conflicts` |
 | A branch, WIP, staged, since-X diff, PR, release candidate, or supported-risk candidate needs read-only judgment | `$change-review` |
 | A repository needs a whole-system map, one selected subsystem audit, one selected audit-candidate analysis, or one selected analyzed-candidate closeout | `$audit-codebase` |
 | One user-selected existing-code target has accepted behavior and needs behavior-preserving simplification | `$simplify-code` |

@@ -1,10 +1,9 @@
-# Conflict Operations
+# Conflict operations
 
-Load only the row for the observed operation and the relevant class rows for
-in-scope conflicts. `SKILL.md` remains authority for scope, mutation, proof,
-Return, and completion.
+Load only the row for the observed operation and the rows for special conflict
+types actually present. `SKILL.md` owns scope, mutation, proof, and completion.
 
-## Operation Roles
+## Operation roles
 
 | Operation | Goal | Stage 1 / 2 / 3 | Native finish |
 | --- | --- | --- | --- |
@@ -13,45 +12,26 @@ Return, and completion.
 | Cherry-pick | Apply one selected commit delta | selected parent or mainline / current target / selected commit | `git cherry-pick --continue` |
 | Revert | Apply the inverse of one selected commit | selected commit / current target / selected parent or mainline | `git revert --continue` |
 | Unmerged, unknown | Reconcile only from proven object and intent roles | inspect objects without assigning side labels | none |
-| Marker-only | Repair proven residue outside an active operation | no authoritative index stages | none |
 
-Never use bare `ours` or `theirs` as intent. Map the stage to its operation
-role first.
+Never use bare `ours` or `theirs` as intent. Map stages to their operation roles
+first. A stage may be absent in add/add, modify/delete, root-commit, and related
+cases. Rename conflicts may span old and new paths. Reconcile the observed path
+set rather than assuming one file with three stages.
 
-## Conflict Classes
+## Special conflict types
 
-| Class | Required reconciliation and proof |
+| Type | Resolve and check |
 | --- | --- |
-| Text or structured content | Inspect all stage objects and the complete candidate; prove syntax, behavior, and applicable contracts. |
-| Add, delete, rename, or path topology | Prove intended presence, name, imports, registrations, packaging, and deletion or compatibility obligations. |
-| Binary, executable mode, or symlink | Compare object identity and modes; select or construct only from traced intent, then verify the resulting artifact and mode. |
-| Generated or filtered artifact | Resolve the authoritative source and regenerate through the repository command when available; do not silently hand-edit derived output. |
-| Submodule gitlink | Inspect referenced commits and superproject intent; prove the selected gitlink is available and compatible. |
-| Plausible marker-only text | Distinguish residue from intentional fixtures, docs, or literals; repair only proven residue and leave Git finishing to the caller. |
+| Add, delete, rename, or path topology | Prove intended presence and name, update live references and registrations, and retain an old path only for a supported compatibility need. |
+| Generated or filtered artifact | Resolve the authoritative source and regenerate with the repository command when available. If regeneration changes paths outside scope, stop rather than admitting them silently. |
+| Binary, executable mode, or symlink | Compare object identity and modes, then inspect the resulting artifact and staged representation. |
+| Submodule gitlink | Resolve the intended commit, verify the exact gitlink object, and leave fetching objects or changing the nested checkout to separate authority. |
+| `rerere`, mergetool, or automatic merge result | Inspect the worktree and staged content as a candidate. An empty unmerged index does not prove the resolution or authorize continuation. Do not change tool configuration or caches without a separate request. |
 
-Use **Compose** when both intents coexist, **Transform** when preserving both
-requires an adapted result, **Prefer** when authority proves one incompatible
-intent wins, and `decision required` when it does not.
+## Exceptional operation choices
 
-## Finish Checks
-
-Before native continuation:
-
-- refresh State and require every unmerged path accounted for;
-- stage only exact authorized resolution paths with status-appropriate commands;
-- require `git ls-files -u` to be empty;
-- inspect the complete staged delta, including deletions, renames, modes, and
-  submodule entries;
-- prove no unrelated index state was admitted and that the staged
-  representation matches the proved candidate.
-
-After continuation, refresh. New conflicts return to **State**. Operation exit
-requires final status read-back and any proof invalidated or required by the
-resulting tree.
-
-## Recovery Decisions
-
-Abort, skip, quit, reset, whole-side selection, strategy replacement, todo or
-message-policy change, hook bypass, and allow-empty handling are separate
-decisions. Do not infer any of them from reconciliation or finish authority.
-Return the exact state, consequence, and authority needed.
+An empty change, hook or editor stop, signing problem, new conflict, or failed
+continuation is observed state, not permission to improvise recovery. Abort,
+skip, quit, reset, stash, strategy changes, todo or message changes, hook
+bypass, and allow-empty handling each require an explicit request after their
+consequence is known.

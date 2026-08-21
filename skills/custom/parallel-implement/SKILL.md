@@ -46,9 +46,9 @@ state. For each frontier item, compare semantic ownership, expected runtime
 writes, proof owners, scarce resources, and known serial tripwires. Run items
 concurrently only when they are independently bounded and the expected time
 saving exceeds coordination and integration cost. Uncertain or overlapping
-items run serially. Protected data, permissions, trust boundaries, migrations,
-cutovers, and irreversible state start with one tracer bullet through the
-real runtime path.
+items run serially. When the graph assigns a tracer bullet for a named
+load-bearing risk in protected data, permissions, trust boundaries, migrations,
+cutovers, or irreversible state, run it before the wider work it informs.
 
 Choose the first matching capable profile using the ordered conditions in
 [Runtime Profiles](references/RUNTIME-PROFILES.md).
@@ -113,11 +113,10 @@ The root judges integration but does not create a second implementation layer.
 If a landing exposes a localized defect, return it with exact evidence to the
 responsible worker when safely resumable or to one fresh capable worker. If it
 invalidates ticket commitments or graph facts, return one `$to-tickets` repair
-packet while retaining campaign claims. On an explicit To Tickets repair
-invocation that admits the packet, transfer only the exact verified
-campaign-owned claims named there. The repair owner releases them only after
-verified repaired-graph publication or a terminal handoff. If it creates a
-real Git conflict, preserve state and use
+packet while retaining campaign custody and claims. An explicit To Tickets
+repair changes only verified graph facts and returns the read-back graph;
+Parallel Implement then reconciles it before resuming. If it creates a real Git
+conflict, preserve state and use
 `$resolving-merge-conflicts`. Do not dispatch a warm general integrator or
 rebuild a campaign ledger.
 

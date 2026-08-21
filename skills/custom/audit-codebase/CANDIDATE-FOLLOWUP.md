@@ -4,9 +4,10 @@ Apply this branch-only contract only after `SKILL.md` admits it.
 
 ## Publish Implementation Work
 
-Accept only To Tickets `ready-graph`, or an exact-semantic `reused` result,
+Accept only a verified graph observed by To Tickets, whether created or reused,
 bound to the candidate digest with publication read-back and a Ready-for-agent
-tracker item. Record the provider-native graph and item identities. The helper
+tracker item. Map a created graph to `ready-graph` and an exact-semantic reuse
+to `reused`, then store the provider-native graph and item identities. The helper
 generates one Implement pickup bound to the Ready tracker item, candidate,
 report, and exact Close packet; publish it unchanged and do not invoke it.
 

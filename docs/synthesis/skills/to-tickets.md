@@ -1,14 +1,17 @@
 # To Tickets Deploy Synthesis
 
-> Status (2026-07-27): historical evidence for the exact 2026-07-25 Deploy
-> Campaign bytes. Later authorized Author passes changed canonical
-> `to-tickets`; the latest adds one graph-level proof-responsibility map so
-> tickets share canonical test owners instead of manufacturing duplicate
-> proof, preserves source-owned Responsibilities, Interfaces, and Seams, and
-> maps source-owned Proof Seams to concrete proof lanes without designing
-> architecture. Prior hashes and evaluations below do not prove current wording.
-> `skills/custom/to-tickets/` is runtime authority. No installed sync is
-> claimed.
+> Current runtime reconciliation (2026-08-20): Pack Composition Contract
+> revision 32 and machine contract revision 20 replace the earlier runtime
+> projection below with one proportional graph-publication job. To Tickets now
+> admits settled multi-slice source, returns one bounded item unchanged, creates
+> the fewest cohesive tickets, obtains graph approval, and publishes through
+> verified external mutation without owning proof ledgers, human frontiers,
+> claim transfer, or delivery. Canonical `skills/custom/to-tickets/` is current
+> runtime authority at campaign-tree SHA-256
+> `677e3a3cafb7c5a338e827062c08220e69733f9d44df64d65538337b91f3eef0`.
+> The 2026-07-25 campaign below remains historical evidence and does not own
+> current runtime behavior. No installed sync or fresh wording-efficacy proof
+> is claimed.
 
 The decision-bearing content is bounded below. Its identity is the SHA-256 of
 the exact UTF-8 bytes between the markers, including the first and last

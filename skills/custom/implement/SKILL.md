@@ -52,6 +52,10 @@ that removal is safe and in scope.
 
 Use these branches only when their condition is present:
 
+- If Git has an active conflicted operation or unmerged index, stop
+  implementation, preserve Git state, and hand off to
+  `$resolving-merge-conflicts` with the requested scope plus whether resolution
+  and native continuation were requested.
 - Invoke `$tdd` for each materially distinct settled behavior and independent
   oracle only when the user explicitly requests TDD, test-first work, or
   RED-GREEN-REFACTOR, or repository policy requires TDD. A material gap returns
