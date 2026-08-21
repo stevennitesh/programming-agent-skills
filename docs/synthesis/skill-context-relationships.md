@@ -53,10 +53,8 @@ flowchart TD
   Shape --> ToSpec["to-spec"]
   ToSpec --> DomainRouter
   ToSpec --> Contract
-  ToSpec -. "one unresolved architecture question" .-> CodeDesign
-  ToSpec -. "new or updated durable spec" .-> TmpSpec[".tmp/to-spec/*.md<br/>draft until publication is verified"]
   ToSpec --> Tracker
-  ToSpec --> Labels
+  ToSpec --> Implement
   ToSpec --> ToTickets["to-tickets"]
   ToSpec -. "setup gate" .-> Setup
   ToTickets --> Tracker
@@ -216,9 +214,8 @@ Return.
 | `wayfinder` | Invoke | `$grill-with-docs` | One selected user decision also requires durable domain capture; receive the intact decision and Domain Delta. |
 | `wayfinder` | Recommend and stop | `$to-questionnaire` | One external Questionnaire prerequisite needs asynchronous attributable answers. Return the recipient, downstream decision, needed-back items, authorized durable path, answer-return destination, and exact `$to-questionnaire` and Wayfinder re-entry instruction. A verified path returns as Waiting, never as an answer. |
 | `wayfinder` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
-| `to-spec` | Load | `$codebase-design` | The source delegates one consequential unresolved architecture question about ownership, data shape, interface, state or failure policy, seam, or migration. Fold the recommendation, retain judgment, or exact gap into the specification. To Spec retains artifact and completion; gaps return `source-gap`. |
-| `to-spec` | Recommend and stop | `$implement` | The settled source is one bounded complete implementation and a durable parent contract would add no useful coordination or lasting decision record. |
-| `to-spec` | Recommend and stop | `$to-tickets` | `ready-spec` verifies purpose, boundaries, limitations, settled decisions and owners, required outcomes, acceptance, and Source Trace; To Tickets owns bounded repository grounding, child slicing, and graph publication. |
+| `to-spec` | Recommend and stop | `$implement` | The settled source is one bounded complete implementation and a durable parent adds no useful coordination, or the verified parent needs no ticket graph. Return the exact source or parent identity and leave implementation unstarted. |
+| `to-spec` | Recommend and stop | `$to-tickets` | The verified parent leaves several valuable implementation slices or needs durable tracker coordination. To Tickets owns repository grounding, child slicing, and graph publication. |
 | `to-spec` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `to-tickets` | Recommend and stop | `$implement` | One standalone ticket is ready, or a verified graph lacks an explicit qualified parent-delivery request; return the first ready ticket in tracker order. |
 | `to-tickets` | Recommend and stop | `$parallel-implement` | An explicitly requested top-level parent-delivery run has an exhaustive non-empty Ready-for-agent graph; Parallel Implement retains campaign custody and owns live serial or concurrent dispatch decisions. |
@@ -278,7 +275,7 @@ every terminal result directly to its current caller or the user.
 | `docs/agents/domain.md` | Context-sensitive routing plus the preserve-or-return posture for domain language, invariants, relationships, and ADR conflicts | `to-spec`, `triage`, `tdd`, `diagnosing-bugs`, `codebase-design`, `audit-codebase`, `parallel-implement` |
 | `docs/agents/engineering-contract.md` | Shared engineering judgment: bounded slices, causal ownership, explicit data shapes, small interfaces, local state, subtractive design, native capabilities, root-cause correction, trust-boundary validation, displaced-path removal, proportional proof, and concrete protection triggers. Skills retain procedures, checks, stopping conditions, and outputs. | `to-spec`, `to-tickets`, `implement`, `tdd`, `diagnosing-bugs`, `codebase-design`, `prototype`, `simplify-code`, `audit-codebase`, `parallel-implement`, `resolving-merge-conflicts`, `change-review`, `high-assurance-review` |
 | `domain-modeling` | Resolves project-specific domain semantics; reconciles proposed wording with routed current truth; returns the authoritative cumulative Domain Delta when composed; persists routed context records only with write authority; and records an already-settled ADR candidate only with separate approval | `skill-router`, `grill-with-docs`, `audit-codebase`, `repo-bootstrap` |
-| `codebase-design` | One bounded module or interface architecture decision using deep-module, caller-first, data-shape, ownership, seam, migration, and proof judgment | `to-spec`, `audit-codebase`, direct architecture/design work |
+| `codebase-design` | One bounded module or interface architecture decision using deep-module, caller-first, data-shape, ownership, seam, migration, and proof judgment | `audit-codebase`, direct architecture/design work |
 | `research` | Claim-owning source legwork and one authorized cited note or verified inline evidence | `skill-router`, `grilling`, `wayfinder` |
 | `to-questionnaire` | One recipient-ready async discovery artifact for one external stakeholder and downstream decision | `skill-router`, `grilling`, `wayfinder`, humans collecting stakeholder evidence |
 | `resolving-merge-conflicts` | Read-only three-way inspection, authorized reconciliation, and the separate finish boundary | Git operations and implementation or integration work that enters a conflicted state |

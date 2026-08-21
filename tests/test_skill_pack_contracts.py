@@ -849,7 +849,7 @@ def test_router_returns_one_exact_skill_or_truthful_none() -> None:
         "slicing | `$to-spec` |"
     ) in router
     assert (
-        "| A `ready-spec` or equivalent settled bounded source needs a "
+        "| A verified parent specification or equivalent settled bounded source needs a "
         "dependency-ordered implementation ticket graph and actionable "
         "frontier | `$to-tickets` |"
     ) in router
@@ -943,7 +943,7 @@ def test_codebase_design_preserves_lean_branch_contracts() -> None:
     assert not (CUSTOM / "codebase-design/DIRECT-DESIGN.md").exists()
     assert 'CodeDesign["codebase-design"] --> Contract' in relationships
     assert "CodeDesign --> DomainRouter" in relationships
-    assert "| `to-spec` | Load | `$codebase-design` |" in relationships
+    assert "| `to-spec` | Load | `$codebase-design` |" not in relationships
     assert "| `audit-codebase` | Load | `$codebase-design` |" in relationships
     for caller in ("research", "tdd", "simplify-code"):
         assert f"| `{caller}` | Recommend and stop | `$codebase-design` |" not in (
@@ -2246,13 +2246,19 @@ def test_workflow_trace_makes_durable_specification_proportional() -> None:
     normalized = " ".join(to_spec.split())
 
     assert not implicit_policy(CUSTOM / "to-spec")
-    assert "`not-needed`" in to_spec
-    assert "Create no draft or tracker state" in normalized
-    assert "Recommend `$to-tickets` only when several implementation slices" in normalized
-    assert "otherwise recommend `$implement`" in normalized
-    assert "draft only when a new or updated durable publication is required" in normalized
-    assert "For exact matching state, reuse the verified parent" in normalized
-    assert "Do not invoke or recommend a resolver" in normalized
+    assert "return `not needed`" in normalized
+    assert "Create nothing" in normalized
+    assert "several valuable implementation slices" in normalized
+    assert "otherwise recommend unstarted `$implement`" in normalized
+    assert "Reuse only when exactly one parent matches" in normalized
+    assert "Perform at most one parent create" in normalized
+    assert "Never retry an indeterminate create blindly" in normalized
+    completion = " ".join(to_spec.split("## Completion", 1)[1].split())
+    assert "`not needed` returns the exact bounded source" in completion
+    assert "published or reused parent" in completion
+    assert "Require one returned identity and pointer" in normalized
+    assert "$codebase-design" not in to_spec
+    assert ".tmp/to-spec" not in to_spec
 
 
 def test_to_spec_handoff_keeps_ticket_design_downstream() -> None:
@@ -2264,24 +2270,20 @@ def test_to_spec_handoff_keeps_ticket_design_downstream() -> None:
     tickets_lower = tickets.lower()
 
     for owned_concept in (
-        "purpose",
-        "boundaries",
-        "limitations",
-        "decisions and their owners",
-        "required behavioral",
-        "acceptance objectives",
-        "Source Trace",
-        "removal condition",
+        "source identity and owners",
+        "problem, outcome, scope, and exclusions",
+        "settled behavior, decisions, constraints",
+        "caller-visible interfaces",
+        "observable acceptance",
+        "residual uncertainty",
     ):
         assert owned_concept.lower() in spec_lower
     for downstream_concept in (
-        "bounded repository grounding",
         "ticket slices",
         "expected writes",
-        "concrete checks and test owners",
-        "dependency graph and ready frontier",
-        "static execution facts",
-        "live concurrency decisions",
+        "concrete commands",
+        "test ownership",
+        "dependency order",
         "implementation technique",
     ):
         assert downstream_concept.lower() in spec_lower
@@ -2295,9 +2297,9 @@ def test_to_spec_handoff_keeps_ticket_design_downstream() -> None:
         "known overlap or serial tripwires",
     ):
         assert ticket_owner.lower() in tickets_lower
-    assert "Paths are evidence, not an implementation plan." in spec
+    assert "Paths may support a source claim" in spec
     assert "## Code Quality Contract" not in to_spec
-    assert "`ready-spec`" in spec
+    assert "Return `ready spec`" in spec
     assert "`published-spec`" not in spec
 
 
@@ -2835,21 +2837,30 @@ def test_to_tickets_is_proportional_and_preserves_ready_frontiers() -> None:
 def test_to_spec_canonical_is_lean_and_experimental_evidence_stays_frozen() -> None:
     canonical = (CUSTOM / "to-spec/SKILL.md").read_text(encoding="utf-8")
     flat = " ".join(canonical.split())
+    synthesis = (ROOT / "docs/synthesis/skills/to-spec.md").read_text(
+        encoding="utf-8"
+    )
 
-    assert "`not-needed`" in canonical
+    assert "return `not needed`" in flat
     assert "one bounded implementation" in flat
-    assert "Create no draft or tracker state" in flat
-    assert "draft only when a new or updated durable publication is required" in flat
-    assert "Recommend `$to-tickets` only when several implementation slices" in flat
-    assert "Load `$codebase-design` only when" in flat
-    assert "perform exactly one configured create operation" in flat
-    assert "delegate exactly one create operation" not in flat
-    assert flat.index("When the settled source already describes one bounded implementation") < flat.index(
-        "Only after the direct branch is excluded"
+    assert re.findall(r"(?m)^## ([A-Za-z]+)$", canonical) == [
+        "Admit",
+        "Read",
+        "Write",
+        "Publish",
+        "Completion",
+    ]
+    assert "Perform at most one parent create" in flat
+    assert "Create no children" in flat
+    assert "$codebase-design" not in canonical
+    assert ".tmp/to-spec" not in canonical
+    assert "Verified Source Correction" not in canonical
+    assert "source-gap" not in canonical
+    assert flat.index("If the source already defines one bounded implementation") < flat.index(
+        "Load the routed tracker contract only after the durable-parent branch wins"
     )
-    assert flat.index("Freeze one internally consistent title and parent body") < flat.index(
-        "Inspect the intended durable parent target"
-    )
+    current_reconciliation = synthesis.split("Status: Deploy Prompt 4", 1)[0]
+    assert exact_tree_hash(CUSTOM / "to-spec") in current_reconciliation
 
     experimental = ROOT / "skills/experimental/to-spec"
     assert exact_tree_hash(experimental) == (
@@ -3190,6 +3201,7 @@ def test_runtime_composition_edges_respect_lean_review_and_planning_policy() -> 
     assert "mutations from two or more independent authors" in relationships_flat
     assert "Missing proof stops instead" in relationships_flat
     assert "Supported risk modifies coverage only after review admission" in relationships_flat
+    assert "ToSpec --> Labels" not in relationships
     assert not implicit_policy(CUSTOM / "high-assurance-review")
 
 

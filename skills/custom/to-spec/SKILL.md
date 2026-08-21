@@ -1,157 +1,104 @@
 ---
 name: to-spec
-description: Explicitly turn settled source that benefits from a durable parent decision contract into one verified specification; return one bounded direct implementation to its caller without drafting.
+description: Explicitly turn one settled source into a verified durable parent specification when several slices, multi-session coordination, or a lasting decision boundary justify it. Return one bounded item to Implement when a spec would add no value.
 ---
 
 # To Spec
 
-Turn settled source into a durable parent decision contract only when that
-artifact is useful for several slices, durable coordination, or a lasting
-decision boundary. Preserve source-owned commitments, verify any publication,
-return one typed result, and stop without delivering the work.
+Publish one durable parent decision contract from settled source. Record what
+was decided without reopening the decision, planning implementation, or
+starting downstream work.
 
-The user and settled source own outcome, commitments, acceptance, scope,
-exclusions, public and data contracts, security and privacy posture, and agreed
-tradeoffs. Repository, domain, ADR, engineering, tracker, and relationship
-owners retain their routed authority. `to-spec` owns faithful synthesis,
-coverage judgment, at most one disposable draft, one parent publication, read-back,
-recovery evidence, Return, and completion.
+## Admit
 
-## Gates
+Accept one identity-bearing settled source: a direct packet, a confirmed Grill
+With Docs result with its current cumulative Domain Delta, a read-back closed
+Wayfinder map whose delivered closing evidence satisfies its closing condition,
+or a verified Audit candidate with settled direction and boundaries.
 
-### 1. Trace settled source and choose the branch
+Use To Spec only when a parent contract is useful across several delivery
+slices or sessions, for durable coordination, or as a lasting decision
+boundary. If the source already defines one bounded implementation with enough
+accepted behavior and evidence to implement and verify it, return `not needed`
+with the exact source and recommend unstarted `$implement`. Create nothing.
 
-Read the target repository's `AGENTS.md`, routed domain and engineering
-contracts, the complete supplied packet, and every decision-bearing pointer it
-names.
-Accept a direct settled packet, a closed Wayfinder map with decisive
-resolutions, or one verified selected improvement candidate with settled
-direction and commitment boundary. Record one source owner, exact identity,
-bound, and intended parent target. Confirm that the source settles the purpose,
-boundaries, limitations, decisions and their owners, required behavioral,
-migration, cutover, or retirement outcomes, and acceptance objectives that
-apply. A missing, inaccessible, ambiguous, contradictory, or decision-changing
-gap returns `source-gap` with affected contract fields, unchanged tracker state,
-the exact return owner, and exactly one gap kind: `user-decision`,
-`domain-decision`, `source-evidence`, `runnable-evidence`,
-`stakeholder-evidence`, or `multi-decision-fog`. Preserve the source identity
-and state the exact re-entry condition. Do not invoke or recommend a resolver.
+The source and its owners retain purpose, outcome, scope, exclusions,
+commitments, acceptance, public and data contracts, security and privacy
+posture, compatibility, migration, and tradeoffs. If a material decision,
+authority, acceptance fact, or source identity is missing, contradictory, or
+inaccessible, return the exact gap, its owner, inspected evidence, and re-entry
+condition. Do not choose a resolver or make the missing decision.
 
-When the settled source already describes one bounded implementation with
-complete acceptance and authority and no useful durable parent contract, return
-`not-needed` with its exact source and `$implement` as the one unstarted next
-recommendation. Create no draft or tracker state.
+## Read
 
-### 2. Prepare the durable-parent branch
+Read the repository instructions, complete source, every decision-bearing
+pointer it names, and only the routed domain records, ADRs, and current-state
+material needed to preserve the source faithfully. Use the project's own
+language.
 
-Only after the direct branch is excluded, load the routed tracker contract and
-verify its required inspect and read-back operations. Before any create, verify
-that the configured parent-create operation is compatible. When that setup is
-missing or incompatible, return `setup-precondition` with the evidence and
-unchanged state, recommend `$repo-bootstrap`, and stop.
+Treat cited code and configuration as evidence, not as permission for a new
+repository survey or architecture choice. If direct evidence corrects an
+incidental current-state statement without changing a commitment, record the
+correction and pointer in the Source Trace. If it changes a commitment, return
+the contradiction to its owner.
 
-Verify implementation-adjacent source claims against their exact code, caller,
-test, configuration, or decision pointers. If a required current-state claim has
-no verifiable pointer, return `source-gap`; do not replace source shaping with
-an independent repository survey or architecture choice. When verification
-corrects a source statement without changing a source-owned decision or
-commitment, preserve the settled direction and record one Verified Source
-Correction with the original statement, observed evidence pointer, corrected
-current-state wording, and why the commitments are unchanged. A
-decision-changing correction is a `source-gap`, not editorial license.
+## Write
 
-Preserve routed domain terms and ADR decisions and point to their owners; change
-no domain truth. Load `$codebase-design` only when the source delegates one
-consequential unresolved architecture question about ownership, data shape,
-interface, state or failure policy, seam, or migration. Fold its recommendation,
-retain judgment, or exact gap into the specification and create no separate
-design artifact. A new public or ownership choice, missing evidence, or
-unsupported trade-off returns `source-gap`.
+Freeze one title, body, and intended parent state that a fresh agent can use
+without inventing a decision. Include, when material:
 
-Cover every applicable requirement, exclusion, deferral, constraint,
-dependency, risk, and nonblocking open note and trace each specification
-commitment back to source authority. Use a detailed bidirectional crosswalk only
-for numerous, conflicting, or multi-source commitments. Do not invent product
-choices, implementation results, or a ready child-ticket graph. When the source
-supersedes behavior, carry each displaced surface and retained compatibility
-path with its owner, reason, proof, and removal condition.
+- source identity and owners;
+- problem, outcome, scope, and exclusions;
+- settled behavior, decisions, constraints, and materially different
+  scenarios;
+- caller-visible interfaces, authoritative data shapes and invariants, and
+  state or failure behavior;
+- trust-boundary, security, privacy, compatibility, migration, cutover,
+  rollback, or removal obligations;
+- observable acceptance, the cheapest credible evidence authority, and honest
+  residual uncertainty;
+- deferrals, risks, and the downstream boundary.
 
-### 3. Freeze, compare, and draft when needed
+Omit empty sections. Trace every material commitment to source authority. Use
+a detailed crosswalk only for conflicting or multi-owner inputs. Cover states
+only where behavior materially differs. At an external or trust boundary,
+state the authoritative representation and observable invalid-input behavior;
+do not prescribe redundant internal validation.
 
-Freeze one internally consistent title and parent body containing Source Trace
-with exact source identity and owner; problem and outcome; users and scenarios;
-scope and non-goals; requirements and invariants; interfaces, data, and state;
-edge and error behavior; security and privacy; compatibility, migration, and
-rollback; operability; dependencies and risks; acceptance and proof; decisions,
-deferrals, and residual gaps; Verified Source Corrections when present; and the
-downstream boundary. Headings and order may fit the source. Include only
-source-triggered facts and omit empty or ceremonial sections, including the
-correction section when none exists. Point to the Engineering Contract instead
-of copying its generic practices.
+Paths may support a source claim, but ticket slices, expected writes, concrete
+commands, test ownership, dependency order, and implementation technique stay
+downstream. Include code only when a source-authorized prototype fragment is
+itself the clearest settled contract.
 
-Pair every commitment with observable acceptance and an honest proof authority.
-Cover edge, error, and state branches where behavior materially varies. Name
-structural proxies and their residual risk; claim no implementation proof that
-was not run. Record settled or delegated-and-supported material
-Responsibilities, Interfaces, Seams, Proof Seams, and state. Omit incidental
-internal seams.
+## Publish
 
-When state matters, cover only the material initial, reusable,
-legacy-or-incompatible, access-path, variant, and lifecycle branches. Do not
-replace judgment with a Cartesian checklist.
+Load the routed tracker contract only after the durable-parent branch wins.
+Verify the required inspect, create, and read-back routes. If setup is missing
+or incompatible, leave state unchanged, recommend `$repo-bootstrap`, and stop.
 
-Inspect the intended durable parent target and compare it with the frozen title
-and body. Distinguish verified absence, exact matching state, divergent state,
-and unknown state. Reuse only an exact match; otherwise create only from
-verified absence. Updating or reconciling requires an explicitly identified
-target and explicit authority; otherwise return `existing-state-conflict` with
-observed identity, unchanged state, and the smallest needed authorization or
-source delta.
+Inspect the intended parent target. Reuse only when exactly one parent matches
+the frozen title, body, and intended state. Create only from verified absence
+and only with authority for that parent. Multiple matches, divergent state, or
+unknown state returns the observed identities and the smallest source or
+authority change needed. Do not overwrite or reconcile implicitly.
 
-Write one ignored `.tmp/to-spec/<feature-slug>.md` draft only when a new or
-updated durable publication is required and after the source and coverage gates
-pass. Exact reuse creates no draft. Read back draft bytes and correct synthesis
-defects before publication. If the path is not safe and ignored, stop without
-durable mutation.
+Perform at most one parent create. Create no children, labels, source or domain
+changes, code, Git state, installation state, or downstream work. Read the
+durable parent back. Require one returned identity and pointer, and verify its
+title, body, and state against the frozen expectations. If publication fails,
+is partial, or remains unknown, report the input and observed durable state
+with the safest recovery. Never retry an indeterminate create blindly.
 
-Carry a path, current owner, reuse candidate, or Proof Seam only when it is a
-binding source decision, supported design result, or evidence pointer. A
-material Seam belongs in the spec when it affects caller contracts, cross-ticket
-ownership, compatibility or migration, or test strategy. Paths are evidence, not
-an implementation plan. Leave bounded repository grounding, ticket slices,
-expected writes, concrete checks and test owners, dependency graph and
-ready frontier, static execution facts, live concurrency decisions, and
-implementation technique to `$to-tickets` and delivery owners.
-
-### 4. Publish, verify, and reconcile
-
-For exact matching state, reuse the verified parent without mutation. Otherwise
-perform exactly one configured create operation for the GitHub issue, GitLab
-issue, or Local Markdown `.scratch/<feature-slug>/SPEC.md` contract. Use the
-frozen title and body. Add no child, label, source, domain, implementation, Git,
-installation, or downstream mutation.
-
-Refetch or reread the full created or reused parent, including body, location,
-state, metadata, and affected relationships, and compare it with the frozen
-title and body. When publication fails, is partial, is indeterminate, or read-back
-mismatches, return `publication-recovery` with applied and failed operations,
-publication input identity, any draft identity, observed durable state, affected
-relationships, and the safest inspection or recovery action. Preserve any exact
-draft and never repeat a create whose result is unknown.
-
-After a verified create or exact reuse, remove any disposable draft and return
-`ready-spec` with the durable pointer, source identity, coverage result,
-publication-or-reuse proof, and residual gaps. Recommend `$to-tickets` only
-when several implementation slices or durable tracker coordination are useful;
-otherwise recommend `$implement`. Invoke neither.
+Return `ready spec` with the durable pointer, exact source identity, verified
+publication or reuse, and material residual gaps. Recommend unstarted
+`$to-tickets` when several valuable implementation slices or durable tracker
+coordination remain; otherwise recommend unstarted `$implement`. Invoke
+neither.
 
 ## Completion
 
-Complete through the selected branch: `not-needed` requires verified direct
-readiness and no mutation; `ready-spec` requires applicable setup, source,
-target-state, coverage, publication-or-reuse, durable read-back, and
-cleanup-or-preservation gates. Every applicable commitment is accounted for,
-unrelated state is preserved, and exactly one typed Return is supported by
-observed state.
-Stop before source research, conversational shaping, ticket slicing,
-implementation, review, installation, or Git delivery.
+Complete through either branch: `not needed` returns the exact bounded source,
+performs no mutation, and leaves `$implement` unstarted; a published or reused
+parent preserves every material source commitment, lets a fresh agent recover
+the same scope and caller-visible contract without inventing a decision, was
+read back from durable state, and starts no downstream work.

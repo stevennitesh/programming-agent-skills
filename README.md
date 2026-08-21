@@ -121,7 +121,7 @@ After setup, invoke a skill directly or let `$skill-router` carry the route map.
 
 Representative routes:
 
-- Fuzzy product idea needing durable decisions -> `$grill-with-docs` -> `$to-spec` -> `$to-tickets`
+- Fuzzy product idea needing durable decisions -> `$grill-with-docs`; explicitly run `$to-spec` only when the settled result earns a durable parent
 - External stakeholder knowledge gap -> `$to-questionnaire` -> human delivery and answer collection
 - One bounded ready item -> `$implement`; one parent-backed ready ticket graph to finish -> `$parallel-implement`, serializing or parallelizing each frontier as needed
 - Incoming issue or configured external PR -> `$triage`; ready-for-agent item -> `$implement`

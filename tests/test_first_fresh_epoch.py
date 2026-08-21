@@ -127,7 +127,7 @@ def test_first_epoch_contract_freezes_complete_h1_free_composition() -> None:
 
     assert pack_contract.validate_contract(contract) == []
     assert contract["epoch_header"]["composition_epoch_id"] == EPOCH
-    assert contract["epoch_header"]["contract_revision"] == 18
+    assert contract["epoch_header"]["contract_revision"] == 19
     assert contract["epoch_header"]["status"] == "frozen"
     assert contract["epoch_header"]["integration_result"] == {
         "decision": None,
@@ -213,7 +213,7 @@ def test_first_epoch_revision_preserves_history_and_derives_r11_blueprints() -> 
             skill_id,
         )
         assert projected["slice"]["slice_id"].startswith(
-                f"{EPOCH}:r18:"
+                f"{EPOCH}:r19:"
         )
         assert projected["slice"]["skill"] == skill_by_id[skill_id]
     assert {
@@ -230,7 +230,7 @@ def test_current_contract_preserves_review_and_tdd_topology() -> None:
         skill["canonical_name"]: skill for skill in contract["selected_skills"]
     }
     assert contract["epoch_header"]["status"] == "frozen"
-    assert contract["epoch_header"]["contract_revision"] == 18
+    assert contract["epoch_header"]["contract_revision"] == 19
     assert {
         name: (skill_by_name[name]["skill_id"], skill_by_name[name]["invocation_mode"])
         for name in (
@@ -262,6 +262,7 @@ def test_current_contract_preserves_review_and_tdd_topology() -> None:
         for edge in contract["epoch_header"]["campaign_proof_graph"]
     }
     assert not any(predecessor == "SK-014" for predecessor, _ in graph_edges)
+    assert ("SK-007", "SK-011") not in graph_edges
 
     skill_name_by_id = {
         skill["skill_id"]: skill["canonical_name"]

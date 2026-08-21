@@ -1,20 +1,17 @@
 # To Spec Deploy Synthesis
 
-> Status (2026-07-27): historical evidence for the exact 2026-07-25 Deploy
-> Campaign bytes. A later authorized Author pass retained the proven four-gate
-> runtime while clarifying the parent decision contract, exact reuse, the To
-> Tickets boundary, source-triggered content, and `ready-spec`. The latest lean
-> composition pass lets To Spec settle one source-delegated consequential
-> internal design with Codebase Design, keeps material Seams in the spec, and
-> leaves concrete proof lanes and test owners to To Tickets. The 2026-07-28
-> lean composition pass classifies each `source-gap` as one of six owner-facing
-> kinds, preserves exact re-entry, and invokes or recommends no resolver. Five fresh
-> fixed-scenario controls exposed no registered broad wording deficit, so a
-> larger rewrite was `reject-no-control-deficit`. Canonical
-> `skills/custom/to-spec/` is current runtime authority at campaign-tree
-> SHA-256
-> `e319eb815944530ef30e7fa2cb1ab966fef6a2a9efe05601b7e12ce82795a5cc`.
-> No installed sync or fresh wording-efficacy proof is claimed.
+> Current runtime reconciliation (2026-08-20): Pack Composition Contract
+> revision 31 and machine contract revision 19 replace the earlier runtime
+> projection below with one proportional synthesis-and-publication job. To Spec
+> now admits settled source, skips a parent for one bounded implementation,
+> removes architecture delegation and draft ceremony, publishes at most one
+> verified durable parent, then recommends To Tickets or Implement without
+> starting either. Canonical `skills/custom/to-spec/` is current runtime
+> authority at campaign-tree SHA-256
+> `4770db441b58aeee7f291e23c07a46a7bfb63ec41745a2cfafd47155ab45a58f`.
+> The 2026-07-25 campaign and the analysis below remain historical evidence;
+> they do not own current runtime behavior. No installed sync or fresh
+> wording-efficacy proof is claimed.
 
 Status: Deploy Prompt 4 decision for campaign `to-spec-2026-07-25`;
 `accepted`.

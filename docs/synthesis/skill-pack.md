@@ -134,6 +134,12 @@ status taxonomies, numeric growth allowance, successor protocol, derived ticket
 fields, automatic closure routing, and five operation files while retaining
 exact identity, one-ticket progress, per-session claims, drift fencing,
 read-back, distinct termination, and evidence-backed closure.
+Revision 31 materializes machine contract revision 19 by rewriting To Spec as
+one proportional synthesis-and-publication job. It admits only settled source,
+returns one bounded item unchanged when a parent would add no
+value, removes architecture delegation and draft ceremony, publishes at most
+one parent with read-back, and recommends either To Tickets or Implement
+without starting either.
 It binds the complete fingerprinted pre-discovery fixed point, then freezes the
 tested environment, finite research order, capability
 owners, roles, relationships, exclusions, resolved collisions, acceptance
@@ -388,14 +394,12 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "acceptance_scenario_ids": [
         "PS-011"
       ],
-      "allowed_contributor_skill_ids": [
-        "SK-007"
-      ],
+      "allowed_contributor_skill_ids": [],
       "capability_id": "CAP-011",
-      "completion_return": "One verified parent specification or a source-defect return",
+      "completion_return": "One verified durable parent, one bounded no-parent return, or one exact source or publication gap",
       "disposition": "selected",
       "entry_conditions": [
-        "A decision-complete source needs a durable parent specification"
+        "An explicit To Spec selection supplies one identity-bearing settled source for a proportionality decision"
       ],
       "essential": true,
       "exclusions": [
@@ -403,11 +407,11 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Unbounded foreign procedure loading",
         "Automated semantic acceptance"
       ],
-      "observable_outcome": "Turn one bounded settled-source packet into one verified durable parent specification",
+      "observable_outcome": "Publish one verified durable parent when it earns its cost, or return one bounded item unchanged",
       "primary_owner_skill_id": "SK-011",
-      "proof_class": "fresh behavioral proof plus structural identity and boundary proof",
+      "proof_class": "proportionate structural, boundary, and consumer proof; fresh behavioral proof only when the user requests it",
       "required_authority_mutation": [
-        "Source reconciliation, specification structure, acceptance, publication, and read-back"
+        "Settled-source synthesis, proportional parent publication, and read-back"
       ]
     },
     {
@@ -798,7 +802,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "scenario_id": "PS-010"
       },
       {
-        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for to-spec: Turn one bounded settled-source packet into one verified durable parent specification",
+        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for to-spec: Publish one verified durable parent when it earns its cost, or return one bounded item unchanged",
         "expected_owner_skill_id": "SK-011",
         "scenario_id": "PS-011"
       },
@@ -935,10 +939,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       },
       {
         "predecessor_skill_id": "SK-007",
-        "successor_skill_id": "SK-011"
-      },
-      {
-        "predecessor_skill_id": "SK-007",
         "successor_skill_id": "SK-017"
       },
       {
@@ -1039,7 +1039,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       }
     ],
     "composition_epoch_id": "FCE-20260727-01",
-    "contract_revision": 18,
+    "contract_revision": 19,
     "epoch_lock": null,
     "exclusions": [
       "Per-skill H1 or candidate wording",
@@ -2797,33 +2797,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
     {
       "affected_capability_ids": [
         "CAP-011",
-        "CAP-007"
-      ],
-      "callee_owned_gates_mutations": [
-        "The target retains all target-local admission, evidence, mutation, Return, and completion gates"
-      ],
-      "caller_skill_id": "SK-011",
-      "combined_exit_owner_skill_id": "SK-011",
-      "context_loaded": [
-        "codebase-design caller-facing interface and branch-required reference only"
-      ],
-      "entry_condition": "The source delegates one consequential unresolved architecture question while To Spec remains authoritative.",
-      "failure_behavior": "Fold the target's exact user-owned decision or evidence gap into the specification as source-gap and preserve the caller-owned resumption boundary",
-      "input_packet": "Caller-owned bounded Source Trace and one delegated architecture question about ownership, data shape, interface, state or failure policy, seam, or migration",
-      "ordering_impact": "callee-before-caller",
-      "relationship_id": "REL-078",
-      "required_proof_ids": [
-        "PROOF-REL-078"
-      ],
-      "resume_owner_skill_id": "SK-011",
-      "return_packet": "One recommendation, retain judgment, or exact gap folded into the caller-owned specification without a separate design artifact",
-      "target_skill_id": "SK-007",
-      "verb": "Load",
-      "wrong_condition": "The source does not delegate a consequential unresolved architecture question, a public or ownership choice remains user-owned, evidence is missing, or another selected owner has the bounded outcome"
-    },
-    {
-      "affected_capability_ids": [
-        "CAP-011",
         "CAP-001"
       ],
       "callee_owned_gates_mutations": [
@@ -2857,19 +2830,19 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-011",
       "combined_exit_owner_skill_id": "SK-011",
       "context_loaded": [],
-      "entry_condition": "The verified parent spec is ready for implementation slicing.",
+      "entry_condition": "The verified parent leaves several valuable implementation slices or needs durable tracker coordination.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for to-spec and the declared to-tickets input",
+      "input_packet": "Verified parent identity, outcome, boundaries, settled behavior, observable acceptance, material residuals, and exact To Tickets recommendation",
       "ordering_impact": "none",
       "relationship_id": "REL-080",
       "required_proof_ids": [
         "PROOF-REL-080"
       ],
       "resume_owner_skill_id": "SK-011",
-      "return_packet": "One named target and reason with downstream work unstarted",
+      "return_packet": "One exact To Tickets recommendation with downstream work unstarted",
       "target_skill_id": "SK-012",
       "verb": "Recommend and stop",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
+      "wrong_condition": "The source is one bounded implementation, the verified parent needs no graph, or another selected owner has the bounded outcome"
     },
     {
       "affected_capability_ids": [
@@ -3380,6 +3353,31 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "target_skill_id": "SK-005",
       "verb": "Recommend and stop",
       "wrong_condition": "An active conflict or unmerged entry remains, the request is operation planning, or the behavioral failure cause is already settled"
+    },
+    {
+      "affected_capability_ids": [
+        "CAP-011",
+        "CAP-022"
+      ],
+      "callee_owned_gates_mutations": [
+        "No callee execution, mutation, resumption, or completion is authorized by this edge"
+      ],
+      "caller_skill_id": "SK-011",
+      "combined_exit_owner_skill_id": "SK-011",
+      "context_loaded": [],
+      "entry_condition": "The settled source is one bounded implementation and a durable parent adds no useful value, or the verified parent needs no ticket graph.",
+      "failure_behavior": "Return the recommendation without starting implementation",
+      "input_packet": "Exact settled source or verified parent identity, outcome, scope, accepted behavior, observable evidence, material residuals, and exact Implement recommendation",
+      "ordering_impact": "none",
+      "relationship_id": "REL-105",
+      "required_proof_ids": [
+        "PROOF-REL-105"
+      ],
+      "resume_owner_skill_id": "SK-011",
+      "return_packet": "One exact Implement recommendation with downstream work unstarted",
+      "target_skill_id": "SK-022",
+      "verb": "Recommend and stop",
+      "wrong_condition": "The source is unsettled, several implementation slices or durable coordination require To Tickets, or another owner has the bounded outcome"
     }
   ],
   "selected_skills": [
@@ -3745,24 +3743,24 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "PS-011"
       ],
       "canonical_name": "to-spec",
-      "completion_condition": "The source is represented without inventing product decisions",
+      "completion_condition": "One proportionate parent preserves every material source commitment, is read back, and starts no downstream work, or the bounded no-parent branch returns unchanged source",
       "contract_order": 11,
-      "essential_outcome": "Turn one bounded settled-source packet into one verified durable parent specification",
-      "failure_return": "Return the contradictory, incomplete, or unauthorized source packet",
+      "essential_outcome": "Publish one verified durable parent when it earns its cost, or return one bounded item unchanged",
+      "failure_return": "Return the exact source, authority, existing-state, or publication gap",
       "invocation_mode": "explicit-only",
       "load_budget_class": "conditional-leaf",
       "negative_exclusion_predicates": [
-        "The request does not satisfy: A decision-complete source needs a durable parent specification",
+        "The request does not supply one identity-bearing settled source",
         "Another selected skill owns the requested outcome",
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
       "owned_authority_mutation_surfaces": [
-        "Source reconciliation, specification structure, acceptance, publication, and read-back"
+        "Settled-source synthesis, proportional parent publication, and read-back"
       ],
       "owned_capability_ids": [
         "CAP-011"
       ],
-      "positive_entry_predicate": "A decision-complete source needs a durable parent specification",
+      "positive_entry_predicate": "An explicit To Spec selection supplies one identity-bearing settled source for a proportionality decision",
       "primary_role": "leaf",
       "prohibited_ownership": [
         "Another selected skill's semantic decision, local mutation, proof judgment, Return, or completion",
@@ -3770,12 +3768,12 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Pack integration acceptance, epoch Lock, cleanup, installation, or Git delivery unless explicitly owned"
       ],
       "relationship_ids": [
-        "REL-078",
         "REL-079",
-        "REL-080"
+        "REL-080",
+        "REL-105"
       ],
-      "required_input": "A bounded caller-owned Source Trace and authority for: Turn one bounded settled-source packet into one verified durable parent specification",
-      "return_packet": "One verified parent specification or a source-defect return",
+      "required_input": "One identity-bearing settled source, its owners and material decision-bearing pointers, plus authority for any durable parent publication",
+      "return_packet": "One verified durable parent, one bounded no-parent return, or one exact source or publication gap",
       "skill_id": "SK-011"
     },
     {
