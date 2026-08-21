@@ -65,16 +65,13 @@ flowchart TD
 
   Triage["triage"] --> Tracker
   Triage --> Labels
-  Triage --> DomainRouter
   Triage -. "setup gate" .-> Setup
-  Triage --> TriageFlows["ATTENTION-SCAN / SPECIFIC-ITEM / QUICK-OVERRIDE<br/>branch procedures"]
+  Triage --> Attention["ATTENTION-SCAN.md"]
   Triage --> AgentBrief["AGENT-BRIEF.md"]
-  Triage --> OutOfScope["OUT-OF-SCOPE.md / .out-of-scope/"]
   Triage --> Ready
-  Triage -. "conversation-only decision" .-> Grilling
-  Triage -. "domain-affecting decision" .-> GrillDocs
-  Triage -. "multi-decision route" .-> Wayfinder
-  Triage -. "settled multi-slice source" .-> ToTickets
+  Triage -. "deep causal investigation" .-> Debug
+  Triage -. "fixed-candidate code judgment" .-> Review
+  Triage -. "settled multi-slice intake" .-> ToTickets
   Tracker -. "ready contract" .-> Triage
 
   Ready --> Implement["implement"]
@@ -218,10 +215,9 @@ Return.
 | `to-tickets` | Recommend and stop | `$implement` | The settled source is one bounded direct item, or a verified graph lacks an explicit whole-parent delivery request; return that item or the first actionable ticket. |
 | `to-tickets` | Recommend and stop | `$parallel-implement` | An explicitly requested top-level parent-delivery run has an exhaustive non-empty Ready-for-agent graph; Parallel Implement retains campaign custody and owns live serial or concurrent dispatch decisions. |
 | `to-tickets` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
-| `triage` | Recommend and stop | `$grilling` | One maintainer-owned conversation-only decision needs direct resolution; stop before mutation and resume the same item with the intact result. |
-| `triage` | Recommend and stop | `$grill-with-docs` | One maintainer-owned decision may change durable domain terms, Invariants, Context Relationships, or an ADR; stop before mutation and resume the same item with the intact result. |
-| `triage` | Recommend and stop | `$wayfinder` | A bounded destination still has several interdependent decisions or non-conversational prerequisites; leave the item unchanged and start Wayfinder only if the user chooses it. |
-| `triage` | Recommend and stop | `$to-tickets` | Settled source requires several independently completable implementation slices; leave readiness unchanged and pass the intact source for user-selected graph creation. |
+| `triage` | Recommend and stop | `$diagnosing-bugs` | Readiness requires deep causal investigation rather than intake-level evidence; preserve the report, observations, hypotheses, and skipped proof. |
+| `triage` | Recommend and stop | `$change-review` | An attached diff needs fixed-candidate code judgment rather than intake disposition; preserve the candidate identity and observed intake evidence. |
+| `triage` | Recommend and stop | `$to-tickets` | Settled intake needs several independently completable implementation slices; preserve the source and leave readiness unchanged. |
 | `triage` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `implement` | Invoke | `$tdd` | The selected work explicitly requires TDD, test-first work, or RED-GREEN-REFACTOR, or applicable repository policy requires TDD, and one accepted observable behavior and independent oracle are settled. TDD owns the RED-GREEN-REFACTOR inner loop. |
 | `implement` | Invoke | `$change-review` | The user or repository explicitly requires independent review; the candidate contains mutations from two or more independent authors; or focused proof establishes behavior but a material shared-contract or irreversible-migration acceptance judgment still warrants fresh independent judgment and review is the lowest-burden way to obtain it. Implement freezes the proved candidate, dispatches one fresh `ordinary-reviewer`, and supplies `Formal review: yes`, mode, proof and skips, Spec requirement, author identities, and fresh-separation evidence; missing proof stops instead. A repaired successor is reviewed only while the original trigger still applies and includes the prior Return, both candidate identities, repair delta, carried IDs, and remaining acceptance. |
@@ -288,7 +284,7 @@ every terminal result directly to its current caller or the user.
 | `domain-modeling` | `CONTEXT-FORMAT.md`: glossary and context-map format; `ADR-FORMAT.md`: ADR gate and format |
 | `tdd` | `references/TEST-SHAPE.md` for an unclear test boundary or oracle; `references/TEST-DOUBLES.md` before adding a substitute |
 | `prototype` | `LOGIC.md`, `UI.md`, and `MEASURE.md`: decision-bearing branch mechanics. One decision branch loads; `SKILL.md` owns the universal lifecycle, reconciliation, and Return. |
-| `triage` | `ATTENTION-SCAN.md`, `SPECIFIC-ITEM.md`, `QUICK-OVERRIDE.md`: branch procedures; `AGENT-BRIEF.md`: agent/human ready brief, branch emphasis, and Ready Gate; `OUT-OF-SCOPE.md`: rejected-work knowledge base |
+| `triage` | `ATTENTION-SCAN.md`: read-only queue overview; `AGENT-BRIEF.md`: concise agent or human ready handoff |
 | `repo-bootstrap` | Tracker, label, domain, and engineering-contract seeds; optional repo-local parallel-lane permission and agent setup; `setup-schema.json`: aggregate compatibility fingerprint; `scripts/validate_setup.py`: target-repo structural compatibility validation |
 | `wayfinder` | `MAP-FORMAT.md`: lean map, ticket, resolution, closing, and termination shapes; `references/MUTATION.md`: claim and durable-write protection; `references/RESOLVERS.md`: selected-ticket routing and return interpretation |
 | `research` | Seven conditional evidence references; one authorized cited Markdown note or cited inline result |
@@ -328,8 +324,8 @@ every terminal result directly to its current caller or the user.
   that alter operation policy require their own request.
 - Tracker docs own transport, tracker commands, Ready-for-agent state and
   navigation, and Mutation read-back. `triage` owns incoming classification,
-  verification, its Codex-ready brief and Ready Gate, state transitions, and
-  the AI disclaimer; `$to-tickets` owns proportional slicing, true dependency
+  proportional disposition evidence, its concise ready brief, and authorized
+  state transitions; `$to-tickets` owns proportional slicing, true dependency
   order, graph approval, safe publication, and graph read-back. Do not re-triage
   valid `$to-tickets` output.
 - `implement` owns one standalone selected item and its in-scope correction path, with Git delivery only when the selected branch requires it; `parallel-implement` owns one explicitly requested parent-backed exhaustive Ready-for-agent graph through concurrent and serial frontiers, serial integration, bounded in-scope correction, and verified child-first then parent-last closeout.

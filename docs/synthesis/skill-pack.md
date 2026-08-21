@@ -150,6 +150,13 @@ Merge Conflicts as five direct actions. It removes decision and status
 taxonomies, marker-only admission, and the Diagnosis edge while retaining
 operation-aware roles, separate edit and finish permission, exact-path staging,
 unrelated-work protection, native continuation, and branch-only Git traps.
+Revision 34 materializes machine contract revision 22 by rewriting Triage as
+one proportional intake and disposition job. It removes the packet and return
+status taxonomies, mandatory reproduction and shaping routes, the rejected-work
+ledger, and the full readiness gate while retaining explicit invocation,
+configured roles, bounded evidence, concise handoff, authorized tracker
+mutation, read-back, and conditional Diagnosis, Change Review, or To Tickets
+handoff.
 It binds the complete fingerprinted pre-discovery fixed point, then freezes the
 tested environment, finite research order, capability
 owners, roles, relationships, exclusions, resolved collisions, acceptance
@@ -454,7 +461,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       ],
       "allowed_contributor_skill_ids": [],
       "capability_id": "CAP-013",
-      "completion_return": "A verified triage state and exact next owner",
+      "completion_return": "One supported intake disposition or read-only attention result, with every authorized tracker effect read back",
       "disposition": "selected",
       "entry_conditions": [
         "Raw issues or configured external requests need sorting and readiness verification"
@@ -465,11 +472,11 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Unbounded foreign procedure loading",
         "Automated semantic acceptance"
       ],
-      "observable_outcome": "Classify incoming configured work into one truthful maintainer-approved state or attention result and preserve its exact handoff",
+      "observable_outcome": "Turn raw configured tracker intake into one supported disposition or concise handoff without implementing it",
       "primary_owner_skill_id": "SK-013",
-      "proof_class": "fresh behavioral proof plus structural identity and boundary proof",
+      "proof_class": "proportionate structural, boundary, and consumer proof; fresh behavioral proof only when the user requests it",
       "required_authority_mutation": [
-        "Classification, state-role labels, readiness facts, and tracker mutation read-back"
+        "Exact approved tracker effects and read-back"
       ]
     },
     {
@@ -820,7 +827,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "scenario_id": "PS-012"
       },
       {
-        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for triage: Classify incoming tracker work into maintainer-approved executable or human-owned states",
+        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for triage: turn raw configured tracker intake into one supported disposition or concise handoff without implementation",
         "expected_owner_skill_id": "SK-013",
         "scenario_id": "PS-013"
       },
@@ -1047,7 +1054,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       }
     ],
     "composition_epoch_id": "FCE-20260727-01",
-    "contract_revision": 21,
+    "contract_revision": 22,
     "epoch_lock": null,
     "exclusions": [
       "Per-skill H1 or candidate wording",
@@ -2905,31 +2912,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
     {
       "affected_capability_ids": [
         "CAP-013",
-        "CAP-020"
-      ],
-      "callee_owned_gates_mutations": [
-        "No callee execution, mutation, resumption, or completion is authorized by this edge"
-      ],
-      "caller_skill_id": "SK-013",
-      "combined_exit_owner_skill_id": "SK-013",
-      "context_loaded": [],
-      "entry_condition": "One maintainer-owned decision may change durable domain terms, Invariants, Context Relationships, or an ADR; stop before mutation and resume the same item with the intact result.",
-      "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Triage item identity, bounded Source Trace, exact domain-affecting decision, return owner, and the declared grill-with-docs input",
-      "ordering_impact": "none",
-      "relationship_id": "REL-084",
-      "required_proof_ids": [
-        "PROOF-REL-084"
-      ],
-      "resume_owner_skill_id": "SK-013",
-      "return_packet": "One intact decision and Domain Delta for later Triage resumption with Grill With Docs left unstarted",
-      "target_skill_id": "SK-020",
-      "verb": "Recommend and stop",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
-    },
-    {
-      "affected_capability_ids": [
-        "CAP-013",
         "CAP-001"
       ],
       "callee_owned_gates_mutations": [
@@ -3187,81 +3169,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
     },
     {
       "affected_capability_ids": [
-        "CAP-013",
-        "CAP-008"
-      ],
-      "callee_owned_gates_mutations": [
-        "No callee execution, mutation, resumption, or completion is authorized by this edge"
-      ],
-      "caller_skill_id": "SK-013",
-      "combined_exit_owner_skill_id": "SK-013",
-      "context_loaded": [],
-      "entry_condition": "One maintainer-owned conversation-only scope, acceptance, or tradeoff decision needs direct resolution.",
-      "failure_behavior": "Return the recommendation without invoking the target; preserve the item and Triage resumption boundary",
-      "input_packet": "Triage item identity, bounded Source Trace, exact decision, caller identifiers, and return owner",
-      "ordering_impact": "none",
-      "relationship_id": "REL-097",
-      "required_proof_ids": [
-        "PROOF-REL-097"
-      ],
-      "resume_owner_skill_id": "SK-013",
-      "return_packet": "One intact decision packet for later Triage resumption with Grilling left unstarted",
-      "target_skill_id": "SK-008",
-      "verb": "Recommend and stop",
-      "wrong_condition": "The decision may change durable domain truth, several interdependent decisions remain, or another owner can resolve it"
-    },
-    {
-      "affected_capability_ids": [
-        "CAP-013",
-        "CAP-021"
-      ],
-      "callee_owned_gates_mutations": [
-        "No callee execution, mutation, resumption, or completion is authorized by this edge"
-      ],
-      "caller_skill_id": "SK-013",
-      "combined_exit_owner_skill_id": "SK-013",
-      "context_loaded": [],
-      "entry_condition": "One bounded destination has several coupled unresolved questions or prerequisites, at least one non-conversational resolver, and needs tracker-backed multi-session sequencing.",
-      "failure_behavior": "Return the recommendation without invoking the target; preserve the item and every unresolved identity",
-      "input_packet": "Triage item identity, bounded destination, Source Trace, unresolved decisions and prerequisites, and return owner",
-      "ordering_impact": "none",
-      "relationship_id": "REL-098",
-      "required_proof_ids": [
-        "PROOF-REL-098"
-      ],
-      "resume_owner_skill_id": "SK-013",
-      "return_packet": "One intact multi-decision route packet with Wayfinder left unstarted",
-      "target_skill_id": "SK-021",
-      "verb": "Recommend and stop",
-      "wrong_condition": "The destination is still unbounded, one conversation can settle the item, or the remaining work is implementation slicing"
-    },
-    {
-      "affected_capability_ids": [
-        "CAP-013",
-        "CAP-012"
-      ],
-      "callee_owned_gates_mutations": [
-        "No callee execution, mutation, resumption, or completion is authorized by this edge"
-      ],
-      "caller_skill_id": "SK-013",
-      "combined_exit_owner_skill_id": "SK-013",
-      "context_loaded": [],
-      "entry_condition": "Settled source requires several independently completable implementation slices rather than one ready brief.",
-      "failure_behavior": "Return the recommendation without invoking the target; preserve source authority and leave readiness unchanged",
-      "input_packet": "Triage item identity, settled Source Trace, commitments, acceptance, evidence, and multi-slice reason",
-      "ordering_impact": "none",
-      "relationship_id": "REL-099",
-      "required_proof_ids": [
-        "PROOF-REL-099"
-      ],
-      "resume_owner_skill_id": "SK-013",
-      "return_packet": "One intact settled multi-slice packet for user-selected ticket graph creation with To Tickets left unstarted",
-      "target_skill_id": "SK-012",
-      "verb": "Recommend and stop",
-      "wrong_condition": "The source is unsettled, one bounded slice is ready, or no implementation slicing remains"
-    },
-    {
-      "affected_capability_ids": [
         "CAP-022",
         "CAP-016"
       ],
@@ -3336,6 +3243,81 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "target_skill_id": "SK-022",
       "verb": "Recommend and stop",
       "wrong_condition": "The source is unsettled, several implementation slices or durable coordination require To Tickets, or another owner has the bounded outcome"
+    },
+    {
+      "affected_capability_ids": [
+        "CAP-013",
+        "CAP-005"
+      ],
+      "callee_owned_gates_mutations": [
+        "No callee execution or mutation is authorized by this edge"
+      ],
+      "caller_skill_id": "SK-013",
+      "combined_exit_owner_skill_id": "SK-013",
+      "context_loaded": [],
+      "entry_condition": "A reported failure needs deep causal investigation rather than intake-level evidence for disposition.",
+      "failure_behavior": "Return the recommendation and intact evidence without starting Diagnosis",
+      "input_packet": "Item identity, reported behavior, observations, hypotheses, attempted checks, and material uncertainty",
+      "ordering_impact": "none",
+      "relationship_id": "REL-106",
+      "required_proof_ids": [
+        "PROOF-REL-106"
+      ],
+      "resume_owner_skill_id": "SK-013",
+      "return_packet": "One Diagnosis recommendation with intake evidence intact and downstream work unstarted",
+      "target_skill_id": "SK-005",
+      "verb": "Recommend and stop",
+      "wrong_condition": "Intake-level evidence can support the disposition, the cause is already settled, or another owner has the requested outcome"
+    },
+    {
+      "affected_capability_ids": [
+        "CAP-013",
+        "CAP-015"
+      ],
+      "callee_owned_gates_mutations": [
+        "No callee execution or mutation is authorized by this edge"
+      ],
+      "caller_skill_id": "SK-013",
+      "combined_exit_owner_skill_id": "SK-013",
+      "context_loaded": [],
+      "entry_condition": "An attached diff needs fixed-candidate code judgment rather than intake disposition.",
+      "failure_behavior": "Return the recommendation and candidate identity without starting Change Review",
+      "input_packet": "Item identity, candidate identity, reported intent, observed intake evidence, and material uncertainty",
+      "ordering_impact": "none",
+      "relationship_id": "REL-107",
+      "required_proof_ids": [
+        "PROOF-REL-107"
+      ],
+      "resume_owner_skill_id": "SK-013",
+      "return_packet": "One Change Review recommendation with the fixed candidate and intake evidence intact",
+      "target_skill_id": "SK-015",
+      "verb": "Recommend and stop",
+      "wrong_condition": "No fixed candidate exists, only intake classification is needed, or another owner has the requested outcome"
+    },
+    {
+      "affected_capability_ids": [
+        "CAP-013",
+        "CAP-012"
+      ],
+      "callee_owned_gates_mutations": [
+        "No callee execution or tracker mutation is authorized by this edge"
+      ],
+      "caller_skill_id": "SK-013",
+      "combined_exit_owner_skill_id": "SK-013",
+      "context_loaded": [],
+      "entry_condition": "Settled intake needs several independently completable implementation slices rather than one bounded ready handoff.",
+      "failure_behavior": "Return the recommendation and intact settled source without starting To Tickets or changing readiness",
+      "input_packet": "Item identity, settled outcome, accepted behavior, evidence, material uncertainty, and multi-slice reason",
+      "ordering_impact": "none",
+      "relationship_id": "REL-108",
+      "required_proof_ids": [
+        "PROOF-REL-108"
+      ],
+      "resume_owner_skill_id": "SK-013",
+      "return_packet": "One To Tickets recommendation with settled intake preserved and downstream work unstarted",
+      "target_skill_id": "SK-012",
+      "verb": "Recommend and stop",
+      "wrong_condition": "The intake is unsettled, one bounded ready handoff is sufficient, or no implementation slicing remains"
     }
   ],
   "selected_skills": [
@@ -3777,10 +3759,10 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "PS-013"
       ],
       "canonical_name": "triage",
-      "completion_condition": "The item has one truthful state and no fabricated readiness",
+      "completion_condition": "The attention scan stayed read-only, or the selected item has one supported disposition and every authorized tracker effect has been read back",
       "contract_order": 13,
-      "essential_outcome": "Classify incoming configured work into one truthful maintainer-approved state or attention result and preserve its exact handoff",
-      "failure_return": "Return the missing reporter fact, maintainer decision, or setup boundary",
+      "essential_outcome": "Turn raw configured tracker intake into one supported disposition or concise handoff without implementing it",
+      "failure_return": "Return the missing reporter fact, unresolved owned decision, setup boundary, or observed partial tracker effect",
       "invocation_mode": "explicit-only",
       "load_budget_class": "conditional-leaf",
       "negative_exclusion_predicates": [
@@ -3789,7 +3771,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
       "owned_authority_mutation_surfaces": [
-        "Classification, state-role labels, readiness facts, and tracker mutation read-back"
+        "Intake classification, concise readiness facts, exact approved tracker effects, and read-back"
       ],
       "owned_capability_ids": [
         "CAP-013"
@@ -3802,14 +3784,13 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Pack integration acceptance, epoch Lock, cleanup, installation, or Git delivery unless explicitly owned"
       ],
       "relationship_ids": [
-        "REL-084",
         "REL-085",
-        "REL-097",
-        "REL-098",
-        "REL-099"
+        "REL-106",
+        "REL-107",
+        "REL-108"
       ],
-      "required_input": "A bounded caller-owned Source Trace and authority for: Classify incoming tracker work into maintainer-approved executable or human-owned states",
-      "return_packet": "A verified triage state and exact next owner",
+      "required_input": "One configured raw tracker item or attention scan request, with authority for any exact tracker effects",
+      "return_packet": "One supported disposition or read-only attention result, material uncertainty, next owner, and read-back for any authorized effects",
       "skill_id": "SK-013"
     },
     {

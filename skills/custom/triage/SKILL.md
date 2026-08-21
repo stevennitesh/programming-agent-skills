@@ -1,81 +1,90 @@
 ---
 name: triage
-description: Triage raw tracker issues and configured external PR requests through maintainer-approved states and Codex-ready handoffs.
+description: Sort raw tracker issues and configured external PR or MR intake into one honest disposition or concise handoff, then apply authorized tracker changes with read-back. Exclude project-created ready work, implementation, deep diagnosis, and code review.
 ---
 
 # Triage
 
-Move raw tracker requests to a maintainer-approved state and handoff. Triage
-owns classification, verification, shaping, approved state transitions, its
-Codex-ready brief and Ready Gate, and rejected-enhancement memory. Tracker docs
-own transport, label mappings, Ready-for-agent state and queries, and Mutation
-read-back. `$implement` and `$parallel-implement` own code changes and
-`implemented` closeout.
+Turn raw tracker intake into an honest next state without implementing it.
 
-## Spine
+## 1. Read the intake
 
-1. **Load.** Read `docs/agents/issue-tracker.md` and
-   `docs/agents/triage-labels.md` before tracker access. If either is absent or
-   incompatible with triage, recommend `$repo-bootstrap` and stop. Follow
-   `docs/agents/domain.md` for codebase context. Read
-   `docs/agents/engineering-contract.md` before Specific Item verification,
-   readiness rendering, checkout, or executable validation. Triage PRs only when
-   the tracker enables them. A named PR bypasses only external-author discovery;
-   a **PR is an issue with attached code**, not a formal code review.
+Read `docs/agents/issue-tracker.md` and `docs/agents/triage-labels.md`. If either
+is missing or incompatible, recommend `$repo-bootstrap` and stop. Include an
+external PR or MR only when the tracker configuration permits it.
 
-2. **Choose.** Read one branch completely:
+For a queue overview, read [ATTENTION-SCAN.md](ATTENTION-SCAN.md), return the
+items needing attention, and make no changes. Otherwise read the complete
+selected item, its decision-bearing discussion, current roles, relevant links,
+and useful attachments.
 
-   - [ATTENTION-SCAN.md](ATTENTION-SCAN.md) — show incoming work needing
-     maintainer attention.
-   - [SPECIFIC-ITEM.md](SPECIFIC-ITEM.md) — verify, shape, recommend, and apply
-     one outcome.
-   - [QUICK-OVERRIDE.md](QUICK-OVERRIDE.md) — apply an explicitly named state
-     with reduced discovery.
+When the maintainer names an exact state, skip discovery that cannot change
+that instruction. Inspect enough current context to write the required note and
+do not present skipped verification as completed.
 
-   Read [AGENT-BRIEF.md](AGENT-BRIEF.md) only when preparing or reusing a
-   `ready-for-agent` or `ready-for-human` brief. Read
-   [OUT-OF-SCOPE.md](OUT-OF-SCOPE.md) only when screening, rejecting, or
-   reconsidering an enhancement.
+## 2. Judge the disposition
 
-3. **Run.** Follow only the selected branch; its helper owns branch-specific
-   discovery, sequence, and completion criterion. Treat valid `$to-tickets`
-   output as ready; re-enter triage only for an explicit state or brief
-   correction.
+Choose the configured category and the next honest state. Inspect current
+behavior, tracker history, and the likely owner only as far as they can change
+that choice. Search for an existing implementation, duplicate, prior fix, or
+settled rejection when the evidence makes one plausible. Match meaning and
+cause, not keywords or a visible symptom alone.
 
-   For any mutation branch, keep exactly one mapped category role and one mapped
-   state role; surface missing or conflicting roles before mutation. Display
-   one exact packet containing the target identity, roles and mapped labels
-   before and after, complete post or brief, rejected-memory delta, and close
-   state. Mutate only after explicit approval. After that interaction, refresh
-   the item, affected dependents, and local targets; any decision-bearing drift
-   or packet change requires fresh approval. Apply prerequisites and local
-   records before the post, roles, and state; close last. Stop on the first
-   unsafe, failed, or indeterminate operation.
+Separate observations from hypotheses. Run only the cheapest safe check needed
+to support the disposition. A failed reproduction does not prove a report
+false. When readiness requires deep causal investigation, recommend
+`$diagnosing-bugs` and stop with the evidence intact. When an attached diff
+needs fixed-candidate code judgment, recommend `$change-review` instead.
 
-   Before applying `ready-for-agent`, satisfy Triage's Ready Gate with a new
-   brief or an existing brief proved current. Reduced discovery records
-   `maintainer-override` and its residual uncertainty; it never fabricates
-   confirmed verification.
+If reporter facts are missing, ask the few specific questions that would
+change the disposition. If product intent or another owned decision remains
+open, name the decision and owner rather than choosing a heavier workflow for
+the user.
 
-   Prefix every posted issue or comment with:
+## 3. Write the handoff
 
-   ```markdown
-   > *This was generated by AI during triage.*
-   ```
+State the recommended category and state, the evidence that supports them, and
+material uncertainty. For `needs-info`, preserve what is already settled and
+ask actionable questions. For a rejection or duplicate, give the reason and
+the existing item or decision when one exists.
 
-4. **Prove.** Apply tracker Mutation read-back and reread affected local files.
-   Return exactly one status and stop:
+For `ready-for-agent` or `ready-for-human`, read
+[AGENT-BRIEF.md](AGENT-BRIEF.md). Keep the handoff bounded. Do not pre-plan the
+implementation or repeat generic engineering guidance.
 
-   - `scan-complete` — every Attention Scan bucket was evaluated and nothing
-     mutated;
-   - `decision-required` — one complete packet awaits exact approval;
-   - `mutation-complete` — every approved effect and invariant read back;
-   - `partial` or `blocked` — discovery cannot safely reach a packet; or
-   - `blocked-partial` — some mutation occurred; applied, failed, withheld,
-     and observed effects plus the safest recovery are explicit.
+When settled intake needs several independently completable implementation
+slices, preserve the source, recommend explicit `$to-tickets`, and stop before
+changing readiness.
 
-   The triage packet preserves branch and target identity, Source Trace,
-   verification and readiness authority, roles, disposition, packet or applied
-   effects, artifact references, skipped checks, residual uncertainty, and one
-   unstarted next route when applicable. Only `scan-complete` and
-   `mutation-complete` satisfy branch completion.
+## 4. Apply authorized effects
+
+If no tracker change was requested, return the recommendation and stop. A
+request that names the target and every durable effect authorizes only those
+effects. Preview any generated note, brief, additional role change, or close
+action the request did not already approve, then wait for approval.
+
+If the requested effects cannot leave one configured category role, one
+configured state role, and any required ready brief, show the smallest
+additional effects and wait. Do not create a false-ready or invalid item to
+honor a narrower request.
+
+Refresh the item before writing when later activity could change the decision.
+If the refresh changes the disposition, note, roles, or close state, stop and
+obtain approval for the revised effects.
+Apply only the approved comment, one configured category role, one configured
+state role, and close action. Post the required note or brief first, replace
+roles second, and close last. Follow the tracker contract for transport and
+recovery. Add AI attribution only when the repository's tracker policy requires
+it.
+
+## 5. Verify and stop
+
+Read the item back and verify the intended effects. Refresh dependents only
+when the change can alter their readiness. If an effect is failed or uncertain,
+do not retry blindly; report what applied, what remains unknown, and the safest
+recovery.
+
+Complete when the attention scan stayed read-only, or the selected item has one
+supported disposition and every authorized tracker effect has been read back.
+Report the resulting state, material uncertainty, and next owner. Leave code
+changes and downstream work unstarted.

@@ -19,7 +19,7 @@ Run `glab` inside the clone; it resolves the project from the remote.
 - **Fetch or list:** `glab issue view <number> --comments` or
   `glab issue list -O json`. Use JSON output for machine reads.
 - **Comment or brief:** `glab issue note <number> --message "..."`; `$triage`
-  owns the brief and disclaimer.
+  owns the brief. Apply attribution only when repository policy requires it.
 - **Label:** `glab issue update <number> --label "..."` or `--unlabel "..."`.
 - **Close:** post any closing note first, then run `glab issue close <number>`.
 - **Merge requests:** when intake is enabled, use the corresponding

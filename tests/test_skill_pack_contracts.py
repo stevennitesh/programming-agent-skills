@@ -354,7 +354,9 @@ def test_triage_label_template_respects_tracker_pr_policy() -> None:
     assert "`wayfinder:diagnosis`" not in (
         CUSTOM / "repo-bootstrap/scripts/validate_setup.py"
     ).read_text(encoding="utf-8")
-    assert "Triage PRs only when the tracker enables them" in triage_flat
+    assert "external PR or MR only when the tracker configuration permits it" in (
+        triage_flat
+    )
 
 
 def test_delivery_skills_own_custody_and_trackers_map_closeout() -> None:
@@ -880,19 +882,13 @@ def test_router_returns_one_exact_skill_or_truthful_none() -> None:
 def test_branch_heavy_skills_disclose_branch_procedure() -> None:
     triage = (CUSTOM / "triage/SKILL.md").read_text(encoding="utf-8")
     attention = (CUSTOM / "triage/ATTENTION-SCAN.md").read_text(encoding="utf-8")
-    quick = (CUSTOM / "triage/QUICK-OVERRIDE.md").read_text(encoding="utf-8")
     design = (CUSTOM / "codebase-design/SKILL.md").read_text(encoding="utf-8")
 
     assert "[ATTENTION-SCAN.md](ATTENTION-SCAN.md)" in triage
-    assert "[SPECIFIC-ITEM.md](SPECIFIC-ITEM.md)" in triage
-    assert "[QUICK-OVERRIDE.md](QUICK-OVERRIDE.md)" in triage
-    assert "## Specific Item" not in triage
-    run = triage.split("3. **Run.**", 1)[1].split("4. **Prove.**", 1)[0]
-    assert "selected branch" in run
-    assert "For any mutation branch" in run
-    assert "tracker state stayed unchanged" in attention
-    assert "Skip ordinary request verification" in quick
-    assert "unseen mutation packet" in quick
+    assert "When the maintainer names an exact state" in triage
+    assert not (CUSTOM / "triage/SPECIFIC-ITEM.md").exists()
+    assert not (CUSTOM / "triage/QUICK-OVERRIDE.md").exists()
+    assert "without changing tracker state" in attention
     assert "[DEEPENING.md](DEEPENING.md)" in design
     assert "[DESIGN-IT-TWICE.md](DESIGN-IT-TWICE.md)" in design
     assert "## 1. Understand" in design
@@ -1222,7 +1218,7 @@ def test_grill_with_docs_package_and_relationship_contract() -> None:
         caller
         for caller, verb, callee in rows
         if verb == "Recommend and stop" and callee == "grill-with-docs"
-    } >= {"triage"}
+    } == {"audit-codebase"}
     assert ("wayfinder", "Invoke", "grill-with-docs") in rows
     assert ("wayfinder", "Invoke", "grilling") in rows
     assert ("wayfinder", "Recommend and stop", "to-questionnaire") in rows
@@ -2775,60 +2771,92 @@ def test_readme_exposes_both_adoption_paths() -> None:
     assert readme.count("```mermaid") == 1
 
 
-def test_triage_branches_share_the_authoritative_brief_schema() -> None:
+def test_triage_is_lean_and_preserves_tracker_boundaries() -> None:
     triage = (CUSTOM / "triage/SKILL.md").read_text(encoding="utf-8")
-    specific = (CUSTOM / "triage/SPECIFIC-ITEM.md").read_text(encoding="utf-8")
-    quick = (CUSTOM / "triage/QUICK-OVERRIDE.md").read_text(encoding="utf-8")
+    attention = (CUSTOM / "triage/ATTENTION-SCAN.md").read_text(encoding="utf-8")
     brief = (CUSTOM / "triage/AGENT-BRIEF.md").read_text(encoding="utf-8")
-    out_of_scope = (CUSTOM / "triage/OUT-OF-SCOPE.md").read_text(encoding="utf-8")
 
-    assert specific.index("mutation packet") < specific.index(
-        "universal approval"
+    assert not implicit_policy(CUSTOM / "triage")
+    assert "## 1. Read the intake" in triage
+    assert "## 5. Verify and stop" in triage
+    assert "A failed reproduction does not prove a report false" in " ".join(
+        triage.split()
     )
-    assert "## Completion" in quick
-    normalized_triage = " ".join(triage.split())
-    assert "Codex-ready brief and Ready Gate" in normalized_triage
-    assert "Ready-for-agent state and queries" in normalized_triage
-    assert "tracker's Ready-for-agent contract" not in triage
-    assert not (CUSTOM / "triage/AGENT-BRIEF-EXAMPLES.md").exists()
-    assert "tracker state is navigation metadata" in " ".join(brief.split())
-    assert "### Scope And Proof" in brief
-    assert "Canonical test owner or proof surface" in brief
-    assert "a new test requires a distinct responsibility" in brief
-    assert "acceptance is operational and observable" in " ".join(brief.split())
-    assert "### Change Closure" in brief
-    assert "removal condition" in brief
-    assert "## Branch Emphasis" in brief
-    for branch in ("Bug tracer", "Enhancement tracer", "Support slice", "PR finish"):
-        assert f"| {branch} |" in brief
-    for route in ("$grilling", "$grill-with-docs", "$wayfinder", "$to-tickets"):
-        assert route in specific
-    assert "label-only" not in specific
-    assert "not-confirmed" in specific
-    assert "does not prove the report false" in specific
-    assert "refresh the item, affected dependents, and local targets" in (
-        normalized_triage
+    assert "$diagnosing-bugs" in triage
+    assert "$change-review" in triage
+    assert "$to-tickets" in triage
+    assert "every durable effect authorizes only those effects" in " ".join(
+        triage.split()
     )
-    assert triage.index("Apply prerequisites and local") < triage.index("close last")
-    for status in (
+    assert "Do not create a false-ready or invalid item" in " ".join(triage.split())
+    assert "changes the disposition, note, roles, or close state" in " ".join(
+        triage.split()
+    )
+    assert "do not retry blindly" in triage
+    assert "without changing tracker state" in attention
+    assert "observable acceptance" in brief
+    assert "without a new product decision" in " ".join(brief.split())
+    assert "Add interface," in brief
+    for retired in (
+        "mutation packet",
+        "Ready Gate",
         "scan-complete",
         "decision-required",
         "mutation-complete",
         "blocked-partial",
+        ".out-of-scope/",
+        "generated by AI during triage",
     ):
-        assert f"`{status}`" in triage
-    assert "maintainer-override" in quick
-    assert "disclaimer-prefixed triage note" in (
-        CUSTOM / "triage/ATTENTION-SCAN.md"
+        assert retired not in triage + attention + brief
+    for retired_path in (
+        "SPECIFIC-ITEM.md",
+        "QUICK-OVERRIDE.md",
+        "OUT-OF-SCOPE.md",
+    ):
+        assert not (CUSTOM / "triage" / retired_path).exists()
+
+    relationships = (
+        ROOT / "docs/synthesis/skill-context-relationships.md"
     ).read_text(encoding="utf-8")
-    assert "Leave it unstaged and stop before commit, push" in out_of_scope
-    assert [
-        title for title, _, _ in skill_pack_contract.level_two_heading_spans(out_of_scope)
-    ] == [
-        "File Format",
-        "Screen",
-        "Classify",
-    ]
+    projection_edges = set(
+        re.findall(
+            r"(?m)^\| `([a-z0-9-]+)` \| (Recommend and stop) \| `\$([a-z0-9-]+)` \|",
+            relationships,
+        )
+    )
+    assert {
+        edge for edge in projection_edges if edge[0] == "triage"
+    } == {
+        ("triage", "Recommend and stop", "change-review"),
+        ("triage", "Recommend and stop", "diagnosing-bugs"),
+        ("triage", "Recommend and stop", "repo-bootstrap"),
+        ("triage", "Recommend and stop", "to-tickets"),
+    }
+
+    contract = pack_contract.parse_contract(
+        (ROOT / "docs/synthesis/skill-pack.md").read_text(encoding="utf-8")
+    )
+    names = {
+        skill["skill_id"]: skill["canonical_name"]
+        for skill in contract["selected_skills"]
+    }
+    machine_edges = {
+        (names[row["caller_skill_id"]], row["verb"], names[row["target_skill_id"]])
+        for row in contract["relationships"]
+        if names[row["caller_skill_id"]] == "triage"
+    }
+    assert machine_edges == {
+        ("triage", "Recommend and stop", "change-review"),
+        ("triage", "Recommend and stop", "diagnosing-bugs"),
+        ("triage", "Recommend and stop", "repo-bootstrap"),
+        ("triage", "Recommend and stop", "to-tickets"),
+    }
+    relationship_ids = {
+        row["relationship_id"] for row in contract["relationships"]
+    }
+    assert not relationship_ids.intersection(
+        {"REL-084", "REL-097", "REL-098", "REL-099"}
+    )
 
 
 def test_mutating_workflows_require_proportional_readback() -> None:
@@ -3205,6 +3233,7 @@ def test_diagnosis_is_an_explicit_leaf_with_bounded_recommendations() -> None:
         if caller == "diagnosing-bugs" or callee == "diagnosing-bugs"
     } == {
         ("prototype", "Recommend and stop", "diagnosing-bugs"),
+        ("triage", "Recommend and stop", "diagnosing-bugs"),
     }
     contract = pack_contract.parse_contract(
         (ROOT / "docs/synthesis/skill-pack.md").read_text(encoding="utf-8")
@@ -3221,12 +3250,14 @@ def test_diagnosis_is_an_explicit_leaf_with_bounded_recommendations() -> None:
     } == {
         ("skill-router", "Recommend and stop", "diagnosing-bugs"),
         ("prototype", "Recommend and stop", "diagnosing-bugs"),
+        ("triage", "Recommend and stop", "diagnosing-bugs"),
     }
     for skill in CUSTOM.iterdir():
         if skill.is_dir() and skill.name not in {
             "diagnosing-bugs",
             "prototype",
             "skill-router",
+            "triage",
         }:
             for path in skill.rglob("*.md"):
                 assert "$diagnosing-bugs" not in path.read_text(encoding="utf-8")
@@ -3252,6 +3283,9 @@ def test_runtime_composition_edges_respect_lean_review_and_planning_policy() -> 
         ("to-tickets", "Recommend and stop", "parallel-implement"),
         ("implement", "Invoke", "change-review"),
         ("parallel-implement", "Invoke", "change-review"),
+        ("triage", "Recommend and stop", "change-review"),
+        ("triage", "Recommend and stop", "diagnosing-bugs"),
+        ("triage", "Recommend and stop", "to-tickets"),
     ):
         assert edge in edges
     assert not any(

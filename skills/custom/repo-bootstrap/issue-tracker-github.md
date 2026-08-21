@@ -24,7 +24,8 @@ the connector lacks the required operation.
 - **Fetch:** read the issue body, comments, labels, state, assignee, and
   relationships.
 - **Comment or brief:** post an issue comment. When PR intake is enabled, post a
-  PR comment instead; `$triage` owns the brief and disclaimer.
+  PR comment instead; `$triage` owns the brief. Apply attribution only when
+  repository policy requires it.
 - **Close:** use the connector's close action and include the skill-owned closing
   comment when applicable.
 - **Relationships:** use connector actions when exposed; otherwise use GitHub's

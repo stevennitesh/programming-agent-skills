@@ -124,7 +124,7 @@ Representative routes:
 - Fuzzy product idea needing durable decisions -> `$grill-with-docs`; explicitly run `$to-spec` only when the settled result earns a durable parent
 - External stakeholder knowledge gap -> `$to-questionnaire` -> human delivery and answer collection
 - One bounded ready item -> `$implement`; one parent-backed ready ticket graph to finish -> `$parallel-implement`, serializing or parallelizing each frontier as needed
-- Incoming issue or configured external PR -> `$triage`; ready-for-agent item -> `$implement`
+- Incoming issue or configured external PR/MR -> `$triage`; ready-for-agent item -> `$implement`
 - Bounded multi-session decision route -> `$wayfinder` until it returns a terminal decision or settled source
 - Explicit test-first, TDD, or RED-GREEN-REFACTOR work -> `$tdd`; ordinary implementation with tests -> `$implement`; route uncertain bugs through `$skill-router`.
 - Whole-repository correctness, robustness, or quality discovery -> `$audit-codebase` builds, continues, or refreshes one linked HTML map, audits one user-selected subsystem, then can analyze one user-selected improvement candidate or returned evidence
