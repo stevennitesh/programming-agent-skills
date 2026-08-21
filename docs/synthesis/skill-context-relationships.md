@@ -204,6 +204,7 @@ Return.
 | `grilling` | Recommend and stop | `$wayfinder` | A bounded destination has several coupled unresolved questions or prerequisites, including at least one non-conversational resolver, and needs tracker-backed multi-session sequencing; active Wayfinder is not the return owner. An active Wayfinder receives the intact Route gap directly for graph reconciliation. |
 | `to-questionnaire` | Recommend and stop | `$research` | Claim-owning sources can answer the gap. |
 | `to-questionnaire` | Recommend and stop | `$grilling` | The current user owns the unresolved conversation-only decision. |
+| `skill-router` | Recommend and stop | `$high-assurance-review` | The user explicitly requests high-assurance, heavy, or final review of one fixed complete code candidate. Return the route and leave review unstarted. |
 | `skill-router` | Recommend and stop | `$repo-bootstrap` | The chosen engineering route needs missing, incompatible, or outdated setup. Return Repo Bootstrap as the one route and leave it unstarted. |
 | `wayfinder` | Invoke | `$research` | One selected ticket needs claim-owning source evidence. Pass its question, map use, scope, applicable state, approved note path or no-write mode, and Wayfinder return owner. |
 | `wayfinder` | Invoke | `$prototype` | One selected ticket needs runnable evidence. Pass its question, decision owner, named human judge or objective rule, representative evidence, bounded run, mutation authority, and cleanup or custody. |

@@ -13,7 +13,8 @@ which skill should implement one ready issue. Repeat with a compatible repo and
 clear ready item; one source-answerable fact, runnable design choice, external
 stakeholder gap, and current-user decision; a large effort before and after its
 destination is bounded; a fresh same-root context and `/compact`; one standalone
-settled red-testable behavior; an ordinary diff, release candidate, explicit
+settled red-testable behavior; an ordinary diff, release candidate, novel or
+supported-risk candidate without an explicit heavy-review request, explicit
 High-Assurance Review request, and repository baseline; canonical
 skill-semantics work; an active unmerged index;
 an already-resolved conflict candidate; and a post-operation behavioral
@@ -21,15 +22,16 @@ failure. Include one request that satisfies no available skill's exact entry
 contract.
 
 **Required:** `$skill-router` returns exactly one route or a truthful
-`Skill: none` in the `Skill`, `Reason`, and `Precondition` fields. The no-match
-case names the exact unmet routing predicates and does not fabricate a nearest
-route. Setup wins before implementation. Evidence ownership
+`Skill: none` with `Skill` and `Reason`. It adds `Precondition` only when one
+applies. When no route matches, it names the exact unmet routing predicates
+without fabricating a nearest route. Setup wins before implementation. Evidence ownership
 routes to `$research`, `$prototype`, `$to-questionnaire`, `$grilling`, or
 `$grill-with-docs`; bounded multi-decision scale routes to `$wayfinder`; fresh
 same-root continuation routes to `$handoff` while `/compact` stays current;
 standalone settled behavior routes to `$tdd` while the ready item routes to
-`$implement`; ordinary and release judgment route to `$change-review`, the
-explicit assurance request to `$high-assurance-review`, and baseline and
+`$implement`; ordinary diffs and release, novel, or supported-risk candidates
+route to `$change-review` unless the user explicitly requests heavy review. An
+explicit assurance request routes to `$high-assurance-review`; baseline and
 agent-instruction judgment to `$audit-codebase` and `$writing-for-agents`.
 Ambiguity asks one decisive question. Active unresolved
 state routes to `$resolving-merge-conflicts`, the resolved candidate to review,

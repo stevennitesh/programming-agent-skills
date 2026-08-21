@@ -1,6 +1,6 @@
 ---
 name: skill-router
-description: Route the current situation to exactly one next skill in this engineering pack, or abstain when no available skill satisfies the exact contract.
+description: Choose one next engineering skill when the user explicitly asks which skill to use or invokes $skill-router. Return that skill or none, then stop without starting it.
 ---
 
 # Skill Router
@@ -21,10 +21,11 @@ completion.
    missing, incompatible, or outdated, route to `$repo-bootstrap` instead. If no
    available skill satisfies its entry contract, select `none`; never
    substitute the nearest or weakest route.
-4. **Stop.** Return `Skill: <skill-name | none>`,
-   `Reason: <winning contract | exact unmet routing predicates>`, and
-   `Precondition: <setup, fact, authority, or handoff need | none>`. The user
-   starts any selected skill; downstream work remains unstarted.
+4. **Stop.** Return `Skill: <skill-name | none>` and
+   `Reason: <winning contract | exact unmet routing predicates>`. Add
+   `Precondition: <setup, fact, authority, or handoff need>` only when the user
+   must satisfy one before starting the route. The user starts any selected
+   skill; downstream work remains unstarted.
 
 `none` is a terminal abstention, not a recommendation. Use it only when current
 facts make every available route ineligible, not instead of one allowed
@@ -74,6 +75,7 @@ checks dependencies, ownership, and write effects before concurrent dispatch.
 | The user explicitly requests TDD, test-first work, or RED-GREEN-REFACTOR, or applicable repository policy requires TDD, and one bounded behavior and independent oracle are settled | `$tdd` |
 | An active merge, rebase, cherry-pick, or revert is conflicted, or an index is unmerged | `$resolving-merge-conflicts` |
 | A branch, WIP, staged, since-X diff, PR, release candidate, or supported-risk candidate needs read-only judgment | `$change-review` |
+| The user explicitly requests high-assurance, heavy, or final review of one fixed complete code candidate | `$high-assurance-review` |
 | A repository needs a whole-system HTML map, one user-selected subsystem audit, or one user-selected audit-candidate analysis | `$audit-codebase` |
 | One user-selected existing-code target has accepted behavior and needs behavior-preserving simplification | `$simplify-code` |
 
@@ -85,10 +87,9 @@ TDD only under an explicit user or repository-policy requirement. Route one
 standalone explicitly test-first behavior to `$tdd`, ordinary test,
 integration-test, regression-test, or coverage work to `$implement`, uncertain
 broken behavior that needs dedicated investigation to `$diagnosing-bugs`, and
-an existing diff needing judgment to `$change-review`.
-High Assurance Review is an explicit user-selected heavy review of a fixed
-code candidate, commonly after a ticket graph or before merging a PR. It
-is never an automatic route.
+an ordinary existing diff needing judgment to `$change-review`. Route to
+`$high-assurance-review` only for an explicit heavy-review request; candidate
+size, PR presence, release status, novelty, or risk does not qualify.
 
 **Conflict tie-breaker:** route an active unresolved operation or unmerged index
 to `$resolving-merge-conflicts`; an already-resolved candidate to review; a

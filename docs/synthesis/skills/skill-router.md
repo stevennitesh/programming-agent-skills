@@ -7,7 +7,7 @@
 > still has interdependent decisions or prerequisites, a non-conversational
 > resolver, and a multi-session tracker need. Canonical
 > `skills/custom/skill-router/` is runtime authority at tree SHA-256
-> `3156a8c57f5593840df44ad867984be3160d5a4895a9dd9565e76aedda64d8bc`.
+> `8e02edd93dc79e270a9babe5375e8142dc0b095d703eb8058e0764849f37d748`.
 > Current review routes are `$change-review` and
 > `$high-assurance-review`; later former-name references are historical. No
 > installed sync or fresh wording-efficacy proof is claimed.

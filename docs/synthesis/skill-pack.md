@@ -195,6 +195,11 @@ ticket categories and readiness, Wayfinder maps its own item types, and the two
 delivery skills own implemented and newly-unblocked transitions. The installed
 label contract remains a repository-specific value map rather than a workflow
 owner.
+Revision 41 materializes machine contract revision 29 by keeping Skill Router
+explicit-only and terminal while making its trigger explicit, adding the
+user-requested High-Assurance Review route, making preconditions conditional,
+and replacing its false Source Trace requirement with current route-changing
+facts. Destination procedures and execution remain unstarted.
 It binds the complete fingerprinted pre-discovery fixed point, then freezes the
 tested environment, finite research order, capability
 owners, roles, relationships, exclusions, resolved collisions, acceptance
@@ -785,10 +790,10 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       ],
       "allowed_contributor_skill_ids": [],
       "capability_id": "CAP-025",
-      "completion_return": "One exact skill or none, with reason and precondition and downstream work unstarted",
+      "completion_return": "One exact skill or none with a reason, an applicable precondition when one exists, and downstream work unstarted",
       "disposition": "selected",
       "entry_conditions": [
-        "The user needs one engineering route rather than immediate downstream execution"
+        "The user explicitly asks which engineering skill to use or invokes Skill Router"
       ],
       "essential": true,
       "exclusions": [
@@ -1094,7 +1099,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       }
     ],
     "composition_epoch_id": "FCE-20260727-01",
-    "contract_revision": 28,
+    "contract_revision": 29,
     "epoch_lock": null,
     "exclusions": [
       "Per-skill H1 or candidate wording",
@@ -2209,7 +2214,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [],
       "entry_condition": "The situation requires a whole-repository ownership map, one user-selected subsystem audit, or one user-selected candidate analysis; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for skill-router and the declared audit-codebase input",
+      "input_packet": "The current situation and visible facts that can change the route",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-047",
       "required_proof_ids": [
@@ -2234,7 +2239,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [],
       "entry_condition": "The situation satisfies one module, interface, seam, adapter, ownership boundary, or caller-facing test surface needs a decision; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for skill-router and the declared codebase-design input",
+      "input_packet": "The current situation and visible facts that can change the route",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-048",
       "required_proof_ids": [
@@ -2259,7 +2264,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [],
       "entry_condition": "A hard, intermittent, performance, environment-only, production-only, or causally ambiguous failure needs dedicated investigation; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for skill-router and the declared diagnosing-bugs input",
+      "input_packet": "The current situation and visible facts that can change the route",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-050",
       "required_proof_ids": [
@@ -2284,7 +2289,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [],
       "entry_condition": "The situation requires project-specific semantic resolution or capture, or an already-settled ADR candidate needs assessment or approved recording; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for skill-router and the declared domain-modeling input",
+      "input_packet": "The current situation and visible facts that can change the route",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-051",
       "required_proof_ids": [
@@ -2309,7 +2314,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [],
       "entry_condition": "One current-user-owned repo-backed decision needs both live grilling and domain reconciliation as answers settle; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "One bounded current-user-owned repo-backed decision whose domain meaning may change during live questioning",
+      "input_packet": "The current situation and visible facts that can change the route",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-052",
       "required_proof_ids": [
@@ -2334,7 +2339,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [],
       "entry_condition": "The situation satisfies the current user owns one material decision that benefits from direct questioning; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for skill-router and the declared grilling input",
+      "input_packet": "The current situation and visible facts that can change the route",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-053",
       "required_proof_ids": [
@@ -2359,7 +2364,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [],
       "entry_condition": "The situation needs a local pickup for a fresh context that can read the same work root and required sources; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for skill-router and the declared handoff input",
+      "input_packet": "The current situation and visible facts that can change the route",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-054",
       "required_proof_ids": [
@@ -2384,7 +2389,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [],
       "entry_condition": "The situation satisfies one caller-selected item has settled commitments, readiness, proof, and write scope; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for skill-router and the declared implement input",
+      "input_packet": "The current situation and visible facts that can change the route",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-055",
       "required_proof_ids": [
@@ -2409,7 +2414,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [],
       "entry_condition": "The situation has one explicit fixed delivery set with at least two accepted implementation items; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for skill-router and the declared parallel-implement input",
+      "input_packet": "The current situation and visible facts that can change the route",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-057",
       "required_proof_ids": [
@@ -2434,7 +2439,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [],
       "entry_condition": "The situation satisfies one design choice needs runnable evidence rather than production proof; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "The bounded situation, matched Prototype predicate, and Router return boundary",
+      "input_packet": "The current situation and visible facts that can change the route",
       "ordering_impact": "none",
       "relationship_id": "REL-058",
       "required_proof_ids": [
@@ -2459,7 +2464,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [],
       "entry_condition": "The situation satisfies a selected engineering route needs a missing, incompatible, or outdated setup surface; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for skill-router and the declared repo-bootstrap input",
+      "input_packet": "The current situation and visible facts that can change the route",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-059",
       "required_proof_ids": [
@@ -2484,7 +2489,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [],
       "entry_condition": "The situation satisfies claim-owning sources can answer one bounded question without transferring decision authority; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for skill-router and the declared research input",
+      "input_packet": "The current situation and visible facts that can change the route",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-060",
       "required_proof_ids": [
@@ -2509,7 +2514,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [],
       "entry_condition": "An active conflicted merge, rebase, cherry-pick, revert, or unmerged index needs inspection or resolution; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Observed active conflict or unmerged index and any known request for resolution or native continuation",
+      "input_packet": "The current situation and visible facts that can change the route",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-061",
       "required_proof_ids": [
@@ -2534,7 +2539,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [],
       "entry_condition": "The caller requests read-only judgment of a branch, WIP, staged, since-X diff, local PR, release candidate, or implementation candidate; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for skill-router and the declared change-review input",
+      "input_packet": "The current situation and visible facts that can change the route",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-062",
       "required_proof_ids": [
@@ -2559,7 +2564,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [],
       "entry_condition": "One user-selected existing-code target has accepted behavior and needs behavior-preserving simplification; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "User-stated situation, selected target, and the declared simplify-code input",
+      "input_packet": "The current situation and visible facts that can change the route",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-063",
       "required_proof_ids": [
@@ -2584,7 +2589,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [],
       "entry_condition": "The user explicitly requests TDD, test-first work, or RED-GREEN-REFACTOR, or applicable repository policy requires TDD; intended behavior and its independent oracle are settled; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "The explicit TDD trigger, one accepted observable behavior, and its independent oracle",
+      "input_packet": "The current situation and visible facts that can change the route",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-064",
       "required_proof_ids": [
@@ -2609,7 +2614,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [],
       "entry_condition": "The situation satisfies one external stakeholder holds material facts, judgment, or decision authority unavailable from inspectable sources and the current user; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for skill-router and the declared to-questionnaire input",
+      "input_packet": "The current situation and visible facts that can change the route",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-065",
       "required_proof_ids": [
@@ -2634,7 +2639,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [],
       "entry_condition": "The situation satisfies a decision-complete source needs a durable parent specification; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for skill-router and the declared to-spec input",
+      "input_packet": "The current situation and visible facts that can change the route",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-066",
       "required_proof_ids": [
@@ -2659,7 +2664,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [],
       "entry_condition": "The situation satisfies a settled bounded source needs implementation slicing and dependency order; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for skill-router and the declared to-tickets input",
+      "input_packet": "The current situation and visible facts that can change the route",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-067",
       "required_proof_ids": [
@@ -2684,7 +2689,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [],
       "entry_condition": "The situation satisfies raw issues or configured external requests need sorting and readiness verification; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for skill-router and the declared triage input",
+      "input_packet": "The current situation and visible facts that can change the route",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-068",
       "required_proof_ids": [
@@ -2709,7 +2714,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [],
       "entry_condition": "One bounded destination has several interdependent decisions or prerequisites, at least one non-conversational resolver, and needs tracker-backed multi-session sequencing; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Bounded destination, interdependent decisions or prerequisites, non-conversational resolver need, multi-session reason, and caller-owned Source Trace",
+      "input_packet": "The current situation and visible facts that can change the route",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-069",
       "required_proof_ids": [
@@ -2734,7 +2739,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [],
       "entry_condition": "Instructions consumed by an agent need creation, editing, or audit; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for skill-router and the declared writing-for-agents input",
+      "input_packet": "The current situation and visible facts that can change the route",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-070",
       "required_proof_ids": [
@@ -3355,6 +3360,31 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "target_skill_id": "SK-001",
       "verb": "Recommend and stop",
       "wrong_condition": "The installed domain-routing contract is compatible"
+    },
+    {
+      "affected_capability_ids": [
+        "CAP-025",
+        "CAP-014"
+      ],
+      "callee_owned_gates_mutations": [
+        "No review, mutation, resumption, or completion is authorized by this edge"
+      ],
+      "caller_skill_id": "SK-025",
+      "combined_exit_owner_skill_id": "SK-025",
+      "context_loaded": [],
+      "entry_condition": "The user explicitly requests high-assurance, heavy, or final review of one fixed complete code candidate.",
+      "failure_behavior": "Return the recommendation without starting review",
+      "input_packet": "The current situation and visible facts that can change the route",
+      "ordering_impact": "none",
+      "relationship_id": "REL-111",
+      "required_proof_ids": [
+        "PROOF-REL-111"
+      ],
+      "resume_owner_skill_id": "SK-025",
+      "return_packet": "One High-Assurance Review recommendation with review unstarted",
+      "target_skill_id": "SK-014",
+      "verb": "Recommend and stop",
+      "wrong_condition": "The user did not explicitly request heavy review, the candidate is not fixed and complete, or ordinary Change Review owns the request"
     }
   ],
   "selected_skills": [
@@ -3863,7 +3893,8 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       ],
       "relationship_ids": [
         "REL-002",
-        "REL-109"
+        "REL-109",
+        "REL-111"
       ],
       "required_input": "An explicit heavy-review request, one fixed complete code candidate, governing accepted sources, relevant repository context, and candidate-bound proof",
       "return_packet": "One terminal decision with candidate identity, reviewer identities and independence basis, coverage, admitted findings, material limits, residual risk, and applicable drift",
@@ -4221,7 +4252,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "invocation_mode": "explicit-only",
       "load_budget_class": "metadata-only",
       "negative_exclusion_predicates": [
-        "The request does not satisfy: The user needs one engineering route rather than immediate downstream execution",
+        "The user did not explicitly ask which engineering skill to use or invoke Skill Router",
         "Another selected skill owns the requested outcome",
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
@@ -4231,7 +4262,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "owned_capability_ids": [
         "CAP-025"
       ],
-      "positive_entry_predicate": "The user needs one engineering route rather than immediate downstream execution",
+      "positive_entry_predicate": "The user explicitly asks which engineering skill to use or invokes Skill Router",
       "primary_role": "router",
       "prohibited_ownership": [
         "Another selected skill's semantic decision, local mutation, proof judgment, Return, or completion",
@@ -4260,10 +4291,11 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "REL-067",
         "REL-068",
         "REL-069",
-        "REL-070"
+        "REL-070",
+        "REL-111"
       ],
-      "required_input": "A bounded caller-owned Source Trace and authority for: Choose exactly one next engineering skill or truthfully return none, then stop",
-      "return_packet": "One exact skill or none, with reason and precondition and downstream work unstarted",
+      "required_input": "The user's route-selection request and any visible facts that can change the route",
+      "return_packet": "One exact skill or none with a reason, an applicable precondition when one exists, and downstream work unstarted",
       "skill_id": "SK-025"
     }
   ]

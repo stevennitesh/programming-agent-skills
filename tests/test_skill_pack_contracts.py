@@ -47,11 +47,9 @@ def test_router_names_every_custom_skill() -> None:
     )
     routed = [skill for _, skill in routes]
 
-    assert set(routed) | {"repo-bootstrap", "high-assurance-review"} == (
-        skill_names - {"skill-router"}
-    )
+    assert set(routed) | {"repo-bootstrap"} == skill_names - {"skill-router"}
     assert len(routed) == len(set(routed))
-    assert "High Assurance Review is an explicit user-selected heavy review" in router
+    assert routed.count("high-assurance-review") == 1
 
 
 def test_handoff_compacts_context_without_advancing_work() -> None:
@@ -834,25 +832,20 @@ def test_router_returns_one_exact_skill_or_truthful_none() -> None:
     )
 
     assert not implicit_policy(CUSTOM / "skill-router")
-    assert re.findall(r"(?m)^\d+\. \*\*([A-Za-z]+)\.\*\*", router) == [
-        "Inspect",
-        "Clarify",
-        "Route",
-        "Stop",
-    ]
+    assert "explicitly asks which skill to use" in router.split("---", 2)[1]
+    steps = re.findall(r"(?m)^\d+\. \*\*[^*]+\.\*\*", router)
+    assert 3 <= len(steps) <= 6
     stop = router.split("4. **Stop.**", 1)[1].split("## Route Map", 1)[0]
-    assert re.findall(r"`(Skill|Reason|Precondition):", stop) == [
-        "Skill",
-        "Reason",
-        "Precondition",
-    ]
+    assert "Skill: <skill-name | none>" in stop
+    assert "Reason: <winning contract | exact unmet routing predicates>" in stop
+    assert "Precondition:" in stop
+    assert "only when the user" in stop
     assert "missing, incompatible, or outdated" in router_flat
     assert "Skill: <skill-name | none>" in router
     assert "exact unmet routing predicates" in router
     assert "`none` is a terminal abstention, not a recommendation" in router_flat
     assert "never substitute the nearest or weakest route" in router_flat
     assert "not instead of one allowed clarification" in router_flat
-    assert "or abstain when no available skill satisfies the exact contract" in router
     assert "one exact route or truthful none" in bootstrap
     assert "it returns one route and stops" not in bootstrap
     assert "truthful `none` when no available skill fits" in readme
@@ -868,17 +861,21 @@ def test_router_returns_one_exact_skill_or_truthful_none() -> None:
     assert "truthful no-match result" in selected["completion_condition"]
     assert "exact unmet routing predicates" in selected["failure_return"]
     assert "exact skill or none" in selected["return_packet"]
+    assert "explicitly asks which engineering skill" in selected["positive_entry_predicate"]
+    assert "when one exists" in selected["return_packet"]
     assert "truthfully return none" in capability["observable_outcome"]
+    assert "explicitly asks which engineering skill" in capability["entry_conditions"][0]
+    assert "when one exists" in capability["completion_return"]
     assert "no-match abstention" in capability["required_authority_mutation"][0]
-    assert (
-        "| Settled source needs a durable parent decision contract before ticket "
-        "slicing | `$to-spec` |"
-    ) in router
-    assert (
-        "| A verified parent specification or equivalent settled bounded source needs a "
-        "dependency-ordered implementation ticket graph and actionable "
-        "frontier | `$to-tickets` |"
-    ) in router
+    routes = dict(
+        (skill, situation.strip())
+        for situation, skill in re.findall(
+            r"(?m)^\| (?!-)([^|]+?) \| `\$([a-z0-9][a-z0-9-]*)` \|$", router
+        )
+    )
+    assert "durable parent" in routes["to-spec"]
+    assert "ticket graph" in routes["to-tickets"]
+    assert "explicitly requests" in routes["high-assurance-review"]
     tie_breaker = " ".join(
         router.split("**Unknown-owner tie-breaker:**", 1)[1].split(
             "### Build", 1
@@ -1670,7 +1667,11 @@ def test_review_family_shares_one_bounded_quality_and_risk_model() -> None:
     assert "Do not activate from PR presence" in convergent_flat
     assert "novelty, or risk" in convergent_flat
     assert "supported-risk candidate needs read-only judgment" in router
-    assert "High Assurance Review is an explicit user-selected heavy review" in router
+    assert re.search(
+        r"(?m)^\| The user explicitly requests high-assurance, heavy, or final review "
+        r"of one fixed complete code candidate \| `\$high-assurance-review` \|$",
+        router,
+    )
 
 
 def test_review_assurance_route_has_one_domain_decision() -> None:
@@ -3248,10 +3249,10 @@ def test_runtime_composition_edges_respect_lean_review_and_planning_policy() -> 
         caller == "wayfinder" and callee in {"domain-modeling", "implement", "to-spec"}
         for caller, _, callee in edges
     )
+    assert ("skill-router", "Recommend and stop", "high-assurance-review") in edges
     assert not any(
-        callee == "high-assurance-review" and caller in {
-            "skill-router", "implement", "parallel-implement", "change-review"
-        }
+        callee == "high-assurance-review"
+        and caller in {"implement", "parallel-implement", "change-review"}
         for caller, _, callee in edges
     )
     assert not any(
