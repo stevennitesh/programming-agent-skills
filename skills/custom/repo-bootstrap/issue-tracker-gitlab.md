@@ -55,12 +55,12 @@ representation. Use the fixed map and ticket labels from
 `docs/agents/triage-labels.md`; the map body follows `$wayfinder`'s
 `MAP-FORMAT.md`.
 
-Store `Participation:`, `Resolution owner:`, `Resolver:`, `Expected return:`,
-`Mutation boundary:`, and `Re-entry owner: $wayfinder` in the issue description. Represent fog as
-`Blocked: fog - <gist>` and an external return as
-`Blocked: waiting - <gist>` with its exact return record in a note. Store an
-active claim in the assignee plus `Claim token:` and `Claimed at:` description
-fields. Resolved and out-of-scope tickets close; blocked and waiting tickets
+Store `Type:`, `Decision owner:`, `Accept when:`, and any applicable
+`Mutation boundary:` in the issue description. Represent fog as
+`Blocked: fog - <gist> - sharpens when <evidence or decision>` and an external
+return as `Blocked: waiting - <gist>` with its exact owner and return condition
+in a note. Store an active claim in the assignee plus `Claim token:`.
+Resolved and out-of-scope tickets close; blocked and waiting tickets
 remain open. `$wayfinder` owns frontier selection, claim lifecycle, outcomes,
 and map completion.
 

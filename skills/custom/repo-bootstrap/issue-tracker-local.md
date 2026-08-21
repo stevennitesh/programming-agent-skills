@@ -45,12 +45,11 @@ Use `.scratch/<feature-slug>/wayfinder/map.md` with
 `Status: Open | Complete` and
 `.scratch/<feature-slug>/wayfinder/tickets/<NN>-<slug>.md` in map order.
 
-Each ticket stores `Part of: map.md`, `Type:`, `Participation:`,
-`Resolution owner:`, `Resolver:`, `Expected return:`, `Mutation boundary:`,
-`Re-entry owner: $wayfinder`, and
+Each ticket stores `Part of: map.md`, `Type:`, `Decision owner:`,
+`Accept when:`, and any applicable `Mutation boundary:`, plus
 `Status: Pending | In Progress | Resolved | Blocked | Waiting | Out Of Scope`.
 Store edges in `Blocked by:`, waiting return records under comments, and active
-claims in `Claimed by:`, `Claim token:`, and `Claimed at:`. Store resolution and
+claims in `Claimed by:` and `Claim token:`. Store resolution and
 scope notes under comments and decision pointers in the map. `$wayfinder` owns
 frontier selection, claim lifecycle, outcomes, and map completion.
 

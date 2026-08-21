@@ -1,9 +1,9 @@
 # Terminal Gap Routing
 
 Return `Route gap` with kind `multi-decision route` when the bounded interview
-cannot close in one conversation because several interdependent unresolved
-decisions or non-conversational prerequisites need a tracker-backed
-multi-session route. Preserve the intact bound, unresolved branches or
+cannot close in one conversation because several coupled unresolved questions
+or prerequisites, including at least one non-conversational resolver, need a
+tracker-backed multi-session route. Preserve the intact bound, unresolved branches or
 prerequisites, and impact. When active `$wayfinder` is the return owner, return
 the intact gap to it for graph reconciliation without recommending another
 Wayfinder. Otherwise recommend uninvoked `$wayfinder` and stop.

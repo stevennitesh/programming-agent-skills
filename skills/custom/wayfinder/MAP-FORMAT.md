@@ -1,126 +1,96 @@
-# Wayfinder Map Format
+# Wayfinder map format
 
-Persist these shapes. `SKILL.md` owns behavior; tracker docs own representation.
+Persist only decision state. `SKILL.md` owns behavior; the configured tracker
+guide owns provider representation.
 
 ## Map
 
 ```markdown
 ## Destination
 
-Destination owner: <owner>
-Outcome: <decision, settled source, or readiness>
-Route-closing condition: <observable condition>
-Terminal kind: settled source | terminal decision
-Return owner: <closure recipient>
-Predecessor: <closed map link or none>
-Post-Chart ticket allowance: <finite integer>
-Post-Chart tickets used: <integer and calculation>
-
-## Scope Boundary
-
-In: <scope>
-Out: <delivery and exclusions>
+Owner: <destination owner>
+Outcome: <decision or settled source>
+In scope: <bounded scope>
+Out of scope: <delivery and exclusions>
+Close when: <observable condition>
+Return to: <owner of the settled result>
 
 ## Notes
 
-<source, domain, constraint, skill, or standing-decision pointers; or None>
+<only pointers or standing constraints every session needs; or None>
 
-## Decisions So Far
+## Decisions so far
 
-- [<resolved ticket title>](link) - <one-line gist>
+- [<ticket title>](link) - <one-line answer gist>
 
-## Not Yet Specified
+## Not yet specified
 
-- Uncertainty: <unsharp in-scope uncertainty>
-  Owner: <who owns sharpening>
-  Sharpening source: <finite source>
-  Observable trigger: <evidence that permits reconsideration>
-  Fallback: <exclude, terminate, successor, or named blocker>
-  Affecting tickets: <links or none>
+- <unsharp in-scope uncertainty> - sharpens when <evidence or decision>
 
-When empty, write exactly:
-None - all remaining in-scope questions are ticket-owned.
+When empty, write `None`.
 
-## Out Of Scope
+## Out of scope
 
-- [<governing resolution, ticket, map, or successor>](link) - <reason>
+- [<ticket or decision>](link) - <reason>
 ```
 
 ## Ticket
 
 ```markdown
-Type: Research | Prototype | Diagnosis | Grilling | Questionnaire | Task
-Participation: HITL | AFK | external
-Resolution owner: <who settles it>
-Resolver: <resolver locked by SKILL.md>
-Expected return: <evidence or return permitting normalization>
-Mutation boundary: <allowed artifact or none>
-Re-entry owner: $wayfinder
+Type: Research | Prototype | Grilling | Questionnaire | Task
+Decision owner: <who can settle the question>
+Accept when: <evidence or attributable decision that answers the question>
+Mutation boundary: <allowed durable artifact or none, only when applicable>
 
 ## Question
 
 <one sharp one-session question>
+
+## Why this matters
+
+<how the answer changes the destination or route>
 ```
 
-After locking `Type`, load and append only its matching fields below. Diagnosis,
-Grilling, and Task append no additional type-conditioned fields.
+Represent dependencies through the configured tracker relationship mode, not a
+second body field.
 
-### Research Fields
-
-When `Type: Research`, append only:
+Append only fields that change authority or safe continuation:
 
 ```text
-Research note path and write mode: <approved repo-local path; create | update | none>
+Research note: <approved repo-local path and create | update | none>
+Prototype judgment: <named human judge or predeclared objective rule>
+Prototype evidence and run: <representative cases; bounded entry point; cleanup or custody>
+Questionnaire packet: <recipient; downstream decision; needed-back items; authorized path; answer-return destination; exact user re-entry>
 ```
 
-### Prototype Fields
-
-When `Type: Prototype`, append only:
-
-```text
-Judgment: human: <named judge> | rule: <predeclared objective rule>
-Representative evidence: <cases, variants, workload, or interactions>
-Run and cleanup: <entry point or smallest recipe; finite bound; authorized scratch or durable path; cleanup or accepted custody>
-```
-
-### Questionnaire Fields
-
-When `Type: Questionnaire`, append only:
-
-```text
-Questionnaire packet: <recipient; downstream decision; needed-back items; authorized durable path; answer-return destination; exact $to-questionnaire and Wayfinder re-entry instruction>
-```
-
-## Resolution Comment
+## Resolution
 
 ```markdown
-Status: resolved | blocked | waiting | out of scope
-Answer, blocker, wait, or scope condition: <normalized result>
-Condition owner: <owner or none>
-Observable trigger or intervention: <exact condition or none>
-Required return evidence: <evidence or none>
-Supersedes: <prior condition pointer or none>
-Authority: <owner or governing source>
-Evidence or assets: <links>
-Map implications: <pointers, edges, fog, allowance, or none>
-Residual: <uncertainty or none>
-```
-
-## Closing Packet
-
-```markdown
-Disposition: delivered | cancelled | superseded | out of scope
-Map/source owner: <link; owner>
-Destination/bound: <outcome; scope; exclusions>
-Closing route: <condition; terminal kind; return owner>
-Route-closing satisfaction: <cited evidence>
-Snapshot identity: <map, ticket, resolver-return, and tracker identities>
-Decisive resolutions: <links; owners>
-Coherence: <destination, dependency, contract, decision, and evidence result>
+Condition: resolved | waiting | blocked | out of scope
+Answer or condition: <answer, wait, blocker, or scope decision>
+Owner and return condition: <owner; observable trigger or intervention; or none>
 Evidence: <links>
-Growth allowance: <total; used; remaining; calculation>
-Residual: <exclusions; deferrals; uncertainty; or none>
-Proof/acceptance objectives: <items>
-Domain Delta: <intact packet or not applicable>
-Recovery or successor boundary: <pointer or none>
+Direct map consequences: <decision gist, dependencies, new question, fog, or none>
+Supersedes: <prior resolution pointer or none>
+```
+
+## Closing record
+
+```markdown
+Disposition: delivered
+Destination: <outcome and scope>
+Closing evidence: <cited evidence satisfying Close when>
+Decisions: <ticket links>
+Exclusions and residuals: <items or none>
+Return to: <owner>
+```
+
+## Termination record
+
+```markdown
+Disposition: cancelled | superseded | out of scope
+Confirmed by: <destination owner and evidence>
+Unresolved and preserved work: <ticket or evidence links>
+Recovery or successor: <pointer or none>
+Return to: <owner>
 ```

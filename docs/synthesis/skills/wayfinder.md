@@ -1,169 +1,147 @@
-# Wayfinder Current Runtime Synthesis
+# Wayfinder current runtime synthesis
 
 Status: current ownership and relationship reference. Runtime procedure remains
 in `skills/custom/wayfinder/`.
 
-The former broader Resume/Reopen, multi-budget, closure-generation proposal is
-preserved as [inactive design history](wayfinder-state-machine-proposal.md). It
-is not compatibility behavior, routing authority, or an extraction target.
+## Outcome and boundary
 
-## Outcome And Boundary
+Wayfinder clears one bounded multi-session decision route through a shared
+tracker map. It owns destination identity, question tickets, fog, dependencies,
+frontier choice, per-session claims, resolver selection, direct consequence
+reconciliation, and truthful finish.
 
-Wayfinder resolves one finite tracker-backed route from a bounded foggy
-destination to a coherent settled source or terminal decision. It owns map
-orientation, resolver classification, consequence reconciliation, fog and
-finite growth, map claims, closure coherence, and the terminal packet.
+The map is an index. Tickets own detailed questions, evidence, and decisions.
+Wayfinder never implements the destination, slices delivery work, or chooses a
+later delivery route.
 
-Tickets own one sharp decision or prerequisite. Resolver skills own their local
-admission, evidence or judgment, mutation boundary, and Return. Wayfinder
-normalizes the intact Return and remains the sole owner of map state and the
-next operation.
+Entry requires all of these:
 
-Wayfinder never delivers implementation. The successful chain is:
+- one bounded destination;
+- several coupled unresolved questions or prerequisites;
+- at least one non-conversational resolver; and
+- a real need for tracker-backed sequencing across sessions.
 
-```text
-$wayfinder -> recommend and stop -> $to-spec
-$to-spec -> recommend and stop -> $to-tickets
-$to-tickets -> recommend and stop -> $implement | $parallel-implement
-```
+Upstream skills recommend explicit Wayfinder and stop. One conversation, one
+resolver, settled source, implementation planning, and delivery remain outside
+its boundary.
 
-A terminal decision stops at Wayfinder. Closed maps never route directly to
-ticketing or implementation.
+## Runtime authority
 
-## Runtime Authority
-
-- `skills/custom/wayfinder/SKILL.md`: Orient, shared mutation and resolver
-  gates, reconciliation, exact operation pointers, and Return.
-- `skills/custom/wayfinder/references/`: the five operation procedures, loaded
-  only after Orient selects the matching operation.
-- `skills/custom/wayfinder/MAP-FORMAT.md`: durable map, ticket, fog, resolution,
-  growth, and closing fields; Research, Prototype, and Questionnaire extensions
-  enter only through their exact type-conditioned anchors.
+- `skills/custom/wayfinder/SKILL.md`: Bound, Chart, Advance, Reconcile, Finish,
+  and the sole completion condition.
+- `skills/custom/wayfinder/MAP-FORMAT.md`: lean persisted decision shapes.
+- `skills/custom/wayfinder/references/MUTATION.md`: loaded only before a durable
+  tracker write.
+- `skills/custom/wayfinder/references/RESOLVERS.md`: loaded only for the
+  selected ticket.
 - `skills/custom/wayfinder/agents/openai.yaml`: explicit-only invocation.
-- configured tracker `Wayfinding representation`: provider objects, labels,
-  relationships, claim storage, close primitives, and Mutation read-back.
-- `docs/synthesis/skill-context-relationships.md` and the embedded contract in
-  `docs/synthesis/skill-pack.md`: cross-skill verbs and handoff ownership.
+- configured tracker `Wayfinding representation`: provider operations, claim
+  storage, labels, relationships, and mutation read-back.
 
 No other Wayfinder package is runnable or manifest-tracked.
 
-## Gate And Operation Spine
-
-Every invocation begins at Orient and derives one operation or safe Return from
-current identity, integrity, frontier, liveness, blocker, closure, and terminal
-evidence.
+## Five-action loop
 
 ```text
-Orient
-├─ no map -> Chart
-├─ frontier or answer-bearing return -> Advance one ticket
-├─ deterministic drift or liveness change -> Maintain
-├─ coherent supported destination -> Closure
-├─ owner-confirmed unsuccessful terminal state -> Terminate
-└─ waiting | blocked | incompatible | closed -> Return
+Bound
+├─ no map and route earns durable sequencing -> Chart and stop
+├─ one open map with an eligible question -> Advance one ticket
+├─ no eligible question but exact wait or blocker -> return it
+└─ every obligation disposed -> Finish and stop
+
+Advance -> Reconcile -> read back -> release -> stop
 ```
 
-Chart, Advance, and Maintain use the shared Mutation Gate and Reconcile owner.
-Closure prepares Gather, Coherence, and Domain Modeling without a claim, then
-claims only for the drift-checked Seal. Terminate requires destination-owner
-confirmation and bypasses successful closure and To Spec.
+Chart works breadth-first. It creates tickets only for sharp questions and
+keeps unsharp in-scope uncertainty as fog with one sharpening condition. Among
+ready tickets, information value controls order: prefer the question most
+likely to unblock, invalidate, or reshape the route, then use map order.
 
-Orient loads exactly one selected operation procedure. It loads none for a
-safe no-mutation Return. Generic authority, claim acquisition and read-back,
-refresh, selected mutation, effects/frontier read-back, release, claim-absence
-proof, and re-orientation remain centralized in the inline Mutation Gate;
-operation files retain only their order and operation-specific drift rules.
+Advance resolves one ticket. Reconcile records one attributable answer, wait,
+blocker, or scope disposition and only its direct map consequences. A changed
+destination, wider scope, or material expansion returns for owner approval or a
+new map. No numeric growth allowance is persisted.
 
-Closed maps are immutable. Material later gaps require a successor Chart with
-an explicit predecessor pointer and explicit decision/evidence imports. Claims,
-frontier, growth, and lifecycle never transfer.
+Finish closes successfully only from current cited evidence satisfying the
+destination condition. Cancellation, supersession, and out-of-scope termination
+use a separate record and never claim successful closure.
 
-## Fog And Convergence
+## Mutation protection
 
-Fog is legal only while the question remains unsharp and the map records a
-finite sharpening source, owner, observable trigger, fallback, and affected
-tickets. Every affected fog item is retained, graduated, resolved, or excluded
-during Reconcile.
+Wayfinder uses a fresh unpredictable claim token because several sessions may
+share one tracker account. It claims the ticket before resolver work and the map
+only for the reconciliation or closing write. Another token remains foreign
+until the destination owner or provider administrator approves replacement;
+time alone never expires it.
 
-Chart approves one finite allowance for tickets created after Chart. Each new
-ticket consumes one. Exhaustion or destination change cannot silently widen the
-campaign; it returns for a new finite approval, Terminate, or successor.
+Chart detects a duplicate race by creating the map before children, repeating
+the destination search, and continuing only with one match. Reconcile refreshes
+only decision-bearing state after long resolver work. Unrelated comments do not
+create drift.
 
-The allowance is the only campaign budget. Outcome, correction, Reopen, and
-multi-counter compatibility machinery are deliberately absent.
+Every durable write reads back the changed items, affected dependencies,
+resulting frontier, and claim release. Failed or indeterminate writes are
+inspected before retry. Partial state is reported as applied, failed, and
+unknown with the safest recovery.
 
-## Resolver Composition
+## Resolver composition
 
 | Ticket | Relationship and boundary |
 | --- | --- |
-| Research | Invoke `$research`; pass the map use, scope, exact state, note path/write mode, Source Trace, and return owner. |
-| Prototype | Invoke `$prototype` with the complete resolver packet owned by `MAP-FORMAT.md`. |
-| Diagnosis | Return `diagnosis-required` and Wait. Diagnosis remains separately explicit; its attributable Return later re-enters Wayfinder. |
-| Grilling | Invoke `$grilling` for a conversation-only user decision or `$grill-with-docs` while domain capture is active. A nested Route gap returns to active Wayfinder without a self-recommendation. |
-| Questionnaire | Return the compact packet and exact `$to-questionnaire` instruction for explicit user invocation. Re-enter Advance with the verified artifact path, which becomes Waiting rather than an answer. |
-| Task | Inspect one objectively bounded repository or operational fact without durable mutation. |
+| Research | Invoke `$research` for one source-answerable question. |
+| Prototype | Invoke `$prototype` with a named human judge or objective rule. |
+| Grilling | Invoke `$grilling` for one conversation-only user decision, or `$grill-with-docs` when that decision also needs durable domain capture. |
+| Questionnaire | Recommend explicit `$to-questionnaire` and stop before claims or shared mutation. A returned path is waiting evidence, never an answer. |
+| Task | Establish one bounded prerequisite without durable mutation; a required human action becomes waiting. |
 
-Wayfinder maps supported answers to `resolved`, attributable external or human
-returns to `waiting`, exact gaps to `blocked`, governing scope evidence to `out
-of scope`, and malformed, unauthorized, mismatched, or non-admitted Returns to
-`incomplete` without shared mutation.
+Resolver skills own their method, evidence judgment, local mutation, and Return.
+Wayfinder accepts a result only when cited evidence or an attributable decision
+answers the selected question. It never copies a callee status blindly.
 
-## Handoff Rules
+## Durable shapes
 
-- Upstream skills recommend Wayfinder and stop; the user explicitly starts it.
-- Missing tracker capability recommends Repo Bootstrap and stops.
-- Resolver Returns always come back to Wayfinder; they never select another map
-  operation.
-- To Questionnaire is explicit-only. Wayfinder prepares its packet and stops;
-  it never invokes the leaf from context.
-- Domain Modeling runs only for an unaccounted durable consequence during
-  Closure and returns its complete Domain Delta.
-- Successful Closure recommends To Spec and stops.
+The map stores destination, scope, closing condition, return owner, only the
+pointers every session needs, linked decision gists, fog, and exclusions.
 
-## Deterministic Versus Judgment Ownership
+A ticket stores its type, decision owner, dependencies, acceptance evidence,
+one sharp question, why the answer matters, and a mutation boundary only when
+applicable. Type-derived resolver and participation fields and the constant
+Wayfinder re-entry field are not persisted.
 
-Provider and validator surfaces may check section schema, exact identity,
-frontier and dependency state, claim acquisition/release, UUID and timestamp
-shape, revision equality, allowance arithmetic, and mutation read-back. They
-return evidence only.
+Successful closure stores destination, closing evidence, decision links,
+exclusions or residuals, and return owner. Unsuccessful termination stores the
+confirming owner and evidence, unresolved or preserved work, recovery or
+successor pointer, and return owner.
 
-Wayfinder retains judgment over destination admission, sharp question versus
-fog, participation and resolver choice, evidence applicability, outcome
-normalization, consequence scope, coherence, termination, successor imports,
-and permission to close.
+## Active relationships
 
-## Proof Surface
+- Router, Grilling, Triage, and Audit Codebase recommend Wayfinder and stop only
+  on the complete entry predicate.
+- Wayfinder invokes Research, Prototype, Grilling, or Grill With Docs only for
+  one selected ticket.
+- Wayfinder recommends Repo Bootstrap only when required tracker setup is
+  missing.
+- Wayfinder recommends To Questionnaire only for explicit user invocation.
+- After Finish, Wayfinder returns to the named owner and starts no specification,
+  ticketing, implementation, or domain-persistence workflow.
 
-Structural proof should parse the embedded relationship contract, compare its
-Wayfinder-involved edges with the human index, validate persisted map fields,
-and ensure Wayfinding tracker fields occur inside their named section. Practical
-cases should cover:
+## Proof surface
 
-- duplicate-map refusal and map-first Chart creation;
-- fog sharpening and growth exhaustion;
-- Waiting and Blocked re-entry;
-- nested Grilling Route gap without a self-cycle;
-- questionnaire packet and explicit user re-entry;
-- commit-point drift with resolver evidence preserved;
-- independently selected Closure with route-closing evidence;
-- owner-confirmed Terminate; and
-- no direct delivery edge.
+Current proof should establish narrow admission, exact-map duplicate refusal,
+one-ticket progress, same-account claim exclusion, post-resolver drift fencing,
+claim-free explicit resolver re-entry, direct-only map growth, truthful waiting
+and blocking, distinct finish and termination records, evidence-backed closure,
+and verified claim absence.
 
-Historical transcripts and the inactive proposal are provenance, not fresh
-behavioral efficacy evidence.
+Exact wording, removed operation names, numeric allowance fields, and return
+taxonomies are not protected behavior.
 
-## Current Progressive-Disclosure Proof
+Historical validation and issue #88's progressive-disclosure evaluation remain
+evidence for the prior five-operation contract. They are not current runtime
+instructions or proof that those operations still earn their cost.
 
-Issue #88 froze the canonical Wayfinder package at tree SHA-256
-`e850538833a429ab5e8c05bbf3b24c1ccc914b94cf440b05fdfc18acd6316148`.
-The main surface fell from 2,080 to 1,394 words while retaining the five
-operation procedures behind exact pointers. Fresh isolated samples loaded only
-Chart, Advance, Maintain, Closure, or Terminate for the matching case, and only
-the applicable Research, Prototype, or Questionnaire field section. The same
-samples preserved the complete mutation transaction, foreign-claim protection,
-Chart creation exception, Advance dependency-drift abort, resolver and re-entry
-ownership, and terminal Return.
+## Current reconciliation
 
-The exact identities, per-sample ledger, wrong-condition controls, deviations,
-and residual limits are recorded in the
-[progressive-disclosure evaluation](../../validation/skills/wayfinder/evals/EV-wayfinder-grilling-progressive-disclosure-20260819-01/evidence/2026-08-19-wayfinder-grilling-progressive-disclosure-eval.md).
+Pack composition revision 30 and machine contract revision 18 own the current
+runtime projection. Canonical Wayfinder package tree SHA-256:
+`e328530ff7969a3313986ae3490885be9cd309be87dff648759eada9636c3509`.

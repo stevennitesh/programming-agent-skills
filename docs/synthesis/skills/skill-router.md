@@ -337,9 +337,9 @@ Every custom destination appears exactly once in this taxonomy except Skill Rout
 
 Provisionally select `$wayfinder` only when all are supported by current evidence:
 
-1. one bounded destination remains foggy;
-2. at least two interdependent material decisions remain unresolved;
-3. at least one decision needs non-conversational work such as source evidence, a runnable probe, diagnosis, repository proof, an external response, an executable prerequisite, or a durable artifact; and
+1. one destination is bounded;
+2. several coupled questions or prerequisites remain unresolved;
+3. at least one needs non-conversational work such as source evidence, a runnable probe, repository proof, an external response, an executable prerequisite, or a durable artifact; and
 4. resolving the set requires durable tracker-backed sequencing across sessions.
 
 Question count, project size, severity, session count, generic uncertainty, or the word “roadmap” never independently qualifies.

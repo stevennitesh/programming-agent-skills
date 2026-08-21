@@ -48,9 +48,6 @@ flowchart TD
   Wayfinder -. "explicit user re-entry" .-> Questionnaire
   Wayfinder --> Prototype["prototype"]
   Wayfinder --> Research["research"]
-  Wayfinder -. "closed settled source" .-> ToSpec
-  Wayfinder -. "one settled bounded implementation" .-> Implement
-  Wayfinder --> DomainModel
   Prototype -. "promotion or production proof" .-> Contract
 
   Shape --> ToSpec["to-spec"]
@@ -210,17 +207,14 @@ Return.
 | `grilling` | Recommend and stop | `$prototype` | A design evidence gap needs a runnable verdict. |
 | `grilling` | Recommend and stop | `$to-questionnaire` | An identifiable external stakeholder owns evidence that must be collected asynchronously. |
 | `grilling` | Recommend and stop | `$handoff` | The intact gap must cross into a fresh context; preserve its evidence or decision owner and use Handoff only as transport. |
-| `grilling` | Recommend and stop | `$wayfinder` | The bounded interview cannot close in one conversation because several interdependent unresolved decisions or non-conversational prerequisites need a tracker-backed multi-session route, and active Wayfinder is not the return owner. An active Wayfinder receives the intact Route gap directly for graph reconciliation. |
+| `grilling` | Recommend and stop | `$wayfinder` | A bounded destination has several coupled unresolved questions or prerequisites, including at least one non-conversational resolver, and needs tracker-backed multi-session sequencing; active Wayfinder is not the return owner. An active Wayfinder receives the intact Route gap directly for graph reconciliation. |
 | `to-questionnaire` | Recommend and stop | `$research` | Claim-owning sources can answer the gap. |
 | `to-questionnaire` | Recommend and stop | `$grilling` | The current user owns the unresolved conversation-only decision. |
-| `wayfinder` | Invoke | `$research` | Pass the question, supported map use, scope, exact state, approved note path and write mode, and Wayfinder return owner; normalize the intact answer or blocker. |
-| `wayfinder` | Invoke | `$prototype` | Pass the question, resolution and return owners, named human judge or predeclared objective rule, representative evidence, mutation boundary with authority evidence, run bound, cleanup or accepted custody, and Wayfinder re-entry; normalize the intact answer or residual. |
-| `wayfinder` | Invoke | `$grilling` | One HITL ticket or Chart bound needs a conversation-only user decision; receive the intact decision or gap packet and retain map ownership. |
-| `wayfinder` | Invoke | `$grill-with-docs` | One HITL ticket or Chart bound needs a user decision while durable domain capture remains active; receive the intact Grilling packet and Domain Delta. |
+| `wayfinder` | Invoke | `$research` | One selected ticket needs claim-owning source evidence. Pass its question, map use, scope, applicable state, approved note path or no-write mode, and Wayfinder return owner. |
+| `wayfinder` | Invoke | `$prototype` | One selected ticket needs runnable evidence. Pass its question, decision owner, named human judge or objective rule, representative evidence, bounded run, mutation authority, and cleanup or custody. |
+| `wayfinder` | Invoke | `$grilling` | One selected ticket needs a conversation-only user decision with no durable domain consequence; receive the intact decision or gap. |
+| `wayfinder` | Invoke | `$grill-with-docs` | One selected user decision also requires durable domain capture; receive the intact decision and Domain Delta. |
 | `wayfinder` | Recommend and stop | `$to-questionnaire` | One external Questionnaire prerequisite needs asynchronous attributable answers. Return the recipient, downstream decision, needed-back items, authorized durable path, answer-return destination, and exact `$to-questionnaire` and Wayfinder re-entry instruction. A verified path returns as Waiting, never as an answer. |
-| `wayfinder` | Invoke | `$domain-modeling` | A settled closing decision changes durable domain truth or yields an already-settled ADR candidate, and no current Domain Delta accounts for it; return the complete Domain Delta before Closure continues. |
-| `wayfinder` | Recommend and stop | `$implement` | The closed map produced one settled bounded implementation and no durable parent contract is useful. |
-| `wayfinder` | Recommend and stop | `$to-spec` | The closed map produced settled parent-spec source. |
 | `wayfinder` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `to-spec` | Load | `$codebase-design` | The source delegates one consequential unresolved architecture question about ownership, data shape, interface, state or failure policy, seam, or migration. Fold the recommendation, retain judgment, or exact gap into the specification. To Spec retains artifact and completion; gaps return `source-gap`. |
 | `to-spec` | Recommend and stop | `$implement` | The settled source is one bounded complete implementation and a durable parent contract would add no useful coordination or lasting decision record. |
@@ -255,7 +249,7 @@ Return.
 | `audit-codebase` | Recommend and stop | `$prototype` | One selected candidate has an unresolved runnable-evidence question needing a disposable probe or comparative design measurement; Audit publishes an exact report-backed pickup and leaves Prototype unstarted. |
 | `audit-codebase` | Recommend and stop | `$to-questionnaire` | One identifiable external stakeholder holds candidate knowledge unavailable from sources or the current user; Audit publishes an exact report-backed pickup and leaves questionnaire creation unstarted. |
 | `audit-codebase` | Load | `$codebase-design` | During Analyze of one selected design or mixed candidate after user decisions settle, resolve its one bounded architecture question and fold the result into the HTML. Audit retains artifact and completion and creates no second design step. |
-| `audit-codebase` | Recommend and stop | `$wayfinder` | Multiple interdependent unresolved candidate decisions or prerequisites need a configured tracker-backed route; Audit publishes an exact pickup and leaves Wayfinder unstarted. |
+| `audit-codebase` | Recommend and stop | `$wayfinder` | One bounded destination has several coupled unresolved questions or prerequisites, at least one non-conversational resolver, and needs tracker-backed multi-session sequencing; Audit publishes an exact pickup and leaves Wayfinder unstarted. |
 | `audit-codebase` | Recommend and stop | `$to-spec` | One analyzed candidate has settled direction and commitments but needs a durable parent specification; Audit publishes an exact report-backed pickup and leaves specification work unstarted. |
 | `audit-codebase` | Invoke | `$to-tickets` | The generated candidate Analyze prompt includes To Tickets and the candidate is implementation-ready. Without that exact authority Audit publishes `authority-required`, returns its linked Analyze re-entry, and invokes nothing. With authority, To Tickets returns a ready/reused graph or recovery state. |
 | `audit-codebase` | Recommend and stop | `$simplify-code` | One analyzed candidate has a bounded behavior-preserving reduction, current report identity, supported behavior, Source Trace, and proof seam; Audit publishes an exact report-backed pickup and leaves simplification unstarted. |
@@ -263,9 +257,9 @@ Return.
 | `codebase-design` | Recommend and stop | `$audit-codebase` | The request needs codebase-wide mapping and improvement discovery. |
 | `handoff` | Recommend and stop | `$repo-bootstrap` | The exact Handoff target cannot be proved ignored because the disposable-artifact setup is missing or incompatible; return the mismatch without a pickup and leave Repo Bootstrap unstarted. |
 
-Wayfinder invokes Domain Modeling once for an uncovered settled closing
-consequence; Audit Codebase recommends it and stops for user-selected settled
-capture. Domain Modeling remains a leaf: direct use may ask focused
+Wayfinder returns its settled source or terminal record without choosing a
+downstream workflow. Audit Codebase recommends Domain Modeling and stops for
+user-selected settled capture. Domain Modeling remains a leaf: direct use may ask focused
 domain-expert questions, composed use receives settled answers from Grilling,
 and every residual returns to the user or caller without invoking Skill
 Router, its composer, or downstream execution. Prototype likewise returns
@@ -283,7 +277,7 @@ every terminal result directly to its current caller or the user.
 | `docs/agents/triage-labels.md` | Category/state role mappings and fixed Wayfinder labels | `to-tickets`, `triage`, `implement`, `parallel-implement`, `wayfinder` |
 | `docs/agents/domain.md` | Context-sensitive routing plus the preserve-or-return posture for domain language, invariants, relationships, and ADR conflicts | `to-spec`, `triage`, `tdd`, `diagnosing-bugs`, `codebase-design`, `audit-codebase`, `parallel-implement` |
 | `docs/agents/engineering-contract.md` | Shared engineering judgment: bounded slices, causal ownership, explicit data shapes, small interfaces, local state, subtractive design, native capabilities, root-cause correction, trust-boundary validation, displaced-path removal, proportional proof, and concrete protection triggers. Skills retain procedures, checks, stopping conditions, and outputs. | `to-spec`, `to-tickets`, `implement`, `tdd`, `diagnosing-bugs`, `codebase-design`, `prototype`, `simplify-code`, `audit-codebase`, `parallel-implement`, `resolving-merge-conflicts`, `change-review`, `high-assurance-review` |
-| `domain-modeling` | Resolves project-specific domain semantics; reconciles proposed wording with routed current truth; returns the authoritative cumulative Domain Delta when composed; persists routed context records only with write authority; and records an already-settled ADR candidate only with separate approval | `skill-router`, `grill-with-docs`, `wayfinder`, `audit-codebase`, `repo-bootstrap` |
+| `domain-modeling` | Resolves project-specific domain semantics; reconciles proposed wording with routed current truth; returns the authoritative cumulative Domain Delta when composed; persists routed context records only with write authority; and records an already-settled ADR candidate only with separate approval | `skill-router`, `grill-with-docs`, `audit-codebase`, `repo-bootstrap` |
 | `codebase-design` | One bounded module or interface architecture decision using deep-module, caller-first, data-shape, ownership, seam, migration, and proof judgment | `to-spec`, `audit-codebase`, direct architecture/design work |
 | `research` | Claim-owning source legwork and one authorized cited note or verified inline evidence | `skill-router`, `grilling`, `wayfinder` |
 | `to-questionnaire` | One recipient-ready async discovery artifact for one external stakeholder and downstream decision | `skill-router`, `grilling`, `wayfinder`, humans collecting stakeholder evidence |
@@ -303,7 +297,7 @@ every terminal result directly to its current caller or the user.
 | `prototype` | `LOGIC.md`, `UI.md`, and `MEASURE.md`: decision-bearing branch mechanics. One decision branch loads; `SKILL.md` owns the universal lifecycle, reconciliation, and Return. |
 | `triage` | `ATTENTION-SCAN.md`, `SPECIFIC-ITEM.md`, `QUICK-OVERRIDE.md`: branch procedures; `AGENT-BRIEF.md`: agent/human ready brief, branch emphasis, and Ready Gate; `OUT-OF-SCOPE.md`: rejected-work knowledge base |
 | `repo-bootstrap` | Tracker, label, domain, and engineering-contract seeds; optional repo-local parallel-lane permission and agent setup; `setup-schema.json`: aggregate compatibility fingerprint; `scripts/validate_setup.py`: target-repo structural compatibility validation |
-| `wayfinder` | `MAP-FORMAT.md`: canonical map and ticket shape, empty-fog sentinel, and exclusion pointers; `SKILL.md`: Chart, Advance, Maintain, Closure, and foggy map lifecycle semantics |
+| `wayfinder` | `MAP-FORMAT.md`: lean map, ticket, resolution, closing, and termination shapes; `references/MUTATION.md`: claim and durable-write protection; `references/RESOLVERS.md`: selected-ticket routing and return interpretation |
 | `research` | Seven conditional evidence references; one authorized cited Markdown note or cited inline result |
 | `resolving-merge-conflicts` | `OPERATIONS.md`: branch-only operation roles, conflict classes, finish checks, and recovery decisions; `SKILL.md`: universal State/Trace/Reconcile/Prove/Finish contract, authority, typed Return, and completion |
 | `change-review`, `high-assurance-review` | `change-review/FINDING-CONTRACT.md`: evidence-backed finding admission, concise severity, and no-authority boundary |
@@ -319,20 +313,18 @@ every terminal result directly to its current caller or the user.
 - The bundled system `skill-creator` owns new-package scaffolding and metadata mechanics. `$writing-for-agents` owns the instructions agents consume and their directly affected pointers, including semantic invocation wording for existing skills. It stops before metadata mechanics, installation, or delivery.
 - Setup docs own tracker, labels, domain routing, and engineering-contract details. Skills should point there instead of restating those mechanics.
 - `$grill-with-docs` owns composition and preserves the intact Grilling packet
-  and cumulative Domain Delta. Wayfinder invokes Domain Modeling separately
-  only for an uncovered settled consequence during Closure.
+  and cumulative Domain Delta. Wayfinder uses it only for a selected decision
+  whose durable domain consequence is already active.
 - `$to-questionnaire` owns one verified artifact, not delivery or continuation.
   Wayfinder prepares its packet and stops for explicit user invocation, then
   owns Waiting and answer reconciliation after the artifact path returns.
 - `domain-modeling` is the only skill that writes `CONTEXT.md`, `CONTEXT-MAP.md`, or approved ADR truth; `repo-bootstrap` configures and verifies routing before persistence across a required topology transition, and vocabulary consumers follow `docs/agents/domain.md`.
 - `to-spec` owns final source admission, parent spec synthesis, and tracker publication. Grilling confirms shared understanding but neither certifies source readiness nor drafts or publishes. `to-tickets` owns implementation issue slicing.
-- `wayfinder` owns finite foggy multi-session maps, ticket classification,
-  frontier selection, claim lifecycle and takeover, resolver selection, Waiting
-  and outcome reconciliation, consequence-only Maintain repairs, fog
-  disposition, completion, and the compact closing packet. Tracker docs own
-  provider representation, transport primitives, and mutation read-back. Each
-  resolver owns its local gates and Return; none chooses the map outcome or
-  downstream route.
+- `wayfinder` owns finite foggy multi-session decision maps, frontier selection,
+  per-session claims, resolver selection, direct consequence reconciliation,
+  and evidence-backed finish or termination. Tracker docs own provider
+  representation and transport. Each resolver owns its local gates and Return;
+  none chooses the map outcome or a later delivery route.
 - `research` owns one bounded source question, claim-owning evidence judgment,
   and one authorized cited note or cited inline result. It reports a mismatch
   without choosing the next route. A user request or caller packet must

@@ -22,7 +22,7 @@ REQUIRED_FILES = (
     "docs/agents/engineering-contract.md",
 )
 
-SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:d8b501d28404 -->"
+SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:c5f2a1bdebda -->"
 SETUP_SCHEMA_MARKER_RE = re.compile(
     r"<!-- programming-agent-skills setup-schema: \d+:[0-9a-f]{12} -->"
 )
@@ -61,14 +61,11 @@ WORK_ITEM_TOKENS = (
     "## Mutation read-back",
 )
 WAYFINDER_TOKENS = (
-    "Participation:",
-    "Resolution owner:",
-    "Resolver:",
-    "Expected return:",
+    "Type:",
+    "Decision owner:",
+    "Accept when:",
     "Mutation boundary:",
-    "Re-entry owner: $wayfinder",
     "Claim token:",
-    "Claimed at:",
 )
 
 HOSTED_WAYFINDER_TOKENS = (
@@ -103,7 +100,6 @@ LABEL_TOKENS = (
     "`wayfinder:map`",
     "`wayfinder:research`",
     "`wayfinder:prototype`",
-    "`wayfinder:diagnosis`",
     "`wayfinder:grilling`",
     "`wayfinder:questionnaire`",
     "`wayfinder:task`",

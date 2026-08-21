@@ -31,7 +31,7 @@ Choose the first unresolved work, not an eventual workflow:
 | One current-user decision that also requires domain-record maintenance | `$grill-with-docs` |
 | One conversation-only current-user decision | `$grilling` |
 | One identifiable external stakeholder holding unavailable knowledge | `$to-questionnaire` |
-| Multiple interdependent unresolved decisions or prerequisites | `$wayfinder` |
+| A bounded destination has several coupled unresolved questions or prerequisites, including a non-conversational resolver, and needs tracker-backed multi-session sequencing | `$wayfinder` |
 | Settled direction and commitments needing a parent specification | `$to-spec` |
 | One bounded behavior-preserving reduction | `$simplify-code` |
 | Disproved candidate or no justified route | `none` |

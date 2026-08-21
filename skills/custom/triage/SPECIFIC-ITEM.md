@@ -42,8 +42,9 @@ Recommend explicit `$grilling` for a conversation-only scope, acceptance, or
 tradeoff decision. Recommend explicit `$grill-with-docs` when the decision may
 change durable domain terms, Invariants, Context Relationships, or an ADR.
 
-When the destination is bounded but several interdependent decisions or
-non-conversational prerequisites remain, return their intact identities,
+When a bounded destination has several coupled unresolved questions or
+prerequisites, including at least one non-conversational resolver, and needs
+tracker-backed multi-session sequencing, return their intact identities,
 recommend explicit `$wayfinder`, and stop.
 
 Resume the same item in a later Triage invocation with the intact result. Add

@@ -333,7 +333,8 @@ Protected before H1 evaluation:
 
 Relationship topology delta is `none`; the existing Load now includes the
 bounded Direct Design branch. Current relationship owners remain:
-Wayfinder and Improve Codebase may recommend `$to-spec` and stop;
+Improve Codebase may recommend `$to-spec` and stop; a direct caller may supply
+a closed Wayfinder map as a settled source;
 `to-spec` may Load `$codebase-design`; `to-spec` may recommend
 `$repo-bootstrap` or `$to-tickets` and stop. Direct user invocation may supply
 the other checkpoint-approved source forms without creating a new runtime edge.

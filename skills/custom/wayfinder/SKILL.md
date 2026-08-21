@@ -1,181 +1,101 @@
 ---
 name: wayfinder
-description: Resolve one bounded, interdependent foggy effort through a tracker-backed decision map, then return a coherent settled source or terminal decision.
+description: Coordinate one bounded destination whose interdependent decision questions need tracker-backed multi-session resolution. Exclude one-session decisions, settled specifications, implementation planning, and delivery.
 ---
 
 # Wayfinder
 
-Resolve one finite, foggy, multi-session effort. Own its map, resolver routing,
-reconciliation, and terminal packet. Tickets answer questions and prerequisites;
-they never deliver the destination.
+Clear one bounded, foggy decision route through a shared tracker map. The map is
+an index. Tickets own the questions, evidence, and decisions. Wayfinding plans;
+it never implements the destination.
 
-## Model
+An invocation charts a map, advances one ticket, or finishes the route. It does
+not do more than one of those.
 
-- **Destination:** owner, outcome, scope, exclusions, route-closing condition,
-  terminal kind, and return owner.
-- **Map:** orientation index; tickets own detail.
-- **Frontier:** `Pending`, dependency-unblocked, unclaimed tickets in map order;
-  Waiting and Blocked enter only through their evidence-qualified Orient rows.
-- **Fog:** one in-scope uncertainty without a sharp question, tethered to a
-  finite sharpening source, owner, trigger, and fallback.
-- **Operation result:** what this invocation accomplished.
-- **Map condition:** `active | waiting | blocked | closeable | closed`.
+## Bound
 
-Use linked titles for people; use provider IDs only for tracker operations.
-Keep every sharp question in a ticket, even when blocked.
+Load the configured tracker `Wayfinding representation` and labels. Name one
+destination with its owner, outcome, in and out boundary, observable closing
+condition, and return owner.
 
-## Orient
+Use Wayfinder only when several coupled questions or prerequisites, including
+at least one non-conversational resolver, need durable sequencing across
+sessions. If one conversation, one resolver, or settled source can finish the
+work, return `not needed` with the smaller need and do not create a map.
 
-Load the tracker `Wayfinding representation` and, when hosted labels apply,
-`Wayfinding Labels`. Freeze its parent/child and dependency modes. Require
-inspect and read-back before resolving map identity. Missing or incompatible
-inspection setup recommends `$repo-bootstrap` and stops before mutation.
+Search open and closed maps for the exact destination. Return a closed map's
+record unchanged. Several matches are an identity conflict. With one open map,
+read its current questions, dependencies, claims, decisions, fog, and scope.
+With no match, continue to Chart.
 
-Search open and closed maps for the exact destination tuple. One open match
-supplies current state; several open matches return the identity conflict. With
-no open match, select exactly one branch: a successor may enter Chart only with
-one explicitly selected closed predecessor, one material new gap, explicit
-imports, and zero maps matching the destination tuple plus predecessor; one
-explicitly selected closed match returns its immutable packet; zero closed
-matches may enter initial Chart. Any other ambiguity returns without mutation.
-For one map derive:
+## Chart
 
-- **Integrity:** `verified`, `repairable-drift` when accepted evidence permits
-  exactly one consequence-only correction, or `incompatible` otherwise.
-- **Condition:** use this precedence.
+Work breadth-first. Create one ticket for each question or prerequisite that is
+sharp now. A ticket must be resolvable by a fresh agent from its own question,
+importance, owner, dependencies, and acceptance evidence. Keep an in-scope
+uncertainty as fog only while the question cannot yet be stated sharply; name
+the evidence or decision that would sharpen it.
 
-| Evidence | Next operation or return |
-| --- | --- |
-| Map is closed | Return its immutable closing packet. |
-| Integrity is incompatible | Return the exact owner or setup precondition. |
-| Integrity is repairable-drift | Maintain. |
-| Destination owner confirms cancellation, supersession, or out-of-scope termination | Terminate. |
-| A frontier ticket exists | Advance. |
-| A Waiting or Blocked ticket has evidence that can answer it | Advance that ticket. |
-| A recorded trigger or intervention changes only readiness or fog sharpness | Maintain. |
-| Unresolved external triggers remain | Return `waiting` with their owners and required evidence. |
-| An authority, capability, growth, or prerequisite blocker remains | Return `blocked` with its intervention. |
-| No unresolved ticket, fog, wait, or blocker remains and cited evidence satisfies the route-closing condition | Closure. |
-| None applies | Return `incomplete` with the state gap. |
+Order dependency-ready tickets by how much they can unblock, invalidate, or
+reshape the remaining route. Use map order as the tie-breaker.
 
-After Orient selects one operation, load only its procedure:
+Show the destination owner one concise packet conforming to
+[MAP-FORMAT.md](MAP-FORMAT.md). After exact approval, read
+[Mutation](references/MUTATION.md), create the map first, repeat the identity
+search, then create its tickets and edges. Complete mutation read-back of the
+graph and stop.
 
-- `Chart`: [CHART.md](references/CHART.md)
-- `Advance`: [ADVANCE.md](references/ADVANCE.md)
-- `Maintain`: [MAINTAIN.md](references/MAINTAIN.md)
-- `Closure`: [CLOSURE.md](references/CLOSURE.md)
-- `Terminate`: [TERMINATE.md](references/TERMINATE.md)
+## Advance
 
-Do not load any unselected operation procedure.
+Select a named eligible ticket or the highest-value unclaimed frontier ticket.
+Read [Resolvers](references/RESOLVERS.md) only for the selected ticket. When an
+explicit-only resolver first needs user action, return its exact packet and
+re-entry instruction before any claim or shared mutation. Otherwise, before
+resolver work, read [Mutation](references/MUTATION.md), claim the ticket, and
+freeze only the question, owner, resolver route, dependencies, eligibility,
+destination, and scope.
 
-After selecting one operation and excluding its no-mutation Returns, require
-only its create, update, link, close, claim, release, and read-back
-capabilities, including an exclusive claim route with an observable losing-race
-result when that operation claims state. A no-mutation Return requires none of
-those mutation capabilities. Missing or incompatible selected-operation setup
-recommends `$repo-bootstrap` and stops before mutation.
-
-Run exactly one selected operation and return its verified result. A later
-invocation re-orients from read-back state and may independently select Closure.
-
-## Mutation Gate
-
-For each invocation generate fresh `codex/<lowercase UUIDv4>` and
-`<YYYY-MM-DDTHH:MM:SSZ>` claim values. Reuse them for its ticket and map, never
-across invocations. A different token owns an item even for the same actor;
-elapsed time alone never makes a claim stale. Replace another token only with
-explicit approval from an affirmed destination owner or provider administrator,
-after recording the old claim, approver authority, and reason.
-
-**Mutation read-back.** Every non-exception mutation uses one transaction:
-verify authority and captured state; acquire every operation-required claim and
-read back ownership; refresh decision-bearing state; apply only the selected
-change; read back all direct effects and frontier; release every claim; verify
-claim absence; Orient. Refresh an indeterminate result before any retry.
-Unverified effects return `incomplete` with verified, failed, and unknown state.
-
-Chart is the only pre-claim exception: approve the exact packet, confirm zero
-matches for its initial or successor identity, create only the map, repeat
-identity search, then claim the sole created canonical map before children or
-edges.
-
-Advance freezes the map identity and open state, selected ticket contract and
-claim, dependency identities, and frontier eligibility before resolver work.
-After acquiring the map claim, require those fields unchanged except for this
-invocation's ticket claim. Drift records no tracker outcome or map mutation;
-release both claims and verify their absence, preserve and report resolver
-evidence and effects within the frozen mutation boundary, and return the
-conflict.
-
-## Resolver Gate
-
-Each ticket locks one type, participation, resolution owner, resolver, expected
-return, mutation boundary, and `$wayfinder` re-entry:
-
-| Type | Participation and resolver |
-| --- | --- |
-| Research | AFK; `$research` with the question, supported map use, scope, exact state, Source Trace, Wayfinder return owner, and [Research fields](MAP-FORMAT.md#research-fields). |
-| Prototype | HITL or AFK; `$prototype` with [Prototype fields](MAP-FORMAT.md#prototype-fields). |
-| Diagnosis | AFK after explicit separate start; return `diagnosis-required` with evidence, environment, exact state, authorities, and Wayfinder as return owner. |
-| Grilling | HITL; `$grilling` for a conversation-only user decision, or `$grill-with-docs` while durable domain capture remains active. |
-| Questionnaire | External; return its [Questionnaire fields](MAP-FORMAT.md#questionnaire-fields) for the user to invoke `$to-questionnaire`, then re-enter Advance with the artifact path. |
-| Task | AFK for one bounded objectively provable repository or operational fact; HITL only for required live human action; no durable mutation. |
-
-A Prototype ticket with a named human judge uses HITL. One with a predeclared
-objective rule may use AFK. Its mutation boundary transports named authority
-evidence; it does not create authority.
-
-Wayfinder normalizes the intact resolver Return; it never copies callee status
-labels blindly:
-
-| Return evidence | Map effect |
-| --- | --- |
-| Supported answer, confirmed decision, or objective verdict | `resolved` |
-| Intact Research `conflicted` | `blocked` with the conflict owner and one observable intervention; never `resolved` or generic `incomplete` |
-| Verified questionnaire path, human verdict wait, or `diagnosis-required` | `waiting` with owner, trigger, and required evidence |
-| Advance receives nested Grilling `Route gap` | Keep the ticket blocked on the admitted replacement graph; never recommend Wayfinder to itself |
-| Chart receives a Grilling decision or `Route gap` | Treat it as claim-free proposed Chart input; record no ticket outcome or map mutation, and require exact approval of the resulting packet |
-| Exact evidence, authority, setup, or prerequisite gap | `blocked` with one intervention |
-| Governing evidence places the question outside the destination | `out of scope` |
-| Missing approval, malformed or mismatched return, transport failure, or callee non-admission | `incomplete`; release claims, record no tracker outcome or map mutation, and report any frozen-boundary resolver effects |
-
-A verified questionnaire path is Waiting, never an answer. Only matching
-attributable answers can resolve it. Return the packet and exact instruction to
-invoke `$to-questionnaire`, then re-enter Wayfinder Advance with the artifact
-path. Wayfinder never invokes the explicit-only skill or mutates shared state
-while waiting for that return.
+Resolve that question through its owner. Accept cited source evidence, a
+runnable verdict, or an attributable human decision only when it answers the
+ticket as written. A summary, questionnaire path, malformed return, or
+unsupported status is not an answer.
 
 ## Reconcile
 
-Record one normalized result and only its direct consequences. Give each
-affected fog item one disposition: **retain** with its tether, **graduate** into
-one or more sharp tickets, **resolve** through linked evidence, or **exclude**
-with a governing pointer.
+Claim the map for the short reconciliation step and reread the frozen fields.
+On material drift, preserve the resolver evidence, record no ticket outcome,
+release the claims, and return the conflict.
 
-Chart freezes one destination-owner-approved post-Chart ticket allowance,
-defaulting to the number of initial fog items. Every later ticket creation
-consumes one; other state changes consume none. Add only in-scope obligations
-caused by accepted evidence. Exhaustion, destination change, or unsupported
-growth returns `blocked` for a new finite approval, Terminate, or successor.
-Never invoke another resolver while reconciling.
+Otherwise record one answer, wait, blocker, or out-of-scope result and only its
+direct map consequences. Detailed evidence stays in the ticket; the map gets a
+linked one-line gist. Add a ticket only when accepted evidence exposes a new
+sharp in-scope question needed for closure. A changed destination, wider scope,
+or material expansion of the remaining effort needs destination-owner approval
+or a new map.
 
-## Return
+Read back the affected ticket, map, dependencies, and frontier. Release every
+claim, verify absence, and stop. Never retain a claim across an external or
+user wait.
 
-Return only applicable fields:
+## Finish
 
-```text
-Operation result: oriented | charted | advanced | maintained | closed | terminated | not-needed | incomplete
-Map condition: active | waiting | blocked | closeable | closed
-Map and operation:
-Destination and integrity:
-Selected ticket and normalized outcome:
-Evidence and direct changes:
-Growth allowance: total | used | remaining
-Domain Delta: <intact packet or not applicable>
-Claims: <verified release or exact conflict>
-Next admission: <frontier ticket | trigger | intervention | Closure | successor | none>
-Suggested owner: <one uninvoked skill or user action, or none>
-```
+When questions or fog remain, return the next frontier ticket, exact wait, or
+blocker with its owner and observable return condition.
 
-When a frontier remains, end with `Next frontier: [<ticket title>](<link>).
-Invoke $wayfinder to advance it.`
+Close successfully only when every in-scope question and fog item has a
+disposition and current cited evidence satisfies the closing condition. Post
+the concise closing record from [MAP-FORMAT.md](MAP-FORMAT.md), close through
+[Mutation](references/MUTATION.md), read back closed state, and stop.
+
+For owner-confirmed cancellation, supersession, or out-of-scope termination,
+use the separate termination record. Do not claim route-closing satisfaction.
+Closed maps are immutable.
+
+Wayfinder returns the map, what changed, decisive evidence, the next question
+or condition, and verified claim state. After Finish it starts no downstream
+skill.
+
+Completion requires the exact map to be closed, every in-scope obligation to
+have an evidence-backed disposition, the approved destination condition to be
+satisfied or truthfully terminated, no claim to remain, and the terminal record
+to be read back.

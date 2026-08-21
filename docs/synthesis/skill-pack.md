@@ -128,6 +128,12 @@ Revision 29 materializes machine contract revision 17 by rewriting To
 Questionnaire as Identify, Draft, and Write. It removes the default transaction
 protocol and typed return, keeps one-recipient coverage and overwrite protection,
 and changes Wayfinder's impossible explicit-only invocation into user re-entry.
+Revision 30 materializes machine contract revision 18 by rewriting Wayfinder as
+Bound, Chart, Advance, Reconcile, and Finish. It removes the operation and map
+status taxonomies, numeric growth allowance, successor protocol, derived ticket
+fields, automatic closure routing, and five operation files while retaining
+exact identity, one-ticket progress, per-session claims, drift fencing,
+read-back, distinct termination, and evidence-backed closure.
 It binds the complete fingerprinted pre-discovery fixed point, then freezes the
 tested environment, finite research order, capability
 owners, roles, relationships, exclusions, resolved collisions, acceptance
@@ -639,10 +645,10 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "SK-020"
       ],
       "capability_id": "CAP-021",
-      "completion_return": "A verified frontier result, wait, settled source, or terminal decision",
+      "completion_return": "A current frontier, exact wait or blocker, settled source, or truthful terminal decision",
       "disposition": "selected",
       "entry_conditions": [
-        "One bounded destination has several interdependent material decisions or prerequisites, at least one non-conversational resolver, and needs tracker-backed multi-session sequencing"
+        "One bounded destination has several coupled questions or prerequisites, at least one non-conversational resolver, and needs tracker-backed multi-session sequencing"
       ],
       "essential": true,
       "exclusions": [
@@ -650,11 +656,11 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Unbounded foreign procedure loading",
         "Automated semantic acceptance"
       ],
-      "observable_outcome": "Resolve one finite tracker-backed route from bounded fog to a coherent settled source or terminal decision",
+      "observable_outcome": "Clear one bounded tracker-backed decision route and return its settled source or terminal decision",
       "primary_owner_skill_id": "SK-021",
-      "proof_class": "fresh behavioral proof plus structural identity and boundary proof",
+      "proof_class": "proportionate structural, boundary, and consumer proof; fresh behavioral proof only when the user requests it",
       "required_authority_mutation": [
-        "Map topology, resolver classification, ticket and shared-map claims, waiting state, reconciliation, and closing packet"
+        "Map identity and topology, selected resolver route, ticket and short map claims, direct reconciliation, and truthful finish"
       ]
     },
     {
@@ -842,7 +848,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "scenario_id": "PS-020"
       },
       {
-        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for wayfinder: Resolve one finite tracker-backed route from bounded fog to a settled source or terminal decision",
+        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for wayfinder: Clear one bounded tracker-backed route with several coupled questions or prerequisites and return a settled source or terminal decision",
         "expected_owner_skill_id": "SK-021",
         "scenario_id": "PS-021"
       },
@@ -1033,7 +1039,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       }
     ],
     "composition_epoch_id": "FCE-20260727-01",
-    "contract_revision": 17,
+    "contract_revision": 18,
     "epoch_lock": null,
     "exclusions": [
       "Per-skill H1 or candidate wording",
@@ -1915,7 +1921,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-017",
       "combined_exit_owner_skill_id": "SK-017",
       "context_loaded": [],
-      "entry_condition": "Multiple interdependent unresolved candidate decisions or prerequisites need a configured tracker-backed route; Audit publishes an exact pickup and leaves Wayfinder unstarted.",
+      "entry_condition": "One bounded destination has several coupled unresolved questions or prerequisites, at least one non-conversational resolver, and needs tracker-backed multi-session sequencing; Audit publishes an exact pickup and leaves Wayfinder unstarted.",
       "failure_behavior": "Return the recommendation without invoking the target; preserve the candidate and report for user-selected continuation",
       "input_packet": "Durable audit report, candidate identity, analysis, route prerequisite, and exact suggested invocation",
       "ordering_impact": "none",
@@ -2993,33 +2999,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
     {
       "affected_capability_ids": [
         "CAP-021",
-        "CAP-002"
-      ],
-      "callee_owned_gates_mutations": [
-        "The target retains all target-local admission, evidence, mutation, Return, and completion gates"
-      ],
-      "caller_skill_id": "SK-021",
-      "combined_exit_owner_skill_id": "SK-021",
-      "context_loaded": [
-        "domain-modeling caller-facing interface and branch-required reference only"
-      ],
-      "entry_condition": "A settled closing decision changes durable domain truth or yields an already-settled ADR candidate, and no current Domain Delta accounts for it.",
-      "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
-      "input_packet": "Settled Wayfinder decision, return owner, context-write authority, separate ADR approval, and declared domain-modeling input",
-      "ordering_impact": "callee-before-caller",
-      "relationship_id": "REL-086",
-      "required_proof_ids": [
-        "PROOF-REL-086"
-      ],
-      "resume_owner_skill_id": "SK-021",
-      "return_packet": "The complete Domain Delta or exact unresolved question with verified write state when applicable",
-      "target_skill_id": "SK-002",
-      "verb": "Invoke",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
-    },
-    {
-      "affected_capability_ids": [
-        "CAP-021",
         "CAP-020"
       ],
       "callee_owned_gates_mutations": [
@@ -3030,9 +3009,9 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [
         "grill-with-docs caller-facing interface and branch-required domain pointers only"
       ],
-      "entry_condition": "One HITL decision ticket or Chart bound needs a user decision while durable domain capture remains active.",
+      "entry_condition": "One selected user decision ticket also requires durable domain capture.",
       "failure_behavior": "Return the target's intact decision, gap, Domain Delta, or exact blocker for Wayfinder classification",
-      "input_packet": "Wayfinder ticket or Chart bound, current user as decision owner, return owner, identifiers, Source Trace, and any supplied context-write authority or separate ADR approval",
+      "input_packet": "Selected Wayfinder question, why it matters, current user as decision owner, acceptance evidence, return owner, Source Trace, and any supplied context-write authority or separate ADR approval",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-087",
       "required_proof_ids": [
@@ -3057,9 +3036,9 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [
         "prototype caller-facing interface and branch-required reference only"
       ],
-      "entry_condition": "One Wayfinder Prototype ticket needs runnable evidence under a named human judge or predeclared objective rule.",
+      "entry_condition": "One selected Wayfinder question needs runnable evidence under a named human judge or predeclared objective rule.",
       "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
-      "input_packet": "Wayfinder ticket, Source Trace, question, resolution and return owners, named human judge or predeclared objective rule, representative evidence, mutation boundary with authority evidence, entry point or smallest recipe, finite bound, cleanup or accepted custody, and Wayfinder re-entry",
+      "input_packet": "Wayfinder question, why it matters, decision and return owners, acceptance evidence, named human judge or objective rule, representative evidence, authorized mutation boundary, bounded run, cleanup or custody, and Wayfinder re-entry",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-088",
       "required_proof_ids": [
@@ -3111,7 +3090,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       ],
       "entry_condition": "One Wayfinder Research ticket needs claim-owning source evidence.",
       "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
-      "input_packet": "Wayfinder question, supported map use, scope and exclusions, applicable state, approved note path and write mode, Source Trace, and return owner",
+      "input_packet": "Wayfinder question, why it matters, map use, scope and exclusions, applicable state, acceptance evidence, approved note path or no-write mode, Source Trace, and return owner",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-090",
       "required_proof_ids": [
@@ -3121,31 +3100,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "return_packet": "One intact Research answer, conflict, blocker, or non-admission packet with citations, limits, artifact state, and Wayfinder re-entry",
       "target_skill_id": "SK-003",
       "verb": "Invoke",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
-    },
-    {
-      "affected_capability_ids": [
-        "CAP-021",
-        "CAP-011"
-      ],
-      "callee_owned_gates_mutations": [
-        "No callee execution, mutation, resumption, or completion is authorized by this edge"
-      ],
-      "caller_skill_id": "SK-021",
-      "combined_exit_owner_skill_id": "SK-021",
-      "context_loaded": [],
-      "entry_condition": "The closed map produced settled parent-spec source.",
-      "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for wayfinder and the declared to-spec input",
-      "ordering_impact": "none",
-      "relationship_id": "REL-091",
-      "required_proof_ids": [
-        "PROOF-REL-091"
-      ],
-      "resume_owner_skill_id": "SK-021",
-      "return_packet": "One named target and reason with downstream work unstarted",
-      "target_skill_id": "SK-011",
-      "verb": "Recommend and stop",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
     },
     {
@@ -3209,7 +3163,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-008",
       "combined_exit_owner_skill_id": "SK-008",
       "context_loaded": [],
-      "entry_condition": "The bounded interview cannot close in one conversation because several interdependent unresolved decisions or non-conversational prerequisites need a tracker-backed multi-session route, and active Wayfinder is not the return owner.",
+      "entry_condition": "One bounded destination has several coupled unresolved questions or prerequisites, at least one non-conversational resolver, needs tracker-backed multi-session sequencing, and active Wayfinder is not the return owner.",
       "failure_behavior": "Return the recommendation without invoking the target; preserve the intact bound and exact re-entry instruction",
       "input_packet": "Grilling bound, confirmed decisions, unresolved branches or prerequisites, return owner, and exact re-entry instruction",
       "ordering_impact": "none",
@@ -3221,7 +3175,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "return_packet": "One intact Route gap with Wayfinder left unstarted",
       "target_skill_id": "SK-021",
       "verb": "Recommend and stop",
-      "wrong_condition": "One bounded conversation can still settle the decision, the destination remains unbounded, or active Wayfinder already owns re-entry"
+      "wrong_condition": "One bounded conversation can still settle the decision, no non-conversational resolver is required, durable multi-session sequencing is unnecessary, the destination remains unbounded, or active Wayfinder already owns re-entry"
     },
     {
       "affected_capability_ids": [
@@ -3236,9 +3190,9 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [
         "grilling caller-facing interface only"
       ],
-      "entry_condition": "One HITL decision ticket or Chart bound needs a conversation-only user decision with no durable domain-record consequence.",
+      "entry_condition": "One selected Wayfinder question needs a conversation-only user decision with no durable domain-record consequence.",
       "failure_behavior": "Return Grilling's intact decision or gap packet for Wayfinder classification",
-      "input_packet": "Wayfinder ticket or chart bound, decision owner, identifiers, and return owner",
+      "input_packet": "Wayfinder question, why it matters, decision owner, acceptance evidence, identifiers, and return owner",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-095",
       "required_proof_ids": [
@@ -3311,7 +3265,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-013",
       "combined_exit_owner_skill_id": "SK-013",
       "context_loaded": [],
-      "entry_condition": "The destination is bounded but several interdependent decisions or non-conversational prerequisites remain.",
+      "entry_condition": "One bounded destination has several coupled unresolved questions or prerequisites, at least one non-conversational resolver, and needs tracker-backed multi-session sequencing.",
       "failure_behavior": "Return the recommendation without invoking the target; preserve the item and every unresolved identity",
       "input_packet": "Triage item identity, bounded destination, Source Trace, unresolved decisions and prerequisites, and return owner",
       "ordering_impact": "none",
@@ -4167,24 +4121,24 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "PS-021"
       ],
       "canonical_name": "wayfinder",
-      "completion_condition": "Orient selects one valid operation or return; Chart creates one verified finite map; Advance or Maintain reconciles one bounded transition; Closure or Terminate closes with exact evidence and no retained claim",
+      "completion_condition": "The exact map is closed, every in-scope obligation has an evidence-backed disposition, the destination is satisfied or truthfully terminated, no claim remains, and the terminal record is read back",
       "contract_order": 21,
-      "essential_outcome": "Resolve one finite tracker-backed route from bounded fog to a coherent settled source or terminal decision",
-      "failure_return": "Return the exact admission gap, frontier, wait, blocker, claim conflict, or missing setup surface",
+      "essential_outcome": "Clear one bounded tracker-backed decision route and return its settled source or terminal decision",
+      "failure_return": "Return not-needed, the identity conflict, current frontier, exact wait or blocker, claim conflict, drift, or unverified mutation state",
       "invocation_mode": "explicit-only",
       "load_budget_class": "conditional-aggregate",
       "negative_exclusion_predicates": [
-        "The destination lacks several interdependent material decisions or prerequisites, a non-conversational resolver, or multi-session tracker sequencing",
+        "The destination lacks several coupled unresolved questions or prerequisites, a non-conversational resolver, or multi-session tracker sequencing",
         "Another selected skill owns the requested outcome",
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
       "owned_authority_mutation_surfaces": [
-        "Map topology, resolver classification, ticket and shared-map claims, waiting state, reconciliation, and closing packet"
+        "Map identity and topology, selected resolver route, ticket and short map claims, direct reconciliation, and truthful finish"
       ],
       "owned_capability_ids": [
         "CAP-021"
       ],
-      "positive_entry_predicate": "One bounded destination has several interdependent material decisions or prerequisites, at least one non-conversational resolver, and needs tracker-backed multi-session sequencing",
+      "positive_entry_predicate": "One bounded destination has several coupled questions or prerequisites, at least one non-conversational resolver, and needs tracker-backed multi-session sequencing",
       "primary_role": "executable-aggregate",
       "prohibited_ownership": [
         "Another selected skill's semantic decision, local mutation, proof judgment, Return, or completion",
@@ -4192,17 +4146,15 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Pack integration acceptance, epoch Lock, cleanup, installation, or Git delivery unless explicitly owned"
       ],
       "relationship_ids": [
-        "REL-086",
         "REL-087",
         "REL-088",
         "REL-089",
         "REL-090",
-        "REL-091",
         "REL-095",
         "REL-096"
       ],
-      "required_input": "A bounded destination tuple or existing map, caller-owned Source Trace, and tracker authority for one finite fog-resolution route",
-      "return_packet": "A typed verified map, frontier, wait, blocker, settled source, terminal decision, or not-needed result",
+      "required_input": "A bounded destination or existing map, return owner, Source Trace, and tracker authority for one finite decision route",
+      "return_packet": "The map, what changed, decisive evidence, current frontier or condition, verified claim state, or truthful terminal record",
       "skill_id": "SK-021"
     },
     {
