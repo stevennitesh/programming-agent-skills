@@ -144,7 +144,7 @@ def test_first_epoch_contract_freezes_complete_h1_free_composition() -> None:
             *(capability_owner[skill_id] for skill_id in issue["involved_skill_ids"])
         )
     assert contract["epoch_header"]["composition_epoch_id"] == EPOCH
-    assert contract["epoch_header"]["contract_revision"] == 29
+    assert contract["epoch_header"]["contract_revision"] == 32
     assert contract["epoch_header"]["status"] == "frozen"
     assert contract["epoch_header"]["integration_result"] == {
         "decision": None,
@@ -178,7 +178,7 @@ def test_first_epoch_contract_freezes_complete_h1_free_composition() -> None:
         f"{fixed_point['fixed_point_fingerprint']}"
     )
     assert selected_names == active_names
-    assert len(contract["capabilities"]) == len(selected_names) == 24
+    assert len(contract["capabilities"]) == len(selected_names) == 26
     assert {
         skill["primary_role"] for skill in contract["selected_skills"]
     } == {"leaf", "executable-aggregate", "router"}
@@ -195,7 +195,7 @@ def test_first_epoch_contract_freezes_complete_h1_free_composition() -> None:
     }
 
 
-def test_first_epoch_revision_preserves_history_and_derives_r11_blueprints() -> None:
+def test_first_epoch_revision_preserves_history_and_derives_current_blueprints() -> None:
     contract = pack_contract.parse_contract(
         (ROOT / "docs/synthesis/skill-pack.md").read_text(encoding="utf-8")
     )
@@ -223,14 +223,14 @@ def test_first_epoch_revision_preserves_history_and_derives_r11_blueprints() -> 
     }
 
     order = pack_contract.campaign_order(contract)
-    assert len(order) == len(skill_by_id) == 24
+    assert len(order) == len(skill_by_id) == 26
     for skill_id in order:
         projected = pack_contract.contract_blueprint(
             contract,
             skill_id,
         )
         assert projected["slice"]["slice_id"].startswith(
-                f"{EPOCH}:r29:"
+                f"{EPOCH}:r32:"
         )
         assert projected["slice"]["skill"] == skill_by_id[skill_id]
     assert {
@@ -247,7 +247,7 @@ def test_current_contract_preserves_review_and_tdd_topology() -> None:
         skill["canonical_name"]: skill for skill in contract["selected_skills"]
     }
     assert contract["epoch_header"]["status"] == "frozen"
-    assert contract["epoch_header"]["contract_revision"] == 29
+    assert contract["epoch_header"]["contract_revision"] == 32
     assert {
         name: (skill_by_name[name]["skill_id"], skill_by_name[name]["invocation_mode"])
         for name in (
@@ -257,6 +257,8 @@ def test_current_contract_preserves_review_and_tdd_topology() -> None:
             "implement",
             "parallel-implement",
             "skill-router",
+            "hillclimb",
+            "wizard",
         )
     } == {
         "tdd": ("SK-006", "implicit"),
@@ -265,6 +267,8 @@ def test_current_contract_preserves_review_and_tdd_topology() -> None:
         "implement": ("SK-022", "explicit-only"),
         "parallel-implement": ("SK-023", "explicit-only"),
         "skill-router": ("SK-025", "explicit-only"),
+        "hillclimb": ("SK-026", "explicit-only"),
+        "wizard": ("SK-027", "explicit-only"),
     }
     assert "REL-013" not in skill_by_name["implement"]["relationship_ids"]
     assert "REL-018" not in skill_by_name["implement"]["relationship_ids"]
@@ -304,6 +308,8 @@ def test_current_contract_preserves_review_and_tdd_topology() -> None:
         ("REL-017", "implement", "Invoke", "tdd"),
         ("REL-034", "parallel-implement", "Invoke", "change-review"),
         ("REL-064", "skill-router", "Recommend and stop", "tdd"),
+        ("REL-112", "skill-router", "Recommend and stop", "hillclimb"),
+        ("REL-113", "skill-router", "Recommend and stop", "wizard"),
     } <= relationship_topology
     assert {("SK-015", "SK-022"), ("SK-015", "SK-023")} <= graph_edges
     assurance_review = next(

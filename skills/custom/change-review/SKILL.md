@@ -55,6 +55,10 @@ applicable contract and failure behavior. For removed or replaced behavior,
 inspect displaced callers, registrations, configuration, proof, and public
 documentation. An inactive concern creates no checklist or specialist review.
 
+When evidence identifies a serialized, stored, configured, pinned-dependency,
+lifecycle, or cross-language boundary outside the visible call graph, trace
+that boundary and its affected consumers before judging the change safe.
+
 ## 4. Verify
 
 Reuse proof bound to the candidate. Run only safe checks needed to resolve a

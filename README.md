@@ -106,9 +106,9 @@ The portable contract carries authority boundaries, a direct five-action impleme
 ## What's Included
 
 - **Shape before building:** `$grilling`, `$grill-with-docs`, `$wayfinder`, `$to-questionnaire`, `$research`, `$prototype`, `$handoff`
-- **Turn intent into delivery:** `$to-spec`, `$to-tickets`, `$triage`, `$implement`, `$parallel-implement`
+- **Turn intent into delivery:** `$to-spec`, `$to-tickets`, `$triage`, `$implement`, `$parallel-implement`, `$wizard`
 - **Prove and protect behavior:** `$tdd`, `$diagnosing-bugs`, `$resolving-merge-conflicts`, `$change-review`, `$high-assurance-review`, `$audit-codebase`
-- **Improve code and design:** `$audit-codebase`, `$simplify-code`, `$codebase-design`, `$domain-modeling`
+- **Improve code and design:** `$audit-codebase`, `$simplify-code`, `$hillclimb`, `$codebase-design`, `$domain-modeling`
 - **Write agent instructions and maintain the pack:** `$writing-for-agents`, `$repo-bootstrap`, `$skill-router`
 
 The small [`GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md`](GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md) template supplies the delegation gate and teaches Codex when to suggest `$skill-router` and `$repo-bootstrap`. Workflows stay with their skills, and personal environment instructions stay local.
@@ -123,12 +123,14 @@ Representative routes:
 
 - Fuzzy product idea needing durable decisions -> `$grill-with-docs`; explicitly run `$to-spec` only when the settled result earns a durable parent
 - External stakeholder knowledge gap -> `$to-questionnaire` -> human delivery and answer collection
-- One bounded ready item -> `$implement`; one explicit fixed set of at least two accepted items -> `$parallel-implement`, serializing shared ownership and parallelizing independent work
+- One bounded ready item -> `$implement`; one explicit fixed set of at least two accepted items with a non-empty ready frontier -> `$parallel-implement`, serializing shared ownership and parallelizing independent work
 - Incoming issue or configured external PR/MR -> `$triage`; ready-for-agent item -> `$implement`
 - Bounded multi-session decision route -> `$wayfinder` until it returns a terminal decision or settled source
 - Explicit test-first, TDD, or RED-GREEN-REFACTOR work -> `$tdd`; ordinary implementation with tests -> `$implement`; route uncertain bugs through `$skill-router`.
 - Whole-repository architecture or code-quality discovery -> `$audit-codebase` builds or continues one linked HTML map, audits one user-selected subsystem at a time, then analyzes one user-selected candidate without starting implementation
 - Existing behavior in one selected target -> `$simplify-code` for proved behavior-preserving simplification or a truthful no-change result
+- One bounded sustained campaign to improve a frozen runtime, resource, cost, capacity, or product result against a settled target -> `$hillclimb`; use `$implement` for one settled optimization, `$simplify-code` for maintainability reduction, and `$diagnosing-bugs` for an unexplained regression
+- Several settled steps only the current human can perform -> explicitly invoke `$wizard` for one repository-native guided script; use `$implement` when the agent can perform the work or the result is maintained automation
 - An explicit read-only change judgment or implementation candidate whose independent-review trigger applies -> `$change-review`; an explicitly requested heavy review of a fixed code candidate, commonly an integrated ticket-graph result or pre-merge PR -> `$high-assurance-review`
 - Bounded correctness, domain robustness, performance, structural, or simplification discovery over a repository baseline -> `$audit-codebase`; the report preserves coverage and returns subsystem and candidate selection to the user
 

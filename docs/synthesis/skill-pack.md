@@ -200,6 +200,22 @@ explicit-only and terminal while making its trigger explicit, adding the
 user-requested High-Assurance Review route, making preconditions conditional,
 and replacing its false Source Trace requirement with current route-changing
 facts. Destination procedures and execution remain unstarted.
+Revision 42 materializes machine contract revision 30 by adding Hillclimb as an
+explicit-only owner for one bounded sustained campaign against a frozen
+measurable target. It keeps comparable baseline-to-final proof and
+keep-or-reject experiments while excluding mandatory delegation, logs,
+commits, review, minimum attempts, and open-ended plateau rituals.
+Revision 43 materializes machine contract revision 31 by adding Wizard as an
+explicit-only leaf for one settled multi-stage human-only procedure. It creates
+one repository-native script, keeps secrets outside agent context, verifies the
+artifact without running manual or external stages, and leaves routing,
+installation, execution, commit, and publication unstarted.
+Revision 44 materializes machine contract revision 32 by keeping Parallel
+Implement as the sole concurrent delivery owner while admitting dependency
+graphs through a non-empty ready frontier. It removes unnecessary shared write
+targets before serialization, uses authoritative context pointers in worker
+briefs, and hides complete-parent tracker claim and closeout behind one
+conditional reference.
 It binds the complete fingerprinted pre-discovery fixed point, then freezes the
 tested environment, finite research order, capability
 owners, roles, relationships, exclusions, resolved collisions, acceptance
@@ -769,7 +785,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "completion_return": "The integrated outcome, proof, closeout when applicable, or exact preserved resume state",
       "disposition": "selected",
       "entry_conditions": [
-        "One explicit fixed delivery set has at least two accepted implementation items"
+        "One explicit fixed delivery set has at least two accepted implementation items and a non-empty ready frontier"
       ],
       "essential": true,
       "exclusions": [
@@ -806,6 +822,56 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "proof_class": "fresh behavioral proof plus structural identity and boundary proof",
       "required_authority_mutation": [
         "Route selection, no-match abstention, and setup-precondition detection only"
+      ]
+    },
+    {
+      "acceptance_scenario_ids": [
+        "PS-026"
+      ],
+      "allowed_contributor_skill_ids": [],
+      "capability_id": "CAP-026",
+      "completion_return": "A trustworthy baseline-to-final comparison, retained changes, applicable correctness proof, and either target attainment or an honest bounded stop",
+      "disposition": "selected",
+      "entry_conditions": [
+        "The user explicitly invokes Hillclimb for a bounded sustained campaign to improve one measurable runtime, resource, cost, capacity, or product outcome of a fixed representative workload against a settled target"
+      ],
+      "essential": true,
+      "exclusions": [
+        "One-off implementation or optimization",
+        "Causal diagnosis of unexplained slowness or regression",
+        "Disposable design comparison",
+        "Code-shape or maintainability reduction, including measured repeated simplification"
+      ],
+      "observable_outcome": "Test isolated hypotheses against one frozen measurable runtime, resource, cost, capacity, or product target, retain only proved wins, and stop at the declared bound",
+      "primary_owner_skill_id": "SK-026",
+      "proof_class": "comparable quantitative proof plus structural identity and boundary proof",
+      "required_authority_mutation": [
+        "Repeated bounded local source attempts inside the named target; no Git delivery or external mutation"
+      ]
+    },
+    {
+      "acceptance_scenario_ids": [
+        "PS-027"
+      ],
+      "allowed_contributor_skill_ids": [],
+      "capability_id": "CAP-027",
+      "completion_return": "One secret-free statically verified script, its run command and possible effects, and any unresolved manual detail with execution unstarted",
+      "disposition": "selected",
+      "entry_conditions": [
+        "The user explicitly invokes Wizard for one bounded procedure with several settled steps only the current human can perform and a guided script is more useful than live guidance"
+      ],
+      "essential": true,
+      "exclusions": [
+        "Work the agent can perform with current tools and authority",
+        "One manual action, approval, or live walkthrough",
+        "Unsettled decisions, missing stakeholder knowledge, or disposable design evidence",
+        "Maintained automation or ordinary implementation"
+      ],
+      "observable_outcome": "Create one repository-native interactive script for a settled multi-stage human-only procedure, verify it statically, and stop before execution",
+      "primary_owner_skill_id": "SK-027",
+      "proof_class": "static artifact and source-to-effect tracing plus structural identity and boundary proof",
+      "required_authority_mutation": [
+        "One local script inside the requested scope; no procedure execution, dependency installation, Git delivery, publication, or unrelated documentation"
       ]
     }
   ],
@@ -930,6 +996,16 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "description": "Positive entry, nearest-negative exclusion, material failure, and completion for skill-router: Choose exactly one next engineering skill or truthfully return none, then stop",
         "expected_owner_skill_id": "SK-025",
         "scenario_id": "PS-025"
+      },
+      {
+        "description": "Positive entry, nearest-negative exclusion, material measurement failure, and completion for hillclimb: repeatedly improve one fixed runtime, resource, cost, capacity, or product outcome through bounded comparable experiments",
+        "expected_owner_skill_id": "SK-026",
+        "scenario_id": "PS-026"
+      },
+      {
+        "description": "Positive entry, nearest-negative exclusion, effect-boundary failure, and completion for wizard: create one repository-native interactive script for a settled multi-stage human-only procedure without running it",
+        "expected_owner_skill_id": "SK-027",
+        "scenario_id": "PS-027"
       }
     ],
     "campaign_proof_graph": [
@@ -1096,10 +1172,18 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       {
         "predecessor_skill_id": "SK-023",
         "successor_skill_id": "SK-025"
+      },
+      {
+        "predecessor_skill_id": "SK-026",
+        "successor_skill_id": "SK-025"
+      },
+      {
+        "predecessor_skill_id": "SK-027",
+        "successor_skill_id": "SK-025"
       }
     ],
     "composition_epoch_id": "FCE-20260727-01",
-    "contract_revision": 29,
+    "contract_revision": 32,
     "epoch_lock": null,
     "exclusions": [
       "Per-skill H1 or candidate wording",
@@ -1139,13 +1223,13 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "docs/research/skill-pack-composition/epochs/FCE-20260727-01/independent-discovery.json#sha256-v1:54c55c9efe02194fb7a350824ffcfa7feca96734ac49c01b478f265c82e2e48d",
       "docs/research/skill-pack-composition/epochs/FCE-20260727-01/catalog-reconciliation.json#sha256-v1:f11fead78d45a6d4f4b2361f645d93a3d57c300e0ed177aed4dc55df69b0c8a9",
       "docs/research/skill-pack-composition/catalog.json#sha256-v1:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
-      "docs/adr/0009-fresh-composition-epochs-revalidate-skill-pack-knowledge.md#sha256-v1:26f392e8c645f587052681e4f401b8d078cccf87519b58b1a9008ffd1d8213a2",
+      "docs/adr/0009-fresh-composition-epochs-revalidate-skill-pack-knowledge.md#sha256-v1:f94bfe4bac73cae1355c1e2b1c9c82c9cbc3b24b2d7b6923df8ad10c5754ede3",
       "docs/adr/0008-deploy-campaign-automation-separates-mechanical-evidence-from-semantic-decisions.md#sha256-v1:5fa8981188f8ac513e1d192b14391ee1ac44dc3ffc24d036a749feedcd306fb1",
       "github-issue-comment-body:stevennitesh/programming-agent-skills#36:5081636826#sha256-v1:b48d5b27ed87d0c651fa46d7859e6724be3a9a581a05e0997b6461fec1c82428",
       "github-issue-body:stevennitesh/programming-agent-skills#39#sha256-v1:f8115df444ab80f15fdb49610d96152cdff2edc12a5f03bb50efaba308a840a3",
       "github-issue-body:stevennitesh/programming-agent-skills#50#sha256-v1:21d89976101c1815c6e08f921d6045f97615bfdad8b3a3babc6ed40ca9d463bb",
       "git-commit:2710890325c51a2120656a8d1233d442f6454c1a",
-      "docs/synthesis/skill-context-relationships.md#sha256-v1:dcf849b205733dd2bae7549d2faf24d6e6ac4ab34c6ebe1f3c6aa9b8ad141706"
+      "docs/synthesis/skill-context-relationships.md#sha256-v1:f746c8d907a9aa244c5e58e078be38748d12df568492713c3638dd0eaaf6e700"
     ],
     "status": "frozen"
   },
@@ -1180,7 +1264,9 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "SK-021",
         "SK-022",
         "SK-023",
-        "SK-025"
+        "SK-025",
+        "SK-026",
+        "SK-027"
       ],
       "issue_id": "ECG-001",
       "negative_control_scenario_id": "PS-003",
@@ -1238,7 +1324,9 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "CAP-021",
         "CAP-022",
         "CAP-023",
-        "CAP-025"
+        "CAP-025",
+        "CAP-026",
+        "CAP-027"
       ],
       "involved_skill_ids": [
         "SK-001",
@@ -1264,7 +1352,9 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "SK-021",
         "SK-022",
         "SK-023",
-        "SK-025"
+        "SK-025",
+        "SK-026",
+        "SK-027"
       ],
       "issue_id": "ECG-003",
       "negative_control_scenario_id": "PS-025",
@@ -1410,7 +1500,9 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "SK-021",
         "SK-022",
         "SK-023",
-        "SK-025"
+        "SK-025",
+        "SK-026",
+        "SK-027"
       ],
       "issue_id": "ECG-007",
       "negative_control_scenario_id": "PS-007",
@@ -1450,7 +1542,9 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "SK-021",
         "SK-022",
         "SK-023",
-        "SK-025"
+        "SK-025",
+        "SK-026",
+        "SK-027"
       ],
       "issue_id": "ECG-008",
       "negative_control_scenario_id": "PS-012",
@@ -1476,7 +1570,9 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "CAP-008",
         "CAP-020",
         "CAP-022",
-        "CAP-023"
+        "CAP-023",
+        "CAP-026",
+        "CAP-027"
       ],
       "involved_skill_ids": [
         "SK-025",
@@ -1490,7 +1586,9 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "SK-020",
         "SK-022",
         "SK-023",
-        "SK-017"
+        "SK-017",
+        "SK-026",
+        "SK-027"
       ],
       "issue_id": "ECG-009",
       "negative_control_scenario_id": "PS-025",
@@ -1505,7 +1603,11 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "design",
         "decision",
         "complete",
-        "Return"
+        "Return",
+        "improvement",
+        "campaign",
+        "script",
+        "procedure"
       ]
     }
   ],
@@ -3385,6 +3487,56 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "target_skill_id": "SK-014",
       "verb": "Recommend and stop",
       "wrong_condition": "The user did not explicitly request heavy review, the candidate is not fixed and complete, or ordinary Change Review owns the request"
+    },
+    {
+      "affected_capability_ids": [
+        "CAP-025",
+        "CAP-026"
+      ],
+      "callee_owned_gates_mutations": [
+        "No experiment, source mutation, measurement, resumption, or completion is authorized by this edge"
+      ],
+      "caller_skill_id": "SK-025",
+      "combined_exit_owner_skill_id": "SK-025",
+      "context_loaded": [],
+      "entry_condition": "The user explicitly requests a bounded sustained campaign to improve one frozen measurable runtime, resource, cost, capacity, or product outcome against a settled target.",
+      "failure_behavior": "Return the recommendation without starting the campaign",
+      "input_packet": "The current situation and visible facts that can change the route",
+      "ordering_impact": "none",
+      "relationship_id": "REL-112",
+      "required_proof_ids": [
+        "PROOF-REL-112"
+      ],
+      "resume_owner_skill_id": "SK-025",
+      "return_packet": "One Hillclimb recommendation with the campaign unstarted",
+      "target_skill_id": "SK-026",
+      "verb": "Recommend and stop",
+      "wrong_condition": "The work is one settled optimization, unexplained slowness or regression, a disposable design probe, code-shape or maintainability simplification, or lacks a settled metric, target, representative workload, or bound"
+    },
+    {
+      "affected_capability_ids": [
+        "CAP-025",
+        "CAP-027"
+      ],
+      "callee_owned_gates_mutations": [
+        "No script creation, procedure execution, mutation, resumption, or completion is authorized by this edge"
+      ],
+      "caller_skill_id": "SK-025",
+      "combined_exit_owner_skill_id": "SK-025",
+      "context_loaded": [],
+      "entry_condition": "The user explicitly requests one bounded procedure with several settled steps only the current human can perform and a guided repository-native script is more useful than live guidance.",
+      "failure_behavior": "Return the recommendation without creating or running the script",
+      "input_packet": "The current situation and visible facts that can change the route",
+      "ordering_impact": "none",
+      "relationship_id": "REL-113",
+      "required_proof_ids": [
+        "PROOF-REL-113"
+      ],
+      "resume_owner_skill_id": "SK-025",
+      "return_packet": "One Wizard recommendation with script creation and procedure execution unstarted",
+      "target_skill_id": "SK-027",
+      "verb": "Recommend and stop",
+      "wrong_condition": "The agent can perform the work, one manual action or live guidance is enough, a decision or source fact is unresolved, or the requested result is maintained automation"
     }
   ],
   "selected_skills": [
@@ -4206,14 +4358,14 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "PS-023"
       ],
       "canonical_name": "parallel-implement",
-      "completion_condition": "Every item is integrated, material interactions are proved, tracker closeout is read back when applicable, and no unsafe lane is removed",
+      "completion_condition": "Every item is integrated, material interactions are proved, tracker closeout is read back when applicable, and every named completed lane is safely removed with helper read-back",
       "contract_order": 23,
       "essential_outcome": "Deliver one fixed set with isolated concurrent workers where ownership and write effects are independent",
       "failure_return": "Preserve work and return the integration HEAD plus each unfinished item's actor, lane, base, commit or dirty state, landing state, blocker, and next safe action",
       "invocation_mode": "explicit-only",
       "load_budget_class": "conditional-aggregate",
       "negative_exclusion_predicates": [
-        "The request does not satisfy: One explicit fixed delivery set has at least two accepted implementation items",
+        "The request does not satisfy: One explicit fixed delivery set has at least two accepted implementation items and a non-empty ready frontier",
         "Another selected skill owns the requested outcome",
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
@@ -4223,7 +4375,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "owned_capability_ids": [
         "CAP-023"
       ],
-      "positive_entry_predicate": "One explicit fixed delivery set has at least two accepted implementation items",
+      "positive_entry_predicate": "One explicit fixed delivery set has at least two accepted implementation items and a non-empty ready frontier",
       "primary_role": "executable-aggregate",
       "prohibited_ownership": [
         "Another selected skill's semantic decision, local mutation, proof judgment, Return, or completion",
@@ -4236,7 +4388,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "REL-034",
         "REL-036"
       ],
-      "required_input": "A fixed caller-owned delivery set with at least two accepted items, dependencies, acceptance, proof, and mutation authority",
+      "required_input": "A fixed caller-owned delivery set with at least two accepted items, a non-empty ready frontier, dependencies, acceptance, proof, and mutation authority; tracker mutation additionally requires one complete parent graph",
       "return_packet": "Integrated HEAD and proof, tracker closeout when applicable, or exact preserved resume state",
       "skill_id": "SK-023"
     },
@@ -4292,11 +4444,83 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "REL-068",
         "REL-069",
         "REL-070",
-        "REL-111"
+        "REL-111",
+        "REL-112",
+        "REL-113"
       ],
       "required_input": "The user's route-selection request and any visible facts that can change the route",
       "return_packet": "One exact skill or none with a reason, an applicable precondition when one exists, and downstream work unstarted",
       "skill_id": "SK-025"
+    },
+    {
+      "acceptance_scenario_ids": [
+        "PS-026"
+      ],
+      "canonical_name": "hillclimb",
+      "completion_condition": "The final candidate has a trustworthy baseline-to-final comparison, applicable correctness proof passes, rejected attempts are absent, and the target result or bounded stop is reported honestly",
+      "contract_order": 26,
+      "essential_outcome": "Test isolated hypotheses against one frozen measurable runtime, resource, cost, capacity, or product target, retain only proved wins, and stop at the declared bound",
+      "failure_return": "Return the measurement, authority, proof, or worthwhile-hypothesis gap with the current accepted state preserved",
+      "invocation_mode": "explicit-only",
+      "load_budget_class": "selected-owner-common",
+      "negative_exclusion_predicates": [
+        "The request is one settled optimization rather than a sustained runtime, resource, cost, capacity, or product campaign",
+        "Unexplained slowness or regression requires causal diagnosis",
+        "The question needs a disposable design probe or code-shape or maintainability simplification",
+        "No representative workload, meaningful metric, settled target, or campaign bound exists"
+      ],
+      "owned_authority_mutation_surfaces": [
+        "Repeated bounded local source attempts inside the named target; no Git delivery or external mutation"
+      ],
+      "owned_capability_ids": [
+        "CAP-026"
+      ],
+      "positive_entry_predicate": "The user explicitly invokes Hillclimb for a bounded sustained campaign to improve one measurable runtime, resource, cost, capacity, or product outcome of a fixed representative workload against a settled target",
+      "primary_role": "leaf",
+      "prohibited_ownership": [
+        "One-off implementation, causal diagnosis, disposable design probing, or code-shape and maintainability simplification",
+        "Mandatory delegation, formal ledgers, Git delivery, review, publication, or external mutation",
+        "Pack integration acceptance, epoch Lock, cleanup, installation, or Git delivery unless explicitly owned"
+      ],
+      "relationship_ids": [],
+      "required_input": "One accepted behavior, representative workload, meaningful metric and direction, settled target, practical threshold, campaign bound, and authority for repeated local attempts",
+      "return_packet": "The frozen workload and metric, baseline and final result, delta, retained changes, correctness evidence, and target attainment or bounded stopping reason",
+      "skill_id": "SK-026"
+    },
+    {
+      "acceptance_scenario_ids": [
+        "PS-027"
+      ],
+      "canonical_name": "wizard",
+      "completion_condition": "One secret-free statically verified script covers every admitted human-only stage, the run command fits the target environment, and no manual or external stage has been executed",
+      "contract_order": 27,
+      "essential_outcome": "Create one repository-native interactive script for a settled multi-stage human-only procedure, verify it statically, and stop before execution",
+      "failure_return": "Return why Wizard is not admitted or the exact instruction, target, authority, destination, runtime, or proof gap without creating or running the procedure",
+      "invocation_mode": "explicit-only",
+      "load_budget_class": "selected-owner-common",
+      "negative_exclusion_predicates": [
+        "The agent can perform the work with current tools and authority",
+        "The user needs one manual action, approval, or live guidance rather than a script",
+        "A decision, source fact, stakeholder answer, or design verdict remains unresolved",
+        "The requested result is ordinary implementation or maintained automation"
+      ],
+      "owned_authority_mutation_surfaces": [
+        "One local repository-native script inside the requested scope; no execution, installation, Git delivery, publication, or unrelated documentation"
+      ],
+      "owned_capability_ids": [
+        "CAP-027"
+      ],
+      "positive_entry_predicate": "The user explicitly invokes Wizard for one bounded procedure with several settled steps only the current human can perform and a guided script is more useful than live guidance",
+      "primary_role": "leaf",
+      "prohibited_ownership": [
+        "Agent-executable setup, ordinary implementation, maintained automation, live guidance, decision discovery, stakeholder questionnaires, or disposable probes",
+        "Procedure execution, real secret handling in agent context, dependency installation, commit, publication, cleanup, or unrelated documentation",
+        "Pack integration acceptance, epoch Lock, cleanup, installation, or Git delivery unless explicitly owned"
+      ],
+      "relationship_ids": [],
+      "required_input": "One bounded settled multi-stage human-only procedure, authoritative instructions, applicable exact targets and destinations, target runtime, and authority to write one local script",
+      "return_packet": "The script path, one run command, possible effects, checks run, unresolved manual detail, and execution left unstarted",
+      "skill_id": "SK-027"
     }
   ]
 }

@@ -53,6 +53,10 @@ domain values into core logic and prefer explicit results over hidden mutation.
 Derive secondary state from one source of truth instead of synchronizing
 copies.
 
+When an authoritative schema defines a boundary shape, derive its boundary type
+with existing repository tooling instead of maintaining a parallel copy. Keep
+that type at the edge and pass only the domain values or model the core needs.
+
 ## Implement the whole change
 
 Preserve the behavior and failure semantics the accepted contract exposes.

@@ -13,6 +13,9 @@ Use Handoff only for an intended fresh task or context that can read the same
 work root and required sources. Use `/compact` within the same conversation;
 use the active workflow's Return for ordinary continuation.
 
+When the next phase still depends on reasoning held only in the current context
+and continuing is practical, continue there.
+
 Resolve the work root as the Git root when present, otherwise the current
 directory. Choose the first unused
 `<work-root>/.tmp/handoff-<YYYYMMDD-HHMMSS>[-<NN>].md`; never overwrite it. In

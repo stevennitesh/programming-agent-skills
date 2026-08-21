@@ -15,24 +15,24 @@ one bounded item.
 ## Admit
 
 Run only at the top-level root after an explicit request to deliver at least
-two accepted, independently implementable items. The set may come from a
+two accepted items with a non-empty ready frontier. The set may be one complete
 tracker-backed parent graph or another caller-owned fixed delivery scope. Send
 one item to `$implement`. Send vague work, unsettled meaning, or missing
 dependencies back to its owner or `$to-tickets` before mutation.
 
-Pin a clean integration `HEAD`. For tracker-backed delivery, read
-`docs/agents/issue-tracker.md` and `docs/agents/triage-labels.md`; if either is
-missing or incompatible, recommend `$repo-bootstrap` and stop. Refresh the
-graph, claim the parent and selected children, and read each claim back. Direct
-work creates no tracker state.
+Pin a clean integration `HEAD`. For a complete tracker-backed parent graph,
+read [Tracker Delivery](references/TRACKER-DELIVERY.md) and follow its admission
+and closeout rules. Direct work creates no tracker state.
 
 Derive the ready frontier from dependencies whose changes are already
 integrated. Admit concurrent siblings only when their behavior ownership and
 write effects are independent. Account for shared schemas, callers, fixtures,
 configuration, generated destinations, databases, ports, package environments,
 external services, and other mutable resources. File separation alone does
-not prove independence. Assign one exclusive owner to a shared writable
-resource or run the affected items serially.
+not prove independence. First remove unnecessary sharing when natural
+ownership can give the items independent outputs. Otherwise assign one
+exclusive owner to a shared writable resource or run the affected items
+serially.
 
 Run a shared enabling refactor before dependent slices when that preserves the
 real design better than artificial file boundaries. Keep only enough workers
@@ -49,7 +49,9 @@ there is idle. Root landing and direct serial implementation never overlap.
 
 Use one fresh worker per item. Give it the exact absolute worktree path, base,
 scope, allowed writes, acceptance, predecessor outcomes, proof, assigned
-exclusive resources, and prohibited external effects.
+exclusive resources, and prohibited external effects. Point to accessible
+specifications, tickets, research, and predecessor commits instead of copying
+them; include only context the worker cannot recover from those sources.
 
 ## Dispatch
 
@@ -110,16 +112,17 @@ workers alone do not trigger review.
 
 ## Finish
 
-For tracker-backed delivery, preserve each completed child's category, remove
-its readiness roles, apply `implemented`, close it when configured, and read
-the result back. After each child, refetch open dependents and apply
-`ready-for-agent` only to complete accepted packets whose blockers are all
-resolved. Leave other dependents non-ready. After every child is implemented,
-apply the same state transition to the parent and close it when configured.
-Otherwise create no closeout state.
+For tracker-backed delivery, finish through
+[Tracker Delivery](references/TRACKER-DELIVERY.md). Otherwise create no
+closeout state.
 
 Remove only named lanes whose commits are integrated and whose checkouts are
 clean. If the run stops early, preserve work and report the integration `HEAD`,
 each unfinished item's actor, lane, base, commit or dirty state, landing state,
 blocker, and next safe action. Infer no deployment, PR, merge, push, or later
-campaign.
+campaign. A cleanup failure or residual helper-owned state is unfinished
+cleanup; preserve it and report the exact retry.
+
+Complete when every accepted item is landed, all writers are idle, integrated
+proof supports the requested outcome, applicable tracker state is read back,
+and every named completed lane is safely removed with helper read-back.

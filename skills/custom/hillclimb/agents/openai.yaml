@@ -1,0 +1,6 @@
+interface:
+  display_name: "Hillclimb"
+  short_description: "Improve one measured result through bounded trials"
+  default_prompt: "Use $hillclimb to improve one fixed measurable runtime, resource, cost, capacity, or product outcome against a settled target through comparable keep-or-reject experiments."
+policy:
+  allow_implicit_invocation: false

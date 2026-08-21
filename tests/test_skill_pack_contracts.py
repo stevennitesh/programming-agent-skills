@@ -305,6 +305,11 @@ def test_label_consumers_own_explicit_role_transitions() -> None:
         name: " ".join((CUSTOM / name / "SKILL.md").read_text(encoding="utf-8").split())
         for name in ("triage", "to-tickets", "wayfinder", "implement", "parallel-implement")
     }
+    texts["parallel-implement"] += " " + " ".join(
+        (CUSTOM / "parallel-implement/references/TRACKER-DELIVERY.md")
+        .read_text(encoding="utf-8")
+        .split()
+    )
 
     assert "Use `bug` only for a defect" in texts["triage"]
     assert "`needs-triage` marks unprocessed intake" in texts["triage"]
@@ -347,9 +352,15 @@ def test_delivery_skills_own_closeout_and_trackers_keep_readback() -> None:
     parallel = " ".join(
         (CUSTOM / "parallel-implement/SKILL.md").read_text(encoding="utf-8").split()
     )
+    parallel_tracker = " ".join(
+        (CUSTOM / "parallel-implement/references/TRACKER-DELIVERY.md")
+        .read_text(encoding="utf-8")
+        .split()
+    )
     assert "For tracker-backed delivery" in parallel
-    assert "After every child is implemented" in parallel
-    assert "apply the same state transition to the parent" in parallel
+    assert "After all children finish" in parallel_tracker
+    assert "Apply `implemented` to the parent" in parallel_tracker
+    assert "only when every child is implemented" in parallel_tracker
 
 
 def test_github_relationship_modes_are_explicit_before_publication() -> None:
@@ -811,7 +822,14 @@ def test_repo_bootstrap_is_recommended_only_and_callers_read_installed_contracts
         ),
     }
     for skill_name, pointers in required_pointers.items():
-        text = (CUSTOM / skill_name / "SKILL.md").read_text(encoding="utf-8")
+        entrypoint = (CUSTOM / skill_name / "SKILL.md").read_text(encoding="utf-8")
+        if skill_name == "parallel-implement":
+            assert "[Tracker Delivery](references/TRACKER-DELIVERY.md)" in entrypoint
+            text = (
+                CUSTOM / "parallel-implement/references/TRACKER-DELIVERY.md"
+            ).read_text(encoding="utf-8")
+        else:
+            text = entrypoint
         flat = " ".join(text.split())
         for pointer in pointers:
             assert pointer in text
@@ -2177,6 +2195,71 @@ def test_simplify_code_is_explicit_bounded_and_behavior_preserving() -> None:
         assert old_contract not in skill
 
 
+def test_hillclimb_owns_only_bounded_comparable_improvement_campaigns() -> None:
+    skill_dir = CUSTOM / "hillclimb"
+    skill = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+    contract = pack_contract.parse_contract(
+        (ROOT / "docs/synthesis/skill-pack.md").read_text(encoding="utf-8")
+    )
+    hillclimb = next(
+        selected
+        for selected in contract["selected_skills"]
+        if selected["canonical_name"] == "hillclimb"
+    )
+    names = {
+        selected["skill_id"]: selected["canonical_name"]
+        for selected in contract["selected_skills"]
+    }
+
+    assert not implicit_policy(skill_dir)
+    assert 3 <= len(re.findall(r"(?m)^## \d+\. (.+)$", skill)) <= 6
+    assert hillclimb["invocation_mode"] == "explicit-only"
+    assert hillclimb["relationship_ids"] == []
+    inbound = {
+        (names[row["caller_skill_id"]], row["verb"]): row
+        for row in contract["relationships"]
+        if row["target_skill_id"] == hillclimb["skill_id"]
+    }
+    assert set(inbound) == {("skill-router", "Recommend and stop")}
+    blueprint = pack_contract.contract_blueprint(contract, hillclimb["skill_id"])
+    assert "ECG-009" in {
+        issue["issue_id"] for issue in blueprint["slice"]["issues"]
+    }
+
+
+def test_wizard_is_an_explicit_template_free_human_procedure_leaf() -> None:
+    skill_dir = CUSTOM / "wizard"
+    skill = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+    contract = pack_contract.parse_contract(
+        (ROOT / "docs/synthesis/skill-pack.md").read_text(encoding="utf-8")
+    )
+    wizard = next(
+        selected
+        for selected in contract["selected_skills"]
+        if selected["canonical_name"] == "wizard"
+    )
+
+    assert not implicit_policy(skill_dir)
+    assert 3 <= len(re.findall(r"(?m)^## \d+\. (.+)$", skill)) <= 6
+    assert not any(path.name == "template.sh" for path in skill_dir.rglob("*"))
+    assert wizard["invocation_mode"] == "explicit-only"
+    assert wizard["relationship_ids"] == []
+    inbound = {
+        (relationship["caller_skill_id"], relationship["verb"])
+        for relationship in contract["relationships"]
+        if relationship["target_skill_id"] == wizard["skill_id"]
+    }
+    assert inbound == {("SK-025", "Recommend and stop")}
+    assert all(
+        relationship["caller_skill_id"] != wizard["skill_id"]
+        for relationship in contract["relationships"]
+    )
+    blueprint = pack_contract.contract_blueprint(contract, wizard["skill_id"])
+    assert "ECG-009" in {
+        issue["issue_id"] for issue in blueprint["slice"]["issues"]
+    }
+
+
 def test_codebase_design_bounds_replacement_and_compatibility() -> None:
     design = (CUSTOM / "codebase-design/SKILL.md").read_text(encoding="utf-8")
     flat = " ".join(design.split())
@@ -2310,6 +2393,11 @@ def test_implementation_workflows_keep_local_proof_owners() -> None:
     )
     parallel = " ".join(
         (CUSTOM / "parallel-implement/SKILL.md").read_text(encoding="utf-8").split()
+    )
+    parallel_tracker = " ".join(
+        (CUSTOM / "parallel-implement/references/TRACKER-DELIVERY.md")
+        .read_text(encoding="utf-8")
+        .split()
     )
 
     assert "Trace the real callers, data flow, and existing proof seam" in implement
@@ -2860,10 +2948,15 @@ def test_mutating_workflows_require_proportional_readback() -> None:
     parallel = " ".join(
         (CUSTOM / "parallel-implement/SKILL.md").read_text(encoding="utf-8").split()
     )
+    parallel_tracker = " ".join(
+        (CUSTOM / "parallel-implement/references/TRACKER-DELIVERY.md")
+        .read_text(encoding="utf-8")
+        .split()
+    )
     assert "Read back every durable external mutation" in implement
     assert "recovery path before an operation that can partially succeed" in implement
     assert "read back integration `HEAD`" in parallel
-    assert "read the result back" in parallel
+    assert "read the result back" in parallel_tracker
 
     for name in ("to-spec", "to-tickets", "triage", "wayfinder"):
         text = (CUSTOM / name / "SKILL.md").read_text(encoding="utf-8")
@@ -3010,6 +3103,8 @@ def test_parallel_implement_owns_recovery_authority_and_outcome_gates() -> None:
     assert "stop the prior actor, confirm it stopped" in flat
     assert "Never run two actors on one item" in flat
     assert "Let healthy active workers finish" in flat
+    assert "cleanup failure or residual helper-owned state is unfinished" in flat
+    assert "report the exact retry" in flat
     for required_resume_fact in (
         "integration `HEAD`",
         "actor, lane, base",
@@ -3053,6 +3148,10 @@ def test_parallel_implement_has_one_lean_worktree_lifecycle() -> None:
 def test_parallel_implement_exposes_live_frontier_and_closeout_contracts() -> None:
     skill_dir = CUSTOM / "parallel-implement"
     parallel = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+    tracker_delivery = (
+        skill_dir / "references/TRACKER-DELIVERY.md"
+    ).read_text(encoding="utf-8")
+    tracker_delivery_flat = " ".join(tracker_delivery.split())
     router = (CUSTOM / "skill-router/SKILL.md").read_text(encoding="utf-8")
     tickets = (CUSTOM / "to-tickets/SKILL.md").read_text(encoding="utf-8")
     tickets_flat = " ".join(tickets.split())
@@ -3063,16 +3162,25 @@ def test_parallel_implement_exposes_live_frontier_and_closeout_contracts() -> No
 
     assert not implicit_policy(skill_dir)
     assert "ready frontier" in flat
+    assert "non-empty ready frontier" in flat
     assert "independent work saves more time than coordination costs" in flat
     assert "run the affected items serially" in flat
-    assert "claim the parent and selected children" in flat
+    assert "complete tracker-backed parent graph" in flat
+    assert "claim the parent and initial ready frontier" in tracker_delivery_flat
+    assert "demonstrably retained by this run" in tracker_delivery_flat
+    assert "Stop on any other or ambiguous ownership" in tracker_delivery_flat
+    assert "confirm one current actor before dispatch" in tracker_delivery_flat
+    assert "Leave blocked descendants unclaimed" in tracker_delivery_flat
+    assert "only when every child is implemented" in tracker_delivery_flat
     assert "a dependent item starts only after its predecessors land" in flat
     assert "Accept that direct landing without applying its commit again" in flat
     assert "Verify and land accepted worker commits one at a time" in flat
-    assert "After every child is implemented" in flat
+    assert "Complete when every accepted item is landed" in flat
+    assert "every named completed lane is safely removed" in flat
     assert re.search(
         r"(?m)^\| One explicit fixed delivery set has at least two accepted "
-        r"implementation items \| `\$parallel-implement` \|$",
+        r"implementation items and a non-empty ready frontier "
+        r"\| `\$parallel-implement` \|$",
         router,
     )
     assert "selected directly or as a Ready-for-agent item" in router

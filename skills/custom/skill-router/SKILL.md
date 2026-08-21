@@ -60,11 +60,23 @@ non-conversational resolver, need a tracker-backed multi-session route.
 | Settled source needs a durable parent decision contract before ticket slicing | `$to-spec` |
 | A verified parent specification or equivalent settled bounded source needs a dependency-ordered implementation ticket graph and actionable frontier | `$to-tickets` |
 | One bounded settled implementation is selected directly or as a Ready-for-agent item | `$implement` |
-| One explicit fixed delivery set has at least two accepted implementation items | `$parallel-implement` |
+| One explicitly requested bounded campaign must repeatedly improve one frozen measurable runtime, resource, cost, capacity, or product outcome against a settled target | `$hillclimb` |
+| One explicitly requested bounded procedure has several settled steps only the current human can perform and needs a guided repository-native script | `$wizard` |
+| One explicit fixed delivery set has at least two accepted implementation items and a non-empty ready frontier | `$parallel-implement` |
 
 Route one selected item to `$implement`; route an explicitly requested fixed
-set of at least two accepted items to `$parallel-implement`. Parallel Implement
-checks dependencies, ownership, and write effects before concurrent dispatch.
+set of at least two accepted items with a non-empty ready frontier to
+`$parallel-implement`. Parallel Implement checks dependencies, ownership, and
+write effects before concurrent dispatch.
+Route one settled optimization to `$implement`, a sustained runtime, resource,
+cost, capacity, or product target to `$hillclimb`, measured code-shape or
+maintainability reduction to `$simplify-code`, and unexplained slowness or
+regression to `$diagnosing-bugs`.
+
+Route agent-executable setup or maintained automation to `$implement`, one
+manual action to no skill, and several settled human-only stages that need an
+interactive script to `$wizard`. An unresolved decision, source fact, or
+stakeholder answer remains with its shaping or evidence owner.
 
 ### Incoming Work And Quality
 

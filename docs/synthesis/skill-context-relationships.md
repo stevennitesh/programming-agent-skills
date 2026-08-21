@@ -32,6 +32,7 @@ flowchart TD
   Router --> Shape["grilling / grill-with-docs / wayfinder / prototype"]
   Router --> Questionnaire["to-questionnaire"]
   Router --> Handoff["handoff"]
+  Router --> Wizard["wizard"]
   GrillDocs["grill-with-docs"] --> Grilling["grilling"]
   GrillDocs --> DomainModel
   Grilling -. "async stakeholder gap" .-> Questionnaire
@@ -49,6 +50,8 @@ flowchart TD
   Wayfinder --> Prototype["prototype"]
   Wayfinder --> Research["research"]
   Prototype -. "promotion or production proof" .-> Contract
+  Hillclimb["hillclimb"] --> Contract
+  Wizard["wizard"] --> Contract
 
   Shape --> ToSpec["to-spec"]
   ToSpec --> DomainRouter
@@ -86,6 +89,7 @@ flowchart TD
   Parallel --> Tracker
   Parallel --> DomainRouter
   Parallel --> AgentLanes["AGENT-LANES.md<br/>worktree prepare + cleanup"]
+  Parallel --> TrackerDelivery["TRACKER-DELIVERY.md<br/>complete-graph claim + closeout"]
   Parallel -. "review trigger" .-> Review
   Parallel --> FindingContract
   Parallel -. "conflicted landing" .-> Conflict
@@ -159,6 +163,8 @@ Source: `skills/custom/*/agents/openai.yaml`.
 | `grill-with-docs` | implicitly invocable |
 | `handoff` | explicit-only |
 | `implement` | explicit-only |
+| `hillclimb` | explicit-only |
+| `wizard` | explicit-only |
 | `audit-codebase` | explicit-only |
 | `parallel-implement` | explicit-only |
 | `prototype` | implicitly invocable |
@@ -205,6 +211,8 @@ Return.
 | `to-questionnaire` | Recommend and stop | `$research` | Claim-owning sources can answer the gap. |
 | `to-questionnaire` | Recommend and stop | `$grilling` | The current user owns the unresolved conversation-only decision. |
 | `skill-router` | Recommend and stop | `$high-assurance-review` | The user explicitly requests high-assurance, heavy, or final review of one fixed complete code candidate. Return the route and leave review unstarted. |
+| `skill-router` | Recommend and stop | `$hillclimb` | The user explicitly requests a bounded sustained campaign to improve one frozen measurable runtime, resource, cost, capacity, or product outcome against a settled target. Return the route and leave the campaign unstarted. |
+| `skill-router` | Recommend and stop | `$wizard` | The user explicitly requests one bounded procedure with several settled steps only the current human can perform and a guided repository-native script is more useful than live guidance. Return the route and leave script creation unstarted. |
 | `skill-router` | Recommend and stop | `$repo-bootstrap` | The chosen engineering route needs missing, incompatible, or outdated setup. Return Repo Bootstrap as the one route and leave it unstarted. |
 | `wayfinder` | Invoke | `$research` | One selected ticket needs claim-owning source evidence. Pass its question, map use, scope, applicable state, approved note path or no-write mode, and Wayfinder return owner. |
 | `wayfinder` | Invoke | `$prototype` | One selected ticket needs runnable evidence. Pass its question, decision owner, named human judge or objective rule, representative evidence, bounded run, mutation authority, and cleanup or custody. |
@@ -268,15 +276,17 @@ every terminal result directly to its current caller or the user.
 | `docs/agents/issue-tracker.md` | Selected provider operations, configured relationship representation, and mutation read-back | `to-spec`, `to-tickets`, `triage`, `implement`, `parallel-implement`, `wayfinder` |
 | `docs/agents/triage-labels.md` | Repository values for active category, state, and Wayfinder roles; consuming skills own when each role applies | `to-tickets`, `triage`, `implement`, `parallel-implement`, `wayfinder` |
 | `docs/agents/domain.md` | Single-context or multi-context routing to current domain records | `domain-modeling` and domain-language consumers |
-| `docs/agents/engineering-contract.md` | Shared engineering judgment: bounded slices, causal ownership, explicit data shapes, small interfaces, local state, subtractive design, native capabilities, root-cause correction, trust-boundary validation, displaced-path removal, proportional proof, and concrete protection triggers. Skills retain procedures, checks, stopping conditions, and outputs. | `to-spec`, `to-tickets`, `implement`, `tdd`, `diagnosing-bugs`, `codebase-design`, `prototype`, `simplify-code`, `audit-codebase`, `parallel-implement`, `resolving-merge-conflicts`, `change-review`, `high-assurance-review` |
+| `docs/agents/engineering-contract.md` | Shared engineering judgment: bounded slices, causal ownership, explicit data shapes, schema-derived boundary types, small interfaces, local state, subtractive design, native capabilities, root-cause correction, trust-boundary validation, displaced-path removal, proportional proof, and concrete protection triggers. Skills retain procedures, checks, stopping conditions, and outputs. | `to-spec`, `to-tickets`, `implement`, `hillclimb`, `wizard`, `tdd`, `diagnosing-bugs`, `codebase-design`, `prototype`, `simplify-code`, `audit-codebase`, `parallel-implement`, `resolving-merge-conflicts`, `change-review`, `high-assurance-review` |
 | `domain-modeling` | Resolves project-specific domain semantics; reconciles proposed wording with routed current truth; returns the current domain result when composed; persists routed context records only with write authority; and records an already-settled ADR candidate only with separate approval | `skill-router`, `grill-with-docs`, `audit-codebase`, `repo-bootstrap` |
 | `codebase-design` | One bounded module or interface architecture decision using deep-module, caller-first, data-shape, ownership, seam, migration, and proof judgment | `audit-codebase`, direct architecture/design work |
 | `research` | Claim-owning source legwork and one authorized cited note or verified inline evidence | `skill-router`, `grilling`, `wayfinder` |
 | `to-questionnaire` | One recipient-ready async discovery artifact for one external stakeholder and downstream decision | `skill-router`, `grilling`, `wayfinder`, humans collecting stakeholder evidence |
 | `resolving-merge-conflicts` | Read-only inspection, requested conflict resolution, and separately requested exact-path continuation of one active Git operation | Git operations and implementation or integration work that enters a conflicted state |
-| `change-review` | Read-only review of one identified code change through accepted-behavior and engineering-quality judgment; formal delivery conditionally adds fixed-candidate gating, independence, remediation, and a terminal decision | `implement`, `parallel-implement`, `high-assurance-review`, direct callers |
+| `change-review` | Read-only review of one identified code change through accepted behavior, visible callers, hidden contract consumers, and engineering-quality judgment; formal delivery conditionally adds fixed-candidate gating, independence, remediation, and a terminal decision | `implement`, `parallel-implement`, `high-assurance-review`, direct callers |
 | `audit-codebase` | Organized HTML repository atlas plus current-source, user-selected subsystem Audit and candidate Analyze; six-class coverage loads detailed owners on observable triggers, records cross-subsystem patterns, and stops before tickets or implementation | `skill-router`, `change-review`, `high-assurance-review`, returned evidence, and humans explicitly invoking repository audits |
 | `simplify-code` | Proved behavior-preserving simplification of one user-selected target or a truthful no-change result | `skill-router`, `audit-codebase`, humans invoking bounded cleanup |
+| `hillclimb` | Bounded comparable experiments that improve one frozen runtime, resource, cost, capacity, or product result against a settled target | `skill-router`, humans explicitly invoking sustained measured improvement |
+| `wizard` | One repository-native interactive script for a settled multi-stage procedure containing actions only the current human can perform | `skill-router`, humans explicitly invoking a guided human-only procedure |
 
 ## Supporting Files
 
@@ -296,7 +306,7 @@ every terminal result directly to its current caller or the user.
 | `change-review` | `change-review/references/FORMAL-REVIEW.md`: formal-only required-Spec, independence, remediation, decision, and Return rules |
 | `implement` | `implement/references/WORKER-HANDOFF.md`: plain bounded handoff and provisional evidence return for user-requested delegation |
 | `audit-codebase` | `DEFECT-CONTRACT.md`: defects and gaps; `QUALITY-LENS.md`: six-class coverage, routing, opportunity admission, retained complexity, and systemic widening; detailed lens owners: condition-triggered issue discovery; `CANDIDATE-CONTRACT.md`: current-source candidate comparison; `REPORT-QUICK-REFERENCE.md`: sole CLI procedure; `HTML-REPORT.md` plus `scripts/update_report.py`: deterministic atlas state and rendering |
-| `parallel-implement` | `AGENT-LANES.md`: checkout custody, shared-ref limits, replacement, and cleanup; `lane_worktree.py`: exact-base lane preparation, isolated temp/cache paths, and conservative cleanup |
+| `parallel-implement` | `AGENT-LANES.md`: checkout custody, shared-ref limits, replacement, and cleanup; `TRACKER-DELIVERY.md`: complete-parent claim, readiness, read-back, and closeout; `lane_worktree.py`: exact-base lane preparation, isolated temp/cache paths, and conservative cleanup |
 
 ## Boundary Notes
 
@@ -331,7 +341,7 @@ every terminal result directly to its current caller or the user.
   state transitions; `$to-tickets` owns proportional slicing, true dependency
   order, graph approval, safe publication, and graph read-back. Do not re-triage
   valid `$to-tickets` output.
-- `implement` owns one standalone selected item and its in-scope correction path, with Git delivery only when the selected branch requires it; `parallel-implement` owns one explicit fixed set of at least two accepted items through isolated concurrent lanes, serial integration, bounded correction, integrated proof, and conditional tracker closeout.
+- `implement` owns one standalone selected item and its in-scope correction path, with Git delivery only when the selected branch requires it; `parallel-implement` owns one explicit fixed set of at least two accepted items with a non-empty ready frontier through isolated concurrent lanes, serial integration, bounded correction, integrated proof, and complete-parent tracker closeout when applicable.
 - The `parallel-implement` root is the sole dispatcher, serial landing,
   integration-judgment, and conditional-review owner. Workers never fan out. There
   is no warm general integrator or machine-validated worker capsule.
