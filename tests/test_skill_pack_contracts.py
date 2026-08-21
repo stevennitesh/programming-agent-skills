@@ -380,8 +380,9 @@ def test_delivery_skills_own_custody_and_trackers_map_closeout() -> None:
     parallel = " ".join(
         (CUSTOM / "parallel-implement/SKILL.md").read_text(encoding="utf-8").split()
     )
-    assert "Retain each claim through verified non-dispatchable closeout" in parallel
-    assert "Close the parent only after every child verifies" in parallel
+    assert "For tracker-backed delivery" in parallel
+    assert "close children before the parent" in parallel
+    assert "read back each durable change" in parallel
 
 
 def test_github_relationship_modes_are_explicit_before_publication() -> None:
@@ -569,18 +570,10 @@ def test_repo_bootstrap_owns_optional_parallel_support_and_reconciliation(
     assert check(root) == []
     assert "When support is absent, ask whether to enable it" in bootstrap
     assert "goes directly through Reconcile without this question" in bootstrap
-    assert "one missing or stale half is a `delta`" in bootstrap
     assert "do not create worktrees or external directories" in bootstrap
 
-    agent = root / validator["PARALLEL_AGENT"]
-    agent.parent.mkdir(parents=True)
-    template = CUSTOM / "parallel-implement/assets/luna_max.toml"
-    agent.write_bytes(template.read_bytes())
-    assert check(root) == [
-        "Parallel implementation support is missing .codex/config.toml"
-    ]
-
     config = root / validator["PARALLEL_CONFIG"]
+    config.parent.mkdir(parents=True)
     lane_root = tmp_path / "lanes" / "wt"
     encoded_lane_root = json.dumps(str(lane_root.resolve()))
     config.write_text(
@@ -613,11 +606,6 @@ def test_repo_bootstrap_owns_optional_parallel_support_and_reconciliation(
         f"{encoded_lane_root} = true\n",
         encoding="utf-8",
     )
-
-    agent.write_text("name = \"stale\"\n", encoding="utf-8")
-    assert check(root) == [
-        ".codex/agents/luna_max.toml does not match the current template"
-    ]
 
 
 def test_repo_bootstrap_marks_and_validates_setup_schema() -> None:
@@ -1527,46 +1515,21 @@ def test_review_baselines_are_discovered_and_independence_is_honest() -> None:
     assert "Implementation-worker profiles remain with implementation dispatch" in review_summary
 
 
-def test_spawned_agents_share_one_runtime_profile_owner() -> None:
+def test_spawned_agents_use_runtime_defaults_without_pack_profiles() -> None:
     implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
     implement_flat = " ".join(implement.split())
     review = (CUSTOM / "change-review/SKILL.md").read_text(encoding="utf-8")
     assurance = (CUSTOM / "high-assurance-review/SKILL.md").read_text(
         encoding="utf-8"
     )
-    profiles = (
-        CUSTOM / "parallel-implement/references/RUNTIME-PROFILES.md"
-    ).read_text(
-        encoding="utf-8"
-    )
-    profiles_flat = " ".join(profiles.split())
-
-    assert re.findall(
-        r"(?m)^\| `([^`]+)` \| `([^`]+)` \| `([^`]+)` \| `([^`]+)` \|$",
-        profiles,
-    ) == [
-        ("clear-worker", "luna_max", "gpt-5.6-luna", "max"),
-        ("adaptive-worker", "default", "gpt-5.6-terra", "xhigh"),
-        ("fast-adaptive-worker", "default", "gpt-5.6-sol", "medium"),
-        ("demanding-worker", "default", "gpt-5.6-sol", "high"),
-    ]
-    assert "A named agent type loads its custom TOML" in profiles_flat
-    assert "Enforce a row only for a spawned implementation actor" in profiles_flat
-    assert "public interface, cross-owner invariant" in profiles_flat
-    assert "Review roles use their owning review skill's fresh-context" in profiles_flat
-    assert "[Runtime Profiles](../parallel-implement/references/RUNTIME-PROFILES.md)" in implement
-    assert "[Runtime Profiles](../parallel-implement/references/RUNTIME-PROFILES.md)" not in review
-    assert "[Runtime Profiles](../parallel-implement/references/RUNTIME-PROFILES.md)" not in assurance
-    assert "passes it directly when starting the worker" in profiles_flat
     assert "If the user explicitly requests subagents" in implement_flat
     assert "delegate only a bounded edit that one worker can own" in implement_flat
-    assert "Luna/max `clear-worker`" not in implement
+    assert "fresh capable worker under the active runtime" in implement_flat
+    assert "unless the user selects a model" in implement_flat
     assert not (CUSTOM / "parallel-implement/scripts/run_ledger.py").exists()
-    custom_agents = sorted((ROOT / ".codex/agents").glob("*.toml"))
-    assert [path.name for path in custom_agents] == ["luna_max.toml"]
-    luna = custom_agents[0].read_text(encoding="utf-8")
-    assert 'model = "gpt-5.6-luna"' in luna
-    assert 'model_reasoning_effort = "max"' in luna
+    assert not (CUSTOM / "parallel-implement/references/RUNTIME-PROFILES.md").exists()
+    assert not (CUSTOM / "parallel-implement/assets/luna_max.toml").exists()
+    assert not (ROOT / ".codex/agents/luna_max.toml").exists()
     for skill in (implement, review, assurance):
         assert "gpt-5.6" not in skill
 
@@ -1655,7 +1618,12 @@ def test_review_assurance_route_has_one_domain_decision() -> None:
     assert "each review skill validates its admitted candidate" in normalized_context
     assert "risk expands only applicable candidate-scoped judgment" in normalized_context
     assert "**Status**: superseded by ADR-0016" in prior_adr
-    assert "**Status**: accepted" in adr
+    assert "**Status**: superseded in part by ADR-0017" in adr
+    current_adr = (
+        ROOT
+        / "docs/adr/0017-parallel-delivery-keeps-structural-isolation-not-dispatch-ceremony.md"
+    ).read_text(encoding="utf-8")
+    assert "**Status**: accepted" in current_adr
     normalized_prior_adr = " ".join(prior_adr.split())
     assert "Supported facts expand ordinary candidate-scoped coverage" in normalized_prior_adr
     assert "Candidate size, PR or release packaging" in normalized_prior_adr
@@ -1922,19 +1890,12 @@ def test_implement_uses_condition_triggered_change_review() -> None:
     review = implement.split("## 4. Prove", 1)[1].split("## 5. Finish", 1)[0]
     flat = " ".join(review.split())
 
-    assert "user or repository requires independent review" in flat
-    assert "two or more independent authors" in flat
-    assert "material shared-contract or irreversible-migration judgment" in flat
-    assert "freeze the proved candidate" in flat
-    assert "fresh `ordinary-reviewer`" in flat
-    assert "`Formal review: yes`" in flat
-    assert "`Mode: initial`" in flat
-    assert "`Mode: remediation`" in flat
-    assert "required proof and material skips" in flat
-    assert "fresh task or context" in flat
-    assert "Do not finish from `blocked` or `incomplete`" in flat
-    assert "caller accepts the named risk" in flat
-    assert "Review grants no authority to widen scope" in flat
+    assert "user or repository requires it" in flat
+    assert "concrete unresolved shared-contract or migration judgment" in flat
+    assert "Pin the clean candidate" in flat
+    assert "let Change Review own its procedure" in flat
+    assert "Multiple authors alone do not trigger review" in flat
+    assert "`Formal review: yes`" not in flat
 
 
 def test_review_policy_is_consistent_across_delivery_metadata() -> None:
@@ -1955,9 +1916,8 @@ def test_review_policy_is_consistent_across_delivery_metadata() -> None:
     assert "Use heavier workflows only when their stated condition applies" in (
         implement["interface"]["default_prompt"]
     )
-    assert "Change Review only when its trigger applies" in (
-        parallel["interface"]["default_prompt"]
-    )
+    assert "one root integrator" in parallel["interface"]["default_prompt"]
+    assert "focused integrated proof" in parallel["interface"]["default_prompt"]
     assert assurance["policy"]["allow_implicit_invocation"] is False
     assert assurance["interface"]["default_prompt"].startswith("Explicitly use")
 
@@ -2027,11 +1987,13 @@ def test_tdd_invocation_gate_is_consistent_across_active_owners() -> None:
     portable = (ROOT / "AGENTS_PORTABLE_FALLBACK.md").read_text(encoding="utf-8")
 
     assert implicit_policy(CUSTOM / "tdd")
-    for owner in (tdd, implement, parallel, router, relationships):
+    for owner in (tdd, implement, router, relationships):
         assert "explicit" in owner.lower()
         assert "repository policy" in owner.lower()
         for trigger in ("TDD", "test-first work", "RED-GREEN-REFACTOR"):
             assert trigger in owner
+    for trigger in ("TDD", "test-first work", "RED-GREEN-REFACTOR"):
+        assert trigger not in parallel
     assert "integration tests, regression tests, or coverage alone do not trigger" in tdd
     assert "safe red-capable check" in " ".join(tdd.split())
     assert "Otherwise implement directly and use ordinary tests" in " ".join(
@@ -2039,12 +2001,6 @@ def test_tdd_invocation_gate_is_consistent_across_active_owners() -> None:
     )
     assert "for each materially distinct settled behavior and independent oracle" in (
         " ".join(implement.split())
-    )
-    assert "never repeats the worker's TDD loop" in " ".join(parallel.split())
-    assert "Ordinary bug investigation stays with the worker" in parallel
-    assert "`diagnosis-required` to the root" in parallel
-    assert "A material gap returns to the root before that behavior is mutated" in (
-        " ".join(parallel.split())
     )
     assert (
         "ordinary test, integration-test, regression-test, or coverage work to "
@@ -2074,7 +2030,6 @@ def test_tdd_invocation_gate_is_consistent_across_active_owners() -> None:
     }
     assert set(inbound) == {
         ("REL-017", "implement", "Invoke"),
-        ("REL-035", "parallel-implement", "Invoke"),
         ("REL-064", "skill-router", "Recommend and stop"),
     }
     for relationship in inbound.values():
@@ -2267,7 +2222,8 @@ def test_implementation_closeout_requires_the_spec_axis() -> None:
     assert "Skip an optional absent source" in assurance_flat
     assert "accepted request is always required" in assurance_flat
     assert "record why it is optional" in assurance_flat
-    assert "`Spec required: yes`" in parallel
+    assert "let Change Review own its procedure" in parallel
+    assert "`Spec required: yes`" not in parallel
 
 
 def test_implementation_workflows_keep_local_proof_owners() -> None:
@@ -2281,13 +2237,12 @@ def test_implementation_workflows_keep_local_proof_owners() -> None:
     assert "Trace the real callers, data flow, and existing proof seam" in implement
     assert "Run the nearest useful check" in implement
     assert "Inspect the real output or caller path" in implement
-    assert "proof owners" in parallel
-    assert "Carry worker proof only while" in parallel
-    assert "run only proof invalidated by the transition" in parallel
-    assert "smallest final proof set" in parallel
+    assert "run proof invalidated by that transition" in parallel
+    assert "real callers, and material interactions" in parallel
+    assert "Do not repeat worker proof that remains valid" in parallel
 
 
-def test_implement_owns_one_plain_worker_handoff_without_a_schema() -> None:
+def test_implement_owns_one_plain_worker_handoff_without_parallel_loading_it() -> None:
     implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
     parallel = (CUSTOM / "parallel-implement/SKILL.md").read_text(encoding="utf-8")
     relationships = (
@@ -2298,10 +2253,9 @@ def test_implement_owns_one_plain_worker_handoff_without_a_schema() -> None:
 
     assert handoff_path.is_file()
     assert "[Plain Worker Handoff](references/WORKER-HANDOFF.md)" in implement
-    assert "[Plain Worker Handoff](../implement/references/WORKER-HANDOFF.md)" in parallel
+    assert "WORKER-HANDOFF.md" not in parallel
     assert "If the user explicitly requests subagents" in " ".join(implement.split())
     assert "The root inspects the returned diff and proof" in " ".join(implement.split())
-    assert "guidance, not a schema" in " ".join(parallel.split())
     assert "implement/references/WORKER-HANDOFF.md" in relationships
     assert "schema" not in handoff.lower()
     assert not (CUSTOM / "parallel-implement/references/WORKER-BRIEF.md").exists()
@@ -2323,17 +2277,11 @@ def test_implementation_workflows_trace_acceptance_before_completion() -> None:
     )
 
     assert "Trace the real callers, data flow, and existing proof seam" in implement
-    assert (
-        "Before choosing an implementation seam, each worker traces every assigned"
-        in parallel
-    )
+    assert "scope, allowed writes, acceptance" in parallel
+    assert "real callers, and material interactions" in parallel
     assert (
         "Call the item complete only when the requested behavior works"
         in implement
-    )
-    assert (
-        "Do not accept a lane merely because its first component seam is green"
-        in parallel
     )
     assert (
         "component proof counts only when that path exercises the component"
@@ -2356,7 +2304,9 @@ def test_planning_and_delivery_activate_lean_integrated_quality_contract() -> No
     assert "smallest integrated design" in implement
     assert "Remove code made obsolete by the change" in implement
     assert "complete replacement or removal" in review
-    assert "Parallelism is an optimization, not a goal" in parallel
+    assert "Parallelism is useful only when independent work saves more time" in (
+        " ".join(parallel.split())
+    )
     assert "ToSpec --> Contract" in relationships
     assert "ToTickets --> Contract" in relationships
 
@@ -2384,11 +2334,9 @@ def test_ticket_and_delivery_packets_are_compact_and_preserve_repairs() -> None:
     assert "Use the caller's selection as the scope fence" in implement_flat
     assert "Direct work creates no tracker state" in implement_flat
     assert "Return a concise summary" in implement_flat
-    assert "create no campaign ledger" in parallel_flat
-    assert "plain task context" in parallel_flat
-    assert "Prose is evidence, not trusted state" in parallel_flat
-    assert "one `$to-tickets` repair packet" in parallel_flat
-    assert "retaining campaign custody and claims" in parallel_flat
+    assert "campaign ledger" not in parallel_flat
+    assert "Worker prose is evidence, not state" in parallel_flat
+    assert "Send vague work" in parallel_flat
     assert "A caller with campaign claims retains them throughout repair" in tickets_flat
 
 
@@ -2709,7 +2657,7 @@ def test_tracer_bullet_is_a_conditional_learning_role_not_a_slice_alias() -> Non
     assert "tracer bullet** only when a named risk warrants early feedback" in contract
     assert "learning role, not a substitute for acceptance" in contract
     assert "Otherwise omit the learning role" in tickets
-    assert "When the graph assigns a tracer bullet" in parallel
+    assert "tracer bullet" not in parallel
     assert "the terms are not synonyms" in readme
     assert "deliver observable vertical slices" not in readme
 
@@ -2830,7 +2778,8 @@ def test_mutating_workflows_require_proportional_readback() -> None:
     )
     assert "Read back every durable external mutation" in implement
     assert "recovery path before an operation that can partially succeed" in implement
-    assert "mutation read-back" in parallel
+    assert "read back integration `HEAD`" in parallel
+    assert "read back each durable change" in parallel
 
     for name in ("to-spec", "to-tickets", "triage", "wayfinder"):
         text = (CUSTOM / name / "SKILL.md").read_text(encoding="utf-8")
@@ -2945,40 +2894,25 @@ def test_git_and_parallel_delivery_roles_stay_out_of_the_shared_contract() -> No
         assert "starting index" not in normalized
         assert "registered worktrees" not in normalized
     assert "Preserve unrelated work" in " ".join(implement.split())
-    assert "Workers never widen scope or dispatch successors" in " ".join(parallel.split())
+    assert "Concurrent workers do not" in " ".join(parallel.split())
+    assert "dispatch successors" in " ".join(parallel.split())
 
 
 def test_parallel_implement_separates_plain_context_checkout_and_review() -> None:
     skill_dir = CUSTOM / "parallel-implement"
     parallel = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
     lanes = (skill_dir / "references/AGENT-LANES.md").read_text(encoding="utf-8")
-    profiles = (skill_dir / "references/RUNTIME-PROFILES.md").read_text(encoding="utf-8")
     flat = " ".join(parallel.split())
 
     assert re.findall(r"(?m)^## (.+)$", parallel) == [
-        "Admit", "Wave", "Integrate", "Final Check, Conditional Review, And Repair", "Close"
+        "Admit", "Isolate", "Dispatch", "Land", "Prove", "Finish"
     ]
-    for profile in ("clear-worker", "adaptive-worker", "fast-adaptive-worker", "demanding-worker"):
-        assert f"`{profile}`" in profiles
-    assert "one fresh `integration-reviewer` through `$change-review`" in flat
-    assert "two or more independent authors" in flat
-    assert "serial execution by one author" in flat
-    assert "do not trigger review" in flat
-    assert "The root judges integration" in flat
-    assert "warm general integrator" in flat
-    assert "plain task context" in flat and "not a schema" in flat
-    assert "quick pytest collection smoke when the checkout declares" in " ".join(lanes.split())
-    assert "`integration-reviewer`" not in profiles
-    for field in (
-        "`Mode: initial`",
-        "`Mode: remediation`",
-        "required proof, material skips",
-        "fresh task or context",
-        "implementation and integration-author identities",
-    ):
-        assert field in flat
-    assert "Do not close from `blocked` or `incomplete`" in flat
-    assert "serial-integrator" not in profiles
+    assert "one root integrator" in flat.lower()
+    assert "Multiple workers alone do not trigger review" in flat
+    assert "let Change Review own its procedure" in flat
+    assert "WORKER-HANDOFF.md" not in parallel
+    assert "quick pytest collection" not in " ".join(lanes.split())
+    assert not (skill_dir / "references/RUNTIME-PROFILES.md").exists()
     assert not (skill_dir / "scripts/run_ledger.py").exists()
     assert not (skill_dir / "references/RUN-LEDGER.md").exists()
     assert not (skill_dir / "references/WORKER-BRIEF.md").exists()
@@ -2988,37 +2922,21 @@ def test_parallel_implement_owns_recovery_authority_and_outcome_gates() -> None:
     parallel = (CUSTOM / "parallel-implement/SKILL.md").read_text(encoding="utf-8")
     flat = " ".join(parallel.split())
 
-    for outcome in ("`complete`", "`partial`", "`blocked`"):
-        assert outcome in parallel
-    assert "Retry only after an observed blocking condition changes" in flat
-    assert "never duplicate an uncertain task" in flat
-    assert "return one `$to-tickets` repair packet" in flat
-    assert "retaining campaign custody and claims" in flat
-    tickets = " ".join(
-        (CUSTOM / "to-tickets/SKILL.md").read_text(encoding="utf-8").split()
-    )
-    assert "An explicit To Tickets repair changes only verified graph facts" in flat
-    assert "A caller with campaign claims retains them throughout repair" in tickets
-    assert "transfer only the exact verified campaign-owned claims" not in flat
-    assert "release transferred claims" not in tickets
-    assert "use `$resolving-merge-conflicts`" in flat
-    assert "If the same blocker recurs" in flat
-    assert "without a new authorized in-scope repair path" in flat
-    assert "`blocked` means no authorized in-scope progress" in flat
-    assert "`partial` means accepted progress is preserved" in flat
-    assert "Retain each claim through verified non-dispatchable closeout" in flat
-    assert "Close the parent only after every child verifies" in flat
-    for required_return_evidence in (
-        "integrated `HEAD`",
-        "every final proof run and result",
-        "review decision (`passed` or `not triggered`)",
-        "verified child and parent closeout",
-        "final claim state",
-        "lane cleanup",
-        "preserved recovery evidence (`none` when absent)",
+    assert "Silence or a missed checkpoint triggers inspection" in flat
+    assert "stop the prior actor, confirm it stopped" in flat
+    assert "Never run two actors on one item" in flat
+    assert "Let healthy active workers finish" in flat
+    for required_resume_fact in (
+        "integration `HEAD`",
+        "actor, lane, base",
+        "commit or dirty state",
+        "landing state",
+        "blocker",
+        "next safe action",
     ):
-        assert required_return_evidence in flat
-    assert "Missing any one of these fields makes the Return `partial`" in flat
+        assert required_resume_fact in flat
+    for retired in ("`complete`", "`partial`", "`blocked`", "campaign ledger"):
+        assert retired not in parallel
 
 
 def test_parallel_implement_has_one_lean_worktree_lifecycle() -> None:
@@ -3029,25 +2947,21 @@ def test_parallel_implement_has_one_lean_worktree_lifecycle() -> None:
     codex_config = (ROOT / ".codex/config.toml").read_text(encoding="utf-8")
     flat = " ".join(lanes.split())
 
-    assert "Pass only at the top-level root" in parallel
+    assert "Run only at the top-level root" in parallel
     assert "lane_worktree.py prepare" in flat
     assert "lane_worktree.py cleanup" in flat
-    assert "pytest temp and cache roots" in flat
-    assert "quick pytest collection smoke when the checkout declares" in flat
+    assert "`temp_root`, `pytest_basetemp`, and `pytest_cache`" in lanes
+    assert "quick pytest collection" not in flat
     assert "Start the worker only when" in flat and "`ok: true`" in flat
-    assert "--oldest" in lanes and "--completed" in lanes
-    assert "deletes state only after `git worktree remove` succeeds" in flat
-    assert "leaves state intact" in flat
-    assert "exact retry whose helper-owned state remains" in flat
-    assert "non-empty or uncertain paths remain preserved" in flat
+    assert "--oldest" not in lanes and "--completed" in lanes
+    assert "Dirty, unintegrated, active, or uncertain work stays in place" in flat
+    assert "exact retry after Git removed the worktree" in flat
     assert 'operations.add_parser("prepare")' in lane_script
     assert 'operations.add_parser("cleanup")' in lane_script
-    assert '"--collect-only"' in lane_script and '"addopts="' in lane_script
+    assert '"--collect-only"' not in lane_script and '"--oldest"' not in lane_script
     assert "lane_state(root, worktree.name)" in lane_script
     assert "shutil.rmtree(state)" in lane_script and "--global" not in lane_script
-    assert (skill_dir / "assets/luna_max.toml").read_bytes() == (
-        ROOT / ".codex/agents/luna_max.toml"
-    ).read_bytes()
+    assert not (skill_dir / "assets/luna_max.toml").exists()
     expected_lane_root = str(Path(ROOT.anchor) / "pi" / "pas-001" / "wt")
     assert expected_lane_root.replace("\\", "\\\\") in codex_config
 
@@ -3064,16 +2978,17 @@ def test_parallel_implement_exposes_live_frontier_and_closeout_contracts() -> No
     flat = " ".join(parallel.split())
 
     assert not implicit_policy(skill_dir)
-    assert "dependency-ready frontier" in flat
-    assert "expected time saving exceeds coordination and integration cost" in flat
-    assert "Uncertain or overlapping items run serially" in flat
-    assert "retain the parent campaign through serial or concurrent frontiers" in flat
-    assert "Claim the parent and read the claim back before dispatch" in flat
-    assert "does not land the same commit again" in flat
-    assert flat.index("Close children") < flat.index("Close the parent")
+    assert "ready frontier" in flat
+    assert "independent work saves more time than coordination costs" in flat
+    assert "run the affected items serially" in flat
+    assert "claim the parent and selected children" in flat
+    assert "a dependent item starts only after its predecessors land" in flat
+    assert "Accept that direct landing without applying its commit again" in flat
+    assert "Verify and land accepted worker commits one at a time" in flat
+    assert "close children before the parent" in flat
     assert re.search(
-        r"(?m)^\| One explicitly requested parent has an exhaustive "
-        r"non-empty Ready-for-agent graph \| `\$parallel-implement` \|$",
+        r"(?m)^\| One explicit fixed delivery set has at least two accepted "
+        r"implementation items \| `\$parallel-implement` \|$",
         router,
     )
     assert "selected directly or as a Ready-for-agent item" in router
@@ -3086,8 +3001,8 @@ def test_parallel_uses_current_landed_state_without_a_dependency_overlay() -> No
     parallel = " ".join(
         (CUSTOM / "parallel-implement/SKILL.md").read_text(encoding="utf-8").split()
     )
-    assert "current landed state" in parallel
-    assert "Recompute the frontier after each accepted landing" in parallel
+    assert "dependencies whose changes are already integrated" in parallel
+    assert "recompute the ready frontier" in parallel
     for token in ("landed-awaiting-lock", "same-campaign", "dependency overlay"):
         assert token not in parallel
 
@@ -3142,10 +3057,11 @@ def test_implement_closeout_locks_exact_candidate_and_preserves_custody() -> Non
     assert "Call the item complete only when the requested behavior works" in flat
     assert "Return a concise summary" in flat
     assert "Outcome: complete | partial | blocked" not in flat
-    assert "request remediation review only while the original trigger remains" in flat
+    assert "let Change Review own its procedure" in flat
+    assert "Mode: remediation" not in flat
 
 
-def test_current_relationships_preserve_candidate_commit_and_repair_claim_custody() -> None:
+def test_parallel_relationships_keep_review_conditional_and_shaping_external() -> None:
     relationships = (ROOT / "docs/synthesis/skill-context-relationships.md").read_text(
         encoding="utf-8"
     )
@@ -3159,12 +3075,11 @@ def test_current_relationships_preserve_candidate_commit_and_repair_claim_custod
         if relationship["relationship_id"] == "REL-036"
     )
 
-    assert "A repaired successor is reviewed only while the original trigger still applies" in flat
-    assert "retain campaign custody and claims" in flat
-    assert "A later explicit To Tickets repair" in flat
-    assert "Parallel Implement reconciles the read-back graph before resuming" in flat
-    assert "campaign custody retained" in repair["return_packet"]
-    assert "reconciles any later read-back graph before resuming" in repair["return_packet"]
+    assert "Multiple workers alone do not trigger review" in flat
+    assert "vague work, unsettled meaning, missing dependencies" in flat
+    assert "leave shaping or graph repair to To Tickets" in flat
+    assert "downstream work unstarted" in repair["return_packet"]
+    assert "campaign custody" not in repair["return_packet"]
 
 
 def test_diagnosis_is_an_explicit_leaf_with_bounded_recommendations() -> None:
@@ -3265,8 +3180,10 @@ def test_runtime_composition_edges_respect_lean_review_and_planning_policy() -> 
         for caller, _, callee in edges
     )
     assert ("implement", "Recommend and stop", "to-tickets") not in edges
-    assert "mutations from two or more independent authors" in relationships_flat
-    assert "Missing proof stops instead" in relationships_flat
+    assert "Multiple authors alone do not trigger review" in relationships_flat
+    assert "Multiple workers alone do not trigger review" in relationships_flat
+    assert "review trigger or independent authors" not in relationships_flat
+    assert "remains after proof" in relationships_flat
     assert "Supported risk modifies coverage only after review admission" in relationships_flat
     assert "ToSpec --> Labels" not in relationships
     assert not implicit_policy(CUSTOM / "high-assurance-review")

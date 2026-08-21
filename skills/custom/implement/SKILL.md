@@ -62,9 +62,9 @@ Use these branches only when their condition is present:
   before that behavior is mutated. Otherwise implement directly and use
   ordinary tests as useful proof.
 - If the user explicitly requests subagents, load
-  [Plain Worker Handoff](references/WORKER-HANDOFF.md) and
-  [Runtime Profiles](../parallel-implement/references/RUNTIME-PROFILES.md), then
-  delegate only a bounded edit that one worker can own. The root inspects the
+  [Plain Worker Handoff](references/WORKER-HANDOFF.md), then delegate only a
+  bounded edit that one worker can own. Use a fresh capable worker under the
+  active runtime unless the user selects a model. The root inspects the
   returned diff and proof.
 - For tracker-backed work, follow the repository's claim and closeout rules.
   Direct work creates no tracker state. Commit only when the user or repository
@@ -85,22 +85,10 @@ Inspect the real output or caller path when a unit check cannot establish that
 the change works. If safe execution is unavailable, use the strongest safe
 proxy and say what remains unproved.
 
-Invoke `$change-review` only when the user or repository requires independent
-review, the candidate has changes from two or more independent authors, or a
-material shared-contract or irreversible-migration judgment remains after
-proof. When triggered, freeze the proved candidate and launch one fresh
-`ordinary-reviewer` distinct from its implementation authors. Supply
-`Formal review: yes`, `Mode: initial`, the accepted request, fixed point,
-candidate identity, required proof and material skips, whether a Spec is
-required, implementation-author identities, and evidence of the reviewer's
-fresh task or context and distinct identity. Review
-grants no authority to widen scope or mutate the candidate. Do not finish from
-`blocked` or `incomplete`; apply only caller-authorized in-scope corrections,
-rerun invalidated proof, and request remediation review only while the original
-trigger remains. A remediation request supplies `Mode: remediation`, the prior
-formal Return and candidate identity, fixed successor identity, exact repair
-delta, all carried IDs, and remaining acceptance. Finish from `pass`, or from
-`pass with residual risk` after the caller accepts the named risk.
+Invoke `$change-review` only when the user or repository requires it, or a
+concrete unresolved shared-contract or migration judgment remains after proof.
+Pin the clean candidate first and let Change Review own its procedure. Multiple
+authors alone do not trigger review.
 
 ## 5. Finish
 

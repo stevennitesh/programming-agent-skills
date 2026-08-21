@@ -1,7 +1,7 @@
 interface:
   display_name: "Parallel Implement"
-  short_description: "Drain one graph to a verified parent outcome"
-  default_prompt: "Use $parallel-implement from the root to deliver this parent graph with plain worker handoffs, isolated concurrent lanes only when worthwhile, serial root integration, focused proof, independent Change Review only when its trigger applies, and child-first closeout."
+  short_description: "Deliver independent items with isolated workers"
+  default_prompt: "Use $parallel-implement from the root to deliver this fixed set with isolated concurrent workers where ownership and write effects are independent, one root integrator, rolling serial landings, and focused integrated proof."
 
 policy:
   allow_implicit_invocation: false

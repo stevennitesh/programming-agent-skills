@@ -57,11 +57,11 @@ tracker-backed multi-session route.
 | Settled source needs a durable parent decision contract before ticket slicing | `$to-spec` |
 | A verified parent specification or equivalent settled bounded source needs a dependency-ordered implementation ticket graph and actionable frontier | `$to-tickets` |
 | One bounded settled implementation is selected directly or as a Ready-for-agent item | `$implement` |
-| One explicitly requested parent has an exhaustive non-empty Ready-for-agent graph | `$parallel-implement` |
+| One explicit fixed delivery set has at least two accepted implementation items | `$parallel-implement` |
 
-Route one selected item to `$implement`; route an explicitly requested parent
-delivery through its complete ready graph to `$parallel-implement`. Parallel
-Implement decides whether each frontier runs serially or concurrently.
+Route one selected item to `$implement`; route an explicitly requested fixed
+set of at least two accepted items to `$parallel-implement`. Parallel Implement
+checks dependencies, ownership, and write effects before concurrent dispatch.
 
 ### Incoming Work And Quality
 

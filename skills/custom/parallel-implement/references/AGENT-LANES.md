@@ -1,80 +1,46 @@
-# Agent Lanes
+# Agent lanes
 
-Task context and checkout isolation are separate facts. Isolate concurrent
-writers; do not add a worktree for a serial worker merely for uniformity.
+Use this reference when concurrent workers need checkout isolation or when
+their lanes need cleanup.
 
-## Prepare And Start
+## Prepare
 
-Give one serial writer exclusive custody of the clean integration checkout at
-the exact base. The root performs no repository or Git mutation until Return.
-
-Give every concurrent writer a distinct helper-created worktree at the exact
-base:
+Create each concurrent lane from integration `HEAD` at dispatch. Siblings
+selected together share that base. A later dependent lane uses the newer
+integration `HEAD` after its predecessors land:
 
 ```text
 python <skill-dir>/scripts/lane_worktree.py prepare \
   --repo <repo> --root <worktree-root> --base <sha> --name <lane-name>
 ```
 
-The helper creates or reuses the lane, checks registration, exact `HEAD`, clean
-status, and basic Git operation, creates checkout-external pytest temp and cache
-roots, and runs a quick pytest collection smoke when the checkout declares
-pytest through root configuration or tracked Python tests. Start the worker only when
-the single result says `ok: true`. On failed preflight, the helper removes a
-newly created lane only after rechecking exact `HEAD` and cleanliness; it
-removes the registered worktree before deleting its helper-owned state. A
-failed or uncertain worktree removal preserves that state for inspection and
-retry. The helper also preserves a reused, changed, dirty, or uncertain lane
-and reports the reason.
-Pass successful temp and cache paths to the worker and assign one active writer
-per worktree.
+Start the worker only when the result says `ok: true`. Pass it the returned
+absolute `worktree`, `temp_root`, `pytest_basetemp`, and `pytest_cache`. The
+worker must confirm the lane's `HEAD` and clean status before mutation and use
+that path for every repository and Git command.
 
-Send the selected runtime profile and plain assignment directly to one fresh
-worker. The accepted start request is enough launch evidence when resolved
-telemetry is unavailable.
+One active writer owns each lane. Worktrees still share repository refs and
+stash state, so concurrent workers must not stash, switch or rebase shared
+branches, or mutate shared refs. Assign or serialize every writable resource
+outside the checkout.
 
-## Await And Verify
-
-Wait for the started worker. A missed checkpoint triggers inspection, not a
-duplicate start. Reconcile its task state, checkout, `HEAD`, status, commit, and
-claim before replacing it. Preserve dirty or uncertain work.
-
-Treat the worker's prose Return as evidence. Verify the actual worktree, base,
-commit, diff, scope, and proof. A serial integration-checkout commit is a
-provisional direct landing that the root accepts or rejects after read-back; a
-concurrent-lane commit is verified before landing. A localized correction may
-return to the same worker if its lane is still safe.
-
-Formal review is read-only and needs no writer worktree.
+If a worker stops or disappears, inspect its actor state, lane, `HEAD`, status,
+and commit before resuming or replacing it. Never infer cancellation from
+silence and never start a replacement while the prior actor may still write.
 
 ## Cleanup
 
-At graph end, remove all safe completed lanes:
+After landing, pass only explicitly completed lanes:
 
 ```text
 python <skill-dir>/scripts/lane_worktree.py cleanup \
-  --repo <repo> --root <worktree-root> [--completed <path> ...]
+  --repo <repo> --root <worktree-root> --completed <path>
 ```
 
-When the worktree limit is reached, add `--oldest` to remove the oldest safe
-completed lane first. Pass only explicitly completed worktrees. The helper
-removes only registered lanes contained by the explicit root whose `HEAD` is
-already integrated and whose checkout is clean. Dirty, active, uncertain, and
-unintegrated lanes remain preserved; a capacity-blocked result means no new
-concurrent worker may start. Removing a safe lane also removes only its
-helper-owned temp and cache state under that explicit root. Every supplied
-completed path must belong to that exact root. It must be a registered worktree
-unless it is an exact retry whose helper-owned state remains after Git already
-unregistered the lane. Without `--oldest`, that retry removes only a missing or
-empty residual path; non-empty or uncertain paths remain preserved. The helper
-accepts only the direct-child layout created by `prepare` and rejects an
-unaccounted path. The helper deletes state only after `git worktree remove`
-succeeds or read-back confirms both an unregistered worktree and a missing
-path. If removal fails or remains incomplete, the helper leaves state intact,
-reports registration, path, and state custody, and tries another safe lane in
-capacity mode. If state cleanup fails after confirmed worktree removal, the
-helper reports the residual state for explicit recovery and stops capacity
-cleanup without removing another lane.
+The helper removes only a direct child of the exact external root when the lane
+is registered, clean, and integrated into current repository `HEAD`. It also
+supports an exact retry after Git removed the worktree but helper-owned state
+remains. Dirty, unintegrated, active, or uncertain work stays in place.
 
-The helper never forces removal, deletes branches, or changes global Git
-config.
+The helper never forces removal, deletes branches, changes global Git config,
+or chooses a lane on the caller's behalf.

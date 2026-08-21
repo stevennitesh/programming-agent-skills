@@ -86,7 +86,7 @@ flowchart TD
   Parallel --> Tracker
   Parallel --> DomainRouter
   Parallel --> AgentLanes["AGENT-LANES.md<br/>worktree prepare + cleanup"]
-  Parallel -. "review trigger or independent authors" .-> Review
+  Parallel -. "review trigger" .-> Review
   Parallel --> FindingContract
   Parallel -. "conflicted landing" .-> Conflict
   Review --> Tracker
@@ -214,20 +214,19 @@ Return.
 | `to-spec` | Recommend and stop | `$to-tickets` | The verified parent leaves several valuable implementation slices or needs durable tracker coordination. To Tickets owns repository grounding, child slicing, and graph publication. |
 | `to-spec` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `to-tickets` | Recommend and stop | `$implement` | The settled source is one bounded direct item, or a verified graph lacks an explicit whole-parent delivery request; return that item or the first actionable ticket. |
-| `to-tickets` | Recommend and stop | `$parallel-implement` | An explicitly requested top-level parent-delivery run has an exhaustive non-empty Ready-for-agent graph; Parallel Implement retains campaign custody and owns live serial or concurrent dispatch decisions. |
+| `to-tickets` | Recommend and stop | `$parallel-implement` | The user explicitly requested delivery of the whole verified parent graph and it has a non-empty Ready-for-agent frontier; Parallel Implement owns live serial or concurrent dispatch and one root integration outcome. |
 | `to-tickets` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `triage` | Recommend and stop | `$diagnosing-bugs` | Readiness requires deep causal investigation rather than intake-level evidence; preserve the report, observations, hypotheses, and skipped proof. |
 | `triage` | Recommend and stop | `$change-review` | An attached diff needs fixed-candidate code judgment rather than intake disposition; preserve the candidate identity and observed intake evidence. |
 | `triage` | Recommend and stop | `$to-tickets` | Settled intake needs several independently completable implementation slices; preserve the source and leave readiness unchanged. |
 | `triage` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `implement` | Invoke | `$tdd` | The selected work explicitly requires TDD, test-first work, or RED-GREEN-REFACTOR, or applicable repository policy requires TDD, and one accepted observable behavior and independent oracle are settled. TDD owns the RED-GREEN-REFACTOR inner loop. |
-| `implement` | Invoke | `$change-review` | The user or repository explicitly requires independent review; the candidate contains mutations from two or more independent authors; or focused proof establishes behavior but a material shared-contract or irreversible-migration acceptance judgment still warrants fresh independent judgment and review is the lowest-burden way to obtain it. Implement freezes the proved candidate, dispatches one fresh `ordinary-reviewer`, and supplies `Formal review: yes`, mode, proof and skips, Spec requirement, author identities, and fresh-separation evidence; missing proof stops instead. A repaired successor is reviewed only while the original trigger still applies and includes the prior Return, both candidate identities, repair delta, carried IDs, and remaining acceptance. |
+| `implement` | Invoke | `$change-review` | The user or repository requires review, or a concrete unresolved shared-contract or migration judgment remains after proof. Implement pins the clean candidate; Change Review owns the procedure and returns its decision. Multiple authors alone do not trigger review. |
 | `implement` | Hand off | `$resolving-merge-conflicts` | Admission finds an active conflict rather than an implementable ready item. Stop implementation, preserve Git state, and supply the requested scope plus whether resolution and finish were requested. The resolver inspects live state. |
 | `implement` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
-| `parallel-implement` | Invoke | `$tdd` | The accepted parent or selected ticket explicitly requires TDD, test-first work, or RED-GREEN-REFACTOR, or applicable repository policy requires TDD, and the mutation-owning worker has one accepted observable behavior and independent oracle settled. TDD owns that worker's inner loop; the root does not repeat it. |
-| `parallel-implement` | Invoke | `$change-review` | The integrated candidate contains mutations from two or more independent authors, or either other Change Review trigger applies. Parallel Implement freezes the proved candidate, dispatches one fresh `integration-reviewer`, and supplies `Formal review: yes`, mode, proof and skips, required Spec, author identities, and fresh-separation evidence; several tickets or files authored by one mutation actor do not trigger review. Missing proof stops instead. A repaired successor includes the prior Return, both candidate identities, repair delta, carried IDs, and remaining acceptance. |
+| `parallel-implement` | Invoke | `$change-review` | The user or repository requires review, or a concrete unresolved shared-contract or migration judgment remains after integrated proof. Parallel Implement pins the clean candidate; Change Review owns the procedure and returns its decision. Multiple workers alone do not trigger review. |
 | `parallel-implement` | Invoke | `$resolving-merge-conflicts` | Serial landing enters an active conflict. Preserve Git state and supply the requested scope plus whether resolution and finish were requested. Resume only after the resolver reports current state. |
-| `parallel-implement` | Recommend and stop | `$to-tickets` | Admission finds an actually incomplete or contradictory graph, or verified implementation invalidates remaining graph semantics. Return the exact graph defect and retain campaign custody and claims. A later explicit To Tickets repair may change only verified graph facts; Parallel Implement reconciles the read-back graph before resuming. |
+| `parallel-implement` | Recommend and stop | `$to-tickets` | Admission finds vague work, unsettled meaning, missing dependencies, or an invalidated delivery set. Return the exact defect and leave shaping or graph repair to To Tickets. |
 | `parallel-implement` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `prototype` | Recommend and stop | `$diagnosing-bugs` | Fit finds that an existing built system has a hard failure needing dedicated causal investigation rather than one disposable design question; return the intact symptom evidence and leave Diagnosis unstarted. |
 | `change-review` | Recommend and stop | `$audit-codebase` | The request targets an immutable repository baseline rather than a pending implementation candidate. |
@@ -286,16 +285,15 @@ every terminal result directly to its current caller or the user.
 | `tdd` | `references/TEST-SHAPE.md` for an unclear test boundary or oracle; `references/TEST-DOUBLES.md` before adding a substitute |
 | `prototype` | `LOGIC.md`, `UI.md`, and `MEASURE.md`: decision-bearing branch mechanics. One decision branch loads; `SKILL.md` owns the universal lifecycle, reconciliation, and Return. |
 | `triage` | `ATTENTION-SCAN.md`: read-only queue overview; `AGENT-BRIEF.md`: concise agent or human ready handoff |
-| `repo-bootstrap` | Tracker, label, domain, and engineering-contract seeds; optional repo-local parallel-lane permission and agent setup; `setup-schema.json`: aggregate compatibility fingerprint; `scripts/validate_setup.py`: target-repo structural compatibility validation |
+| `repo-bootstrap` | Tracker, label, domain, and engineering-contract seeds; optional repo-local parallel-lane permission setup; `setup-schema.json`: aggregate compatibility fingerprint; `scripts/validate_setup.py`: target-repo structural compatibility validation |
 | `wayfinder` | `MAP-FORMAT.md`: lean map, ticket, resolution, closing, and termination shapes; `references/MUTATION.md`: claim and durable-write protection; `references/RESOLVERS.md`: selected-ticket routing and return interpretation |
 | `research` | Seven conditional evidence references; one authorized cited Markdown note or cited inline result |
 | `resolving-merge-conflicts` | `OPERATIONS.md`: branch-only operation roles, special conflict types, automatic-resolution traps, and exceptional operation choices; `SKILL.md`: five direct actions, mutation boundaries, and completion |
 | `change-review`, `high-assurance-review` | `change-review/FINDING-CONTRACT.md`: evidence-backed finding admission, concise severity, and no-authority boundary |
 | `change-review` | `change-review/references/FORMAL-REVIEW.md`: formal-only required-Spec, independence, remediation, decision, and Return rules |
-| `implement`, `parallel-implement` | `parallel-implement/references/RUNTIME-PROFILES.md`: implementation-worker profiles and bindings; review roles follow their review owner's fresh-context and separation rules |
-| `implement`, `parallel-implement` | `implement/references/WORKER-HANDOFF.md`: shared plain handoff meaning and provisional evidence Return that Parallel Implement consumes without invoking Implement's delivery lifecycle |
+| `implement` | `implement/references/WORKER-HANDOFF.md`: plain bounded handoff and provisional evidence return for user-requested delegation |
 | `audit-codebase` | `DEFECT-CONTRACT.md`: defects and gaps; `QUALITY-LENS.md`: six-class coverage, routing, opportunity admission, retained complexity, and systemic widening; detailed lens owners: condition-triggered issue discovery; `CANDIDATE-CONTRACT.md`: current-source candidate comparison; `REPORT-QUICK-REFERENCE.md`: sole CLI procedure; `HTML-REPORT.md` plus `scripts/update_report.py`: deterministic atlas state and rendering |
-| `parallel-implement` | `AGENT-LANES.md`: minimal checkout isolation and cleanup; `assets/luna_max.toml`: canonical named-agent template; `lane_worktree.py`: the one concurrent-lane prepare/preflight and safe-cleanup helper |
+| `parallel-implement` | `AGENT-LANES.md`: checkout custody, shared-ref limits, replacement, and cleanup; `lane_worktree.py`: exact-base lane preparation, isolated temp/cache paths, and conservative cleanup |
 
 ## Boundary Notes
 
@@ -329,7 +327,7 @@ every terminal result directly to its current caller or the user.
   state transitions; `$to-tickets` owns proportional slicing, true dependency
   order, graph approval, safe publication, and graph read-back. Do not re-triage
   valid `$to-tickets` output.
-- `implement` owns one standalone selected item and its in-scope correction path, with Git delivery only when the selected branch requires it; `parallel-implement` owns one explicitly requested parent-backed exhaustive Ready-for-agent graph through concurrent and serial frontiers, serial integration, bounded in-scope correction, and verified child-first then parent-last closeout.
+- `implement` owns one standalone selected item and its in-scope correction path, with Git delivery only when the selected branch requires it; `parallel-implement` owns one explicit fixed set of at least two accepted items through isolated concurrent lanes, serial integration, bounded correction, integrated proof, and conditional tracker closeout.
 - The `parallel-implement` root is the sole dispatcher, serial landing,
   integration-judgment, and conditional-review owner. Workers never fan out. There
   is no warm general integrator or machine-validated worker capsule.

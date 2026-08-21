@@ -22,7 +22,7 @@ REQUIRED_FILES = (
     "docs/agents/engineering-contract.md",
 )
 
-SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:ed53b6d1a2dc -->"
+SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:b7487becba35 -->"
 SETUP_SCHEMA_MARKER_RE = re.compile(
     r"<!-- programming-agent-skills setup-schema: \d+:[0-9a-f]{12} -->"
 )
@@ -106,7 +106,6 @@ LABEL_TOKENS = (
 )
 
 PARALLEL_CONFIG = Path(".codex/config.toml")
-PARALLEL_AGENT = Path(".codex/agents/luna_max.toml")
 
 
 class FailureKind(str, Enum):
@@ -417,27 +416,14 @@ def parallel_support_failures(root: Path) -> list[Failure]:
 
 def inspect_parallel_support(root: Path) -> list[Failure]:
     config_path = root / PARALLEL_CONFIG
-    agent_path = root / PARALLEL_AGENT
-    if not config_path.is_file() and not agent_path.is_file():
+    if not config_path.is_file():
         return []
 
     failures: list[Failure] = []
     package = parallel_package()
     helper_path = package / "scripts/lane_worktree.py"
-    template_path = package / "assets/luna_max.toml"
-    if not helper_path.is_file() or not template_path.is_file():
+    if not helper_path.is_file():
         return ["Parallel implementation support requires the installed canonical package"]
-
-    if not config_path.is_file():
-        failures.append("Parallel implementation support is missing .codex/config.toml")
-    if not agent_path.is_file():
-        failures.append(
-            "Parallel implementation support is missing .codex/agents/luna_max.toml"
-        )
-    elif agent_path.read_bytes() != template_path.read_bytes():
-        failures.append(".codex/agents/luna_max.toml does not match the current template")
-    if not config_path.is_file():
-        return failures
 
     try:
         config = tomllib.loads(config_path.read_text(encoding="utf-8"))

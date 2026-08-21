@@ -736,10 +736,10 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "SK-016"
       ],
       "capability_id": "CAP-023",
-      "completion_return": "A complete, partial, or blocked parent-delivery packet",
+      "completion_return": "The integrated outcome, proof, closeout when applicable, or exact preserved resume state",
       "disposition": "selected",
       "entry_conditions": [
-        "One parent has a non-empty exhaustive ready ticket graph and explicit parent-delivery authority"
+        "One explicit fixed delivery set has at least two accepted implementation items"
       ],
       "essential": true,
       "exclusions": [
@@ -747,7 +747,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Unbounded foreign procedure loading",
         "Automated semantic acceptance"
       ],
-      "observable_outcome": "Deliver one explicitly requested parent through its exhaustive Ready-for-agent graph",
+      "observable_outcome": "Deliver one fixed set with isolated concurrent workers where ownership and write effects are independent",
       "primary_owner_skill_id": "SK-023",
       "proof_class": "fresh behavioral proof plus structural identity and boundary proof",
       "required_authority_mutation": [
@@ -892,7 +892,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "scenario_id": "PS-022"
       },
       {
-        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for parallel-implement: Deliver one explicitly requested parent through its exhaustive Ready-for-agent graph",
+        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for parallel-implement: Deliver one fixed set with isolated concurrent workers where ownership and write effects are independent",
         "expected_owner_skill_id": "SK-023",
         "scenario_id": "PS-023"
       },
@@ -958,10 +958,6 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       {
         "predecessor_skill_id": "SK-006",
         "successor_skill_id": "SK-022"
-      },
-      {
-        "predecessor_skill_id": "SK-006",
-        "successor_skill_id": "SK-023"
       },
       {
         "predecessor_skill_id": "SK-006",
@@ -1073,7 +1069,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       }
     ],
     "composition_epoch_id": "FCE-20260727-01",
-    "contract_revision": 24,
+    "contract_revision": 25,
     "epoch_lock": null,
     "exclusions": [
       "Per-skill H1 or candidate wording",
@@ -1778,9 +1774,9 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [
         "change-review caller-facing interface and formal-review reference"
       ],
-      "entry_condition": "The user or repository explicitly requires independent review; the final candidate contains mutations from two or more independent authors; or focused proof establishes behavior but a material shared-contract or irreversible-migration acceptance judgment still warrants fresh independent judgment and Change Review is the lowest-burden way to obtain it.",
+      "entry_condition": "The user or repository requires review, or a concrete unresolved shared-contract or migration judgment remains after proof.",
       "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
-      "input_packet": "Formal review mode, accepted request, fixed point, immutable candidate, proof and material skips, Spec requirement, implementation-author identities, and fresh reviewer task or context separation evidence",
+      "input_packet": "The clean fixed candidate, accepted request, proof, material skips, and the concrete reason review is required",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-016",
       "required_proof_ids": [
@@ -1790,7 +1786,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "return_packet": "One fixed-candidate formal decision with admitted findings, material limits, residual risk, drift, and independence evidence",
       "target_skill_id": "SK-015",
       "verb": "Invoke",
-      "wrong_condition": "No explicit review requirement exists, the candidate has one mutation author, focused proof establishes its material claims without a remaining independent acceptance judgment, or required proof is missing and must stop rather than route to review."
+      "wrong_condition": "No review requirement or unresolved shared-contract or migration judgment remains after proof, multiple authors are the only proposed trigger, or required proof is missing and must stop rather than route to review."
     },
     {
       "affected_capability_ids": [
@@ -2136,9 +2132,9 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [
         "change-review caller-facing interface and formal-review reference"
       ],
-      "entry_condition": "The user or repository explicitly requires independent review; the final candidate contains mutations from two or more independent authors; or focused proof establishes behavior but a material shared-contract or irreversible-migration acceptance judgment still warrants fresh independent judgment and Change Review is the lowest-burden way to obtain it.",
+      "entry_condition": "The user or repository requires review, or a concrete unresolved shared-contract or migration judgment remains after integrated proof.",
       "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
-      "input_packet": "Formal review mode, accepted parent source, fixed point, immutable candidate, proof and material skips, required Spec, implementation and integration-author identities, and fresh reviewer task or context separation evidence",
+      "input_packet": "The clean fixed candidate, accepted delivery scope, integrated proof, material skips, and the concrete reason review is required",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-034",
       "required_proof_ids": [
@@ -2148,34 +2144,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "return_packet": "One fixed-candidate formal decision with admitted findings, material limits, residual risk, drift, and independence evidence",
       "target_skill_id": "SK-015",
       "verb": "Invoke",
-      "wrong_condition": "The candidate has one mutation author, no explicit review requirement exists, focused proof establishes its material claims without a remaining independent acceptance judgment, or required proof is missing and must stop rather than route to review."
-    },
-    {
-      "affected_capability_ids": [
-        "CAP-023",
-        "CAP-006"
-      ],
-      "callee_owned_gates_mutations": [
-        "The target retains all target-local admission, evidence, mutation, Return, and completion gates"
-      ],
-      "caller_skill_id": "SK-023",
-      "combined_exit_owner_skill_id": "SK-023",
-      "context_loaded": [
-        "tdd caller-facing interface; test-shape or test-double reference only when its condition applies"
-      ],
-      "entry_condition": "The accepted parent or selected ticket explicitly requires TDD, test-first work, or RED-GREEN-REFACTOR, or applicable repository policy requires TDD, and the mutation-owning worker has one accepted observable behavior and independent oracle settled. TDD owns that worker's inner loop; the root does not repeat it.",
-      "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
-      "input_packet": "The explicit TDD trigger, one accepted observable behavior, its independent oracle, focused proof context, and worker mutation authority",
-      "ordering_impact": "callee-before-caller",
-      "relationship_id": "REL-035",
-      "required_proof_ids": [
-        "PROOF-REL-035"
-      ],
-      "resume_owner_skill_id": "SK-023",
-      "return_packet": "Observed RED, final GREEN and relevant proof, plus any material gap",
-      "target_skill_id": "SK-006",
-      "verb": "Invoke",
-      "wrong_condition": "The accepted work asks only for tests, integration tests, regression tests, coverage, or ordinary implementation; the TDD requirement or readiness gate is absent or ambiguous; or another selected owner has the bounded outcome."
+      "wrong_condition": "No review requirement or unresolved shared-contract or migration judgment remains after proof, multiple workers are the only proposed trigger, or required proof is missing and must stop rather than route to review."
     },
     {
       "affected_capability_ids": [
@@ -2188,16 +2157,16 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-023",
       "combined_exit_owner_skill_id": "SK-023",
       "context_loaded": [],
-      "entry_condition": "The admitted graph is incomplete or contradictory, or verified implementation invalidates remaining graph facts; return the exact defect without tracker mutation and retain campaign custody and claims.",
+      "entry_condition": "The admitted work is vague, semantically unsettled, missing dependencies, or invalidated as a fixed delivery set.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Parent and graph identities, exact defective facts, before-and-after evidence, affected tickets, settled source pointers, and retained campaign custody",
+      "input_packet": "Fixed delivery identity, exact defective facts, affected items, and settled source pointers",
       "ordering_impact": "none",
       "relationship_id": "REL-036",
       "required_proof_ids": [
         "PROOF-REL-036"
       ],
       "resume_owner_skill_id": "SK-023",
-      "return_packet": "Exact repair recommendation with downstream work unstarted and campaign custody retained; Parallel Implement reconciles any later read-back graph before resuming",
+      "return_packet": "Exact shaping or graph-repair recommendation with downstream work unstarted",
       "target_skill_id": "SK-012",
       "verb": "Recommend and stop",
       "wrong_condition": "The issue is an ordinary blocker, implementation defect, conflict, or review finding, or another selected owner has the bounded outcome"
@@ -2413,7 +2382,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-025",
       "combined_exit_owner_skill_id": "SK-025",
       "context_loaded": [],
-      "entry_condition": "The situation satisfies one parent has a non-empty exhaustive ready ticket graph and explicit parent-delivery authority; return that route and leave it unstarted.",
+      "entry_condition": "The situation has one explicit fixed delivery set with at least two accepted implementation items; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
       "input_packet": "Caller-owned bounded Source Trace for skill-router and the declared parallel-implement input",
       "ordering_impact": "callee-before-caller",
@@ -4154,24 +4123,24 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "PS-023"
       ],
       "canonical_name": "parallel-implement",
-      "completion_condition": "Every in-scope child is integrated and proved, and every triggered review passes before parent closeout",
+      "completion_condition": "Every item is integrated, material interactions are proved, tracker closeout is read back when applicable, and no unsafe lane is removed",
       "contract_order": 23,
-      "essential_outcome": "Deliver one explicitly requested parent through its exhaustive Ready-for-agent graph",
-      "failure_return": "Return the exact frontier, lane, integration, proof, triggered-review, tracker, or capacity blocker",
+      "essential_outcome": "Deliver one fixed set with isolated concurrent workers where ownership and write effects are independent",
+      "failure_return": "Preserve work and return the integration HEAD plus each unfinished item's actor, lane, base, commit or dirty state, landing state, blocker, and next safe action",
       "invocation_mode": "explicit-only",
       "load_budget_class": "conditional-aggregate",
       "negative_exclusion_predicates": [
-        "The request does not satisfy: One parent has a non-empty exhaustive ready ticket graph and explicit parent-delivery authority",
+        "The request does not satisfy: One explicit fixed delivery set has at least two accepted implementation items",
         "Another selected skill owns the requested outcome",
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
       "owned_authority_mutation_surfaces": [
-        "Wave qualification, isolated lanes, serial integration, focused proof, conditional review, and child-first closeout"
+        "Concurrency admission, isolated lanes, worker replacement safety, serial integration, focused proof, and conditional closeout"
       ],
       "owned_capability_ids": [
         "CAP-023"
       ],
-      "positive_entry_predicate": "One parent has a non-empty exhaustive ready ticket graph and explicit parent-delivery authority",
+      "positive_entry_predicate": "One explicit fixed delivery set has at least two accepted implementation items",
       "primary_role": "executable-aggregate",
       "prohibited_ownership": [
         "Another selected skill's semantic decision, local mutation, proof judgment, Return, or completion",
@@ -4182,11 +4151,10 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "REL-032",
         "REL-033",
         "REL-034",
-        "REL-035",
         "REL-036"
       ],
-      "required_input": "A bounded caller-owned Source Trace and authority for: Deliver one explicitly requested parent through its exhaustive Ready-for-agent graph",
-      "return_packet": "A complete, partial, or blocked parent-delivery packet",
+      "required_input": "A fixed caller-owned delivery set with at least two accepted items, dependencies, acceptance, proof, and mutation authority",
+      "return_packet": "Integrated HEAD and proof, tracker closeout when applicable, or exact preserved resume state",
       "skill_id": "SK-023"
     },
     {

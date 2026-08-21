@@ -2,7 +2,6 @@
   "format": 1,
   "version": 1,
   "contract_files": [
-    "../parallel-implement/assets/luna_max.toml",
     "domain.md",
     "engineering-contract.md",
     "issue-tracker-github.md",
@@ -11,5 +10,5 @@
     "scripts/validate_setup.py",
     "triage-labels.md"
   ],
-  "contract_sha256": "ed53b6d1a2dc1d40bb728f5234b9910720e1486db0a67a2d5c22f74c63a7f03f"
+  "contract_sha256": "b7487becba35e4572c86c36a6dabbef677dc43c3cc5296c11eb9663ff022259d"
 }

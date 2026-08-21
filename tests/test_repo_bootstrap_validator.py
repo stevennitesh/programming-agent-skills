@@ -177,10 +177,6 @@ def test_parallel_config_normalizes_invalid_encoding(tmp_path: Path) -> None:
     config = tmp_path / ".codex/config.toml"
     config.parent.mkdir()
     config.write_bytes(b"\xff")
-    agent = tmp_path / ".codex/agents/luna_max.toml"
-    agent.parent.mkdir()
-    template = ROOT / "skills/custom/parallel-implement/assets/luna_max.toml"
-    agent.write_bytes(template.read_bytes())
 
     failures = VALIDATOR["parallel_support_failures"](tmp_path)
 

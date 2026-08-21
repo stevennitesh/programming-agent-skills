@@ -20,9 +20,9 @@ Resolve the repository root, authority, and starting working-tree, index, and
 Inspect before asking: `AGENTS.md`, the four `docs/agents/` contracts,
 `.gitignore`, `.tmp/`, `.scratch/`, repo-owned command sources, tracker
 configuration and read-back capability, labels, and applicable context, ADR,
-manifest, ownership, and domain-layout evidence. Inspect `.codex/config.toml`
-and `.codex/agents/luna_max.toml`; if either exists, also inspect the configured
-parallel-lane root, repository marker, and registered worktrees.
+manifest, ownership, and domain-layout evidence. Inspect `.codex/config.toml`;
+if it exists, also inspect the configured parallel-lane root, repository marker,
+and registered worktrees.
 
 When any managed file or setup marker exists, run
 [scripts/validate_setup.py](scripts/validate_setup.py) read-only, then compare
@@ -42,12 +42,9 @@ missing, ambiguous, incompatible, reopened, or contradicted choices. Repository
 policy remains authoritative; a `conflict` blocks only its affected delta until
 the user resolves it.
 
-Parallel implementation support is installed when both repo-local files exist,
-the permission profile extends the workspace with one explicit external `wt`
-root, and the Luna agent matches the current
-[Luna agent template](../parallel-implement/assets/luna_max.toml). Reconcile
-this state without asking to reinstall it; one missing or stale half is a
-`delta`.
+Parallel implementation support is installed when `.codex/config.toml` selects
+a permission profile that extends the workspace with one explicit external
+`wt` root. Reconcile this state without asking to reinstall it.
 
 ## Choose
 
@@ -76,10 +73,10 @@ labels and propose only missing labels.
 
 Show the exact local and external delta, policies and relationship modes,
 preserved additions, conflicts or blockers, and proof plan. For selected
-parallel support, show one explicit external writable lane root, its permission
-delta, and the exact Luna template. The `AGENTS.md` result includes:
+parallel support, show one explicit external writable lane root and its
+permission delta. The `AGENTS.md` result includes:
 
-`<!-- programming-agent-skills setup-schema: 1:ed53b6d1a2dc -->`
+`<!-- programming-agent-skills setup-schema: 1:b7487becba35 -->`
 
 With zero delta, mutate nothing and continue to Verify. Otherwise wait for
 approval. Narrowing requires a new exact proposal; refusal or deferral returns
@@ -104,9 +101,8 @@ Apply only the approved delta:
   marker into `docs/agents/`, preserving repository additions;
 - keep `.tmp/` ignored and `.scratch/` trackable without replacing unrelated
   ignore rules;
-- when selected, create or reconcile `.codex/config.toml` and
-  `.codex/agents/luna_max.toml`, preserving unrelated configuration; do not
-  create worktrees or external directories;
+- when selected, create or reconcile `.codex/config.toml`, preserving unrelated
+  configuration; do not create worktrees or external directories;
 - create only approved missing GitHub or GitLab labels.
 
 Do not alter domain truth, tracker items, the index, or `HEAD`; stage, commit,
@@ -130,7 +126,7 @@ Separate source-verified commands from commands executed now. Name each skipped
 check and its unproved claim; any required skip returns **Setup incomplete**.
 
 For installed parallel support, verify the explicit external permission root
-and Luna template. Configuration written during this session is structurally
+and lane helper. Configuration written during this session is structurally
 verified but becomes active only in a new Codex session; live lane preparation
 remains with `$parallel-implement`.
 

@@ -1,6 +1,6 @@
 # Ordinary And Formal Review Share One Lean Judgment Owner
 
-**Status**: accepted
+**Status**: superseded in part by ADR-0017
 
 ## Context
 

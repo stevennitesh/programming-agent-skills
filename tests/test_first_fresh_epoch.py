@@ -127,7 +127,7 @@ def test_first_epoch_contract_freezes_complete_h1_free_composition() -> None:
 
     assert pack_contract.validate_contract(contract) == []
     assert contract["epoch_header"]["composition_epoch_id"] == EPOCH
-    assert contract["epoch_header"]["contract_revision"] == 24
+    assert contract["epoch_header"]["contract_revision"] == 25
     assert contract["epoch_header"]["status"] == "frozen"
     assert contract["epoch_header"]["integration_result"] == {
         "decision": None,
@@ -213,7 +213,7 @@ def test_first_epoch_revision_preserves_history_and_derives_r11_blueprints() -> 
             skill_id,
         )
         assert projected["slice"]["slice_id"].startswith(
-                f"{EPOCH}:r24:"
+                f"{EPOCH}:r25:"
         )
         assert projected["slice"]["skill"] == skill_by_id[skill_id]
     assert {
@@ -230,7 +230,7 @@ def test_current_contract_preserves_review_and_tdd_topology() -> None:
         skill["canonical_name"]: skill for skill in contract["selected_skills"]
     }
     assert contract["epoch_header"]["status"] == "frozen"
-    assert contract["epoch_header"]["contract_revision"] == 24
+    assert contract["epoch_header"]["contract_revision"] == 25
     assert {
         name: (skill_by_name[name]["skill_id"], skill_by_name[name]["invocation_mode"])
         for name in (
@@ -252,13 +252,14 @@ def test_current_contract_preserves_review_and_tdd_topology() -> None:
     assert "REL-013" not in skill_by_name["implement"]["relationship_ids"]
     assert "REL-018" not in skill_by_name["implement"]["relationship_ids"]
     assert "REL-030" not in skill_by_name["parallel-implement"]["relationship_ids"]
+    assert "REL-035" not in skill_by_name["parallel-implement"]["relationship_ids"]
     assert "REL-049" not in skill_by_name["skill-router"]["relationship_ids"]
 
     relationship_ids = {
         relationship["relationship_id"] for relationship in contract["relationships"]
     }
     assert "REL-109" in relationship_ids
-    assert {"REL-013", "REL-018", "REL-030", "REL-049"}.isdisjoint(relationship_ids)
+    assert {"REL-013", "REL-018", "REL-030", "REL-035", "REL-049"}.isdisjoint(relationship_ids)
     graph_edges = {
         (edge["predecessor_skill_id"], edge["successor_skill_id"])
         for edge in contract["epoch_header"]["campaign_proof_graph"]
@@ -285,7 +286,6 @@ def test_current_contract_preserves_review_and_tdd_topology() -> None:
         ("REL-016", "implement", "Invoke", "change-review"),
         ("REL-017", "implement", "Invoke", "tdd"),
         ("REL-034", "parallel-implement", "Invoke", "change-review"),
-        ("REL-035", "parallel-implement", "Invoke", "tdd"),
         ("REL-064", "skill-router", "Recommend and stop", "tdd"),
     } <= relationship_topology
     assert {("SK-015", "SK-022"), ("SK-015", "SK-023")} <= graph_edges
@@ -322,7 +322,12 @@ def test_current_contract_preserves_review_and_tdd_topology() -> None:
     ).read_text(encoding="utf-8")
     assert "**Status**: superseded by ADR-0015" in superseded
     assert "**Status**: superseded by ADR-0016" in prior_adr
-    assert "**Status**: accepted" in adr
+    assert "**Status**: superseded in part by ADR-0017" in adr
+    current_adr = (
+        ROOT
+        / "docs/adr/0017-parallel-delivery-keeps-structural-isolation-not-dispatch-ceremony.md"
+    ).read_text(encoding="utf-8")
+    assert "**Status**: accepted" in current_adr
 
     relationships = (
         ROOT / "docs/synthesis/skill-context-relationships.md"

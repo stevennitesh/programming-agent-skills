@@ -16,21 +16,14 @@ Send a fresh implementation worker only the task context needed to begin:
   component.
 - **Stop and escalation conditions:** new authority, contradictory repository
   evidence, overlapping ownership, or an unplanned public-contract decision.
-- **Expected evidence return:** the result described below.
+- **Expected evidence return:** changed scope, task commit when requested,
+  commands and observed results, acceptance evidence, and any material gap.
 
 Do not include the coordinator's planning transcript. The worker implements only
 the assigned scope and does not edit the authoritative spec or ticket graph,
 integrate, push, review, close tickets, or spawn another worker. It may create
 one task-scoped commit when the assignment requests one.
 
-Return:
-
-- status: `completed | partial | blocked`;
-- changed files and task commit when requested;
-- commands run and observed results;
-- acceptance-criterion evidence;
-- assumptions, deviations, or remaining risk; and
-- the exact blocker or recommended next action.
-
-The return is provisional. The coordinator inspects the diff, commit, and
-evidence before granting completion or issuing one bounded correction.
+Return concise prose. If work remains, name the exact blocker and next safe
+action. The coordinator inspects the diff, commit, and evidence before granting
+completion or issuing one bounded correction.
