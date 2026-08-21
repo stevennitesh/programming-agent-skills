@@ -2313,6 +2313,10 @@ def test_implementation_workflows_keep_local_proof_owners() -> None:
     )
 
     assert "Trace the real callers, data flow, and existing proof seam" in implement
+    assert (
+        "demonstrated caller dependence as compatibility and migration evidence"
+        in implement
+    )
     assert "Run the nearest useful check" in implement
     assert "Inspect the real output or caller path" in implement
     assert "run proof invalidated by that transition" in parallel

@@ -14,6 +14,8 @@ external effects. Push requires separate authority.
 Read the repository instructions and the code that owns the behavior. Trace
 the real callers, data flow, and existing proof seam far enough to understand
 what must change. Preserve unrelated work and established domain language.
+Treat demonstrated caller dependence as compatibility and migration evidence;
+do not automatically make it a new commitment or discard it.
 
 Use the caller's selection as the scope fence. If the intended behavior is
 unsettled, return the decision to its owner. Ordinary bug investigation stays
