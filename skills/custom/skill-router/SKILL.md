@@ -72,7 +72,7 @@ Implement decides whether each frontier runs serially or concurrently.
 | The user explicitly requests TDD, test-first work, or RED-GREEN-REFACTOR, or applicable repository policy requires TDD, and one bounded behavior and independent oracle are settled | `$tdd` |
 | An active merge, rebase, cherry-pick, or revert is conflicted, or an index is unmerged | `$resolving-merge-conflicts` |
 | A branch, WIP, staged, since-X diff, PR, release candidate, or supported-risk candidate needs read-only judgment | `$change-review` |
-| A repository needs a whole-system map, one selected subsystem audit, one selected audit-candidate analysis, or one selected analyzed-candidate closeout | `$audit-codebase` |
+| A repository needs a whole-system HTML map, one user-selected subsystem audit, or one user-selected audit-candidate analysis | `$audit-codebase` |
 | One user-selected existing-code target has accepted behavior and needs behavior-preserving simplification | `$simplify-code` |
 
 **Existing-code tie-breaker:** route repository-wide discovery or baseline

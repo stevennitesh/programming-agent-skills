@@ -50,5 +50,5 @@ Code and tests are not authority merely because they describe current behavior;
 honor acceptance tests, schemas, or code contracts that repository authority
 explicitly designates. When a candidate needs a term, Invariant, Bounded Context, Context
 Relationship, or ADR trade-off settled, record the exact collision and
-consequences. `CANDIDATE-FOLLOWUP.md` alone selects the next owner. Audit never
-mutates domain records and treats a returned Domain Delta only as evidence.
+consequences. Suggest the natural decision owner and stop. Audit never mutates
+domain records and treats a returned Domain Delta only as evidence.

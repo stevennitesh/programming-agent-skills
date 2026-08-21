@@ -106,9 +106,6 @@ def test_to_questionnaire_owns_one_safe_recipient_artifact() -> None:
     synthesis = (ROOT / "docs/synthesis/skills/to-questionnaire.md").read_text(
         encoding="utf-8"
     )
-    audit = (CUSTOM / "audit-codebase/CANDIDATE-FOLLOWUP.md").read_text(
-        encoding="utf-8"
-    )
 
     assert not implicit_policy(skill_dir)
     questionnaire_instructions = re.sub(
@@ -158,7 +155,6 @@ def test_to_questionnaire_owns_one_safe_recipient_artifact() -> None:
     assert "`$to-questionnaire` for an external stakeholder" in " ".join(
         grilling_gap.split()
     )
-    assert "One identifiable external stakeholder" in audit
     assert "| `$audit-codebase` | Recommend and stop | `$to-questionnaire` |" in synthesis
     assert questionnaire.index("supplied context already answers the gap") < (
         questionnaire.index("Ask one compact intake")
@@ -1430,9 +1426,6 @@ def test_prototype_preserves_lean_evidence_and_branch_gates() -> None:
     relationships = (
         ROOT / "docs/synthesis/skill-context-relationships.md"
     ).read_text(encoding="utf-8")
-    audit_followup = (
-        CUSTOM / "audit-codebase/CANDIDATE-FOLLOWUP.md"
-    ).read_text(encoding="utf-8")
     pack = pack_contract.parse_contract(
         (ROOT / "docs/synthesis/skill-pack.md").read_text(encoding="utf-8")
     )
@@ -1482,9 +1475,8 @@ def test_prototype_preserves_lean_evidence_and_branch_gates() -> None:
     assert "actual browser or target UI" in ui_flat
     assert "Do not report only the best run" in measure_flat
     assert "does not diagnose an unexplained slowdown" in measure_flat
-    unresolved = "unresolved runnable-evidence question"
+    unresolved = "disposable runnable probe or comparative measurement"
     assert unresolved in relationships
-    assert unresolved in audit_followup
     assert unresolved in prototype_followup["entry_condition"]
 
 
@@ -1745,7 +1737,6 @@ def test_audit_codebase_is_thorough_incremental_html_atlas() -> None:
     defect = (skill_dir / "DEFECT-CONTRACT.md").read_text(encoding="utf-8")
     quality = (skill_dir / "QUALITY-LENS.md").read_text(encoding="utf-8")
     candidate = (skill_dir / "CANDIDATE-CONTRACT.md").read_text(encoding="utf-8")
-    followup = (skill_dir / "CANDIDATE-FOLLOWUP.md").read_text(encoding="utf-8")
     metadata = (skill_dir / "agents/openai.yaml").read_text(encoding="utf-8")
     report = (skill_dir / "HTML-REPORT.md").read_text(encoding="utf-8")
     report_quick = (skill_dir / "REPORT-QUICK-REFERENCE.md").read_text(
@@ -1756,22 +1747,16 @@ def test_audit_codebase_is_thorough_incremental_html_atlas() -> None:
 
     assert not implicit_policy(skill_dir)
     assert re.findall(
-        r"(?m)^## (Map|Audit One Subsystem|Analyze One Candidate|Close One Candidate)$",
+        r"(?m)^## (Map the repository|Audit one subsystem|Analyze one candidate)$",
         audit,
-    ) == ["Map", "Audit One Subsystem", "Analyze One Candidate", "Close One Candidate"]
+    ) == ["Map the repository", "Audit one subsystem", "Analyze one candidate"]
     assert "$to-tickets" not in audit_frontmatter
-    assert "An invalid selection never falls back to Map" in audit
-    assert "Never choose the next subsystem or candidate" in audit
-    assert "Use only" in audit and "REPORT-QUICK-REFERENCE.md" in audit
-    assert "Never open, parse, copy, or edit HTML" in report_quick
-    assert "Close is a separate user-selected objective" in audit
-    assert "Release decision: none" in audit
-    assert "product mutation authority: none" in audit
-    assert "next selection authority: user" in audit
-    assert (
-        "Tracker publication: ready-graph | reused | recovery | authority-required | not-applicable"
-        in audit
-    )
+    assert "An invalid or stale selection changes nothing" in " ".join(audit.split())
+    assert "The user chooses every subsystem and candidate" in audit
+    assert "Use [Report CLI](REPORT-QUICK-REFERENCE.md)" in audit
+    assert "Never scrape or hand-edit the HTML" in report_quick
+    assert "Never invoke it, publish tickets" in " ".join(audit.split())
+    assert "start implementation" in audit
 
     for reference in (
         "RELIABILITY-LENS.md",
@@ -1781,7 +1766,7 @@ def test_audit_codebase_is_thorough_incremental_html_atlas() -> None:
         "HTML-REPORT.md",
         "REPORT-QUICK-REFERENCE.md",
     ):
-        assert f"[{reference}]({reference})" in audit
+        assert f"({reference})" in audit
     for reference in (
         "DOMAIN-LENS.md",
         "DESIGN-LENS.md",
@@ -1792,20 +1777,12 @@ def test_audit_codebase_is_thorough_incremental_html_atlas() -> None:
         assert f"({reference})" in quality
     assert "Coverage: complete | incomplete" in quality
     assert "An admitted item does not close class coverage" in quality
-    assert "`authority-required`" in audit
-    assert "`authority-required`" in followup
-    assert "`authority-required|not-applicable`" in candidate
     assert "selected objective's current source identity" in " ".join(defect.split())
-    assert "separately user-selected `$audit-codebase` objective" in candidate
-    normalized_followup = " ".join(followup.split())
-    assert "The helper generates one Implement pickup" in normalized_followup
-    assert "exact Close packet" in normalized_followup
+    assert "user-selectable improvement boundary" in candidate
+    assert "span several" in " ".join(candidate.split())
+    assert "sibling callers" in audit
+    assert "cross-subsystem" in audit
     assert "$to-tickets" not in metadata
-    assert "helper derives the linked Analyze pickup" in candidate
-    assert "conditional To Tickets authority" in candidate
-    assert "`schema --objective close --completion-route <route>`" in candidate
-    assert "Return proposed context wording unless context writing is separately authorized" in normalized_followup
-    assert "ADR recording needs separate approval" in normalized_followup
 
     contract = pack_contract.parse_contract(
         (ROOT / "docs/synthesis/skill-pack.md").read_text(encoding="utf-8")
@@ -1813,64 +1790,46 @@ def test_audit_codebase_is_thorough_incremental_html_atlas() -> None:
     relationships = {
         row["relationship_id"]: row for row in contract["relationships"]
     }
-    ticket_edge = relationships["REL-028"]
-    assert ticket_edge["verb"] == "Invoke"
-    assert ticket_edge["explicit_target_authority"] == "exact-user-approved-packet"
-    assert ticket_edge["ordering_impact"] == "callee-before-caller"
-    assert "generated candidate Analyze prompt" in ticket_edge["entry_condition"]
-    assert "authority-required" in ticket_edge["wrong_condition"]
-    assert "Generated To Tickets invocation" in ticket_edge["input_packet"]
-    assert "configured tracker publication" in " ".join(
-        ticket_edge["callee_owned_gates_mutations"]
-    )
-    assert "candidate-bundle-bound observed graph" in ticket_edge["return_packet"]
-    assert "Audit maps the result to its own tracker status" in ticket_edge["return_packet"]
-    assert "verified tracker graph" in relationships["REL-056"]["input_packet"]
-    assert "analyzed-candidate closeout" in relationships["REL-047"]["entry_condition"]
-    for relationship_id in ("REL-021", "REL-026"):
-        packet = relationships[relationship_id]["input_packet"]
-        assert "digest-bound current audit report" in packet
-        assert "last verified source identity" in packet
+    assert "REL-028" not in relationships
+    assert relationships["REL-056"]["verb"] == "Recommend and stop"
+    assert "bounded implementation-ready change" in relationships["REL-056"]["entry_condition"]
+    assert "implementation unstarted" in relationships["REL-056"]["return_packet"]
+    assert "user-selected candidate analysis" in relationships["REL-047"]["entry_condition"]
     capability = next(
         row for row in contract["capabilities"] if row["capability_id"] == "CAP-017"
     )
-    assert "analyzed-candidate closeout" in capability["entry_conditions"][0]
-    assert "authority-required" in capability["completion_return"]
+    assert "user-selected candidate analysis" in capability["entry_conditions"][0]
+    assert "no downstream work started" in capability["completion_return"]
     selected_skill = next(
         row for row in contract["selected_skills"] if row["skill_id"] == "SK-017"
     )
-    assert "authority-required" in selected_skill["completion_condition"]
+    assert "no downstream work starts" in selected_skill["completion_condition"]
 
-    assert "accepts exactly structural version 10" in report
-    assert "embedded canonical JSON state" in " ".join(report.split())
-    assert "The helper alone owns" in report
-    assert "HTML, markup, projections" in report
+    assert "Embedded canonical JSON" in " ".join(report.split())
+    assert "The helper owns rendering" in report
+    assert "Agents use [Report CLI]" in report
     for state_token in (
         "mapped",
         "audited",
         "presented",
         "analyzed",
-        "implemented",
     ):
         assert state_token in report
-    assert "`implemented` is reachable only through `close-candidate`" in " ".join(report.split())
 
     for command in (
-        "schema",
         "inspect",
         "source-identity",
         "inventory",
         "render-report",
         "audit-subsystem",
         "analyze-candidate",
-        "close-candidate",
     ):
         assert command in report_quick
-    assert "Never open, parse, copy, or edit HTML" in report_quick
+    assert "Never scrape or hand-edit the HTML" in report_quick
     assert re.search(
-        r"(?m)^\| A repository needs a whole-system map, one selected subsystem "
-        r"audit, one selected audit-candidate analysis, or one selected "
-        r"analyzed-candidate closeout \| `\$audit-codebase` \|$",
+        r"(?m)^\| A repository needs a whole-system HTML map, one user-selected "
+        r"subsystem audit, or one user-selected audit-candidate analysis "
+        r"\| `\$audit-codebase` \|$",
         router,
     )
 
@@ -1912,7 +1871,7 @@ def test_high_assurance_review_returns_a_caller_usable_decision() -> None:
     assert ledger_states == {"candidate", "accepted", "rejected", "duplicate", "disputed"}
 
 
-def test_audit_close_owns_raw_review_admission() -> None:
+def test_audit_stops_before_review_and_implementation_closeout() -> None:
     candidate = (CUSTOM / "audit-codebase/CANDIDATE-CONTRACT.md").read_text(
         encoding="utf-8"
     )
@@ -1920,19 +1879,18 @@ def test_audit_close_owns_raw_review_admission() -> None:
         encoding="utf-8"
     )
     normalized = " ".join(candidate.split())
+    quick_normalized = " ".join(quick.split())
 
-    assert "raw decision and provenance" in normalized
-    assert "`pass` is admissible" in candidate
-    assert "`pass with residual risk` is admissible only" in candidate
-    assert "`blocked` is inadmissible" in candidate
-    assert "`incomplete` is inadmissible" in candidate
-    assert "formal_review_residual_risk_acceptance" in candidate
-    assert "former synthetic `accepted` value remain readable as legacy state" in normalized
-    assert "New Close manifests cannot supply or persist it" in normalized
-    assert "returned accepted" not in normalized
-    assert "admits `pass with residual risk` only with that evidence" in " ".join(
-        quick.split()
-    )
+    for retired in (
+        "close-candidate",
+        "formal_review_residual_risk_acceptance",
+        "tracker-frontier",
+        "ready-graph",
+        "implementation_outcome",
+    ):
+        assert retired not in normalized
+        assert retired not in quick_normalized
+    assert "start implementation" in normalized
 
 
 def test_high_assurance_review_checks_snapshot_drift_not_baseline_drift() -> None:
@@ -2222,7 +2180,6 @@ def test_bug_routing_is_disjoint_and_non_bouncing() -> None:
         CUSTOM / "parallel-implement/SKILL.md",
         CUSTOM / "simplify-code/SKILL.md",
         CUSTOM / "resolving-merge-conflicts/SKILL.md",
-        CUSTOM / "audit-codebase/CANDIDATE-FOLLOWUP.md",
         CUSTOM / "grilling/references/TERMINAL-GAP-ROUTING.md",
     )
     for path in diagnosis_producers:
@@ -2440,11 +2397,9 @@ def test_interface_alternatives_receive_curated_fresh_context() -> None:
     assert "fresh independent scouts" in design_flat
     assert "Otherwise work directly" in design_flat
     assert 'fork_turns="none"' not in research
-    assert 'fork_turns="none"' in audit
     audit_flat = " ".join(audit.split())
-    assert "When the user explicitly requests subagents" in audit_flat
-    assert "Otherwise work directly" in audit_flat
-    assert "root repeats decisive checks" in audit_flat
+    assert "Use read-only subagents only when the user requests them" in audit_flat
+    assert "Inspect their evidence before relying on it" in audit_flat
 
 
 def test_research_owns_one_authorized_cited_note() -> None:

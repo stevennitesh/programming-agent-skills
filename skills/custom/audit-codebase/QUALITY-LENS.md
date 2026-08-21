@@ -47,8 +47,9 @@ finding.
   semantics under load.
 
 Design establishes whether a boundary is earned. Simplification chooses the
-smallest safe removal, reuse, or collapse direction. Mixed candidates may group
-items later without erasing each item's primary owner.
+smallest safe removal, reuse, or collapse direction. Mixed and systemic
+candidates may group items later without erasing each item's primary owner or
+subsystem evidence.
 
 ## Classification
 
@@ -101,4 +102,7 @@ templates, or external entry points.
 
 Do not estimate savings without a verified patch or mechanical count. Audit
 records directions, not implementation. Retained complexity is not a candidate.
-A gap-only or retained-only cluster is not a candidate.
+A gap-only or retained-only cluster is not a candidate. When an observation
+suggests a repeated pattern, search sibling callers and repository-wide
+variants before calling it systemic. Record the affected set and causal owner,
+or keep the finding local.

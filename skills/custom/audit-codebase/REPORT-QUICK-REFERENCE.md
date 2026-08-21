@@ -1,102 +1,66 @@
 # Report CLI
 
 Use `scripts/update_report.py` as the only report interface. Pass absolute
-paths. Every response is one JSON document on stdout; exit 2 rejects the
-request, exit 3 reports an unexpected helper failure, and stderr stays empty.
+repository, report, and manifest paths. The report path must be
+`.tmp/audit-codebase/<run-id>/report.html` inside the audited repository.
 
-Never open, parse, copy, or edit HTML. The helper reads canonical state,
-validates strict JSON, and renders the complete report.
+Every command returns one JSON document. Exit `2` means the request was
+rejected before a trustworthy update completed.
 
-## Read Commands
+## Read
 
 ```text
-schema --objective map|audit
-schema --objective analyze
-  [--tracker-provider local-markdown]
-schema --objective close
-  --completion-route tracker-frontier
-  [--tracker-provider local-markdown]
-  [--reviewed]
-schema --objective close
-  --completion-route local-markdown-recovery|authorized-direct-recovery
-  [--reviewed]
 inventory --repo-root <repo>
-source-identity --repo-root <repo> --path-list <paths.txt>
+source-identity --repo-root <repo> --path <path> [--path <path> ...]
 inspect --repo-root <repo> --report <report>
-  --objective map
-inspect --repo-root <repo> --report <report>
-  --objective audit --subsystem-id <id>
-inspect --repo-root <repo> --report <report>
-  --objective analyze|close --candidate-id <id>
 ```
 
-`inspect` returns the selected current projection without history and derives
-the Close packet route from tracker facts. The route selects a schema;
-[CANDIDATE-CONTRACT.md](CANDIDATE-CONTRACT.md) owns semantic Close admission.
-Use the projection for routing, admission, work, and read-back. `schema`
-returns the exact manifest template for the selected objective and Close
-route; copy only its `template` object into an invocation-owned JSON file.
-Unknown manifest fields are rejected.
+`inventory` returns the tracked paths and current repository identity.
+`source-identity` binds a selected path set to its current contents. `inspect`
+validates canonical report bytes and returns the complete state, including all
+currently selectable subsystems and candidates. Use that state directly.
+Never scrape or hand-edit the HTML.
 
-For Close, add `--reviewed` only when condition-triggered Change Review ran.
-The resulting exact template includes its raw decision, provenance, and a
-separate residual-risk-acceptance field. Fill the last field only for
-`pass with residual risk`, using explicit caller-acceptance evidence. Audit Close
-admits `pass`, admits `pass with residual risk` only with that evidence, and
-rejects `blocked` or `incomplete`. Without `--reviewed`, the template contains
-no review fields or dormant placeholders.
-
-## Publish Once
-
-Map uses `render-report`; Audit, Analyze, and Close use `audit-subsystem`,
-`analyze-candidate`, and `close-candidate` respectively. Every mutation uses
-the same two calls with the same unchanged manifest:
+## Publish
 
 ```text
-<command> --repo-root <repo> --report <report>
-  --manifest <facts.json> --validate-only
-<command> --repo-root <repo> --report <report>
-  --manifest <same-facts.json>
-  --expected-bundle-sha256 <digest-from-validation>
+render-report --repo-root <repo> --report <new-report>
+  --manifest <map.json> [--validate-only]
+
+audit-subsystem --repo-root <repo> --report <report>
+  --manifest <audit.json> [--validate-only]
+
+analyze-candidate --repo-root <repo> --report <report>
+  --manifest <analysis.json> [--validate-only]
 ```
 
-Validation writes nothing. Make at most one publication call. Do not change
-the manifest between calls.
+Publish with the chosen command. Use `--validate-only` when a no-write preview
+is useful; publication performs the same validation. Map requires a new absent
+report. Audit and Analyze require the current report SHA returned by `inspect`;
+stale identities fail without falling back or selecting another item.
 
-## Objective Rules
+The helper writes through an invocation-owned sibling, replaces the report
+atomically, and reads back the final canonical bytes. On failure, return the
+reported stage and inspect current state when safe. Do not retry with a changed
+manifest or another write mechanism.
 
-- **Map:** run `inventory` immediately before work and use its paths and
-  identity. A new report expects `absent`; updating a map-only report requires
-  its current digest. A report with Audit or candidate history is rejected.
-- **Audit:** supply one selected subsystem's current Source Trace, six coverage
-  rows, admitted records, candidates, limits, and resolved Audit, To Tickets,
-  and Implement skill paths. A changed ownership or dependency boundary
-  requires a separately selected Map with a new report.
-- **Analyze:** supply one selected candidate's current validity, members,
-  comparison, proof, tracker result, and at most one other next owner. Request
-  the Local Markdown schema when that provider returned the graph; the helper
-  derives and locks its contained refs and read-back digest without an HTTPS
-  identity.
-  The helper derives the pickup from the validated tracker result.
-- **Close:** `tracker-frontier` requires the matching read-back-verified tracker
-  frontier. Request its Local Markdown schema when applicable.
-  `local-markdown-recovery` is restricted to an existing version-10/state-2
-  recovery record caused solely by the former HTTPS-only Ready identity field;
-  it revalidates one uniquely matching candidate-bound local graph and exact
-  committed closeout, then records `ready-graph` without remapping.
-  `authorized-direct-recovery` requires an already-landed
-  `authority-required|not-applicable` candidate and direct implementation
-  authority; it forbids tracker fields and retrospective ticket fabrication.
-  Every route independently verifies Git commit/tree reachability, candidate
-  identity, and every active member transition.
+## Manifest ownership
 
-## Use The Response Literally
+- **Map** supplies current repository identity, systems, subsystems, complete
+  path ownership or exclusions, coverage, and evidence limits.
+- **Audit** supplies one user-selected subsystem, its current Source Trace,
+  exactly six coverage classes, findings, systemic findings, candidates,
+  coverage, evidence limits, and any suggested audit order.
+- **Analyze** supplies one user-selected candidate, current source identity,
+  terminal state, affected scope, material options, recommendation, proof, and
+  evidence limits. A blocked result includes the exact unresolved question.
 
-Successful validation returns the report, report/state/bundle digests,
-`stage: validate`, `mutation_started: false`, and unchanged report state.
-Successful publication returns `stage: read-back`, `mutation_started: true`,
-`effect: created|replaced`, and `report_state: updated`.
+For Audit and Analyze, copy only `paths` and `sha256` from the applicable
+`source-identity` response. Audit binds at least the selected subsystem's owned
+paths plus every shared source used as evidence; Analyze binds at least the
+mapped paths in the candidate's affected scope plus any additional decisive
+source. Disproved or blocked analysis may omit options and leave recommendation
+empty.
 
-On error, use `stage`, `mutation_started`, `report_unchanged`, and
-`report_state` exactly as returned. Never retry or hand-edit. Remove temporary
-JSON and path lists only after final read-back or a proven zero-effect failure.
+Use the helper's current manifest version. Unknown fields and incomplete
+ownership or coverage are rejected.

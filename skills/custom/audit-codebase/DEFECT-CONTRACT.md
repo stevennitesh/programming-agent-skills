@@ -2,8 +2,8 @@
 
 Use this for repository-baseline defects and evidence gaps. Opportunities and
 retained complexity use `QUALITY-LENS.md`; user-selectable improvement
-boundaries and next-step suggestions use `CANDIDATE-CONTRACT.md`. Diff
-findings remain owned by `change-review/FINDING-CONTRACT.md`.
+boundaries use `CANDIDATE-CONTRACT.md`. Diff findings remain owned by
+`change-review/FINDING-CONTRACT.md`.
 
 ## Burden Of Proof
 

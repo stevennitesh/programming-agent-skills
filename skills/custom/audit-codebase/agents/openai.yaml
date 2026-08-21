@@ -1,7 +1,7 @@
 interface:
   display_name: "Audit Codebase"
-  short_description: "Map, audit, analyze, or close one atlas item"
-  default_prompt: "Use $audit-codebase for exactly one explicit objective: Map the repository, Audit one supplied subsystem ID, Analyze one supplied candidate ID, or Close one supplied analyzed candidate from its exact completion packet. Never fall back from an invalid selection to Map. Use only the report CLI and structured JSON, publish once, and stop without selecting a next item or starting implementation. Analyze may invoke To Tickets only when its exact generated pickup grants authority and must preserve its provider-native tracker identities. Close may use authorized direct recovery only for an explicitly authorized, already-landed authority-required or not-applicable candidate; never fabricate a ticket."
+  short_description: "Map and audit codebase architecture"
+  default_prompt: "Use $audit-codebase to Map this repository, Audit one subsystem I select, or Analyze one candidate I select. Update the organized HTML report and stop before implementation."
 
 policy:
   allow_implicit_invocation: false
