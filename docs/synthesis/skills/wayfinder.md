@@ -90,7 +90,7 @@ unknown with the safest recovery.
 | --- | --- |
 | Research | Invoke `$research` for one source-answerable question. |
 | Prototype | Invoke `$prototype` with a named human judge or objective rule. |
-| Grilling | Invoke `$grilling` for one conversation-only user decision, or `$grill-with-docs` when that decision also needs durable domain capture. |
+| Grilling | Invoke `$grilling` for one conversation-only user decision, or `$grill-with-docs` when that decision also needs live domain reconciliation. |
 | Questionnaire | Recommend explicit `$to-questionnaire` and stop before claims or shared mutation. A returned path is waiting evidence, never an answer. |
 | Task | Establish one bounded prerequisite without durable mutation; a required human action becomes waiting. |
 
@@ -144,4 +144,4 @@ instructions or proof that those operations still earn their cost.
 
 Pack composition revision 30 and machine contract revision 18 own the current
 runtime projection. Canonical Wayfinder package tree SHA-256:
-`e328530ff7969a3313986ae3490885be9cd309be87dff648759eada9636c3509`.
+`2ee050f8870ab54f40ec0a6ea6a4098b218223eb078f1d152d5c18b4899302fc`.

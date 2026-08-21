@@ -1,12 +1,10 @@
 # Issue tracker: GitHub
 
-Issues and specs live as GitHub issues. This guide maps skill-owned tracker
-actions to GitHub. Skills own packet content, readiness judgment, authorization,
-workflow order, claim lifecycle, review, and completion.
+Issues and specifications live in GitHub Issues.
 
 ## Configuration
 
-**PRs as a request surface: no.**
+**PRs as a request surface:** no.
 
 **Close implemented items:** yes.
 
@@ -16,71 +14,39 @@ workflow order, claim lifecycle, review, and completion.
 
 ## Operations
 
-Use the GitHub connector for issues and pull requests. Infer owner and repository
-from `git remote -v` when explicit arguments are required. Use `gh` only when
-the connector lacks the required operation.
+Use the GitHub connector when it exposes the required operation. Otherwise use
+`gh` after resolving the repository from `git remote -v`.
 
-- **Publish:** create a GitHub issue.
+- **Publish:** create an issue.
 - **Fetch:** read the issue body, comments, labels, state, assignee, and
   relationships.
-- **Comment or brief:** post an issue comment. When PR intake is enabled, post a
-  PR comment instead; `$triage` owns the brief. Apply attribution only when
-  repository policy requires it.
-- **Close:** use the connector's close action and include the skill-owned closing
-  comment when applicable.
-- **Relationships:** use connector actions when exposed; otherwise use GitHub's
-  sub-issue and issue-dependency REST endpoints through `gh api`. Resolve the
-  authenticated operation and read-back route before the first create.
-When PR intake is enabled, fetch the PR body, comments, labels, author
-association, and diff. External candidates have author association
-`CONTRIBUTOR`, `FIRST_TIME_CONTRIBUTOR`, or `NONE`. GitHub issues and PRs share
-one number space, so resolve an ambiguous `#<n>` as a PR first and then as an
-issue.
+- **Comment:** add an issue comment. When PR intake is enabled, use the matching
+  PR operation instead.
+- **Label:** add or remove a configured label.
+- **Close:** add any skill-owned closing comment, then close when configured or
+  explicitly directed.
+- **Relationships:** use configured native sub-issue and dependency operations,
+  or their verified REST endpoints when the connector lacks them.
 
-## Work-item representation
+Resolve the operation and its independent read-back route before the first
+external mutation. GitHub issues and PRs share one number space, so resolve an
+ambiguous `#<n>` as a PR first and then as an issue.
 
-- **Packet:** issue body and comments.
-- **State:** mapped category and state labels. `ready-for-agent` and
-  `ready-for-human` are navigation metadata, not proof that a packet or
-  transition is valid.
-- **Parent / child:** `native-sub-issues` uses GitHub sub-issues;
-  `parent-task-list` uses an ordered parent task list and
-  `Part of #<parent>` in each child.
-- **Blocking:** `native-dependencies` uses GitHub issue dependencies;
-  `body-links` uses `Blocked by: #<n>, #<n>` in the child.
-- **Ready query:** derive agent and human frontiers separately from open items
-  in their mapped readiness state, then exclude unresolved blockers and
-  assignees. Preserve child order within a parent; otherwise use oldest first.
-- **Claim:** the assignee stores the active claim.
-- **Closeout:** post the skill-owned packet, apply `implemented`, remove the
-  prior state label, and close only when configured above or explicitly
-  directed. Preserve completed dependency history. Closing a blocker for any
-  other reason must not expose a false-ready dependent.
+## Representation
 
-Freeze both relationship modes before publication. Stop before creation when a
-configured operation or read-back route is unavailable; never switch
-representations during one publication.
+- Content lives in the issue body and comments.
+- Category and state use values from `docs/agents/triage-labels.md`.
+- Parent and child links use the configured parent / child mode.
+- Blocking links use the configured dependency mode.
+- An active claim uses the assignee.
 
-## Wayfinding representation
-
-The map and tickets are issues connected through the configured relationships.
-Use the fixed map and ticket labels from `docs/agents/triage-labels.md`. The map
-body follows `$wayfinder`'s `MAP-FORMAT.md`.
-
-Store `Type:`, `Decision owner:`, `Accept when:`, and any applicable
-`Mutation boundary:` in the issue body. Represent fog as
-`Blocked: fog - <gist> - sharpens when <evidence or decision>` and an external
-return as `Blocked: waiting - <gist>` with its exact owner and return condition
-in a comment. Store an active claim in the assignee plus `Claim token:`.
-Resolved and out-of-scope tickets close; blocked and waiting tickets remain
-open. `$wayfinder` owns frontier selection, claim lifecycle, outcomes, and map
-completion.
+Do not switch relationship representations during one publication. Closing or
+superseding a blocker must not expose a dependent as ready while it remains
+blocked.
 
 ## Mutation read-back
 
-After a mutation, refetch the target and affected dependents and verify every
-intended body, relationship, label or state, assignee, comment, close reason,
-open or closed state, and resulting frontier. Refetch after a failed or
-indeterminate command; do not retry blindly. Treat any unverified partial
-mutation as blocked and report applied, failed, and unknown effects plus the
-safest recovery.
+After a mutation, refetch the target and affected relationships. Verify the
+intended body, labels, state, assignee, comments, and open or closed state. After
+a failed or indeterminate command, refetch before deciding whether to retry.
+Report any observed partial result and the safest recovery.

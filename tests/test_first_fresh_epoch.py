@@ -126,8 +126,25 @@ def test_first_epoch_contract_freezes_complete_h1_free_composition() -> None:
     }
 
     assert pack_contract.validate_contract(contract) == []
+    capability_owner = {
+        skill["skill_id"]: set(skill["owned_capability_ids"])
+        for skill in contract["selected_skills"]
+    }
+    for relationship in contract["relationships"]:
+        assert set(relationship["affected_capability_ids"]) == (
+            capability_owner[relationship["caller_skill_id"]]
+            | capability_owner[relationship["target_skill_id"]]
+        )
+    for issue in contract["exclusions_collisions_gaps"]:
+        capability_ids = issue["involved_capability_ids"]
+        if issue["class"] != "capability" or not capability_ids:
+            continue
+        assert len(capability_ids) == len(set(capability_ids))
+        assert set(capability_ids) == set().union(
+            *(capability_owner[skill_id] for skill_id in issue["involved_skill_ids"])
+        )
     assert contract["epoch_header"]["composition_epoch_id"] == EPOCH
-    assert contract["epoch_header"]["contract_revision"] == 25
+    assert contract["epoch_header"]["contract_revision"] == 28
     assert contract["epoch_header"]["status"] == "frozen"
     assert contract["epoch_header"]["integration_result"] == {
         "decision": None,
@@ -213,7 +230,7 @@ def test_first_epoch_revision_preserves_history_and_derives_r11_blueprints() -> 
             skill_id,
         )
         assert projected["slice"]["slice_id"].startswith(
-                f"{EPOCH}:r25:"
+                f"{EPOCH}:r28:"
         )
         assert projected["slice"]["skill"] == skill_by_id[skill_id]
     assert {
@@ -230,7 +247,7 @@ def test_current_contract_preserves_review_and_tdd_topology() -> None:
         skill["canonical_name"]: skill for skill in contract["selected_skills"]
     }
     assert contract["epoch_header"]["status"] == "frozen"
-    assert contract["epoch_header"]["contract_revision"] == 25
+    assert contract["epoch_header"]["contract_revision"] == 28
     assert {
         name: (skill_by_name[name]["skill_id"], skill_by_name[name]["invocation_mode"])
         for name in (

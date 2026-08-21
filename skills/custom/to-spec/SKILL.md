@@ -12,7 +12,7 @@ starting downstream work.
 ## Admit
 
 Accept one identity-bearing settled source: a direct packet, a confirmed Grill
-With Docs result with its current cumulative Domain Delta, a read-back closed
+With Docs result with its current domain result, a read-back closed
 Wayfinder map whose delivered closing evidence satisfies its closing condition,
 or a verified Audit candidate with settled direction and boundaries.
 
@@ -72,7 +72,7 @@ itself the clearest settled contract.
 
 ## Publish
 
-Load the routed tracker contract only after the durable-parent branch wins.
+Read `docs/agents/issue-tracker.md` only after the durable-parent branch wins.
 Verify the required inspect, create, and read-back routes. If setup is missing
 or incompatible, leave state unchanged, recommend `$repo-bootstrap`, and stop.
 

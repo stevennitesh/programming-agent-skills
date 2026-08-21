@@ -66,9 +66,11 @@ Use these branches only when their condition is present:
   bounded edit that one worker can own. Use a fresh capable worker under the
   active runtime unless the user selects a model. The root inspects the
   returned diff and proof.
-- For tracker-backed work, follow the repository's claim and closeout rules.
-  Direct work creates no tracker state. Commit only when the user or repository
-  requires Git delivery; do not push without separate authority.
+- For tracker-backed work, read `docs/agents/issue-tracker.md` and
+  `docs/agents/triage-labels.md`, then follow the claim and closeout rules. If
+  either contract is missing or incompatible, recommend `$repo-bootstrap` and
+  stop. Direct work creates no tracker state. Commit only when the user or
+  repository requires Git delivery; do not push without separate authority.
 - Before a destructive action or durable external mutation, confirm the exact
   target and authority. Read back every durable external mutation. Establish a
   recovery path before an operation that can partially succeed.
@@ -100,6 +102,12 @@ non-obvious decision changed.
 Call the item complete only when the requested behavior works, the relevant
 proof passes, and the final diff contains only intended changes. Otherwise
 preserve useful work and state exactly what remains.
+
+For a completed tracker item, preserve its category, remove readiness roles,
+apply `implemented`, and close only when the tracker configuration says to.
+Read the result back. Refetch open dependents whose blocker changed; apply
+`ready-for-agent` only when the dependent has a complete accepted packet and no
+unresolved blocker. Leave other dependents non-ready.
 
 Return a concise summary of what changed, the proof run, and any material gap.
 Include commit or tracker state only when applicable. Stop before another item,

@@ -1,8 +1,6 @@
 # Issue tracker: GitLab
 
-Issues and specs live as GitLab issues. This guide maps skill-owned tracker
-actions to GitLab. Skills own packet content, readiness judgment, authorization,
-workflow order, claim lifecycle, review, and completion.
+Issues and specifications live in GitLab Issues.
 
 ## Configuration
 
@@ -10,64 +8,41 @@ workflow order, claim lifecycle, review, and completion.
 
 **Close implemented items:** no.
 
+**Parent / child mode:** body-links.
+
+**Dependency mode:** body-links.
+
 ## Operations
 
-Run `glab` inside the clone; it resolves the project from the remote.
+Run `glab` inside the clone so it resolves the configured project.
 
-- **Publish:** `glab issue create --title "..." --description "..."`; use
-  `--description -` for editor input.
-- **Fetch or list:** `glab issue view <number> --comments` or
-  `glab issue list -O json`. Use JSON output for machine reads.
-- **Comment or brief:** `glab issue note <number> --message "..."`; `$triage`
-  owns the brief. Apply attribution only when repository policy requires it.
+- **Publish:** `glab issue create`.
+- **Fetch:** `glab issue view <number> --comments` or JSON output from
+  `glab issue list`.
+- **Comment:** `glab issue note <number> --message "..."`.
 - **Label:** `glab issue update <number> --label "..."` or `--unlabel "..."`.
-- **Close:** post any closing note first, then run `glab issue close <number>`.
-- **Merge requests:** when intake is enabled, use the corresponding
-  `glab mr view|diff|list|note|update|close` commands. Surface uncertain author
-  membership instead of silently excluding the MR.
+- **Close:** add any skill-owned closing note, then run
+  `glab issue close <number>` when configured or explicitly directed.
+- **Relationships:** use the configured native-link or body-link representation.
 
-Issues and MRs have separate number spaces; name the surface with the number.
+Issues and merge requests have separate number spaces. Name the surface with
+the number. Resolve the operation and its read-back route before the first
+external mutation.
 
-## Work-item representation
+## Representation
 
-- **Packet:** issue description and notes.
-- **State:** mapped category and state labels. `ready-for-agent` and
-  `ready-for-human` are navigation metadata, not proof that a packet or
-  transition is valid.
-- **Parent / child:** use a verified native child relationship when available;
-  otherwise use an ordered parent task list and `Part of #<parent>` in each
-  child.
-- **Blocking:** use verified native blocking links when available; otherwise
-  use `Blocked by: #<n>, #<n>`.
-- **Ready query:** derive agent and human frontiers separately from open items
-  in their mapped readiness state, then exclude unresolved blockers and
-  assignees. Preserve parent order; otherwise use oldest first.
-- **Claim:** the assignee stores the active claim.
-- **Closeout:** post the skill-owned packet as a note, apply `implemented`,
-  remove the prior state label, and close only when configured above or
-  explicitly directed. Closing a blocker for any other reason must not expose a
-  false-ready dependent.
+- Content lives in the issue description and notes.
+- Category and state use values from `docs/agents/triage-labels.md`.
+- Parent, child, and blocking links use the configured relationship form.
+- An active claim uses the assignee.
 
-## Wayfinding representation
-
-The map and tickets are issues connected through the configured relationship
-representation. Use the fixed map and ticket labels from
-`docs/agents/triage-labels.md`; the map body follows `$wayfinder`'s
-`MAP-FORMAT.md`.
-
-Store `Type:`, `Decision owner:`, `Accept when:`, and any applicable
-`Mutation boundary:` in the issue description. Represent fog as
-`Blocked: fog - <gist> - sharpens when <evidence or decision>` and an external
-return as `Blocked: waiting - <gist>` with its exact owner and return condition
-in a note. Store an active claim in the assignee plus `Claim token:`.
-Resolved and out-of-scope tickets close; blocked and waiting tickets
-remain open. `$wayfinder` owns frontier selection, claim lifecycle, outcomes,
-and map completion.
+Do not switch relationship representations during one publication. Closing or
+superseding a blocker must not expose a dependent as ready while it remains
+blocked.
 
 ## Mutation read-back
 
-After a mutation, refetch the target and affected dependents and verify every
-intended description, relationship, label or state, assignee, note, open or
-closed state, and resulting frontier. Refetch after a failed or indeterminate
-command; do not retry blindly. Treat any unverified partial mutation as blocked
-and report applied, failed, and unknown effects plus the safest recovery.
+After a mutation, refetch the target and affected relationships. Verify the
+intended description, labels, state, assignee, notes, and open or closed state.
+After a failed or indeterminate command, refetch before deciding whether to
+retry. Report any observed partial result and the safest recovery.

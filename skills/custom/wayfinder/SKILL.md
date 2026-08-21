@@ -14,7 +14,9 @@ not do more than one of those.
 
 ## Bound
 
-Load the configured tracker `Wayfinding representation` and labels. Name one
+Read `docs/agents/issue-tracker.md` and `docs/agents/triage-labels.md` for the
+configured tracker operations, relationships, and labels. If either contract is
+missing or incompatible, recommend `$repo-bootstrap` and stop. Name one
 destination with its owner, outcome, in and out boundary, observable closing
 condition, and return owner.
 
@@ -35,6 +37,13 @@ sharp now. A ticket must be resolvable by a fresh agent from its own question,
 importance, owner, dependencies, and acceptance evidence. Keep an in-scope
 uncertainty as fog only while the question cannot yet be stated sharply; name
 the evidence or decision that would sharpen it.
+
+Label the map `wayfinder:map`. Give each ticket exactly one label matching its
+`Type`: Research uses `wayfinder:research`, Prototype uses
+`wayfinder:prototype`, Grilling uses `wayfinder:grilling`, Questionnaire uses
+`wayfinder:questionnaire`, and Task uses `wayfinder:task`. Wayfinder status
+lives in its recorded condition, claims, dependencies, and tracker open or
+closed state, not in the triage state roles.
 
 Order dependency-ready tickets by how much they can unblock, invalidate, or
 reshape the remaining route. Use map order as the tie-breaker.

@@ -1,34 +1,31 @@
 # Grill With Docs Composition Synthesis
 
-Status: Prompt 5 promotion is complete. Later lean Author passes add narrow
-implicit discovery, preserve Grilling's `Route gap`, and make Domain Modeling
-blockers dominant and owner-preserving at the combined exit. The three-step
-spine and component ownership remain unchanged. The current amendment admits a
-caller packet only when it preserves the current user as decision owner and
-supplies the return owner; otherwise the direct-user boundary remains intact.
+Status: Prompt 5 promotion is complete. The current lean rewrite keeps narrow
+implicit discovery, the three-step spine, component ownership, and domain
+reconciliation before dependent questioning. It removes caller packets, formal
+Domain Delta transport, relay accounting, and status or recovery fields.
 Current invocation evidence is recorded in
 [`2026-07-22-grill-with-docs-implicit-invocation-eval.md`](../../validation/skills/grill-with-docs/evals/EV-grill-with-docs-implicit-invocation-eval-20260722-01/evidence/2026-07-22-grill-with-docs-implicit-invocation-eval.md);
 historical promotion evidence does not prove the later wording changes.
 Canonical tree SHA-256 is
-`73f6f891f2f4d898f5df392c6389d2cd4d3c28a1ba069d3a6d4b0773a86a804d`;
+`2feab5ad16dcd414e20fd966f24aeb022f6ce9e9c2a080c41f59beb54f56c159`;
 installed parity and fresh wording-efficacy proof are not claimed.
 
 Runtime authority currently remains in:
 
 - `skills/custom/grill-with-docs/SKILL.md` and `skills/custom/grill-with-docs/agents/openai.yaml`;
-- Grilling for the interview and intact Grilling exit packet;
-- Domain Modeling for domain meaning, persistence, ADR handling, and the authoritative cumulative Domain Delta;
+- Grilling for the interview, confirmation, and exact conversational gap;
+- Domain Modeling for domain meaning, persistence, ADR handling, and the current domain result;
 - `docs/synthesis/skill-context-relationships.md` for the current pack-wide relationship map; and
 - the current structural and behavioral proof surfaces.
 
 The sibling [Grilling Decision-Frontier Synthesis](grilling.md) and [Domain Modeling Durable-Truth Synthesis](domain-modeling.md) own component behavior. This synthesis owns only their composition.
 
-Current reconciliation: Pack composition revision 16 keeps the separate
-composer and its three actions. It retains ordered Relay, opaque Domain Delta
-transport, domain-blocker precedence, optional context-write authority, and
-separate ADR approval. It removes the four-status combined packet and universal
-authority preamble, returning only current component results or the concrete
-owner-preserving blocker.
+Current reconciliation: Pack composition revision 26 keeps the separate
+composer and its three actions. It retains narrow implicit discovery,
+reconciliation before dependent questioning, component authority, and a
+combined return. Domain Modeling still owns context-write authority and ADR
+approval. The composer carries no packet, status taxonomy, or recovery schema.
 
 ## How To Read The Historical Record
 

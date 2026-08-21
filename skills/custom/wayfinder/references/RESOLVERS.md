@@ -13,7 +13,7 @@ adds only route-specific inputs.
 | --- | --- |
 | Research | Invoke `$research` for one source-answerable question. Pass the map use, scope, applicable state, approved note path or no-write mode, and Wayfinder return owner. |
 | Prototype | Invoke `$prototype` for one runnable design question. Pass the named human judge or objective rule, representative evidence, bounded run, mutation authority, and cleanup or custody. |
-| Grilling | Invoke `$grilling` for one conversation-only user decision. Use `$grill-with-docs` only when that same decision requires durable domain capture. |
+| Grilling | Invoke `$grilling` for one conversation-only user decision. Use `$grill-with-docs` only when that same decision needs live domain reconciliation. |
 | Questionnaire | Return the recipient, downstream decision, needed-back items, authorized path, answer-return destination, and exact `$to-questionnaire` plus Wayfinder re-entry instruction. Do not invoke the explicit-only skill. |
 | Task | Establish one bounded repository or operational prerequisite. It may inspect state but cannot perform durable mutation. A required live human action becomes a wait. |
 

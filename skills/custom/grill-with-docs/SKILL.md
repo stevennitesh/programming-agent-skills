@@ -1,46 +1,40 @@
 ---
 name: grill-with-docs
-description: Compose grilling one bounded user-owned repo-backed decision with keeping its domain language, invariants, or relationships current; exclude conversation-only grilling and settled-domain-only work.
+description: Use when one user-owned repo-backed decision needs live grilling while its domain meaning, invariants, or relationships are kept current; exclude conversation-only grilling and already-settled domain capture.
 ---
 
 # Grill With Docs
 
-Compose one Grilling conversation with current domain capture. Return the
-confirmed understanding and Domain Modeling's current cumulative Domain Delta,
-or the concrete blocker that prevents either result.
+Grill one repo-backed decision while keeping its domain meaning current.
 
-1. **Admit.** Accept a direct-user request or a caller packet that preserves the
-   current user as decision owner and supplies the return owner when the
-   decision needs both components. Align their bounded subject and Source
-   Trace. Domain Modeling returns proposed wording unless the user separately
-   authorizes context persistence. ADR recording needs separate approval for an
-   identified, already-settled candidate.
+## 1. Bound
 
-   If the request needs only one component, name that narrower owner and stop
-   without invoking it. A missing or contradictory requirement returns to its
-   owner before either component starts.
+Use this only when one bounded user-owned decision needs both live questioning
+and domain reconciliation. If it needs only conversation, use `$grilling`. If
+the meaning is already settled and needs only capture, use `$domain-modeling`.
 
-2. **Compose.** Run one `$grilling` session with `$domain-modeling` active.
-   Relay each settled material answer to Domain Modeling and every returned
-   collision or blocker to Grilling before dependent progress. Carry Domain
-   Modeling's current cumulative Domain Delta opaquely; never merge or
-   reinterpret it. Grilling owns the interview and materiality; Domain Modeling
-   owns domain consequences, mutation, ADR handling, and delta accumulation. A
-   no-change delta is valid. A missing current delta is a composition blocker.
+On caller invocation, preserve the current user as decision owner and require a
+return owner. Keep Domain Modeling's context-write and ADR approval gates intact.
 
-3. **Return.** Return the current Grilling understanding or intact gap with the
-   current cumulative Domain Delta. Do not repeat either component's completion
-   judgment or ask for another confirmation. A material Domain Delta blocker
-   prevents a confirmed combined result; return that blocker, its owner, and
-   re-entry condition instead. Preserve an originating Grilling gap and its
-   owner without selecting a route or recovery.
+## 2. Compose
 
-   Return to the declared return owner, or the user on direct invocation, and
-   stop without starting downstream work.
+Run one `$grilling` session with `$domain-modeling` active. After each settled
+answer that may change domain meaning, invariants, or relationships, let Domain
+Modeling reconcile it before Grilling asks a dependent question. Return a
+collision to the decision conversation instead of building on it.
+
+Grilling owns questioning, materiality judgment, and confirmation. Domain
+Modeling owns domain relevance, reconciliation, and the domain result,
+including no change, proposed wording, authorized writes, or a blocker.
+
+## 3. Return
+
+Return the confirmed decision or exact Grilling gap with Domain Modeling's
+current result. A material domain collision prevents confirmation. Return to
+the caller, or to the user on direct invocation, and stop before downstream
+work.
 
 ## Completion
 
-Complete when every settled material answer and returned collision traversed
-Relay before dependent questioning, and either the confirmed understanding or
-intact gap plus the current Domain Delta, or the concrete composition blocker,
-has returned intact to its owner.
+Complete when one confirmed decision or exact unresolved gap, together with
+Domain Modeling's current result, has returned to its owner.

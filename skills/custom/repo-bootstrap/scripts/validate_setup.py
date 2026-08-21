@@ -1,17 +1,13 @@
-"""Validate the local setup surface required by the custom skill pack."""
+"""Validate the local setup configuration required by the custom skill pack."""
 
 from __future__ import annotations
 
 import argparse
-import errno
 import hashlib
 import re
 import subprocess
 import tomllib
-from dataclasses import dataclass
-from enum import Enum
 from pathlib import Path
-from typing import TypeAlias
 
 
 REQUIRED_FILES = (
@@ -22,16 +18,11 @@ REQUIRED_FILES = (
     "docs/agents/engineering-contract.md",
 )
 
-SETUP_SCHEMA_TOKEN = "<!-- programming-agent-skills setup-schema: 1:b7487becba35 -->"
-SETUP_SCHEMA_MARKER_RE = re.compile(
-    r"<!-- programming-agent-skills setup-schema: \d+:[0-9a-f]{12} -->"
+PORTABLE_OWNER_MARKER = (
+    "<!-- programming-agent-skills portable-contract-owner: 1 -->"
 )
 SETUP_FILE_MARKER_RE = re.compile(
     r"<!-- programming-agent-skills setup-file: engineering-contract\.md:[0-9a-f]{12} -->"
-)
-
-PORTABLE_OWNER_MARKER = (
-    "<!-- programming-agent-skills portable-contract-owner: 1 -->"
 )
 
 AGENT_POINTERS = (
@@ -40,100 +31,31 @@ AGENT_POINTERS = (
     "docs/agents/domain.md",
     "docs/agents/engineering-contract.md",
 )
-
-DOMAIN_TOKENS = (
-    "**single-context:**",
-    "**multi-context:**",
-    "CONTEXT-MAP.md",
-    "<context-root>/docs/adr/",
-    "$domain-modeling",
+TRACKER_HEADINGS = (
+    "Issue tracker: GitHub",
+    "Issue tracker: GitLab",
+    "Issue tracker: Local Markdown",
 )
-
-WORK_ITEM_TOKENS = (
-    "## Operations",
-    "## Work-item representation",
-    "**Packet:**",
-    "**Parent / child:**",
-    "**Blocking:**",
-    "**Ready query:**",
-    "**Claim:**",
-    "**Closeout:**",
-    "## Mutation read-back",
+TRACKER_SECTIONS = ("Operations", "Representation", "Mutation read-back")
+LABEL_ROLES = (
+    "bug",
+    "enhancement",
+    "needs-triage",
+    "needs-info",
+    "ready-for-agent",
+    "ready-for-human",
+    "implemented",
+    "wontfix",
 )
-WAYFINDER_TOKENS = (
-    "Type:",
-    "Decision owner:",
-    "Accept when:",
-    "Mutation boundary:",
-    "Claim token:",
-)
-
-HOSTED_WAYFINDER_TOKENS = (
-    "docs/agents/triage-labels.md",
-    "Blocked: waiting - <gist>",
-)
-LOCAL_WAYFINDER_TOKENS = (
-    "Status: Pending | In Progress | Resolved | Blocked | Waiting | Out Of Scope",
-    "waiting return records",
-)
-
 GITHUB_RELATIONSHIP_MODES = (
-    (
-        "Parent / child mode",
-        ("native-sub-issues", "parent-task-list"),
-    ),
-    (
-        "Dependency mode",
-        ("native-dependencies", "body-links"),
-    ),
+    ("Parent / child mode", ("native-sub-issues", "parent-task-list")),
+    ("Dependency mode", ("native-dependencies", "body-links")),
 )
-
-LABEL_TOKENS = (
-    "`bug`",
-    "`enhancement`",
-    "`needs-triage`",
-    "`needs-info`",
-    "`ready-for-agent`",
-    "`ready-for-human`",
-    "`implemented`",
-    "`wontfix`",
-    "`wayfinder:map`",
-    "`wayfinder:research`",
-    "`wayfinder:prototype`",
-    "`wayfinder:grilling`",
-    "`wayfinder:questionnaire`",
-    "`wayfinder:task`",
+GITLAB_RELATIONSHIP_MODES = (
+    ("Parent / child mode", ("native-links", "body-links")),
+    ("Dependency mode", ("native-links", "body-links")),
 )
-
 PARALLEL_CONFIG = Path(".codex/config.toml")
-
-
-class FailureKind(str, Enum):
-    FILESYSTEM_IO = "filesystem-io"
-    TEXT_DECODING = "text-decoding"
-    GIT_UNAVAILABLE = "git-unavailable"
-    GIT_INVOCATION = "git-invocation"
-    GIT_COMMAND = "git-command"
-
-
-@dataclass(frozen=True)
-class ValidationFailure:
-    kind: FailureKind
-    operation: str
-    path: str | None = None
-
-    def render(self) -> str:
-        context = f" for {self.path}" if self.path is not None else ""
-        return f"[{self.kind.value}] {self.operation} failed{context}"
-
-
-Failure: TypeAlias = str | ValidationFailure
-
-
-def render_failure(failure: Failure) -> str:
-    if isinstance(failure, ValidationFailure):
-        return failure.render()
-    return failure
 
 
 def parse_args() -> argparse.Namespace:
@@ -142,115 +64,16 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def read_required(root: Path, relative: str, failures: list[Failure]) -> str:
+def read_required(root: Path, relative: str, failures: list[str]) -> str:
     path = root / relative
+    if not path.is_file():
+        failures.append(f"Missing required setup file: {relative}")
+        return ""
     try:
-        if not path.is_file():
-            failures.append(f"Missing required setup file: {relative}")
-            return ""
         return path.read_text(encoding="utf-8")
-    except UnicodeError:
-        failures.append(
-            ValidationFailure(FailureKind.TEXT_DECODING, "decode setup file", relative)
-        )
+    except (OSError, UnicodeError) as error:
+        failures.append(f"Cannot read required setup file {relative}: {error}")
         return ""
-    except OSError:
-        failures.append(
-            ValidationFailure(FailureKind.FILESYSTEM_IO, "read setup file", relative)
-        )
-        return ""
-
-
-def require_tokens(
-    text: str, relative: str, tokens: tuple[str, ...], failures: list[str]
-) -> None:
-    for token in tokens:
-        if token not in text:
-            failures.append(f"{relative} is missing {token}")
-
-
-def wayfinder_contract_failures(text: str, relative: str) -> list[str]:
-    failures: list[str] = []
-    provider_tokens = (
-        LOCAL_WAYFINDER_TOKENS
-        if "issue tracker: local markdown" in text.lower()
-        else HOSTED_WAYFINDER_TOKENS
-    )
-    require_section_tokens(
-        text,
-        relative,
-        (("## Wayfinding representation", WAYFINDER_TOKENS + provider_tokens),),
-        failures,
-    )
-    return failures
-
-
-def domain_contract_failures(text: str, relative: str) -> list[str]:
-    failures: list[str] = []
-    require_tokens(text, relative, DOMAIN_TOKENS, failures)
-    return failures
-
-
-def require_section_tokens(
-    text: str,
-    relative: str,
-    requirements: tuple[tuple[str, tuple[str, ...]], ...],
-    failures: list[str],
-) -> None:
-    for heading, tokens in requirements:
-        section = markdown_section(text, heading, include_fenced_content=False)
-        for token in tokens:
-            if section is None or token not in section:
-                failures.append(f"{relative} section {heading} is missing {token}")
-
-
-def markdown_section(
-    text: str,
-    heading: str,
-    *,
-    include_fenced_content: bool = True,
-) -> str | None:
-    lines = text.splitlines(keepends=True)
-    outside_fence: list[bool] = []
-    fence_char = ""
-    fence_length = 0
-
-    for line in lines:
-        outside_fence.append(not fence_char)
-        stripped = line.rstrip("\r\n")
-        if fence_char:
-            if re.fullmatch(
-                rf"[ \t]{{0,3}}{re.escape(fence_char)}{{{fence_length},}}[ \t]*",
-                stripped,
-            ):
-                fence_char = ""
-                fence_length = 0
-            continue
-        opening = re.match(r"[ \t]{0,3}(`{3,}|~{3,})", stripped)
-        if opening:
-            fence_char = opening.group(1)[0]
-            fence_length = len(opening.group(1))
-
-    matches = [
-        index
-        for index, line in enumerate(lines)
-        if outside_fence[index] and line.rstrip().rstrip("\r\n") == heading
-    ]
-    if len(matches) != 1:
-        return None
-
-    start = matches[0] + 1
-    end = len(lines)
-    for index in range(start, len(lines)):
-        if outside_fence[index] and re.match(r"^#{1,2}(?:[ \t]+|$)", lines[index]):
-            end = index
-            break
-    section = "".join(
-        line
-        for index, line in enumerate(lines[start:end], start)
-        if include_fenced_content or outside_fence[index]
-    )
-    return section
 
 
 def markdown_headings(text: str, level: int) -> list[str]:
@@ -304,78 +127,41 @@ def unfenced_markdown(text: str) -> str:
     return "".join(lines)
 
 
-def engineering_contract_failures(text: str, relative: str) -> list[Failure]:
-    failures: list[Failure] = []
-    if markdown_headings(text, 1) != ["Engineering Contract"]:
-        failures.append(f"{relative} must contain one top-level Engineering Contract heading")
-    try:
-        source = Path(__file__).resolve().parents[1] / "engineering-contract.md"
-        digest = hashlib.sha256(source.read_bytes()).hexdigest()[:12]
-    except OSError:
-        failures.append(
-            ValidationFailure(
-                FailureKind.FILESYSTEM_IO,
-                "read canonical setup file",
-                "engineering-contract.md",
-            )
-        )
-        return failures
-    expected_marker = (
-        "<!-- programming-agent-skills setup-file: "
-        f"engineering-contract.md:{digest} -->"
-    )
-    if SETUP_FILE_MARKER_RE.findall(unfenced_markdown(text)) != [expected_marker]:
-        failures.append(
-            f"{relative} must contain exactly one current engineering-contract source marker: "
-            f"{expected_marker}"
-        )
-    level_two = markdown_headings(text, 2)
-    has_content = any(
-        re.sub(
-            r"(?s)<!--.*?-->",
-            "",
-            unfenced_markdown(markdown_section(text, f"## {heading}") or ""),
-        ).strip()
-        for heading in level_two
-    )
-    if not has_content:
-        failures.append(
-            f"{relative} must contain at least one unfenced level-two section "
-            "with non-comment content"
-        )
-    return failures
+def visible_markdown(text: str) -> str:
+    return re.sub(r"(?s)<!--.*?-->", "", unfenced_markdown(text))
 
 
 def portable_owner_failures(agents: str) -> list[str]:
-    if PORTABLE_OWNER_MARKER in agents:
-        return [
-            "AGENTS.md still declares the portable engineering-contract owner; "
-            "complete portable-fallback adoption through $repo-bootstrap."
-        ]
-    return []
-
-
-def setup_schema_marker_failures(agents: str) -> list[str]:
-    if SETUP_SCHEMA_MARKER_RE.findall(unfenced_markdown(agents)) == [SETUP_SCHEMA_TOKEN]:
+    if PORTABLE_OWNER_MARKER not in agents:
         return []
     return [
-        "AGENTS.md must contain exactly one current programming-agent-skills "
-        "setup-schema marker"
+        "AGENTS.md still declares the portable engineering-contract owner; "
+        "complete portable-fallback adoption through $repo-bootstrap."
     ]
 
 
 def agents_commands_failures(agents: str) -> list[str]:
-    if markdown_section(agents, "## Commands") is not None:
+    if markdown_headings(agents, 2).count("Commands") == 1:
         return []
     return ["AGENTS.md must contain one unfenced ## Commands heading"]
 
 
-def github_relationship_mode_failures(tracker: str) -> list[str]:
-    if "issue tracker: github" not in tracker.lower():
+def agent_pointer_failures(agents: str) -> list[str]:
+    return [
+        f"AGENTS.md is missing {pointer}"
+        for pointer in AGENT_POINTERS
+        if pointer not in visible_markdown(agents)
+    ]
+
+
+def relationship_mode_failures(
+    tracker: str, provider: str, modes: tuple[tuple[str, tuple[str, ...]], ...]
+) -> list[str]:
+    if markdown_headings(tracker, 1) != [f"Issue tracker: {provider}"]:
         return []
 
     failures: list[str] = []
-    for field, choices in GITHUB_RELATIONSHIP_MODES:
+    for field, choices in modes:
         choice_pattern = "|".join(re.escape(choice) for choice in choices)
         if not re.search(
             rf"(?im)^\*\*{re.escape(field)}:\*\*\s*(?:{choice_pattern})"
@@ -384,8 +170,108 @@ def github_relationship_mode_failures(tracker: str) -> list[str]:
         ):
             failures.append(
                 "docs/agents/issue-tracker.md must set "
-                f"{field} to one configured GitHub mode"
+                f"{field} to one configured {provider} mode"
             )
+    return failures
+
+
+def tracker_configuration_failures(tracker: str) -> list[str]:
+    failures: list[str] = []
+    headings = markdown_headings(tracker, 1)
+    if len(headings) != 1 or headings[0] not in TRACKER_HEADINGS:
+        return [
+            "docs/agents/issue-tracker.md must select GitHub, GitLab, "
+            "or Local Markdown"
+        ]
+
+    sections = markdown_headings(tracker, 2)
+    for section in TRACKER_SECTIONS:
+        if sections.count(section) != 1:
+            failures.append(
+                f"docs/agents/issue-tracker.md must contain one ## {section} section"
+            )
+
+    if headings[0] != "Issue tracker: Local Markdown" and not re.search(
+        r"(?im)^\*\*Close implemented items:\*\*\s*(?:yes|no)\.?(?:\r?\n|\Z)",
+        tracker,
+    ):
+        failures.append(
+            "docs/agents/issue-tracker.md must set Close implemented items to yes or no"
+        )
+    failures.extend(relationship_mode_failures(tracker, "GitHub", GITHUB_RELATIONSHIP_MODES))
+    failures.extend(relationship_mode_failures(tracker, "GitLab", GITLAB_RELATIONSHIP_MODES))
+    return failures
+
+
+def label_configuration_failures(labels: str) -> list[str]:
+    roles = {
+        role
+        for role, value in re.findall(
+            r"(?m)^\| `([a-z0-9:-]+)` \| `([^`]+)` \|", visible_markdown(labels)
+        )
+        if value.strip()
+    }
+    return [
+        f"docs/agents/triage-labels.md is missing the {role} role"
+        for role in LABEL_ROLES
+        if role not in roles
+    ]
+
+
+def domain_layout_failures(domain: str) -> list[str]:
+    match = re.search(
+        r"(?im)^\*\*Configured layout:\*\*\s*"
+        r"(single-context|multi-context)\.?(?:\r?\n|\Z)",
+        domain,
+    )
+    if match is None:
+        return [
+            "docs/agents/domain.md must set Configured layout to "
+            "single-context or multi-context"
+        ]
+
+    failures: list[str] = []
+    if markdown_headings(domain, 2).count("Route") != 1:
+        failures.append("docs/agents/domain.md must contain one ## Route section")
+    visible = visible_markdown(domain)
+    if "$domain-modeling" not in visible:
+        failures.append("docs/agents/domain.md must point to $domain-modeling")
+    required_path = "CONTEXT.md" if match.group(1) == "single-context" else "CONTEXT-MAP.md"
+    if required_path not in visible:
+        failures.append(f"docs/agents/domain.md is missing {required_path}")
+    if "docs/adr/" not in visible:
+        failures.append("docs/agents/domain.md is missing docs/adr/")
+    return failures
+
+
+def engineering_contract_failures(text: str, relative: str) -> list[str]:
+    failures: list[str] = []
+    if markdown_headings(text, 1) != ["Engineering Contract"]:
+        failures.append(f"{relative} must contain one top-level Engineering Contract heading")
+
+    try:
+        source = Path(__file__).resolve().parents[1] / "engineering-contract.md"
+        digest = hashlib.sha256(source.read_bytes()).hexdigest()[:12]
+    except OSError as error:
+        failures.append(f"Cannot read canonical engineering-contract.md: {error}")
+        return failures
+
+    expected_marker = (
+        "<!-- programming-agent-skills setup-file: "
+        f"engineering-contract.md:{digest} -->"
+    )
+    if SETUP_FILE_MARKER_RE.findall(unfenced_markdown(text)) != [expected_marker]:
+        failures.append(
+            f"{relative} must contain exactly one current source marker: "
+            f"{expected_marker}"
+        )
+    visible = visible_markdown(text)
+    sections = re.split(r"(?m)^##[ \t]+.+$", visible)[1:]
+    sections = [re.sub(r"(?m)^#{3,6}[ \t]+.*$", "", section) for section in sections]
+    if not sections or not any(section.strip() for section in sections):
+        failures.append(
+            f"{relative} must contain at least one non-empty level-two section"
+        )
     return failures
 
 
@@ -393,46 +279,30 @@ def parallel_package() -> Path:
     return Path(__file__).resolve().parents[2] / "parallel-implement"
 
 
-def parallel_support_failures(root: Path) -> list[Failure]:
+def parallel_support_failures(root: Path) -> list[str]:
     try:
         return inspect_parallel_support(root)
-    except UnicodeError:
-        return [
-            ValidationFailure(
-                FailureKind.TEXT_DECODING,
-                "decode parallel configuration",
-                PARALLEL_CONFIG.as_posix(),
-            )
-        ]
-    except OSError:
-        return [
-            ValidationFailure(
-                FailureKind.FILESYSTEM_IO,
-                "inspect parallel support",
-                ".codex",
-            )
-        ]
+    except (OSError, UnicodeError) as error:
+        return [f"Cannot inspect optional parallel support: {error}"]
 
 
-def inspect_parallel_support(root: Path) -> list[Failure]:
+def inspect_parallel_support(root: Path) -> list[str]:
     config_path = root / PARALLEL_CONFIG
     if not config_path.is_file():
         return []
 
-    failures: list[Failure] = []
-    package = parallel_package()
-    helper_path = package / "scripts/lane_worktree.py"
+    helper_path = parallel_package() / "scripts/lane_worktree.py"
     if not helper_path.is_file():
         return ["Parallel implementation support requires the installed canonical package"]
 
     try:
         config = tomllib.loads(config_path.read_text(encoding="utf-8"))
     except tomllib.TOMLDecodeError as error:
-        failures.append(f".codex/config.toml is invalid: {error}")
-        return failures
+        return [f".codex/config.toml is invalid: {error}"]
 
+    failures: list[str] = []
     if config.get("default_permissions") != "project-lanes":
-        failures.append(".codex/config.toml must select the project-lanes permission profile")
+        return []
     permissions = config.get("permissions")
     profile = permissions.get("project-lanes") if isinstance(permissions, dict) else None
     if not isinstance(profile, dict) or profile.get("extends") != ":workspace":
@@ -442,20 +312,19 @@ def inspect_parallel_support(root: Path) -> list[Failure]:
         failures.append("project-lanes permissions must declare workspace_roots")
         return failures
 
-    candidates: list[Path] = []
-    for raw_path, enabled in roots.items():
-        if not isinstance(raw_path, str) or enabled is not True:
-            continue
-        lane_root = Path(raw_path).resolve()
-        if lane_root.name.lower() == "wt":
-            candidates.append(lane_root)
+    candidates = [
+        Path(raw_path).resolve()
+        for raw_path, enabled in roots.items()
+        if isinstance(raw_path, str)
+        and enabled is True
+        and Path(raw_path).name.lower() == "wt"
+    ]
     if len(candidates) != 1:
         failures.append("project-lanes permissions must contain one parallel wt root")
         return failures
 
-    lane_root = candidates[0]
     try:
-        lane_root.relative_to(root.resolve())
+        candidates[0].relative_to(root.resolve())
     except ValueError:
         pass
     else:
@@ -463,88 +332,48 @@ def inspect_parallel_support(root: Path) -> list[Failure]:
     return failures
 
 
-def git_invocation_failure(operation: str, error: OSError) -> ValidationFailure:
-    kind = (
-        FailureKind.GIT_UNAVAILABLE
-        if isinstance(error, FileNotFoundError) or error.errno == errno.ENOENT
-        else FailureKind.GIT_INVOCATION
-    )
-    return ValidationFailure(kind, operation)
-
-
-def run_git(root: Path, arguments: list[str], operation: str) -> tuple[
-    subprocess.CompletedProcess[str] | None, ValidationFailure | None
-]:
+def run_git(root: Path, arguments: list[str]) -> subprocess.CompletedProcess[str] | None:
     try:
-        return (
-            subprocess.run(
-                ["git", *arguments],
-                cwd=root,
-                text=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-            ),
-            None,
+        return subprocess.run(
+            ["git", *arguments],
+            cwd=root,
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
         )
-    except OSError as error:
-        return None, git_invocation_failure(operation, error)
-    except UnicodeError:
-        return None, ValidationFailure(
-            FailureKind.TEXT_DECODING,
-            f"decode Git output from {operation}",
-        )
+    except (OSError, UnicodeError):
+        return None
 
 
-def check_ignore(root: Path, probe: str) -> tuple[bool | None, Failure]:
-    result, failure = run_git(
-        root,
-        ["check-ignore", "-q", "--no-index", probe],
-        "check Git ignore state",
-    )
-    if failure is not None:
-        return None, failure
-    assert result is not None
+def check_ignore(root: Path, probe: str) -> tuple[bool | None, str]:
+    result = run_git(root, ["check-ignore", "-q", "--no-index", probe])
+    if result is None:
+        return None, "Cannot check Git ignore state"
     if result.returncode == 0:
         return True, ""
     if result.returncode == 1:
         return False, ""
-    return None, ValidationFailure(FailureKind.GIT_COMMAND, "check Git ignore state")
+    return None, "Git could not check ignore state"
 
 
-def git_root_failures(root: Path) -> list[Failure]:
-    result, failure = run_git(root, ["rev-parse", "--show-toplevel"], "find Git root")
-    if failure is not None:
-        return [failure]
-    assert result is not None
+def git_root_failures(root: Path) -> list[str]:
+    result = run_git(root, ["rev-parse", "--show-toplevel"])
+    if result is None:
+        return ["Cannot find the Git repository root"]
     if result.returncode != 0:
         return ["Target is not a Git repository"]
     try:
         observed_root = Path(result.stdout.strip()).resolve()
-    except OSError:
-        return [ValidationFailure(FailureKind.FILESYSTEM_IO, "resolve Git root")]
+    except OSError as error:
+        return [f"Cannot resolve the Git repository root: {error}"]
     if observed_root != root:
         return ["Target must be the Git repository root"]
     return []
 
 
-def main() -> int:
-    raw_root = Path(parse_args().repo)
-    try:
-        root = raw_root.resolve()
-    except OSError:
-        failure = ValidationFailure(
-            FailureKind.FILESYSTEM_IO,
-            "resolve repository root",
-            "repository root",
-        )
-        print("Setup surface is incomplete:")
-        print(f"- {failure.render()}")
-        return 1
-    failures: list[Failure] = []
-
-    repository_failures = git_root_failures(root)
-    failures.extend(repository_failures)
-    if not repository_failures:
+def validate_setup(root: Path) -> list[str]:
+    failures = git_root_failures(root)
+    if not failures:
         failures.extend(parallel_support_failures(root))
 
     texts = {
@@ -555,50 +384,25 @@ def main() -> int:
     if agents:
         failures.extend(portable_owner_failures(agents))
         failures.extend(agents_commands_failures(agents))
-        failures.extend(setup_schema_marker_failures(agents))
-        require_tokens(agents, "AGENTS.md", AGENT_POINTERS, failures)
+        failures.extend(agent_pointer_failures(agents))
 
     tracker = texts["docs/agents/issue-tracker.md"]
     if tracker:
-        require_tokens(tracker, "docs/agents/issue-tracker.md", WORK_ITEM_TOKENS, failures)
-        failures.extend(
-            wayfinder_contract_failures(tracker, "docs/agents/issue-tracker.md")
-        )
-        if "**comment or brief:**" not in tracker.lower():
-            failures.append(
-                "docs/agents/issue-tracker.md is missing Codex-ready brief transport"
-            )
-        local_tracker = "issue tracker: local markdown" in tracker.lower()
-        if not local_tracker and not re.search(
-            r"(?im)^\*\*Close implemented items:\*\*\s*(?:yes|no)\.?(?:\r?\n|\Z)",
-            tracker,
-        ):
-            failures.append(
-                "docs/agents/issue-tracker.md must set Close implemented items to yes or no"
-            )
-        failures.extend(github_relationship_mode_failures(tracker))
-    else:
-        local_tracker = False
+        failures.extend(tracker_configuration_failures(tracker))
 
     labels = texts["docs/agents/triage-labels.md"]
-    require_tokens(labels, "docs/agents/triage-labels.md", LABEL_TOKENS, failures)
+    if labels:
+        failures.extend(label_configuration_failures(labels))
 
     domain = texts["docs/agents/domain.md"]
-    if domain and not re.search(
-        r"(?im)^\*\*Configured layout:\*\*\s*(?:single-context|multi-context)\.?(?:\r?\n|\Z)",
-        domain,
-    ):
-        failures.append(
-            "docs/agents/domain.md must set Configured layout to single-context or multi-context"
-        )
-    failures.extend(domain_contract_failures(domain, "docs/agents/domain.md"))
+    if domain:
+        failures.extend(domain_layout_failures(domain))
 
     contract = texts["docs/agents/engineering-contract.md"]
-    failures.extend(
-        engineering_contract_failures(
-            contract, "docs/agents/engineering-contract.md"
+    if contract:
+        failures.extend(
+            engineering_contract_failures(contract, "docs/agents/engineering-contract.md")
         )
-    )
 
     for relative, text in texts.items():
         if "<single-context | multi-context>" in text or "<yes | no>" in text:
@@ -610,19 +414,31 @@ def main() -> int:
     elif not ignored:
         failures.append(".tmp/ contents are not ignored")
 
-    ignored, error = check_ignore(root, ".scratch/setup-validation-probe")
-    if ignored is None:
-        failures.append(error)
-    elif ignored:
-        failures.append(".scratch/ is ignored; durable local state must remain trackable")
+    if markdown_headings(tracker, 1) == ["Issue tracker: Local Markdown"]:
+        ignored, error = check_ignore(root, ".scratch/setup-validation-probe")
+        if ignored is None:
+            failures.append(error)
+        elif ignored:
+            failures.append(".scratch/ is ignored; durable local state must remain trackable")
 
+    return failures
+
+
+def main() -> int:
+    try:
+        root = Path(parse_args().repo).resolve()
+    except OSError as error:
+        print(f"Setup surface is incomplete:\n- Cannot resolve repository root: {error}")
+        return 1
+
+    failures = validate_setup(root)
     if failures:
         print("Setup surface is incomplete:")
         for failure in failures:
-            print(f"- {render_failure(failure)}")
+            print(f"- {failure}")
         return 1
 
-    print(f"Setup surface is valid: {root}")
+    print(f"Setup surface is structurally valid: {root}")
     return 0
 
 

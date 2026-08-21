@@ -1,5 +1,15 @@
 # Repo Bootstrap Deploy Synthesis
 
+> Current reconciliation (2026-08-21): Pack prose Revision 40 and machine
+> contract revision 28. Runtime authority is
+> `skills/custom/repo-bootstrap/` at campaign-tree SHA-256
+> `0331f8bc61916af7e0b34a07e2a8cd52ae4e717ace579292b230da86d4ebd20a`.
+> Repo Bootstrap is explicit-only. Other skills read installed
+> `docs/agents/*` contracts directly and may recommend setup reconciliation;
+> they do not load this package as runtime guidance. The material below is
+> historical campaign evidence. No installed parity or behavioral efficacy is
+> claimed here.
+
 > Status (2026-07-27): historical campaign evidence. A later authorized Author
 > pass narrowed tracker seeds to Ready-for-agent state and navigation while
 > leaving Triage briefs and To Tickets execution packets with their producing

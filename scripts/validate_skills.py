@@ -70,20 +70,9 @@ FRONTMATTER_RE = re.compile(r"\A---\s*\r?\n(.*?)\r?\n---\s*(?:\r?\n|\Z)", re.DOT
 FRONTMATTER_FIELD_RE = re.compile(r"(?m)^([a-zA-Z0-9_-]+):\s*(.+?)\s*$")
 TRAILING_WHITESPACE_RE = re.compile(r"[ \t]$")
 SKILL_HANDLE_RE = re.compile(r"\$([a-z0-9][a-z0-9-]*)")
-SETUP_SCHEMA_MARKER_RE = re.compile(
-    r"<!-- programming-agent-skills setup-schema: \d+:[0-9a-f]{12} -->"
-)
 SETUP_FILE_MARKER_LINE_RE = re.compile(
     r"(?m)^<!-- programming-agent-skills setup-file: [a-z0-9./-]+:[0-9a-f]{12} -->"
     r"\r?\n(?:[ \t]*\r?\n)?"
-)
-SETUP_SCHEMA_MARKER_PLACEHOLDER = (
-    "<!-- programming-agent-skills setup-schema: <fingerprint> -->"
-)
-SETUP_SCHEMA_MARKER_TARGETS = (
-    "AGENTS.md",
-    "skills/custom/repo-bootstrap/SKILL.md",
-    "skills/custom/repo-bootstrap/scripts/validate_setup.py",
 )
 INVOCATION_ROW_RE = re.compile(
     r"(?m)^\| `([a-z0-9][a-z0-9-]*)` \| "
@@ -487,17 +476,36 @@ def setup_contract_hash(root: Path, contract_files: list[str]) -> str:
     setup_root = root / SETUP_SKILL_ROOT
     digest = hashlib.sha256()
     for relative in sorted(contract_files):
-        path = setup_root / relative
+        path = setup_contract_path(setup_root, relative)
         text = path.read_text(encoding="utf-8").replace("\r\n", "\n")
-        normalized = SETUP_SCHEMA_MARKER_RE.sub(
-            SETUP_SCHEMA_MARKER_PLACEHOLDER,
-            text,
-        )
         digest.update(relative.replace("\\", "/").encode("utf-8"))
         digest.update(b"\0")
-        digest.update(normalized.encode("utf-8"))
+        digest.update(text.encode("utf-8"))
         digest.update(b"\0")
     return digest.hexdigest()
+
+
+def setup_contract_path(setup_root: Path, relative: str) -> Path:
+    if (
+        "\\" in relative
+        or Path(relative).is_absolute()
+        or any(part in {"", ".", ".."} for part in relative.split("/"))
+    ):
+        raise ValueError(relative)
+    candidate = (setup_root / relative).resolve()
+    try:
+        candidate.relative_to(setup_root.resolve())
+    except ValueError as error:
+        raise ValueError(relative) from error
+    return candidate
+
+
+def _unsafe_setup_contract_path(setup_root: Path, relative: str) -> bool:
+    try:
+        setup_contract_path(setup_root, relative)
+    except (OSError, ValueError):
+        return True
+    return False
 
 
 def validate_setup_schema_manifest(root: Path) -> list[str]:
@@ -526,6 +534,14 @@ def validate_setup_schema_manifest(root: Path) -> list[str]:
         or len(contract_files) != len(set(contract_files))
     ):
         failures.append("Setup-schema contract_files must be a non-empty unique string list.")
+    elif any(
+        _unsafe_setup_contract_path(root / SETUP_SKILL_ROOT, relative)
+        for relative in contract_files
+    ):
+        failures.append(
+            "Setup-schema contract_files must contain normalized relative paths "
+            "inside the Repo Bootstrap package."
+        )
     if not isinstance(recorded_hash, str) or not re.fullmatch(r"[0-9a-f]{64}", recorded_hash):
         failures.append("Setup-schema contract_sha256 must be a lowercase SHA-256 digest.")
     if failures:
@@ -534,7 +550,7 @@ def validate_setup_schema_manifest(root: Path) -> list[str]:
     missing = [
         relative
         for relative in contract_files
-        if not (root / SETUP_SKILL_ROOT / relative).is_file()
+        if not setup_contract_path(root / SETUP_SKILL_ROOT, relative).is_file()
     ]
     if missing:
         return [f"Setup-schema contract file is missing: {relative}" for relative in missing]
@@ -546,20 +562,6 @@ def validate_setup_schema_manifest(root: Path) -> list[str]:
             f"recorded {recorded_hash}, actual {actual_hash}"
         )
 
-    marker = (
-        f"<!-- programming-agent-skills setup-schema: {version}:{actual_hash[:12]} -->"
-    )
-    for relative in SETUP_SCHEMA_MARKER_TARGETS:
-        path = root / relative
-        if not path.is_file():
-            failures.append(f"Setup-schema marker target is missing: {relative}")
-            continue
-        markers = SETUP_SCHEMA_MARKER_RE.findall(path.read_text(encoding="utf-8"))
-        if markers != [marker]:
-            failures.append(
-                "Setup-schema marker is stale, missing, or duplicated: "
-                f"{relative} -> {marker}"
-            )
     return failures
 
 

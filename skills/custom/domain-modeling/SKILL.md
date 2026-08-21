@@ -15,10 +15,11 @@ code indexes, procedures, and code-shape decisions with their owners.
 ## 1. Ground
 
 Identify the bounded distinction, relevant routed domain records and ADRs,
-load-bearing evidence, meaning authority, caller, and return owner. Follow the
-repository's configured domain route. Without one, use an existing root
-`CONTEXT-MAP.md`, then root `CONTEXT.md` as the fallback. A missing record is not
-a setup gap; create the first one only for an authorized settled distinction.
+load-bearing evidence, meaning authority, caller, and return owner. Read
+`docs/agents/domain.md` and follow its configured route. If that contract is
+missing or incompatible, recommend `$repo-bootstrap` and stop. A missing routed
+record is not a setup gap; create the first one only for an authorized settled
+distinction.
 
 Code, tests, contracts, runtime behavior, and widespread usage show how the
 system works. They do not settle intended meaning. Bounded contexts follow
@@ -34,8 +35,8 @@ answer could change the model.
 
 The direct user or named domain authority settles intended meaning. Direct use
 may ask that owner one focused question. Under `$grill-with-docs`, accept each
-settled material answer and return any collision before dependent questioning
-continues. Other callers retain unresolved choices.
+settled answer that may affect domain meaning and return any collision before
+dependent questioning continues. Other callers retain unresolved choices.
 
 ## 3. Settle
 
@@ -82,11 +83,10 @@ verified changed paths to the user or caller, then stop. Include authority,
 blockers, consequences, ADR outcome, and per-target state only when they affect
 the result.
 
-Under `$grill-with-docs`, return the authoritative cumulative Domain Delta after
-every settled material answer, including one with no durable consequence. The
-delta carries only current domain consequences, collisions, and applicable
-write evidence. Domain Modeling does not choose interview materiality,
-branching, or downstream work.
+Under `$grill-with-docs`, return the current domain result after each answer
+that may affect domain meaning. A no-change result is valid. Accumulate only
+current domain consequences, collisions, and applicable write evidence. Domain
+Modeling does not choose interview materiality, branching, or downstream work.
 
 ## Completion
 

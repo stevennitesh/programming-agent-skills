@@ -2,12 +2,12 @@
 
 Historical status: Prompt 5 promoted the earlier package. Current executable
 authority is `skills/custom/domain-modeling/` at canonical tree SHA-256
-`d80c459f59330ebea87378fb89a72099bbad26696bfcd8403bf0285943d0d300`.
+`2efad7cb4a29ff9ea42d9f1122fbf65924599e7a3db787951fa59af21713f8fb`.
 Installed parity and fresh wording-efficacy proof are not claimed.
 
 ## Current runtime reconciliation
 
-Pack composition revision 16 uses five actions: Ground, Clarify, Settle,
+Pack composition revision 26 uses five actions: Ground, Clarify, Settle,
 Capture, and Return. It keeps meaning authority, code-as-evidence, bounded
 context ownership, current-record reconciliation, explicit context-write
 authority, separate ADR approval, read-back, safe dependency-ordered writes,
@@ -15,8 +15,8 @@ and exact partial state.
 
 Direct use returns plain resolved wording, one exact unresolved question, a
 no-change result, or verified changed paths. Grill With Docs remains the sole
-composer and receives the authoritative cumulative Domain Delta after each
-settled material answer. Domain Modeling neither chooses code shape nor starts
+composer and receives the current domain result after each answer that may
+affect domain meaning. Domain Modeling neither chooses code shape nor starts
 downstream work.
 
 The runtime no longer exposes universal semantic and persistence statuses, a

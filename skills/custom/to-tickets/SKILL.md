@@ -21,9 +21,10 @@ If the settled source itself establishes one bounded outcome and proof path
 with no durable dependency, authority, or ownership handoff, return the exact
 item and recommend `$implement`. Create nothing.
 
-Once a graph is warranted, load the routed tracker and label contracts. Require
-configured inspect and read-back routes before examining existing state; leave
-mutation routes and authority for publication.
+Once a graph is warranted, read `docs/agents/issue-tracker.md` and
+`docs/agents/triage-labels.md`. Require configured inspect and read-back routes
+before examining existing state; leave mutation routes and authority for
+publication.
 
 For an explicit repair, inspect the existing graph and repair only verified
 graph facts while the source remains settled. A caller with campaign claims
@@ -99,15 +100,20 @@ preflight returns a conflict without mutation.
 
 Publish through the configured tracker in blocker-first order. Create planned
 missing items non-ready and bind each new identity through immediate read-back.
+Give each child the source's settled category role when one exists. Otherwise
+use `bug` only for a settled defect and `enhancement` for planned new or changed
+behavior. Non-ready means no readiness state role; do not misuse `needs-triage`
+or `needs-info` for a known dependency.
 During repair, reuse an unchanged active item only when its claim remains with
 the caller; mutate none of its body, readiness, or claim. Before updating any
-other existing item, move it to non-ready and read that state back, preserve
-any caller-held assignee, then apply and read back its approved title and body
-changes. Attach and verify parent and blocking relationships. After every title,
-body, and relationship matches the approved graph, apply and read back each
-approved Ready-for-agent change, then refetch the graph and derive its
-actionable frontier. Use only the configured relationship mutation and
-read-back route.
+other existing item, remove `ready-for-agent` and `ready-for-human` and read
+that state back, preserve any caller-held assignee, then apply and read back its
+approved title and body changes. Attach and verify parent and blocking
+relationships. After every title, body, and relationship matches the approved
+graph, apply and read back `ready-for-agent` only for approved agent tickets
+whose blockers are resolved. Leave blocked tickets without a readiness role,
+then refetch the graph and derive its actionable frontier. Use only the
+configured relationship mutation and read-back route.
 
 On the first failed, partial, or indeterminate effect, stop further mutation,
 refetch the affected graph, report what is observed and the safest configured

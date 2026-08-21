@@ -228,14 +228,6 @@ def test_setup_schema_fingerprint_detects_contract_drift(tmp_path: Path) -> None
     (setup / "domain.md").write_text("# Domain\n", encoding="utf-8")
     contract_files = ["domain.md"]
     fingerprint = validate_skills.setup_contract_hash(tmp_path, contract_files)
-    marker = f"<!-- programming-agent-skills setup-schema: 1:{fingerprint[:12]} -->"
-
-    (tmp_path / "AGENTS.md").write_text(f"{marker}\n", encoding="utf-8")
-    (setup / "SKILL.md").write_text(f"{marker}\n", encoding="utf-8")
-    (setup / "scripts/validate_setup.py").write_text(
-        f"SETUP_SCHEMA_TOKEN = {marker!r}\n",
-        encoding="utf-8",
-    )
     (setup / "setup-schema.json").write_text(
         json.dumps(
             {
@@ -250,21 +242,32 @@ def test_setup_schema_fingerprint_detects_contract_drift(tmp_path: Path) -> None
 
     assert validate_skills.validate_setup_schema_manifest(tmp_path) == []
 
-    (tmp_path / "AGENTS.md").write_text(f"{marker}\n{marker}\n", encoding="utf-8")
-    duplicate_failures = validate_skills.validate_setup_schema_manifest(tmp_path)
-    assert any("stale, missing, or duplicated" in failure for failure in duplicate_failures)
-
-    stale = "<!-- programming-agent-skills setup-schema: 1:deadbeefdead -->"
-    (tmp_path / "AGENTS.md").write_text(f"{stale}\n{marker}\n", encoding="utf-8")
-    mixed_failures = validate_skills.validate_setup_schema_manifest(tmp_path)
-    assert any("stale, missing, or duplicated" in failure for failure in mixed_failures)
-
-    (tmp_path / "AGENTS.md").write_text(f"{marker}\n", encoding="utf-8")
-
     (setup / "domain.md").write_text("# Changed Domain\n", encoding="utf-8")
 
     failures = validate_skills.validate_setup_schema_manifest(tmp_path)
     assert any("contract fingerprint is stale" in failure for failure in failures)
+
+
+def test_setup_schema_rejects_paths_outside_its_package(tmp_path: Path) -> None:
+    setup = tmp_path / validate_skills.SETUP_SKILL_ROOT
+    setup.mkdir(parents=True)
+    outside = tmp_path / "outside.md"
+    outside.write_text("not a setup seed\n", encoding="utf-8")
+
+    for relative in ("../../../outside.md", str(outside.resolve())):
+        (setup / "setup-schema.json").write_text(
+            json.dumps(
+                {
+                    "format": 1,
+                    "version": 1,
+                    "contract_files": [relative],
+                    "contract_sha256": "0" * 64,
+                }
+            ),
+            encoding="utf-8",
+        )
+        failures = validate_skills.validate_setup_schema_manifest(tmp_path)
+        assert any("normalized relative paths" in failure for failure in failures)
 
 
 def test_relationship_invocation_map_must_match_policies(tmp_path: Path) -> None:

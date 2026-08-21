@@ -20,9 +20,11 @@ tracker-backed parent graph or another caller-owned fixed delivery scope. Send
 one item to `$implement`. Send vague work, unsettled meaning, or missing
 dependencies back to its owner or `$to-tickets` before mutation.
 
-Pin a clean integration `HEAD`. For tracker-backed delivery, refresh the graph,
-claim the parent and selected children, and read each claim back. Direct work
-creates no tracker state.
+Pin a clean integration `HEAD`. For tracker-backed delivery, read
+`docs/agents/issue-tracker.md` and `docs/agents/triage-labels.md`; if either is
+missing or incompatible, recommend `$repo-bootstrap` and stop. Refresh the
+graph, claim the parent and selected children, and read each claim back. Direct
+work creates no tracker state.
 
 Derive the ready frontier from dependencies whose changes are already
 integrated. Admit concurrent siblings only when their behavior ownership and
@@ -108,9 +110,13 @@ workers alone do not trigger review.
 
 ## Finish
 
-For tracker-backed delivery, close children before the parent under the
-configured tracker rules and read back each durable change. Otherwise create
-no closeout state.
+For tracker-backed delivery, preserve each completed child's category, remove
+its readiness roles, apply `implemented`, close it when configured, and read
+the result back. After each child, refetch open dependents and apply
+`ready-for-agent` only to complete accepted packets whose blockers are all
+resolved. Leave other dependents non-ready. After every child is implemented,
+apply the same state transition to the parent and close it when configured.
+Otherwise create no closeout state.
 
 Remove only named lanes whose commits are integrated and whose checkouts are
 clean. If the run stops early, preserve work and report the integration `HEAD`,

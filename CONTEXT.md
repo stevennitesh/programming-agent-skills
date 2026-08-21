@@ -110,8 +110,8 @@ _Avoid_: client repo, downstream repo
 
 **Setup surface**
 
-The verified target-repo contract installed by `$repo-bootstrap`: primer, commands, tracker lifecycle, label vocabulary, domain routing, engineering contract, and work-state policy.
-A hidden setup-schema marker identifies contract compatibility, not the installed pack version.
+The verified target-repo contract installed by `$repo-bootstrap`: primer, commands, tracker configuration, label vocabulary, domain routing, engineering contract, and work-state policy.
+Compatibility comes from the applicable configuration and owner checks, not one aggregate marker.
 _Avoid_: generated docs, bootstrap output
 
 **Agent primer**

@@ -195,8 +195,8 @@ Return.
 
 | Caller | Verb | Callee | Condition and return |
 | --- | --- | --- | --- |
-| `grill-with-docs` | Compose | `$grilling` | Run the one-decision-at-a-time interview; preserve its confirmed understanding or intact terminal gap through the composer. |
-| `grill-with-docs` | Compose | `$domain-modeling` | Relay every settled material answer, return each collision or blocker to Grilling before dependent progress, and preserve Domain Modeling's authoritative cumulative Domain Delta under explicit context-write authority and a separate ADR approval gate. |
+| `grill-with-docs` | Compose | `$grilling` | Run the one-decision-at-a-time interview and preserve its confirmed decision or exact gap. |
+| `grill-with-docs` | Compose | `$domain-modeling` | Reconcile each settled domain-affecting answer before dependent questioning; preserve Domain Modeling's current result and its context-write and ADR approval gates. |
 | `grilling` | Recommend and stop | `$research` | Claim-owning sources can answer the evidence gap. |
 | `grilling` | Recommend and stop | `$prototype` | A design evidence gap needs a runnable verdict. |
 | `grilling` | Recommend and stop | `$to-questionnaire` | An identifiable external stakeholder owns evidence that must be collected asynchronously. |
@@ -204,12 +204,12 @@ Return.
 | `grilling` | Recommend and stop | `$wayfinder` | A bounded destination has several coupled unresolved questions or prerequisites, including at least one non-conversational resolver, and needs tracker-backed multi-session sequencing; active Wayfinder is not the return owner. An active Wayfinder receives the intact Route gap directly for graph reconciliation. |
 | `to-questionnaire` | Recommend and stop | `$research` | Claim-owning sources can answer the gap. |
 | `to-questionnaire` | Recommend and stop | `$grilling` | The current user owns the unresolved conversation-only decision. |
+| `skill-router` | Recommend and stop | `$repo-bootstrap` | The chosen engineering route needs missing, incompatible, or outdated setup. Return Repo Bootstrap as the one route and leave it unstarted. |
 | `wayfinder` | Invoke | `$research` | One selected ticket needs claim-owning source evidence. Pass its question, map use, scope, applicable state, approved note path or no-write mode, and Wayfinder return owner. |
 | `wayfinder` | Invoke | `$prototype` | One selected ticket needs runnable evidence. Pass its question, decision owner, named human judge or objective rule, representative evidence, bounded run, mutation authority, and cleanup or custody. |
 | `wayfinder` | Invoke | `$grilling` | One selected ticket needs a conversation-only user decision with no durable domain consequence; receive the intact decision or gap. |
-| `wayfinder` | Invoke | `$grill-with-docs` | One selected user decision also requires durable domain capture; receive the intact decision and Domain Delta. |
+| `wayfinder` | Invoke | `$grill-with-docs` | One selected user decision also requires live domain reconciliation; receive the decision or exact gap with the current domain result. |
 | `wayfinder` | Recommend and stop | `$to-questionnaire` | One external Questionnaire prerequisite needs asynchronous attributable answers. Return the recipient, downstream decision, needed-back items, authorized durable path, answer-return destination, and exact `$to-questionnaire` and Wayfinder re-entry instruction. A verified path returns as Waiting, never as an answer. |
-| `wayfinder` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `to-spec` | Recommend and stop | `$implement` | The settled source is one bounded complete implementation and a durable parent adds no useful coordination, or the verified parent needs no ticket graph. Return the exact source or parent identity and leave implementation unstarted. |
 | `to-spec` | Recommend and stop | `$to-tickets` | The verified parent leaves several valuable implementation slices or needs durable tracker coordination. To Tickets owns repository grounding, child slicing, and graph publication. |
 | `to-spec` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
@@ -220,14 +220,15 @@ Return.
 | `triage` | Recommend and stop | `$change-review` | An attached diff needs fixed-candidate code judgment rather than intake disposition; preserve the candidate identity and observed intake evidence. |
 | `triage` | Recommend and stop | `$to-tickets` | Settled intake needs several independently completable implementation slices; preserve the source and leave readiness unchanged. |
 | `triage` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
+| `wayfinder` | Recommend and stop | `$repo-bootstrap` | The installed tracker or label contract is missing or incompatible; return the exact gap with Wayfinder unstarted. |
+| `implement` | Recommend and stop | `$repo-bootstrap` | Tracker-backed work needs a missing or incompatible installed issue-tracker contract; return the exact gap with implementation unstarted. |
 | `implement` | Invoke | `$tdd` | The selected work explicitly requires TDD, test-first work, or RED-GREEN-REFACTOR, or applicable repository policy requires TDD, and one accepted observable behavior and independent oracle are settled. TDD owns the RED-GREEN-REFACTOR inner loop. |
 | `implement` | Invoke | `$change-review` | The user or repository requires review, or a concrete unresolved shared-contract or migration judgment remains after proof. Implement pins the clean candidate; Change Review owns the procedure and returns its decision. Multiple authors alone do not trigger review. |
 | `implement` | Hand off | `$resolving-merge-conflicts` | Admission finds an active conflict rather than an implementable ready item. Stop implementation, preserve Git state, and supply the requested scope plus whether resolution and finish were requested. The resolver inspects live state. |
-| `implement` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
 | `parallel-implement` | Invoke | `$change-review` | The user or repository requires review, or a concrete unresolved shared-contract or migration judgment remains after integrated proof. Parallel Implement pins the clean candidate; Change Review owns the procedure and returns its decision. Multiple workers alone do not trigger review. |
 | `parallel-implement` | Invoke | `$resolving-merge-conflicts` | Serial landing enters an active conflict. Preserve Git state and supply the requested scope plus whether resolution and finish were requested. Resume only after the resolver reports current state. |
 | `parallel-implement` | Recommend and stop | `$to-tickets` | Admission finds vague work, unsettled meaning, missing dependencies, or an invalidated delivery set. Return the exact defect and leave shaping or graph repair to To Tickets. |
-| `parallel-implement` | Recommend and stop | `$repo-bootstrap` | A required setup surface is missing or incompatible. |
+| `parallel-implement` | Recommend and stop | `$repo-bootstrap` | Tracker-backed delivery needs a missing or incompatible installed issue-tracker contract; return the exact gap with delivery unstarted. |
 | `prototype` | Recommend and stop | `$diagnosing-bugs` | Fit finds that an existing built system has a hard failure needing dedicated causal investigation rather than one disposable design question; return the intact symptom evidence and leave Diagnosis unstarted. |
 | `change-review` | Recommend and stop | `$audit-codebase` | The request targets an immutable repository baseline rather than a pending implementation candidate. |
 | `high-assurance-review` | Recommend and stop | `$audit-codebase` | The request targets a bounded repository correctness, domain-robustness, methodology, or performance baseline rather than a pending candidate diff. |
@@ -243,6 +244,7 @@ Return.
 | `audit-codebase` | Recommend and stop | `$to-spec` | One analyzed candidate has settled direction and commitments that need a durable parent specification. |
 | `audit-codebase` | Recommend and stop | `$simplify-code` | One analyzed candidate is a bounded behavior-preserving reduction with current evidence and a Proof Seam. |
 | `audit-codebase` | Recommend and stop | `$implement` | One analyzed candidate is a bounded implementation-ready change. Audit leaves implementation unstarted. |
+| `domain-modeling` | Recommend and stop | `$repo-bootstrap` | Required domain routing is missing or incompatible. Return the exact routing gap before any domain write. |
 | `codebase-design` | Recommend and stop | `$audit-codebase` | The request needs codebase-wide mapping and improvement discovery. |
 | `handoff` | Recommend and stop | `$repo-bootstrap` | The exact Handoff target cannot be proved ignored because the disposable-artifact setup is missing or incompatible; return the mismatch without a pickup and leave Repo Bootstrap unstarted. |
 
@@ -261,12 +263,12 @@ every terminal result directly to its current caller or the user.
 | `README.md` | Human-facing overview and installation | Humans installing or learning the pack |
 | `GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md` | Minimal pack-owned global Codex bootstrap template: explicit-only router/setup discovery | `~/.codex/AGENTS.md` |
 | `skill-router` | Current executable route map, tie-breakers, and truthful no-match abstention | Humans or agents choosing one next route or confirming that none fits |
-| `repo-bootstrap` | Inventories and reconciles the repo setup surface; provisions an approved delta and verifies the result | `skill-router`, setup gates in planning/tracker skills |
-| `docs/agents/issue-tracker.md` | Provider transport, configured tracker policy, durable work-item and Wayfinder representation, and mutation read-back | `to-spec`, `to-tickets`, `triage`, `implement`, `parallel-implement`, `wayfinder` |
-| `docs/agents/triage-labels.md` | Category/state role mappings and fixed Wayfinder labels | `to-tickets`, `triage`, `implement`, `parallel-implement`, `wayfinder` |
-| `docs/agents/domain.md` | Context-sensitive routing plus the preserve-or-return posture for domain language, invariants, relationships, and ADR conflicts | `to-spec`, `triage`, `tdd`, `diagnosing-bugs`, `codebase-design`, `audit-codebase`, `parallel-implement` |
+| `repo-bootstrap` | Inspects and reconciles applicable repo setup, applies one exact approved delta, and verifies changed local and external state | Explicit user invocation only; other skills read installed `docs/agents/*` contracts and may recommend setup without loading this package |
+| `docs/agents/issue-tracker.md` | Selected provider operations, configured relationship representation, and mutation read-back | `to-spec`, `to-tickets`, `triage`, `implement`, `parallel-implement`, `wayfinder` |
+| `docs/agents/triage-labels.md` | Repository values for active category, state, and Wayfinder roles; consuming skills own when each role applies | `to-tickets`, `triage`, `implement`, `parallel-implement`, `wayfinder` |
+| `docs/agents/domain.md` | Single-context or multi-context routing to current domain records | `domain-modeling` and domain-language consumers |
 | `docs/agents/engineering-contract.md` | Shared engineering judgment: bounded slices, causal ownership, explicit data shapes, small interfaces, local state, subtractive design, native capabilities, root-cause correction, trust-boundary validation, displaced-path removal, proportional proof, and concrete protection triggers. Skills retain procedures, checks, stopping conditions, and outputs. | `to-spec`, `to-tickets`, `implement`, `tdd`, `diagnosing-bugs`, `codebase-design`, `prototype`, `simplify-code`, `audit-codebase`, `parallel-implement`, `resolving-merge-conflicts`, `change-review`, `high-assurance-review` |
-| `domain-modeling` | Resolves project-specific domain semantics; reconciles proposed wording with routed current truth; returns the authoritative cumulative Domain Delta when composed; persists routed context records only with write authority; and records an already-settled ADR candidate only with separate approval | `skill-router`, `grill-with-docs`, `audit-codebase`, `repo-bootstrap` |
+| `domain-modeling` | Resolves project-specific domain semantics; reconciles proposed wording with routed current truth; returns the current domain result when composed; persists routed context records only with write authority; and records an already-settled ADR candidate only with separate approval | `skill-router`, `grill-with-docs`, `audit-codebase`, `repo-bootstrap` |
 | `codebase-design` | One bounded module or interface architecture decision using deep-module, caller-first, data-shape, ownership, seam, migration, and proof judgment | `audit-codebase`, direct architecture/design work |
 | `research` | Claim-owning source legwork and one authorized cited note or verified inline evidence | `skill-router`, `grilling`, `wayfinder` |
 | `to-questionnaire` | One recipient-ready async discovery artifact for one external stakeholder and downstream decision | `skill-router`, `grilling`, `wayfinder`, humans collecting stakeholder evidence |
@@ -285,7 +287,7 @@ every terminal result directly to its current caller or the user.
 | `tdd` | `references/TEST-SHAPE.md` for an unclear test boundary or oracle; `references/TEST-DOUBLES.md` before adding a substitute |
 | `prototype` | `LOGIC.md`, `UI.md`, and `MEASURE.md`: decision-bearing branch mechanics. One decision branch loads; `SKILL.md` owns the universal lifecycle, reconciliation, and Return. |
 | `triage` | `ATTENTION-SCAN.md`: read-only queue overview; `AGENT-BRIEF.md`: concise agent or human ready handoff |
-| `repo-bootstrap` | Tracker, label, domain, and engineering-contract seeds; optional repo-local parallel-lane permission setup; `setup-schema.json`: aggregate compatibility fingerprint; `scripts/validate_setup.py`: target-repo structural compatibility validation |
+| `repo-bootstrap` | Conditional tracker, label, and domain-routing seeds; engineering-contract projection; optional approved parallel permission setup; `setup-schema.json`: internal seed-bundle identity; `scripts/validate_setup.py`: applicable target configuration validation |
 | `wayfinder` | `MAP-FORMAT.md`: lean map, ticket, resolution, closing, and termination shapes; `references/MUTATION.md`: claim and durable-write protection; `references/RESOLVERS.md`: selected-ticket routing and return interpretation |
 | `research` | Seven conditional evidence references; one authorized cited Markdown note or cited inline result |
 | `resolving-merge-conflicts` | `OPERATIONS.md`: branch-only operation roles, special conflict types, automatic-resolution traps, and exceptional operation choices; `SKILL.md`: five direct actions, mutation boundaries, and completion |
@@ -300,9 +302,10 @@ every terminal result directly to its current caller or the user.
 - The global template exposes bootstrap handles; `skill-router` routes or returns a truthful no-match abstention; neither teaches downstream workflow procedures.
 - The bundled system `skill-creator` owns new-package scaffolding and metadata mechanics. `$writing-for-agents` owns the instructions agents consume and their directly affected pointers, including semantic invocation wording for existing skills. It stops before metadata mechanics, installation, or delivery.
 - Setup docs own tracker, labels, domain routing, and engineering-contract details. Skills should point there instead of restating those mechanics.
-- `$grill-with-docs` owns composition and preserves the intact Grilling packet
-  and cumulative Domain Delta. Wayfinder uses it only for a selected decision
-  whose durable domain consequence is already active.
+- `$grill-with-docs` owns live composition. It reconciles domain-affecting
+  answers before dependent questioning and returns Grilling's decision or gap
+  with Domain Modeling's current result. Wayfinder uses it only when both are
+  needed for one selected decision.
 - `$to-questionnaire` owns one verified artifact, not delivery or continuation.
   Wayfinder prepares its packet and stops for explicit user invocation, then
   owns Waiting and answer reconciliation after the artifact path returns.

@@ -30,6 +30,15 @@ that choice. Search for an existing implementation, duplicate, prior fix, or
 settled rejection when the evidence makes one plausible. Match meaning and
 cause, not keywords or a visible symptom alone.
 
+Use `bug` only for a defect in intended existing behavior; use `enhancement`
+for requested new or changed behavior. Use `needs-info` for questions whose
+answers can change the disposition, `ready-for-agent` for one bounded
+implementation-ready outcome, and `ready-for-human` for one named human act.
+Use `implemented` when current evidence shows the requested outcome is already
+delivered. Use `wontfix` only for an authorized rejection, duplicate,
+supersession, or out-of-scope disposition. `needs-triage` marks unprocessed
+intake, not a completed selected-item disposition.
+
 Separate observations from hypotheses. Run only the cheapest safe check needed
 to support the disposition. A failed reproduction does not prove a report
 false. When readiness requires deep causal investigation, recommend

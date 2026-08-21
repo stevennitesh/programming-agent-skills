@@ -15,8 +15,10 @@ completion.
    only a fact that could change the route.
 2. **Clarify.** If two routes remain plausible, ask one highest-leverage
    question and wait.
-3. **Route.** Choose one exact route below. If it needs a missing, incompatible,
-   or outdated setup surface, route to `$repo-bootstrap` instead. If no
+3. **Route.** Choose one exact route below. After a candidate wins, inspect only
+   its applicable installed `docs/agents/*` contract when compatibility could
+   change the route; never load Repo Bootstrap guidance. If that contract is
+   missing, incompatible, or outdated, route to `$repo-bootstrap` instead. If no
    available skill satisfies its entry contract, select `none`; never
    substitute the nearest or weakest route.
 4. **Stop.** Return `Skill: <skill-name | none>`,
@@ -34,7 +36,7 @@ clarification or a required `$repo-bootstrap` route.
 
 | Situation | Route |
 | --- | --- |
-| One repo-backed decision needs direct grilling and durable domain capture | `$grill-with-docs` |
+| One current-user-owned repo-backed decision needs live grilling and domain reconciliation as answers settle | `$grill-with-docs` |
 | The current user owns one bounded decision needing conversation-only stress-testing | `$grilling` |
 | A bounded destination has interdependent decisions, a non-conversational resolver, and needs multi-session tracker sequencing | `$wayfinder` |
 | One external stakeholder holds missing knowledge and needs an async discovery questionnaire | `$to-questionnaire` |
@@ -45,10 +47,10 @@ clarification or a required `$repo-bootstrap` route.
 **Unknown-owner tie-breaker:** route a source-answerable fact to `$research`, a
 runnable design choice to `$prototype`, an external-stakeholder gap to
 `$to-questionnaire`, and a current-user decision to `$grilling` or
-`$grill-with-docs` when durable domain capture may change. Route to `$wayfinder`
-only after the destination is bounded and several interdependent decisions or
-prerequisites, including at least one non-conversational resolver, need a
-tracker-backed multi-session route.
+`$grill-with-docs` when domain meaning may change during the conversation.
+Route to `$wayfinder` only after the destination is bounded and several
+interdependent decisions or prerequisites, including at least one
+non-conversational resolver, need a tracker-backed multi-session route.
 
 ### Build
 

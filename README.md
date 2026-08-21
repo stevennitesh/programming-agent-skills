@@ -115,7 +115,7 @@ The small [`GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md`](GLOBAL_AGENTS_TEMPLATE_SKILL_
 
 ## Using The Full Pack
 
-Start in each target repository with `$repo-bootstrap`. It inventories the repository, resolves tracker, label, and domain-layout choices, shows the exact proposed changes, waits for approval, then provisions and verifies the local setup surface. Run it again after pack upgrades to reconcile the required delta while preserving confirmed choices and repository-specific additions.
+Start in each target repository with `$repo-bootstrap`. It inspects the applicable setup, asks only unresolved choices, shows the exact proposed changes, waits for approval, then applies and verifies that delta. Run it again after pack upgrades to reconcile applicable changes while preserving confirmed choices and repository-specific additions.
 
 After setup, invoke a skill directly or let `$skill-router` carry the route map.
 

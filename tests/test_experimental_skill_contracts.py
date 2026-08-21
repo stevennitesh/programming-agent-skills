@@ -38,7 +38,7 @@ def test_promoted_domain_modeling_preserves_compact_ddd_contract() -> None:
         "every verified intermediate state retains readable current truth",
         "Reread every attempted target",
         "return each unapplied consequence to its owner",
-        "authoritative cumulative Domain Delta",
+        "current domain result",
         "$grill-with-docs",
         "Do not mutate foreign-owner consequences",
     ):
@@ -110,17 +110,19 @@ def test_promoted_grilling_and_domain_modeling_preserve_composer_inputs() -> Non
     )
     grill_docs_plain = " ".join(grill_docs.split())
     for contract in (
-        "every returned collision or blocker to Grilling",
-        "never merge or reinterpret it",
-        "A material Domain Delta blocker prevents a confirmed combined result",
-        "return that blocker, its owner, and re-entry condition",
+        "before Grilling asks a dependent question",
+        "Domain Modeling owns domain relevance, reconciliation, and the domain result",
+        "A material domain collision prevents confirmation",
+        "stop before downstream work",
     ):
         assert contract in grill_docs_plain
+    for retired_protocol in ("Source Trace", "Domain Delta", "re-entry condition"):
+        assert retired_protocol not in grill_docs
 
     for contract in (
-        "accept each settled material answer",
-        "authoritative cumulative Domain Delta after every settled material answer",
-        "including one with no durable consequence",
+        "accept each settled answer that may affect domain meaning",
+        "return the current domain result after each answer that may affect domain meaning",
+        "A no-change result is valid",
         "does not choose interview materiality",
     ):
         assert contract in domain_flat

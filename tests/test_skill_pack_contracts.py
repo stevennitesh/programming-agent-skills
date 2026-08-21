@@ -181,7 +181,7 @@ def test_to_questionnaire_owns_one_safe_recipient_artifact() -> None:
     )
 
 
-def test_tracker_templates_share_ready_state_navigation_and_readback() -> None:
+def test_tracker_templates_keep_provider_configuration_and_readback_only() -> None:
     trackers = [
         ROOT / "docs/agents/issue-tracker.md",
         CUSTOM / "repo-bootstrap/issue-tracker-github.md",
@@ -189,14 +189,10 @@ def test_tracker_templates_share_ready_state_navigation_and_readback() -> None:
         CUSTOM / "repo-bootstrap/issue-tracker-local.md",
     ]
     required = (
-        "## Work-item representation",
-        "**State:**",
-        "navigation metadata",
-        "not proof that a packet or transition is valid",
-        "**Ready query:**",
-        "agent and human frontiers separately",
+        "## Operations",
+        "## Representation",
         "## Mutation read-back",
-        "unverified partial mutation",
+        "safest recovery",
     )
     skill_owned = (
         "Source Trace",
@@ -207,6 +203,9 @@ def test_tracker_templates_share_ready_state_navigation_and_readback() -> None:
         "scope fence",
         "landed-awaiting-lock",
         "Elapsed time alone never makes a claim stale",
+        "## Wayfinding representation",
+        "**Ready query:**",
+        "**Closeout:**",
     )
 
     for tracker in trackers:
@@ -227,15 +226,14 @@ def test_wayfinder_owns_claim_lifecycle_while_trackers_own_representation() -> N
         CUSTOM / "repo-bootstrap/issue-tracker-local.md",
     )
     for tracker in trackers:
-        wayfinding = tracker.read_text(encoding="utf-8").split(
-            "## Wayfinding representation", 1
-        )[1]
-        wayfinding_flat = " ".join(wayfinding.split())
+        wayfinding_flat = " ".join(tracker.read_text(encoding="utf-8").split())
         for foreign_procedure in (
             "codex/<lowercase UUIDv4>",
             "<YYYY-MM-DDTHH:MM:SSZ>",
             "Elapsed time alone never makes a claim stale.",
             "approver authority",
+            "Claim token:",
+            "Decision owner:",
         ):
             assert foreign_procedure not in wayfinding_flat
 
@@ -261,7 +259,7 @@ def test_repo_bootstrap_validates_provider_tracker_templates() -> None:
     validator = runpy.run_path(
         str(CUSTOM / "repo-bootstrap/scripts/validate_setup.py")
     )
-    wayfinder_failures = validator["wayfinder_contract_failures"]
+    check = validator["tracker_configuration_failures"]
     trackers = (
         CUSTOM / "repo-bootstrap/issue-tracker-github.md",
         CUSTOM / "repo-bootstrap/issue-tracker-gitlab.md",
@@ -270,69 +268,21 @@ def test_repo_bootstrap_validates_provider_tracker_templates() -> None:
 
     for tracker in trackers:
         text = tracker.read_text(encoding="utf-8")
-        failures: list[str] = []
-        validator["require_tokens"](
-            text,
-            str(tracker),
-            validator["WORK_ITEM_TOKENS"],
-            failures,
-        )
-        assert failures == []
-        assert wayfinder_failures(text, str(tracker)) == []
+        assert check(text) == []
+        for retired in (
+            "## Wayfinding representation",
+            "**Ready query:**",
+            "Claim token:",
+            "Decision owner:",
+        ):
+            assert retired not in text
 
-    assert "**Campaign snapshot:**" not in trackers[0].read_text(encoding="utf-8")
-    assert "GITHUB_CAMPAIGN_SNAPSHOT_TOKENS" not in validator
-
-    hosted = trackers[0].read_text(encoding="utf-8").replace(
-        "Blocked: waiting - <gist>", "Blocked: paused - <gist>"
-    )
-    assert any(
-        "Blocked: waiting - <gist>" in item
-        for item in wayfinder_failures(hosted, "hosted")
-    )
-    prose_reworded = trackers[0].read_text(encoding="utf-8").replace(
-        "exact return record", "complete return details"
-    )
-    assert wayfinder_failures(prose_reworded, "hosted") == []
-
-    local = trackers[2].read_text(encoding="utf-8").replace(
-        "Status: Pending | In Progress | Resolved | Blocked | Waiting | Out Of Scope",
-        "Status: Pending | Resolved",
-    )
-    assert any(
-        "Status: Pending | In Progress | Resolved | Blocked | Waiting | Out Of Scope"
-        in item
-        for item in wayfinder_failures(local, "local")
-    )
-
-    misplaced = hosted.replace("`Decision owner:`", "decision owner")
-    misplaced += "\nDecision owner:\n"
-    assert any(
-        "section ## Wayfinding representation is missing Decision owner:" in item
-        for item in wayfinder_failures(misplaced, "hosted")
-    )
-
-    missing_boundary = hosted.replace("`Mutation boundary:`", "`Mutation edge:`")
-    assert any(
-        "section ## Wayfinding representation is missing Mutation boundary:" in item
-        for item in wayfinder_failures(missing_boundary, "hosted")
-    )
-
-    fenced_decoy = hosted.replace("`Decision owner:`", "decision owner")
-    fenced_decoy += "\n```text\n## Wayfinding representation\nDecision owner:\n```\n"
-    assert any(
-        "section ## Wayfinding representation is missing Decision owner:" in item
-        for item in wayfinder_failures(fenced_decoy, "hosted")
-    )
-
-    fenced_token = hosted.replace(
-        "`Decision owner:`",
-        "decision owner\n\n```text\nDecision owner:\n```",
-    )
-    assert any(
-        "section ## Wayfinding representation is missing Decision owner:" in item
-        for item in wayfinder_failures(fenced_token, "hosted")
-    )
+    github = trackers[0].read_text(encoding="utf-8")
+    missing_mode = github.replace("native-sub-issues", "when-available", 1)
+    assert check(missing_mode) == [
+        "docs/agents/issue-tracker.md must set Parent / child mode "
+        "to one configured GitHub mode"
+    ]
 
 
 def test_triage_label_template_respects_tracker_pr_policy() -> None:
@@ -340,22 +290,44 @@ def test_triage_label_template_respects_tracker_pr_policy() -> None:
     triage = (CUSTOM / "triage/SKILL.md").read_text(encoding="utf-8")
     triage_flat = " ".join(triage.split())
 
-    assert "Every triaged work item" in labels
-    assert "Every triaged issue or PR" not in labels
+    assert "Map active skill-pack roles" in labels
+    assert "Include these labels only when Wayfinder is active" in labels
     assert "`wayfinder:questionnaire`" in labels
     assert "`wayfinder:diagnosis`" not in labels
     assert "`wayfinder:diagnosis`" not in (
         CUSTOM / "repo-bootstrap/triage-labels.md"
-    ).read_text(encoding="utf-8")
-    assert "`wayfinder:diagnosis`" not in (
-        CUSTOM / "repo-bootstrap/scripts/validate_setup.py"
     ).read_text(encoding="utf-8")
     assert "external PR or MR only when the tracker configuration permits it" in (
         triage_flat
     )
 
 
-def test_delivery_skills_own_custody_and_trackers_map_closeout() -> None:
+def test_label_consumers_own_explicit_role_transitions() -> None:
+    texts = {
+        name: " ".join((CUSTOM / name / "SKILL.md").read_text(encoding="utf-8").split())
+        for name in ("triage", "to-tickets", "wayfinder", "implement", "parallel-implement")
+    }
+
+    assert "Use `bug` only for a defect" in texts["triage"]
+    assert "`needs-triage` marks unprocessed intake" in texts["triage"]
+    assert "Non-ready means no readiness state role" in texts["to-tickets"]
+    assert "apply and read back `ready-for-agent` only" in texts["to-tickets"]
+    for role in (
+        "wayfinder:map",
+        "wayfinder:research",
+        "wayfinder:prototype",
+        "wayfinder:grilling",
+        "wayfinder:questionnaire",
+        "wayfinder:task",
+    ):
+        assert role in texts["wayfinder"]
+    for name in ("implement", "parallel-implement"):
+        assert "docs/agents/triage-labels.md" in texts[name]
+        assert "apply `implemented`" in texts[name]
+        assert "apply `ready-for-agent` only" in texts[name]
+
+
+def test_delivery_skills_own_closeout_and_trackers_keep_readback() -> None:
     hosted_trackers = (
         ROOT / "docs/agents/issue-tracker.md",
         CUSTOM / "repo-bootstrap/issue-tracker-github.md",
@@ -363,16 +335,13 @@ def test_delivery_skills_own_custody_and_trackers_map_closeout() -> None:
     )
     for tracker in hosted_trackers:
         normalized = " ".join(tracker.read_text(encoding="utf-8").split())
-        assert "**Closeout:**" in normalized
+        assert "**Closeout:**" not in normalized
         assert "## Mutation read-back" in normalized
-        assert "false-ready dependent" in normalized
+        assert "must not expose a dependent as ready" in normalized
         assert "named recovery custodian" not in normalized
 
     github = hosted_trackers[0].read_text(encoding="utf-8")
     assert "**Close implemented items:** yes." in github
-
-    bootstrap = (CUSTOM / "repo-bootstrap/SKILL.md").read_text(encoding="utf-8")
-    assert "closure defaults to yes for GitHub and no for GitLab" in bootstrap
 
     implement = " ".join(
         (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8").split()
@@ -381,8 +350,8 @@ def test_delivery_skills_own_custody_and_trackers_map_closeout() -> None:
         (CUSTOM / "parallel-implement/SKILL.md").read_text(encoding="utf-8").split()
     )
     assert "For tracker-backed delivery" in parallel
-    assert "close children before the parent" in parallel
-    assert "read back each durable change" in parallel
+    assert "After every child is implemented" in parallel
+    assert "apply the same state transition to the parent" in parallel
 
 
 def test_github_relationship_modes_are_explicit_before_publication() -> None:
@@ -395,10 +364,10 @@ def test_github_relationship_modes_are_explicit_before_publication() -> None:
         normalized = " ".join(text.split())
         assert "**Parent / child mode:** native-sub-issues." in text
         assert "**Dependency mode:** native-dependencies." in text
-        assert "Resolve the authenticated operation and read-back route before" in (
+        assert "Resolve the operation and its independent read-back route before" in (
             normalized
         )
-        assert "never switch representations during one publication" in normalized
+        assert "Do not switch relationship representations" in normalized
         assert "when available" not in text
 
     tracker = (ROOT / "docs/agents/issue-tracker.md").read_text(encoding="utf-8")
@@ -414,7 +383,9 @@ def test_repo_bootstrap_rejects_unconfigured_github_relationship_modes() -> None
         str(CUSTOM / "repo-bootstrap/scripts/validate_setup.py")
     )
     tracker = (ROOT / "docs/agents/issue-tracker.md").read_text(encoding="utf-8")
-    check = validator["github_relationship_mode_failures"]
+    check = lambda text: validator["relationship_mode_failures"](
+        text, "GitHub", validator["GITHUB_RELATIONSHIP_MODES"]
+    )
 
     assert check(tracker) == []
     invalid = tracker.replace("native-sub-issues", "when-available", 1)
@@ -425,23 +396,21 @@ def test_repo_bootstrap_rejects_unconfigured_github_relationship_modes() -> None
     assert check(tracker) == []
 
 
-def test_repo_bootstrap_domain_contract_validates_owned_structure() -> None:
+def test_repo_bootstrap_validates_selected_domain_layout() -> None:
     validator = runpy.run_path(
         str(CUSTOM / "repo-bootstrap/scripts/validate_setup.py")
     )
-    check = validator["domain_contract_failures"]
+    check = validator["domain_layout_failures"]
     domain = (ROOT / "docs/agents/domain.md").read_text(encoding="utf-8")
 
-    assert check(domain, "docs/agents/domain.md") == []
-    reworded = domain.replace("never silently override them", "do not replace them")
-    assert check(reworded, "docs/agents/domain.md") == []
-
-    invalid = domain.replace("CONTEXT-MAP.md", "CONTEXT-INDEX.md")
-    failures = check(invalid, "docs/agents/domain.md")
-    assert failures == [
-        "docs/agents/domain.md is missing CONTEXT-MAP.md"
+    assert check(domain) == []
+    assert check(domain.replace("single-context.", "unknown.")) == [
+        "docs/agents/domain.md must set Configured layout to "
+        "single-context or multi-context"
     ]
-    assert check(domain, "docs/agents/domain.md") == []
+    assert check(domain.replace("$domain-modeling", "$domain-owner")) == [
+        "docs/agents/domain.md must point to $domain-modeling"
+    ]
 
 
 def assert_repo_bootstrap_semantic_contract(
@@ -548,10 +517,36 @@ def assert_repo_bootstrap_semantic_contract(
 
 
 def test_repo_bootstrap_reconciles_existing_setup_without_reset() -> None:
-    assert_repo_bootstrap_semantic_contract(
-        CUSTOM / "repo-bootstrap",
-        profile="incumbent",
-    )
+    bootstrap = (CUSTOM / "repo-bootstrap/SKILL.md").read_text(encoding="utf-8")
+    normalized = " ".join(bootstrap.split())
+
+    assert not implicit_policy(CUSTOM / "repo-bootstrap")
+    assert re.findall(r"(?m)^## \d\. (.+)$", bootstrap) == [
+        "Inspect",
+        "Reconcile",
+        "Propose",
+        "Apply",
+        "Verify",
+    ]
+    for obligation in (
+        "only the setup branches relevant",
+        "Preserve repository instructions",
+        "exact local edits, external operations",
+        "approval of that exact delta",
+        "Refresh every affected target before writing",
+        "Read back each external effect",
+        "Do not retry blindly or assume rollback",
+        "Run a repository command only when it can disprove a claim",
+        "Leave the recommending workflow unstarted",
+    ):
+        assert obligation in normalized
+    for retired in (
+        "`compatible`, `delta`, `conflict`, or `not applicable`",
+        "Proposal only",
+        "Setup incomplete",
+        "`applied`, `failed`, `unknown`, or `not attempted`",
+    ):
+        assert retired not in bootstrap
 
 
 def test_repo_bootstrap_owns_optional_parallel_support_and_reconciliation(
@@ -568,12 +563,16 @@ def test_repo_bootstrap_owns_optional_parallel_support_and_reconciliation(
     root.mkdir()
 
     assert check(root) == []
-    assert "When support is absent, ask whether to enable it" in bootstrap
-    assert "goes directly through Reconcile without this question" in bootstrap
-    assert "do not create worktrees or external directories" in bootstrap
+    assert "only when the user requested it" in bootstrap
+    assert "`$parallel-implement` returned that exact blocker" in bootstrap
+    assert "do not create worktrees or lane directories" in bootstrap
+    assert "ask whether to enable it" not in bootstrap
 
     config = root / validator["PARALLEL_CONFIG"]
     config.parent.mkdir(parents=True)
+    config.write_text('default_permissions = "workspace"\n', encoding="utf-8")
+    assert check(root) == []
+
     lane_root = tmp_path / "lanes" / "wt"
     encoded_lane_root = json.dumps(str(lane_root.resolve()))
     config.write_text(
@@ -608,13 +607,9 @@ def test_repo_bootstrap_owns_optional_parallel_support_and_reconciliation(
     )
 
 
-def test_repo_bootstrap_marks_and_validates_setup_schema() -> None:
+def test_repo_bootstrap_validates_internal_setup_schema_without_target_marker() -> None:
     schema = json.loads(
         (CUSTOM / "repo-bootstrap/setup-schema.json").read_text(encoding="utf-8")
-    )
-    marker = (
-        "<!-- programming-agent-skills setup-schema: "
-        f"{schema['version']}:{schema['contract_sha256'][:12]} -->"
     )
     bootstrap = (CUSTOM / "repo-bootstrap/SKILL.md").read_text(encoding="utf-8")
     validator = (CUSTOM / "repo-bootstrap/scripts/validate_setup.py").read_text(
@@ -622,10 +617,10 @@ def test_repo_bootstrap_marks_and_validates_setup_schema() -> None:
     )
     agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
 
-    assert marker in bootstrap
-    assert marker in validator
-    assert marker in agents
-    assert "[setup-schema.json](setup-schema.json)" in bootstrap
+    assert schema["format"] == 1
+    assert "programming-agent-skills setup-schema:" not in bootstrap
+    assert "programming-agent-skills setup-schema:" not in validator
+    assert "programming-agent-skills setup-schema:" not in agents
     assert validate_skills.validate_setup_schema_manifest(ROOT) == []
 
 
@@ -654,25 +649,8 @@ def test_portable_fallback_adoption_removes_the_portable_contract_owner() -> Non
         fallback.replace(marker, "")
     ) == []
 
-    marker = validator["SETUP_SCHEMA_TOKEN"]
-    stale = "<!-- programming-agent-skills setup-schema: 1:deadbeefdead -->"
-    assert validator["setup_schema_marker_failures"](marker) == []
-    expected_marker_failure = [
-        "AGENTS.md must contain exactly one current programming-agent-skills "
-        "setup-schema marker"
-    ]
-    assert validator["setup_schema_marker_failures"](
-        f"{marker}\n{marker}\n"
-    ) == expected_marker_failure
-    assert validator["setup_schema_marker_failures"](
-        f"{stale}\n{marker}\n"
-    ) == expected_marker_failure
-    assert validator["setup_schema_marker_failures"](
-        f"```text\n{marker}\n```\n"
-    ) == expected_marker_failure
-
     valid_agents = (
-        f"# Repository Instructions\n\n{marker}\n\n"
+        "# Repository Instructions\n\n"
         "Repository-specific guidance.\n\n"
         "## Commands\n\n- Test: `python -m pytest`\n"
     )
@@ -740,6 +718,10 @@ def test_engineering_contract_validation_is_structural_and_causal() -> None:
         "```text\nexample only\n```\n",
         "engineering-contract.md",
     )
+    assert check(
+        f"# Engineering Contract\n\n{marker}\n\nprose outside a section\n\n## Empty\n",
+        "engineering-contract.md",
+    )
 
 
 def test_repo_bootstrap_accepts_reworded_owner_pointers() -> None:
@@ -750,19 +732,16 @@ def test_repo_bootstrap_accepts_reworded_owner_pointers() -> None:
     reworded = "Read these owners when their contracts apply:\n" + "\n".join(
         f"- {pointer}" for pointer in pointers
     )
-    failures: list[str] = []
-    validator["require_tokens"](reworded, "AGENTS.md", pointers, failures)
-    assert failures == []
+    assert validator["agent_pointer_failures"](reworded) == []
 
-    failures = []
-    validator["require_tokens"](
-        reworded.replace("docs/agents/engineering-contract.md", "docs/engineering.md"),
-        "AGENTS.md",
-        pointers,
-        failures,
-    )
-    assert failures == [
+    assert validator["agent_pointer_failures"](
+        reworded.replace("docs/agents/engineering-contract.md", "docs/engineering.md")
+    ) == [
         "AGENTS.md is missing docs/agents/engineering-contract.md"
+    ]
+    commented = "\n".join(f"<!-- {pointer} -->" for pointer in pointers)
+    assert validator["agent_pointer_failures"](commented) == [
+        f"AGENTS.md is missing {pointer}" for pointer in pointers
     ]
 
 
@@ -774,6 +753,73 @@ def test_outdated_setup_routes_to_repo_bootstrap() -> None:
 
     assert "$repo-bootstrap" in router
     assert "$repo-bootstrap" in template
+
+
+def test_repo_bootstrap_is_recommended_only_and_callers_read_installed_contracts() -> None:
+    contract = pack_contract.parse_contract(
+        (ROOT / "docs/synthesis/skill-pack.md").read_text(encoding="utf-8")
+    )
+    names = {
+        skill["skill_id"]: skill["canonical_name"]
+        for skill in contract["selected_skills"]
+    }
+    inbound = [
+        edge
+        for edge in contract["relationships"]
+        if names[edge["target_skill_id"]] == "repo-bootstrap"
+    ]
+
+    assert inbound
+    for edge in inbound:
+        assert edge["verb"] == "Recommend and stop"
+        assert edge["context_loaded"] == []
+        assert "No callee execution" in edge["callee_owned_gates_mutations"][0]
+
+    relationships = (
+        ROOT / "docs/synthesis/skill-context-relationships.md"
+    ).read_text(encoding="utf-8")
+    projected_callers = set(
+        re.findall(
+            r"(?m)^\| `([^`]+)` \| Recommend and stop \| `\$repo-bootstrap` \|",
+            relationships,
+        )
+    )
+    assert projected_callers == {
+        names[edge["caller_skill_id"]] for edge in inbound
+    }
+
+    required_pointers = {
+        "domain-modeling": ("docs/agents/domain.md",),
+        "implement": (
+            "docs/agents/issue-tracker.md",
+            "docs/agents/triage-labels.md",
+        ),
+        "parallel-implement": (
+            "docs/agents/issue-tracker.md",
+            "docs/agents/triage-labels.md",
+        ),
+        "to-spec": ("docs/agents/issue-tracker.md",),
+        "to-tickets": (
+            "docs/agents/issue-tracker.md",
+            "docs/agents/triage-labels.md",
+        ),
+        "triage": (
+            "docs/agents/issue-tracker.md",
+            "docs/agents/triage-labels.md",
+        ),
+        "wayfinder": (
+            "docs/agents/issue-tracker.md",
+            "docs/agents/triage-labels.md",
+        ),
+    }
+    for skill_name, pointers in required_pointers.items():
+        text = (CUSTOM / skill_name / "SKILL.md").read_text(encoding="utf-8")
+        flat = " ".join(text.split())
+        for pointer in pointers:
+            assert pointer in text
+        assert "$repo-bootstrap" in text
+        assert "missing or incompatible" in flat
+        assert "stop" in flat
 
 
 def test_router_returns_one_exact_skill_or_truthful_none() -> None:
@@ -800,7 +846,7 @@ def test_router_returns_one_exact_skill_or_truthful_none() -> None:
         "Reason",
         "Precondition",
     ]
-    assert "missing, incompatible, or outdated setup surface" in router_flat
+    assert "missing, incompatible, or outdated" in router_flat
     assert "Skill: <skill-name | none>" in router
     assert "exact unmet routing predicates" in router
     assert "`none` is a terminal abstention, not a recommendation" in router_flat
@@ -1052,7 +1098,9 @@ def test_wayfinder_keeps_only_triggered_tracker_protection() -> None:
     for tracker in trackers:
         body = tracker.read_text(encoding="utf-8")
         for field in ("Type:", "Decision owner:", "Accept when:", "Claim token:"):
-            assert field in body
+            assert field not in body
+        assert "## Representation" in body
+        assert "## Mutation read-back" in body
         for retired in (
             "Participation:",
             "Resolution owner:",
@@ -1191,6 +1239,12 @@ def test_grill_with_docs_package_and_relationship_contract() -> None:
     assert "$grilling" in grill_docs and "$domain-modeling" in grill_docs
     assert "$domain-modeling" not in grilling
     assert "$grilling" not in domain
+    assert "Domain Modeling owns intended meaning" not in grill_docs
+    assert re.findall(r"(?m)^## \d+\. ([A-Za-z]+)$", grill_docs) == [
+        "Bound",
+        "Compose",
+        "Return",
+    ]
     rows = re.findall(
         r"(?m)^\| `([a-z0-9-]+)` \| (Load|Invoke|Compose|Hand off|Recommend and stop) \| `\$([a-z0-9-]+)` \|",
         relationships,
@@ -1208,28 +1262,49 @@ def test_grill_with_docs_package_and_relationship_contract() -> None:
     assert ("wayfinder", "Recommend and stop", "to-questionnaire") in rows
     assert ("grilling", "Recommend and stop", "wayfinder") in rows
     assert ("grilling", "Recommend and stop", "to-spec") not in rows
-    assert "Status: Confirmed" not in grill_docs
-    assert "current Grilling understanding or intact gap" in " ".join(
-        grill_docs.split()
-    )
-    assert "declared return owner, or the user on direct invocation" in " ".join(
-        grill_docs.split()
-    )
-    assert (
-        "either the confirmed understanding or intact gap plus the current "
-        "Domain Delta, or the concrete composition blocker"
-        in " ".join(grill_docs.split())
-    )
-    assert "When active `$wayfinder` is the return owner" in grilling_gap
+    grill_docs_flat = " ".join(grill_docs.split())
     for contract in (
-        "each settled material answer to Domain Modeling",
-        "every returned collision or blocker to Grilling",
-        "never merge or reinterpret it",
-        "A material Domain Delta blocker prevents a confirmed combined result",
-        "return that blocker, its owner, and re-entry condition",
-        "Preserve an originating Grilling gap and its owner",
+        "needs both live questioning and domain reconciliation",
+        "before Grilling asks a dependent question",
+        "Grilling owns questioning, materiality judgment, and confirmation",
+        "Domain Modeling owns domain relevance, reconciliation, and the domain result",
+        "Keep Domain Modeling's context-write and ADR approval gates intact",
+        "A material domain collision prevents confirmation",
+        "stop before downstream work",
     ):
-        assert contract in " ".join(grill_docs.split())
+        assert contract in grill_docs_flat
+    for retired_protocol in (
+        "Source Trace",
+        "Domain Delta",
+        "Status: Confirmed",
+        "re-entry condition",
+        "never merge or reinterpret",
+    ):
+        assert retired_protocol not in grill_docs
+    contract = pack_contract.parse_contract(
+        (ROOT / "docs/synthesis/skill-pack.md").read_text(encoding="utf-8")
+    )
+    grill_docs_contract = next(
+        skill
+        for skill in contract["selected_skills"]
+        if skill["canonical_name"] == "grill-with-docs"
+    )
+    assert grill_docs_contract["required_input"] == (
+        "One bounded repo-backed decision owned by the current user, plus a "
+        "return owner on caller invocation and any supplied context-write or ADR authority"
+    )
+    router = (CUSTOM / "skill-router/SKILL.md").read_text(encoding="utf-8")
+    assert (
+        "One current-user-owned repo-backed decision needs live grilling and "
+        "domain reconciliation as answers settle"
+    ) in router
+    router_edge = next(
+        relationship
+        for relationship in contract["relationships"]
+        if relationship["relationship_id"] == "REL-052"
+    )
+    assert "current-user-owned repo-backed decision" in router_edge["entry_condition"]
+    assert "When active `$wayfinder` is the return owner" in grilling_gap
 
     grill_docs_synthesis = (
         ROOT / "docs" / "synthesis" / "skills" / "grill-with-docs.md"
@@ -1240,7 +1315,7 @@ def test_grill_with_docs_package_and_relationship_contract() -> None:
         skill_pack_contract.tree_hash(CUSTOM / "grill-with-docs")
         in grill_docs_synthesis
     )
-    assert "Current reconciliation: Pack composition revision 16" in (
+    assert "Current reconciliation: Pack composition revision 26" in (
         grill_docs_synthesis
     )
 
@@ -1279,7 +1354,9 @@ def test_domain_modeling_owns_durable_domain_truth() -> None:
         "Reread every attempted target",
         "verified changed, verified unchanged, or unknown",
         "return each unapplied consequence to its owner",
-        "authoritative cumulative Domain Delta after every settled material answer",
+        "return the current domain result after each answer that may affect domain meaning",
+        "A no-change result is valid",
+        "Accumulate only current domain consequences",
         "does not choose interview materiality",
     ):
         assert contract in domain_flat
@@ -1342,12 +1419,12 @@ def test_instantiated_domain_helper_preserves_routing_and_ownership() -> None:
     assert "**Configured layout:** single-context." in domain
     assert "setup-file:" not in domain
     for contract in (
-        "Missing records are not setup gaps.",
-        "setup neither creates nor recommends them.",
-        "$domain-modeling` alone may create or change domain truth",
-        "Do not flatten different meanings across contexts.",
-        "never silently override them",
-        "decision owner",
+        "Missing domain records are not setup gaps.",
+        "$domain-modeling` owns settled domain meaning",
+        "Repo Bootstrap only configures this route.",
+        "`CONTEXT.md`",
+        "`CONTEXT-MAP.md`",
+        "`docs/adr/`",
     ):
         assert contract in domain_flat
 
@@ -2600,14 +2677,16 @@ def test_portable_fallback_remains_standalone_from_the_repo_contract() -> None:
     seed = (CUSTOM / "repo-bootstrap/engineering-contract.md").read_text(
         encoding="utf-8"
     )
-    bootstrap = (CUSTOM / "repo-bootstrap/SKILL.md").read_text(encoding="utf-8")
+    validator = (CUSTOM / "repo-bootstrap/scripts/validate_setup.py").read_text(
+        encoding="utf-8"
+    )
     fallback_flat = " ".join(fallback.split())
     contract_flat = " ".join(contract.split())
 
     assert fallback.startswith("# Global Codex Instructions\n")
     assert "when the skill pack is not installed" in fallback_flat
     assert "each repository its own short `AGENTS.md`" in fallback_flat
-    assert "replace any portable contract owner preamble" in " ".join(bootstrap.split())
+    assert "portable-contract-owner" in validator
     assert re.findall(r"\$[a-z0-9][a-z0-9-]*", fallback) == []
     assert "It is not a workflow, checklist, review gate, completion format" in contract_flat
     assert "Git mutation owners" not in contract_flat
@@ -2779,7 +2858,7 @@ def test_mutating_workflows_require_proportional_readback() -> None:
     assert "Read back every durable external mutation" in implement
     assert "recovery path before an operation that can partially succeed" in implement
     assert "read back integration `HEAD`" in parallel
-    assert "read back each durable change" in parallel
+    assert "read the result back" in parallel
 
     for name in ("to-spec", "to-tickets", "triage", "wayfinder"):
         text = (CUSTOM / name / "SKILL.md").read_text(encoding="utf-8")
@@ -2810,14 +2889,14 @@ def test_to_tickets_is_proportional_and_preserves_actionable_frontier() -> None:
     assert "already approved these exact effects or explicitly waived preview" in flat
     assert "`reuse` or `create` or `update` disposition" in flat
     assert "bind each new identity through immediate read-back" in flat
-    assert "apply and read back each approved Ready-for-agent change" in flat
+    assert "apply and read back `ready-for-agent` only" in flat
     assert "refetch the parent and children" in flat
     assert "stop further mutation" in flat
     assert "caller-held resumable ticket" in flat
     assert "if it gates any ticket" in flat
     assert "preserve any caller-held assignee" in flat
     assert flat.index("If the settled source itself establishes") < flat.index(
-        "Once a graph is warranted, load the routed tracker and label contracts"
+        "Once a graph is warranted, read `docs/agents/issue-tracker.md` and"
     )
     assert flat.index("configured inspect and read-back routes") < flat.index(
         "Inspect the intended parent and existing children"
@@ -2870,7 +2949,7 @@ def test_to_spec_canonical_is_lean_and_experimental_evidence_stays_frozen() -> N
     assert "Verified Source Correction" not in canonical
     assert "source-gap" not in canonical
     assert flat.index("If the source already defines one bounded implementation") < flat.index(
-        "Load the routed tracker contract only after the durable-parent branch wins"
+        "Read `docs/agents/issue-tracker.md` only after the durable-parent branch wins"
     )
     current_reconciliation = synthesis.split("Status: Deploy Prompt 4", 1)[0]
     assert exact_tree_hash(CUSTOM / "to-spec") in current_reconciliation
@@ -2985,7 +3064,7 @@ def test_parallel_implement_exposes_live_frontier_and_closeout_contracts() -> No
     assert "a dependent item starts only after its predecessors land" in flat
     assert "Accept that direct landing without applying its commit again" in flat
     assert "Verify and land accepted worker commits one at a time" in flat
-    assert "close children before the parent" in flat
+    assert "After every child is implemented" in flat
     assert re.search(
         r"(?m)^\| One explicit fixed delivery set has at least two accepted "
         r"implementation items \| `\$parallel-implement` \|$",
@@ -3050,7 +3129,7 @@ def test_implement_closeout_locks_exact_candidate_and_preserves_custody() -> Non
     flat = " ".join(implement.split())
 
     assert "Direct work creates no tracker state" in flat
-    assert "follow the repository's claim and closeout rules" in flat
+    assert "follow the claim and closeout rules" in flat
     assert "do not push without separate authority" in flat
     assert "Read back every durable external mutation" in flat
     assert "recovery path before an operation that can partially succeed" in flat

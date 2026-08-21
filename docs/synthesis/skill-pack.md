@@ -170,6 +170,31 @@ finding admission, drift-safe gating, and one terminal decision while removing
 invocation packets, runtime receipts, replacement rounds, quorum vocabulary,
 and the universal finding-state ledger. Typical use follows an implemented
 ticket graph or precedes PR merge; neither condition activates it automatically.
+Revision 37 materializes machine contract revision 25 by rewriting Parallel
+Implement as one six-action concurrent delivery loop. It keeps isolated
+worktrees, one integrator, exact-base verification, serial landing, and
+conservative cleanup while removing model profiles, pytest dispatch preflight,
+author-count review, status packets, and capacity eviction.
+Revision 38 materializes machine contract revision 26 by reducing Grill With
+Docs to one three-action composer. It keeps narrow implicit discovery,
+reconciles each domain-affecting answer before dependent questioning, preserves
+Domain Modeling's write and ADR gates, and returns one decision or gap with the
+current domain result. It removes caller packets, formal Domain Delta transport,
+relay accounting, and status or recovery fields.
+Revision 39 materializes machine contract revision 27 by rewriting Repo
+Bootstrap as Inspect, Reconcile, Propose, Apply, and Verify. It loads only
+applicable setup branches, asks only unresolved choices, applies one exact
+approved delta, and limits partial-effect handling to changed external or
+indeterminate state. Provider seeds now own configuration and read-back rather
+than workflow lifecycle. The validator checks selected structure and ownership
+without policing prose, and the aggregate seed hash no longer acts as a target
+repository compatibility marker.
+Revision 40 materializes machine contract revision 28 by making label timing
+explicit at each mutation owner. Triage assigns intake roles, To Tickets owns
+ticket categories and readiness, Wayfinder maps its own item types, and the two
+delivery skills own implemented and newly-unblocked transitions. The installed
+label contract remains a repository-specific value map rather than a workflow
+owner.
 It binds the complete fingerprinted pre-discovery fixed point, then freezes the
 tested environment, finite research order, capability
 owners, roles, relationships, exclusions, resolved collisions, acceptance
@@ -186,10 +211,10 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       ],
       "allowed_contributor_skill_ids": [],
       "capability_id": "CAP-001",
-      "completion_return": "A verified setup report with exact changed or blocking surfaces",
+      "completion_return": "Verified applicable setup, or one exact blocker with observed partial state",
       "disposition": "selected",
       "entry_conditions": [
-        "A selected engineering route needs a missing, incompatible, or outdated setup surface"
+        "The current user explicitly requests setup inspection, creation, or reconciliation"
       ],
       "essential": true,
       "exclusions": [
@@ -197,11 +222,11 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Unbounded foreign procedure loading",
         "Automated semantic acceptance"
       ],
-      "observable_outcome": "Reconcile one target repository's verified setup surface before engineering work",
+      "observable_outcome": "Reconcile one repository's applicable pack setup through one exact approved delta",
       "primary_owner_skill_id": "SK-001",
-      "proof_class": "fresh behavioral proof plus structural identity and boundary proof",
+      "proof_class": "proportionate structural, mutation read-back, and boundary proof; fresh behavioral proof only when the user requests it",
       "required_authority_mutation": [
-        "Repository setup contracts and their verified reconciliation"
+        "Applicable repository setup files and explicitly approved missing labels"
       ]
     },
     {
@@ -210,7 +235,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       ],
       "allowed_contributor_skill_ids": [],
       "capability_id": "CAP-002",
-      "completion_return": "A settled distinction, exact unresolved question, verified changed paths, or the caller-required cumulative Domain Delta",
+      "completion_return": "A settled distinction, exact unresolved question, verified changed paths, or the caller-required current domain result",
       "disposition": "selected",
       "entry_conditions": [
         "Project-specific domain meaning needs resolution or capture, or an already-settled decision needs ADR assessment or approved recording"
@@ -225,7 +250,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "primary_owner_skill_id": "SK-002",
       "proof_class": "proportionate structural, boundary, or consumer proof; fresh behavioral proof only when the user requests it",
       "required_authority_mutation": [
-        "Domain meaning, conditional context persistence, cumulative composed deltas, and approved ADR recording"
+        "Domain meaning, conditional context persistence, current composed domain results, and approved ADR recording"
       ]
     },
     {
@@ -647,10 +672,10 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "SK-008"
       ],
       "capability_id": "CAP-020",
-      "completion_return": "A confirmed understanding or intact Grilling gap, each with the current Domain Delta, or one owned composition blocker",
+      "completion_return": "A confirmed decision or exact Grilling gap with the current domain result, or one unresolved domain blocker",
       "disposition": "selected",
       "entry_conditions": [
-        "One repo-backed decision needs both direct grilling and cumulative domain capture"
+        "One repo-backed decision needs both live grilling and domain reconciliation as answers settle"
       ],
       "essential": true,
       "exclusions": [
@@ -658,11 +683,11 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Unbounded foreign procedure loading",
         "Automated semantic acceptance"
       ],
-      "observable_outcome": "Stress-test one repo-backed decision while keeping durable domain language current",
+      "observable_outcome": "Grill one repo-backed decision while keeping its domain meaning current",
       "primary_owner_skill_id": "SK-020",
       "proof_class": "proportionate structural, boundary, or consumer proof; fresh behavioral proof only when the user requests it",
       "required_authority_mutation": [
-        "Composition sequence, bidirectional Relay, cumulative Domain Delta, blocker precedence, and combined exit"
+        "Dual activation, reconciliation before dependent questioning, component authority, and combined return"
       ]
     },
     {
@@ -782,7 +807,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
   "epoch_header": {
     "acceptance_scenarios": [
       {
-        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for repo-bootstrap: Reconcile one target repository's verified setup surface before engineering work",
+        "description": "Positive entry, nearest-negative exclusion, external or partial-effect failure, and completion for repo-bootstrap: reconcile one repository's applicable setup through one exact approved delta",
         "expected_owner_skill_id": "SK-001",
         "scenario_id": "PS-001"
       },
@@ -877,7 +902,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "scenario_id": "PS-019"
       },
       {
-        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for grill-with-docs: Stress-test one repo-backed decision while keeping durable domain language current",
+        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for grill-with-docs: Grill one user-owned repo-backed decision while keeping its domain meaning current",
         "expected_owner_skill_id": "SK-020",
         "scenario_id": "PS-020"
       },
@@ -1069,7 +1094,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       }
     ],
     "composition_epoch_id": "FCE-20260727-01",
-    "contract_revision": 25,
+    "contract_revision": 28,
     "epoch_lock": null,
     "exclusions": [
       "Per-skill H1 or candidate wording",
@@ -1271,7 +1296,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "CAP-019",
         "CAP-020",
         "CAP-021",
-        "CAP-022",
+        "CAP-002",
         "CAP-023",
         "CAP-025"
       ],
@@ -1570,16 +1595,16 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [
         "domain-modeling caller-facing interface and branch-required reference only"
       ],
-      "entry_condition": "Relay every settled material answer, return each collision or blocker to Grilling before dependent progress, and preserve Domain Modeling's authoritative cumulative Domain Delta under explicit context-write authority and a separate ADR approval gate.",
-      "failure_behavior": "Return the target's exact blocker and owner; preserve the caller-owned resumption boundary",
-      "input_packet": "Caller-owned bounded Source Trace for grill-with-docs and the declared domain-modeling input",
+      "entry_condition": "Reconcile each settled domain-affecting answer before dependent questioning while preserving Domain Modeling's context-write and ADR approval gates.",
+      "failure_behavior": "Return a material domain collision to the decision conversation and do not confirm through it",
+      "input_packet": "One bounded decision, applicable domain context, and any supplied context-write or ADR authority",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-005",
       "required_proof_ids": [
         "PROOF-REL-005"
       ],
       "resume_owner_skill_id": "SK-020",
-      "return_packet": "The current cumulative Domain Delta with only material consequences, collisions, and write evidence",
+      "return_packet": "The current domain result with only material consequences, collisions, and applicable write evidence",
       "target_skill_id": "SK-002",
       "verb": "Compose",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
@@ -1597,16 +1622,16 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "context_loaded": [
         "grilling caller-facing interface and branch-required reference only"
       ],
-      "entry_condition": "Run the one-decision-at-a-time interview; return its exit packet through the composer.",
-      "failure_behavior": "Return the target's exact blocker and preserve the caller-owned resumption boundary",
-      "input_packet": "Caller-owned bounded Source Trace for grill-with-docs and the declared grilling input",
+      "entry_condition": "Run the one-decision-at-a-time interview and preserve its confirmed decision or exact gap.",
+      "failure_behavior": "Return the exact Grilling gap without selecting or starting recovery",
+      "input_packet": "One bounded decision, its decision owner, and any supplied return owner",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-006",
       "required_proof_ids": [
         "PROOF-REL-006"
       ],
       "resume_owner_skill_id": "SK-020",
-      "return_packet": "The confirmed Grilling understanding or intact Evidence or Route gap, preserved through the composer without reinterpretation",
+      "return_packet": "The confirmed Grilling decision or exact gap",
       "target_skill_id": "SK-008",
       "verb": "Compose",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
@@ -1747,9 +1772,9 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-022",
       "combined_exit_owner_skill_id": "SK-022",
       "context_loaded": [],
-      "entry_condition": "A required setup surface is missing or incompatible.",
+      "entry_condition": "Tracker-backed work needs a missing or incompatible installed issue-tracker contract.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for implement and the declared repo-bootstrap input",
+      "input_packet": "The exact installed tracker-contract gap with implementation left unstarted",
       "ordering_impact": "none",
       "relationship_id": "REL-015",
       "required_proof_ids": [
@@ -1759,7 +1784,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "return_packet": "One named target and reason with downstream work unstarted",
       "target_skill_id": "SK-001",
       "verb": "Recommend and stop",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
+      "wrong_condition": "The installed tracker contract is compatible or tracker-backed work does not apply"
     },
     {
       "affected_capability_ids": [
@@ -1885,7 +1910,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "PROOF-REL-021"
       ],
       "resume_owner_skill_id": "SK-017",
-      "return_packet": "One intact direct-user Grilling exit packet and current Domain Delta for later Audit Analyze",
+      "return_packet": "One direct-user Grilling result and current domain result for later Audit Analyze",
       "target_skill_id": "SK-020",
       "verb": "Recommend and stop",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
@@ -2078,19 +2103,19 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-023",
       "combined_exit_owner_skill_id": "SK-023",
       "context_loaded": [],
-      "entry_condition": "A required setup surface is missing or incompatible.",
-      "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for parallel-implement and the declared repo-bootstrap input",
+      "entry_condition": "Tracker-backed delivery needs a missing or incompatible installed issue-tracker contract.",
+      "failure_behavior": "Return the recommendation without executing the target",
+      "input_packet": "The exact installed tracker-contract gap with parallel delivery left unstarted",
       "ordering_impact": "none",
       "relationship_id": "REL-032",
       "required_proof_ids": [
         "PROOF-REL-032"
       ],
       "resume_owner_skill_id": "SK-023",
-      "return_packet": "One named target and reason with downstream work unstarted",
+      "return_packet": "One Repo Bootstrap recommendation with delivery unstarted",
       "target_skill_id": "SK-001",
       "verb": "Recommend and stop",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
+      "wrong_condition": "The installed tracker contract is compatible or tracker-backed delivery does not apply"
     },
     {
       "affected_capability_ids": [
@@ -2282,9 +2307,9 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-025",
       "combined_exit_owner_skill_id": "SK-025",
       "context_loaded": [],
-      "entry_condition": "The situation satisfies one repo-backed decision needs both direct grilling and cumulative domain capture; return that route and leave it unstarted.",
+      "entry_condition": "One current-user-owned repo-backed decision needs both live grilling and domain reconciliation as answers settle; return that route and leave it unstarted.",
       "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for skill-router and the declared grill-with-docs input",
+      "input_packet": "One bounded current-user-owned repo-backed decision whose domain meaning may change during live questioning",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-052",
       "required_proof_ids": [
@@ -2927,15 +2952,15 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "CAP-020"
       ],
       "callee_owned_gates_mutations": [
-        "Grill With Docs retains composition, Grilling, Domain Modeling, Relay, mutation, Return, and completion gates"
+        "Grill With Docs retains dual activation, reconciliation timing, component authority, combined return, and completion gates"
       ],
       "caller_skill_id": "SK-021",
       "combined_exit_owner_skill_id": "SK-021",
       "context_loaded": [
         "grill-with-docs caller-facing interface and branch-required domain pointers only"
       ],
-      "entry_condition": "One selected user decision ticket also requires durable domain capture.",
-      "failure_behavior": "Return the target's intact decision, gap, Domain Delta, or exact blocker for Wayfinder classification",
+      "entry_condition": "One selected user decision also needs live domain reconciliation as answers settle.",
+      "failure_behavior": "Return the target's decision or exact gap with the current domain result for Wayfinder classification",
       "input_packet": "Selected Wayfinder question, why it matters, current user as decision owner, acceptance evidence, return owner, Source Trace, and any supplied context-write authority or separate ADR approval",
       "ordering_impact": "callee-before-caller",
       "relationship_id": "REL-087",
@@ -2943,10 +2968,10 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "PROOF-REL-087"
       ],
       "resume_owner_skill_id": "SK-021",
-      "return_packet": "The intact Grilling packet plus current cumulative Domain Delta",
+      "return_packet": "The confirmed decision or exact gap with the current domain result",
       "target_skill_id": "SK-020",
       "verb": "Invoke",
-      "wrong_condition": "The decision has no durable domain consequence, does not belong to the current user, the caller packet lacks a return owner, or supplied write or ADR authority is contradictory"
+      "wrong_condition": "The decision needs only conversation, the domain meaning is already settled, does not belong to the current user, lacks a return owner when caller-invoked, or supplied write or ADR authority is contradictory"
     },
     {
       "affected_capability_ids": [
@@ -2986,19 +3011,19 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-021",
       "combined_exit_owner_skill_id": "SK-021",
       "context_loaded": [],
-      "entry_condition": "A required setup surface is missing or incompatible.",
-      "failure_behavior": "Return the recommendation or suggestion without executing the target",
-      "input_packet": "Caller-owned bounded Source Trace for wayfinder and the declared repo-bootstrap input",
+      "entry_condition": "The installed tracker or label contract is missing or incompatible.",
+      "failure_behavior": "Return the recommendation without executing the target",
+      "input_packet": "The exact installed setup-contract gap with Wayfinder unstarted",
       "ordering_impact": "none",
       "relationship_id": "REL-089",
       "required_proof_ids": [
         "PROOF-REL-089"
       ],
       "resume_owner_skill_id": "SK-021",
-      "return_packet": "One named target and reason with downstream work unstarted",
+      "return_packet": "One Repo Bootstrap recommendation with Wayfinder unstarted",
       "target_skill_id": "SK-001",
       "verb": "Recommend and stop",
-      "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
+      "wrong_condition": "The installed tracker and label contracts are compatible"
     },
     {
       "affected_capability_ids": [
@@ -3072,7 +3097,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "PROOF-REL-093"
       ],
       "resume_owner_skill_id": "SK-017",
-      "return_packet": "One complete Domain Delta for later Audit Analyze with Domain Modeling left unstarted",
+      "return_packet": "One complete domain result for later Audit Analyze with Domain Modeling left unstarted",
       "target_skill_id": "SK-002",
       "verb": "Recommend and stop",
       "wrong_condition": "The entry condition is false, ambiguous, or another selected owner has the bounded outcome"
@@ -3305,6 +3330,31 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "target_skill_id": "SK-012",
       "verb": "Recommend and stop",
       "wrong_condition": "The intake is unsettled, one bounded ready handoff is sufficient, or no implementation slicing remains"
+    },
+    {
+      "affected_capability_ids": [
+        "CAP-002",
+        "CAP-001"
+      ],
+      "callee_owned_gates_mutations": [
+        "No callee execution, mutation, resumption, or completion is authorized by this edge"
+      ],
+      "caller_skill_id": "SK-002",
+      "combined_exit_owner_skill_id": "SK-002",
+      "context_loaded": [],
+      "entry_condition": "The installed domain-routing contract is missing or incompatible.",
+      "failure_behavior": "Return the recommendation without executing the target",
+      "input_packet": "The exact installed domain-routing gap with domain work left unstarted",
+      "ordering_impact": "none",
+      "relationship_id": "REL-110",
+      "required_proof_ids": [
+        "PROOF-REL-110"
+      ],
+      "resume_owner_skill_id": "SK-002",
+      "return_packet": "One Repo Bootstrap recommendation with domain work unstarted",
+      "target_skill_id": "SK-001",
+      "verb": "Recommend and stop",
+      "wrong_condition": "The installed domain-routing contract is compatible"
     }
   ],
   "selected_skills": [
@@ -3313,24 +3363,24 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "PS-001"
       ],
       "canonical_name": "repo-bootstrap",
-      "completion_condition": "Every required setup owner is present or an exact blocker is returned",
+      "completion_condition": "Applicable setup is compatible and every external change is read back, or the exact blocker and observed partial state return",
       "contract_order": 1,
-      "essential_outcome": "Reconcile one target repository's verified setup surface before engineering work",
-      "failure_return": "Return the incompatible or unauthorized setup boundary",
+      "essential_outcome": "Reconcile one repository's applicable pack setup through one exact approved delta",
+      "failure_return": "Return the unresolved setup choice, changed target, unauthorized effect, or observed partial state",
       "invocation_mode": "explicit-only",
       "load_budget_class": "conditional-leaf",
       "negative_exclusion_predicates": [
-        "The request does not satisfy: A selected engineering route needs a missing, incompatible, or outdated setup surface",
+        "The request does not satisfy: the current user explicitly requested setup inspection, creation, or reconciliation",
         "Another selected skill owns the requested outcome",
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
       "owned_authority_mutation_surfaces": [
-        "Repository setup contracts and their verified reconciliation"
+        "Applicable repository setup files and explicitly approved missing labels"
       ],
       "owned_capability_ids": [
         "CAP-001"
       ],
-      "positive_entry_predicate": "A selected engineering route needs a missing, incompatible, or outdated setup surface",
+      "positive_entry_predicate": "The current user explicitly requests setup inspection, creation, or reconciliation",
       "primary_role": "leaf",
       "prohibited_ownership": [
         "Another selected skill's semantic decision, local mutation, proof judgment, Return, or completion",
@@ -3338,8 +3388,8 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Pack integration acceptance, epoch Lock, cleanup, installation, or Git delivery unless explicitly owned"
       ],
       "relationship_ids": [],
-      "required_input": "A bounded caller-owned Source Trace and authority for: Reconcile one target repository's verified setup surface before engineering work",
-      "return_packet": "A verified setup report with exact changed or blocking surfaces",
+      "required_input": "One bounded repository, the requested or blocked setup capability, and current-user approval before any non-empty delta",
+      "return_packet": "Verified applicable setup, or one exact blocker with observed partial state",
       "skill_id": "SK-001"
     },
     {
@@ -3359,7 +3409,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
       "owned_authority_mutation_surfaces": [
-        "Domain meaning, conditional context persistence, cumulative composed deltas, and approved ADR recording"
+        "Domain meaning, conditional context persistence, current composed domain results, and approved ADR recording"
       ],
       "owned_capability_ids": [
         "CAP-002"
@@ -3371,9 +3421,11 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Per-skill H1 outside this immutable contract slice",
         "Pack integration acceptance, epoch Lock, cleanup, installation, or Git delivery unless explicitly owned"
       ],
-      "relationship_ids": [],
+      "relationship_ids": [
+        "REL-110"
+      ],
       "required_input": "One bounded domain distinction, relevant routed truth and evidence, meaning authority, and any separate context-write or ADR authority",
-      "return_packet": "A settled distinction, exact unresolved question, verified changed paths, or the caller-required cumulative Domain Delta",
+      "return_packet": "A settled distinction, exact unresolved question, verified changed paths, or the caller-required current domain result",
       "skill_id": "SK-002"
     },
     {
@@ -3708,7 +3760,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "PS-012"
       ],
       "canonical_name": "to-tickets",
-      "completion_condition": "The skill returns either one bounded item unchanged, one exact observed blocker, or an approved or exact-reuse actionable graph whose bodies, relationships, and readiness were read back, with no delivery started",
+      "completion_condition": "The skill returns either one bounded item unchanged, one exact observed blocker, or an approved or exact-reuse actionable graph whose bodies, categories, relationships, and readiness were read back, with no delivery started",
       "contract_order": 12,
       "essential_outcome": "Publish the smallest useful dependency-ordered implementation graph from settled source, or return one bounded item unchanged",
       "failure_return": "Return the exact source, setup, existing-state, approval, or publication gap with observed state",
@@ -3720,7 +3772,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
       "owned_authority_mutation_surfaces": [
-        "Ticket boundaries, dependency order, approval, authorized publication, and read-back"
+        "Ticket boundaries, categories, dependency order, readiness, approval, authorized publication, and read-back"
       ],
       "owned_capability_ids": [
         "CAP-012"
@@ -3758,7 +3810,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
       "owned_authority_mutation_surfaces": [
-        "Intake classification, concise readiness facts, exact approved tracker effects, and read-back"
+        "Intake category and state classification, concise readiness facts, exact approved tracker effects, and read-back"
       ],
       "owned_capability_ids": [
         "CAP-013"
@@ -4006,24 +4058,24 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "PS-020"
       ],
       "canonical_name": "grill-with-docs",
-      "completion_condition": "Both conversational confirmation and durable capture finish under their own gates",
+      "completion_condition": "One decision is confirmed with its reconciled domain result, or one exact unresolved blocker returns",
       "contract_order": 20,
-      "essential_outcome": "Stress-test one repo-backed decision while keeping durable domain language current",
-      "failure_return": "Return the intact Grilling gap and current Domain Delta, or the exact owned composition blocker with safe resumption",
+      "essential_outcome": "Grill one repo-backed decision while keeping its domain meaning current",
+      "failure_return": "Return the exact Grilling gap with the current domain result, or one unresolved domain blocker",
       "invocation_mode": "implicit",
       "load_budget_class": "conditional-aggregate",
       "negative_exclusion_predicates": [
-        "The request does not satisfy: One repo-backed decision needs both direct grilling and cumulative domain capture",
+        "The request does not satisfy: One repo-backed decision needs both live grilling and domain reconciliation as answers settle",
         "Another selected skill owns the requested outcome",
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
       "owned_authority_mutation_surfaces": [
-        "Composition sequence, bidirectional Relay, cumulative Domain Delta, blocker precedence, and combined exit"
+        "Dual activation, reconciliation before dependent questioning, component authority, and combined return"
       ],
       "owned_capability_ids": [
         "CAP-020"
       ],
-      "positive_entry_predicate": "One current-user-owned repo-backed decision needs both direct grilling and cumulative domain capture",
+      "positive_entry_predicate": "One current-user-owned repo-backed decision needs both live grilling and domain reconciliation as answers settle",
       "primary_role": "executable-aggregate",
       "prohibited_ownership": [
         "Another selected skill's semantic decision, local mutation, proof judgment, Return, or completion",
@@ -4034,8 +4086,8 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "REL-005",
         "REL-006"
       ],
-      "required_input": "A bounded caller-owned Source Trace and authority for: Stress-test one repo-backed decision while keeping durable domain language current",
-      "return_packet": "A confirmed understanding or intact Grilling gap plus current Domain Delta, or one composition blocker with its owner",
+      "required_input": "One bounded repo-backed decision owned by the current user, plus a return owner on caller invocation and any supplied context-write or ADR authority",
+      "return_packet": "A confirmed decision or exact Grilling gap with the current domain result, or one unresolved domain blocker",
       "skill_id": "SK-020"
     },
     {
@@ -4055,7 +4107,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
       "owned_authority_mutation_surfaces": [
-        "Map identity and topology, selected resolver route, ticket and short map claims, direct reconciliation, and truthful finish"
+        "Map identity and topology, Wayfinder type labels, selected resolver route, ticket and short map claims, direct reconciliation, and truthful finish"
       ],
       "owned_capability_ids": [
         "CAP-021"
@@ -4068,9 +4120,9 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Pack integration acceptance, epoch Lock, cleanup, installation, or Git delivery unless explicitly owned"
       ],
       "relationship_ids": [
+        "REL-089",
         "REL-087",
         "REL-088",
-        "REL-089",
         "REL-090",
         "REL-095",
         "REL-096"
@@ -4096,7 +4148,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
       "owned_authority_mutation_surfaces": [
-        "Single-item technique routing, integration, proof, conditional Change Review admission, and branch-applicable Git or tracker closeout"
+        "Single-item technique routing, integration, proof, conditional Change Review admission, and branch-applicable Git or tracker state transitions and closeout"
       ],
       "owned_capability_ids": [
         "CAP-022"
@@ -4135,7 +4187,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
       "owned_authority_mutation_surfaces": [
-        "Concurrency admission, isolated lanes, worker replacement safety, serial integration, focused proof, and conditional closeout"
+        "Concurrency admission, isolated lanes, worker replacement safety, serial integration, focused proof, and conditional tracker state transitions and closeout"
       ],
       "owned_capability_ids": [
         "CAP-023"
