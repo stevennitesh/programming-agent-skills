@@ -25,7 +25,8 @@ accepted packets whose blockers are resolved, read each change back, and leave
 the others non-ready.
 
 After all children finish, refetch the complete graph. Apply `implemented` to
-the parent and close it when configured only when every child is implemented,
+the parent and close it when configured only when every child is implemented
+and the main skill's integrated-proof gate is satisfied for that exact `HEAD`,
 then read the parent back.
 
 On a failed, partial, or indeterminate tracker effect, stop further mutation,

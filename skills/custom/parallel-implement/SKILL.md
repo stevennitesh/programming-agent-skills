@@ -105,6 +105,9 @@ diff and run the smallest proof set that covers the accepted outcome, real
 callers, and material interactions. Do not repeat worker proof that remains
 valid.
 
+For a tracker-backed graph, confirm that every caller-visible sequence assigned
+to a consuming ticket remains proved on the integrated `HEAD`.
+
 Invoke `$change-review` only when the user or repository requires it, or a
 concrete unresolved shared-contract or migration judgment remains after proof.
 Pin the clean candidate first and let Change Review own its procedure. Multiple

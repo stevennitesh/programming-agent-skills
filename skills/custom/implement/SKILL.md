@@ -85,6 +85,14 @@ policy requires them or when they are the cheapest durable protection for the
 behavior—not to satisfy a ritual. Run broader suites only when policy or shared
 impact justifies them.
 
+For a bug fix, use proof capable of distinguishing the defect from the repaired
+behavior. When the defect depends on a produced result being used later,
+exercise the lowest ordinary consuming caller that can expose it.
+
+When an operation has material partial-effect risk or must recover after
+interruption, exercise that boundary. Any proxy must be capable of exposing the
+same recovery failure.
+
 Inspect the real output or caller path when a unit check cannot establish that
 the change works. If safe execution is unavailable, use the strongest safe
 proxy and say what remains unproved.

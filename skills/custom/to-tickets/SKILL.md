@@ -67,6 +67,10 @@ contains only what a fresh implementer must not have to invent:
 - true blockers, or `none`;
 - material compatibility, migration, trust, authority, or recovery constraints.
 
+When acceptance depends on a caller-visible sequence across tickets, assign one
+ticket that consumes a required predecessor outcome to prove the sequence.
+State the sequence and consumed outcome in that ticket.
+
 Add stable repository or proof pointers only when they materially narrow the
 work or preserve a settled decision. Do not freeze live file lists, commands,
 test ownership, implementation technique, or worker-return fields into every

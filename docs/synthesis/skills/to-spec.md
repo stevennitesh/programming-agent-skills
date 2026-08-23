@@ -8,7 +8,7 @@
 > verified durable parent, then recommends To Tickets or Implement without
 > starting either. Canonical `skills/custom/to-spec/` is current runtime
 > authority at campaign-tree SHA-256
-> `25d892a187bdcb00aac41b51e07a7b484e42742c6c7f20b5529dd4092082b04d`.
+> `4404ecfbdf7eb29ae15fd7af4fcee7faca9a16e23d09ae9e37eba4e4767a3f95`.
 > The 2026-07-25 campaign and the analysis below remain historical evidence;
 > they do not own current runtime behavior. No installed sync or fresh
 > wording-efficacy proof is claimed.

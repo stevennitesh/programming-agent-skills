@@ -8,7 +8,7 @@
 > verified external mutation without owning proof ledgers, human frontiers,
 > claim transfer, or delivery. Canonical `skills/custom/to-tickets/` is current
 > runtime authority at campaign-tree SHA-256
-> `552fb55c65043f14e33c3b03c43cfdaf14b3513c78da2308d769227ec597032b`.
+> `47489d4f95bbb2ec78cf388f79ce834ffebdfad1a9c54116ec491aab6e2b97e6`.
 > The 2026-07-25 campaign below remains historical evidence and does not own
 > current runtime behavior. No installed sync or fresh wording-efficacy proof
 > is claimed.

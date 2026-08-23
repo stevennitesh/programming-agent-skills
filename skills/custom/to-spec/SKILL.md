@@ -65,6 +65,10 @@ only where behavior materially differs. At an external or trust boundary,
 state the authoritative representation and observable invalid-input behavior;
 do not prescribe redundant internal validation.
 
+When the settled source makes later behavior materially depend on durable
+state, state what must persist, how later behavior uses it, and the observable
+outcome.
+
 Paths may support a source claim, but ticket slices, expected writes, concrete
 commands, test ownership, dependency order, and implementation technique stay
 downstream. Include code only when a source-authorized prototype fragment is
