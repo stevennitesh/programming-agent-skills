@@ -1,60 +1,94 @@
 <h1 align="center">Programming Agent Skills</h1>
 
-<p align="center"><strong>Give Codex the habits of a senior engineer: shape intent, work in bounded slices, prove behavior, and close with evidence.</strong></p>
+<p align="center"><strong>Engineering judgment for Codex, without turning every task into a process.</strong></p>
 
 <p align="center">
   <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-blue.svg"></a>
-  <img alt="Python 3.10+" src="https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white">
+  <img alt="Python 3.11+" src="https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white">
 </p>
 
-Programming Agent Skills is a Codex-first pack of small, composable engineering workflows. It keeps product commitments with the human, gives implementation technique to the agent, and puts evidence gates between "looks done" and done.
+Coding agents can move fast and still leave a mess: speculative abstractions,
+defensive checks nobody needed, compatibility paths with no real consumer, and
+green tests that never touch the behavior a user depends on.
 
-## How It Works
+I built this pack to push Codex toward better engineering judgment without
+turning an ordinary task into a compliance exercise. It combines a shared
+engineering contract with focused skills for shaping work, designing code,
+implementation, diagnosis, delivery, and review.
 
-```mermaid
-flowchart LR
-    A["Foggy request"] --> B["Shape intent"]
-    B --> C["Source trace<br/>+ bounded slice"]
-    C --> D["Tracer-bullet<br/>implementation"]
-    D --> E["Semantic proof<br/>+ Spec / Standards review"]
-    E --> F["Close<br/>evidence + residual risk"]
-```
+Ordinary work stays ordinary. Heavier methods activate when the request, the
+repository, or a concrete risk calls for them.
 
-The diagram shows the common path, not a mandatory sequence. Each skill owns one engineering job, and `$skill-router` returns one exact next skill when its contract fits or truthful `none` when no available skill fits.
+[Install the full pack](#install) ·
+[Use only the portable contract](AGENTS_PORTABLE_FALLBACK.md) ·
+[Browse the skills](#what-is-in-the-pack)
 
-## Purpose
+## The philosophy
 
-Fast agents fail in predictable ways. The pack turns those failure modes into explicit engineering controls:
+> Explore imaginatively. Converge under proof. Simplify ruthlessly.
 
-| Common agent failure | Pack response |
-| --- | --- |
-| Vague or shifting scope | Source trace and bounded slice |
-| Coding before intent is settled | Shape before build |
-| Broad horizontal implementation | Tracer-bullet vertical slices |
-| Output exists but its meaning is wrong | Semantic proof through a useful seam |
-| Review trusts the agent's summary | Fixed-point Spec / Standards review |
-| Work ends without durable state | Close with evidence and residual risk |
+The pack teaches Codex to understand the code before changing it, choose the
+smallest integrated design, and prove the result through a caller or artifact
+that matters. It favors readable code, clear data shapes, small interfaces,
+local state, and one obvious owner for each behavior.
 
-The payoff is visible uncertainty, inspectable proof, and named residual risk before work is accepted.
+It also applies YAGNI with some conviction. A local feature does not need a
+framework for imagined future requirements. Internal code does not need to
+defend against states its types and established invariants already exclude.
+Tests are evidence, not a quota. Documentation should explain a real contract
+or decision, not restate readable code.
 
-## Setup
+For one bounded implementation, the common path is deliberately short:
 
-Choose one global adoption path:
+1. Understand the request, current behavior, real callers, and existing proof.
+2. Choose the smallest sound design and a clear data shape.
+3. Implement the whole change in the current behavior owner.
+4. Run the nearest useful check that can fail for the changed behavior.
+5. Inspect the result, remove displaced code, and stop.
 
-| Full Skill Pack | Portable Contract |
-| --- | --- |
-| Composable workflows, routing, setup, trackers, and templates | Core engineering behavior in one global `AGENTS.md` |
-| Managed installation and upgrades | Manual copy and maintenance |
-| Best for recurring, multi-session engineering work | Best for lightweight adoption |
-| [Install the full pack](#full-skill-pack) | [Use the portable contract](AGENTS_PORTABLE_FALLBACK.md) |
+Risk changes the method. The skills that own external writes, destructive work,
+concurrent delivery, recovery, formal review, and measured claims activate the
+extra protection those jobs require. If the condition is absent, it creates no
+checklist, artifact, reviewer, or explanation obligation.
 
-The full pack installs a lean global delegation gate and bootstrap, then gives each repository its own setup surface. The portable path instead supplies the engineering defaults globally while each repository supplies only its commands, invariants, and source-of-truth pointers.
+## What is in the pack
 
-### Full Skill Pack
+Each skill owns one recognizable engineering job. They compose when the work
+needs more than one job, but they are not a mandatory pipeline.
 
-Requirements: Codex, Git, and Python 3.10 or newer. GitHub or GitLab authentication is optional; the pack can use a local Markdown tracker.
+| Area | Skills | Use for |
+| --- | --- | --- |
+| Build and improve | `$implement`, `$diagnosing-bugs`, `$codebase-design`, `$simplify-code`, `$hillclimb`, `$tdd` | Implementation, hard bugs, a design recommendation for one bounded module or interface, simplification, measured improvement, and test-first work. |
+| Shape decisions | `$grilling`, `$grill-with-docs`, `$research`, `$prototype`, `$domain-modeling`, `$wayfinder`, `$to-questionnaire` | Live decisions, evidence, design probes, domain meaning, coupled multi-session decision routes, and drafting a questionnaire for an external stakeholder. |
+| Plan and deliver | `$to-spec`, `$to-tickets`, `$parallel-implement`, `$triage`, `$handoff` | Durable specs, ticket graphs, parallel delivery, incoming tracker work, and continuation in a fresh context. |
+| Review and conflict resolution | `$change-review`, `$high-assurance-review`, `$audit-codebase`, `$resolving-merge-conflicts` | Change review, explicitly heavy review, organized codebase audits, and inspecting or resolving an active Git conflict. |
+| Setup and instructions | `$repo-bootstrap`, `$skill-router`, `$writing-for-agents`, `$wizard` | Repository setup, skill selection, instructions for agents, and guided scripts for procedures only a human can perform. |
 
-Codex reads global skills from `$HOME/.agents/skills` and global instructions from `$HOME/.codex/AGENTS.md`.
+The active skills live in [`skills/custom/`](skills/custom). Optional skills
+live in [`skills/extra/`](skills/extra) and are not part of the managed install.
+
+### Recommended companion
+
+For clearer, more natural communication with coding agents, I recommend
+pstack's [`unslop`](https://github.com/cursor/plugins/tree/main/pstack/skills/unslop)
+skill. It cleans up agent-written prose without changing its meaning. This
+repository does not bundle or manage it, so install it separately from the
+upstream project.
+
+## Install
+
+You need [Codex](https://github.com/openai/codex), Git, and Python 3.11 or
+newer. GitHub or GitLab authentication is optional. The pack can also use a
+local Markdown tracker.
+
+By default, the installer manages this pack's skills under
+`$HOME/.agents/skills` and its small bootstrap section in
+`$HOME/.codex/AGENTS.md`. It preserves unrelated skills and personal global
+instructions. Add `--skip-global-agents` to both installer commands if you want
+to leave the global `AGENTS.md` untouched.
+
+Preview the affected skills and bootstrap action, then install them. The
+installer uses only the Python standard library.
 
 Bash:
 
@@ -62,8 +96,8 @@ Bash:
 git clone https://github.com/stevennitesh/programming-agent-skills.git
 cd programming-agent-skills
 
-python -m scripts.install_skills
-python -m scripts.validate_skills --installed-root "$HOME/.agents/skills" --require-installed
+python3 -m scripts.install_skills --dry-run
+python3 -m scripts.install_skills
 ```
 
 PowerShell:
@@ -72,108 +106,108 @@ PowerShell:
 git clone https://github.com/stevennitesh/programming-agent-skills.git
 Set-Location programming-agent-skills
 
+python -m scripts.install_skills --dry-run
 python -m scripts.install_skills
-python -m scripts.validate_skills --installed-root "$HOME\.agents\skills" --require-installed
 ```
 
+Pull the repository and run the same commands to update.
+
+See [installation and recovery](INSTALLATION.md) for custom locations, how the
+installer handles global `AGENTS.md`, optional installed-parity validation,
+transaction recovery, and directory ownership.
+
+## Use it
+
+After installation, you can invoke a skill directly:
+
+```text
+$implement issue 123
+```
+
+If a repository should carry the pack's engineering, tracker, label, or domain
+setup, run `$repo-bootstrap`. It inspects what is missing or outdated, shows the
+proposed change, and waits for approval before writing anything. You can skip
+it when the repository already has the instructions the work needs.
+
+Ask Codex for the work you want. Context-enabled skills can be selected from
+their descriptions. Use a skill's `$`-prefixed name when you want a specific
+workflow or when the skill is intentionally explicit-only.
+
+```text
+$diagnosing-bugs investigate why the import sometimes stalls
+
+$simplify-code src/billing/reconciliation.py
+
+$high-assurance-review the completed ticket graph before merge
+```
+
+Use `$skill-router` when choosing the next skill is itself the question. It
+returns one skill name or `none`, then stops. It does not start that skill.
+
+You do not need a specification or ticket graph for every change.
+
+- Use `$implement` for one ready, bounded item.
+- Use `$to-spec` to publish a settled decision that needs to survive several
+  slices or sessions.
+- Use `$to-tickets` to publish a graph when settled work benefits from
+  dependency-ordered delivery.
+- Use `$parallel-implement` for an explicit set of at least two accepted items
+  with a ready frontier and independent behavior ownership and write effects.
+
 <details>
-<summary><strong>What the installer manages</strong></summary>
+<summary>Skills that require explicit invocation</summary>
 
-When no global `AGENTS.md` exists, the installer seeds the complete global template. Later installs create or update only its `## Skill Pack Bootstrap` section, migrate the legacy `## Skill Pack Guide` block, and preserve delegation and other personal global instructions. It records pack-managed skills in `$HOME/.agents/skills/.programming-agent-skills-manifest.json`, so updates can retire old pack skills without touching unrelated personal skills.
-
-Skill swaps, retirements, the manifest, and the global bootstrap commit as one transaction. One process lock excludes competing installs and recovery. The installer validates the complete managed manifest and refuses unsafe names, modified managed trees, or conflicting unmanaged paths before mutation. A failure restores the previous pack and removes the transaction snapshot. If rollback itself cannot finish, the installer preserves a named `.programming-agent-skills-transaction-*` recovery snapshot and refuses another install.
-
-Run `python -m scripts.install_skills --recover-transaction <snapshot-path>` with the reported path. For nondefault targets, repeat the original `--skills-dir` and `--global-agents` values, or `--skip-global-agents`. Recovery binds the snapshot to those targets and refuses live content that matches neither the prior nor planned identity.
-
-| Recovery status | Meaning | Next action |
-| --- | --- | --- |
-| `cleared-preparation` | No managed mutation began; preparation residue was removed. | Rerun the installer. |
-| `restored` | An interrupted mutation was restored and verified. | Rerun the installer. |
-| `cleared-commit` | The committed install was verified; only recovery residue remained. | No reinstall is needed. |
-
-Claims are cleared while the snapshot still exists, and the snapshot is removed last.
-
-Use `python -m scripts.install_skills --dry-run` to preview skill deltas and the global-bootstrap action. `skills/custom/` is the only managed install source. `skills/experimental/` preserves inactive alternatives without routing or installing them, `skills/extra/` is optional, and `skills/.archive/` is retired history.
+`$audit-codebase`, `$diagnosing-bugs`, `$handoff`,
+`$high-assurance-review`, `$hillclimb`, `$implement`,
+`$parallel-implement`, `$repo-bootstrap`, `$simplify-code`, `$skill-router`,
+`$to-questionnaire`, `$to-spec`, `$to-tickets`, `$triage`, `$wayfinder`, and
+`$wizard` do not activate from context alone.
 
 </details>
 
-### Portable Contract Only
+## The engineering contract
 
-No installer or Python runtime is required. Copy [`AGENTS_PORTABLE_FALLBACK.md`](AGENTS_PORTABLE_FALLBACK.md) to `$HOME/.codex/AGENTS.md`, then give each target repository a short local `AGENTS.md` with verified commands, local invariants, and source-of-truth pointers.
+[`$repo-bootstrap`](skills/custom/repo-bootstrap/SKILL.md) can install the
+shared [`engineering-contract.md`](docs/agents/engineering-contract.md). The
+contract defines the pack's coding defaults; skills define procedures for
+particular jobs. Repository instructions and the user remain authoritative.
 
-The portable contract carries authority boundaries, a direct five-action implementation path, root-cause correction, proportional proof, condition-triggered protection, displaced-path removal, and concise reporting. It intentionally omits skill routing, specialized procedures, tracker and domain setup, templates, and managed updates.
+Its advice is concrete: trace the current owner and real callers, subtract
+before adding, model the domain instead of scattering conditionals, validate
+untrusted input once at its owning boundary, trust valid internal
+representations, remove displaced paths, and prove only what the result claims.
+It is engineering taste, not a checklist or review gate.
 
-## What's Included
+If you want the engineering defaults without the skills, copy
+[`AGENTS_PORTABLE_FALLBACK.md`](AGENTS_PORTABLE_FALLBACK.md) to your global
+Codex `AGENTS.md`. It needs no installer or Python runtime. It leaves out skill
+routing, specialized workflows, tracker setup, templates, and managed updates.
 
-- **Shape before building:** `$grilling`, `$grill-with-docs`, `$wayfinder`, `$to-questionnaire`, `$research`, `$prototype`, `$handoff`
-- **Turn intent into delivery:** `$to-spec`, `$to-tickets`, `$triage`, `$implement`, `$parallel-implement`, `$wizard`
-- **Prove and protect behavior:** `$tdd`, `$diagnosing-bugs`, `$resolving-merge-conflicts`, `$change-review`, `$high-assurance-review`, `$audit-codebase`
-- **Improve code and design:** `$audit-codebase`, `$simplify-code`, `$hillclimb`, `$codebase-design`, `$domain-modeling`
-- **Write agent instructions and maintain the pack:** `$writing-for-agents`, `$repo-bootstrap`, `$skill-router`
+## Where this came from
 
-The small [`GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md`](GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md) template supplies the delegation gate and teaches Codex when to suggest `$skill-router` and `$repo-bootstrap`. Workflows stay with their skills, and personal environment instructions stay local.
+This pack began with
+[Matt Pocock's engineering skills](https://github.com/mattpocock/skills) and
+also draws on [pstack](https://github.com/cursor/plugins/tree/main/pstack),
+[Ponytail](https://github.com/DietrichGebert/ponytail), and
+[Superpowers](https://github.com/obra/superpowers). Matt's work shaped the
+short, named workflows. Pstack pushed the engineering guidance toward smaller,
+clearer designs. Ponytail reinforced the YAGNI ladder: do not build, reuse,
+reach for the platform, then add the minimum that works. This repository adapts
+those ideas for Codex and adds narrow controls for external writes, parallel
+work, recovery, trackers, and source-backed review.
 
-## Using The Full Pack
+See [Acknowledgments](ACKNOWLEDGMENTS.md) for the broader list of influences.
 
-Start in each target repository with `$repo-bootstrap`. It inspects the applicable setup, asks only unresolved choices, shows the exact proposed changes, waits for approval, then applies and verifies that delta. Run it again after pack upgrades to reconcile applicable changes while preserving confirmed choices and repository-specific additions.
+## For contributors
 
-After setup, invoke a skill directly or let `$skill-router` carry the route map.
-
-Representative routes:
-
-- Fuzzy product idea needing durable decisions -> `$grill-with-docs`; explicitly run `$to-spec` only when the settled result earns a durable parent
-- External stakeholder knowledge gap -> `$to-questionnaire` -> human delivery and answer collection
-- One bounded ready item -> `$implement`; one explicit fixed set of at least two accepted items with a non-empty ready frontier -> `$parallel-implement`, serializing shared ownership and parallelizing independent work
-- Incoming issue or configured external PR/MR -> `$triage`; ready-for-agent item -> `$implement`
-- Bounded multi-session decision route -> `$wayfinder` until it returns a terminal decision or settled source
-- Explicit test-first, TDD, or RED-GREEN-REFACTOR work -> `$tdd`; ordinary implementation with tests -> `$implement`; route uncertain bugs through `$skill-router`.
-- Whole-repository architecture or code-quality discovery -> `$audit-codebase` builds or continues one linked HTML map, audits one user-selected subsystem at a time, then analyzes one user-selected candidate without starting implementation
-- Existing behavior in one selected target -> `$simplify-code` for proved behavior-preserving simplification or a truthful no-change result
-- One bounded sustained campaign to improve a frozen runtime, resource, cost, capacity, or product result against a settled target -> `$hillclimb`; use `$implement` for one settled optimization, `$simplify-code` for maintainability reduction, and `$diagnosing-bugs` for an unexplained regression
-- Several settled steps only the current human can perform -> explicitly invoke `$wizard` for one repository-native guided script; use `$implement` when the agent can perform the work or the result is maintained automation
-- An explicit read-only change judgment or implementation candidate whose independent-review trigger applies -> `$change-review`; an explicitly requested heavy review of a fixed code candidate, commonly an integrated ticket-graph result or pre-merge PR -> `$high-assurance-review`
-- Bounded correctness, domain robustness, performance, structural, or simplification discovery over a repository baseline -> `$audit-codebase`; the report preserves coverage and returns subsystem and candidate selection to the user
-
-These are examples. `$skill-router` owns the complete route map and tie-breakers.
-
-## Philosophy
-
-Build faster without making the repository harder to trust. Move quickly through reversible exploration; slow down at the gates that protect commitments, correctness, and trust.
-
-- **Shape before build:** settle consequential intent before implementation.
-- **Tracer bullets:** establish a thin real path for early feedback on a named risk. A ticket may also be a vertical slice, but the terms are not synonyms.
-- **Semantic proof:** prove that the result means the right thing; output existence alone is not correctness.
-- **Fixed-point review:** judge the actual diff against Spec and Standards instead of trusting the agent's story.
-- **Ubiquitous language:** preserve domain terms and decisions across code, tests, docs, tickets, and handoffs.
-- **One owner:** skills own workflows, repository docs own local contracts, and supporting files own detailed mechanics.
-
-## Engineering Contract
-
-[`$repo-bootstrap`](skills/custom/repo-bootstrap/SKILL.md) installs a small `docs/agents/engineering-contract.md` in each target repository. The contract owns engineering taste, preventive code-quality defaults, shared vocabulary, and cross-skill discipline while leaving implementation technique flexible.
-
-The shared default is to ground the request, change the smallest path through the current behavior owner and real callers, run the smallest check capable of disproving the claim, close displaced paths, and report only what the evidence supports. Heavier methods activate only from their stated conditions.
-
-For the same core behavior without installing skills, use [`AGENTS_PORTABLE_FALLBACK.md`](AGENTS_PORTABLE_FALLBACK.md) as a standalone global `AGENTS.md`.
-
-## Inspiration
-
-This pack started with [Matt Pocock's engineering skills](https://github.com/mattpocock/skills), which showed how powerful small, named, composable workflows can be. This repository is a Codex-first adaptation shaped by practical multi-session work on real codebases.
-
-It keeps the upstream emphasis on strong leading words, then extends it with repository-local contracts, tracker-backed delivery, long-running wayfinding, isolated parallel implementation, source-traced review, TDD, domain modeling, deep module design, architecture review, and careful conflict resolution.
-
-## Repository Layout
-
-- `skills/custom/`: active skills to install
-- `skills/experimental/`: inactive, manifest-tracked alternatives to active skills
-- `skills/extra/`: optional extra skills
-- `skills/.archive/`: retired historical skills
-- `GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md`: minimal global Codex bootstrap
-- `AGENTS_PORTABLE_FALLBACK.md`: standalone global engineering contract for use without installed skills
-- `skills/custom/repo-bootstrap/`: target-repository setup workflow and contract templates
-- `CONTEXT.md`: stable vocabulary and maintenance invariants for this repository
-- `docs/synthesis/skill-context-relationships.md`: maintainer map for skill boundaries and context ownership
-- `scripts/install_skills.py`: transactional managed installation and update that preserves unrelated skills
-- `scripts/validate_skills.py`: integrity checks for the pack
+- [`skills/custom/`](skills/custom): active skills installed by the pack
+- [`skills/experimental/`](skills/experimental): inactive alternatives
+- [`skills/extra/`](skills/extra): optional skills outside the managed install
+- [`CONTEXT.md`](CONTEXT.md): stable repository vocabulary and ownership
+- [`docs/synthesis/`](docs/synthesis): design decisions and source-backed
+  reasoning behind the runtime skills
+- [`scripts/install_skills.py`](scripts/install_skills.py): managed installer
+- [`scripts/validate_skills.py`](scripts/validate_skills.py): pack validation
 
 ## License
 

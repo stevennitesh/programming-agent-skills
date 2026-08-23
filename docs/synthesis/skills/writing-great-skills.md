@@ -9,6 +9,11 @@ section preserves its exact historical decision and identities. Research
 provenance, campaign judgments, promotion, and its installation evidence remain
 owned by the research packet and compact final manifest.
 
+A later lean refinement makes subagent assignments an explicit agent-facing
+document. Writing for Agents improves the assignment text while preserving any
+worker contract and leaving worker choice, scheduling, integration, and final
+verification with the orchestrating workflow.
+
 ## Current Author Refinement
 
 Decision: `accepted`.

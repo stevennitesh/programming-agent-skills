@@ -866,7 +866,7 @@ def test_router_returns_one_exact_skill_or_truthful_none() -> None:
     assert "not instead of one allowed clarification" in router_flat
     assert "one exact route or truthful none" in bootstrap
     assert "it returns one route and stops" not in bootstrap
-    assert "truthful `none` when no available skill fits" in readme
+    assert "returns one skill name or `none`, then stops" in readme
     assert "recommends exactly one next skill" not in readme
     selected = next(
         row for row in contract["selected_skills"]
@@ -2672,6 +2672,9 @@ def test_writing_for_agents_keeps_a_lean_common_path_and_conditional_branches() 
         "references/SKILL-MECHANICS.md",
     }
     assert "Write documents that help an agent take the intended process" in normalized_skill
+    assert "subagent assignments used in orchestration" in normalized_skill
+    assert "Preserve any worker contract owned by the orchestrating workflow" in normalized_skill
+    assert "does not choose workers, schedule dependencies, integrate results" in normalized_skill
     assert re.findall(
         r"^## [1-5]\. (.+)$",
         skill,
@@ -2719,6 +2722,11 @@ def test_writing_for_agents_keeps_a_lean_common_path_and_conditional_branches() 
     )
     assert (
         "`$writing-for-agents` owns the instructions agents consume"
+        in relationships
+    )
+    assert "assignment wording for orchestrated subagents" in relationships
+    assert (
+        "Worker selection, scheduling, integration, and final verification remain with the orchestrating workflow"
         in relationships
     )
     assert (
@@ -2831,7 +2839,6 @@ def test_tracer_bullet_is_a_conditional_learning_role_not_a_slice_alias() -> Non
     assert "learning role, not a substitute for acceptance" in contract
     assert "Otherwise omit the learning role" in tickets
     assert "tracer bullet" not in parallel
-    assert "the terms are not synonyms" in readme
     assert "deliver observable vertical slices" not in readme
 
 
@@ -2839,19 +2846,15 @@ def test_readme_exposes_both_adoption_paths() -> None:
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
 
     headings = re.findall(r"(?m)^(#{2,3}) (.+)$", readme)
-    assert ("##", "Setup") in headings
-    assert ("###", "Full Skill Pack") in headings
-    assert ("###", "Portable Contract Only") in headings
-    assert ("##", "Using The Full Pack") in headings
-    setup = readme.split("## Setup", 1)[1].split("## What's Included", 1)[0]
-    assert "| Full Skill Pack | Portable Contract |" in setup
-    assert "[Install the full pack](#full-skill-pack)" in setup
-    assert "[Use the portable contract](AGENTS_PORTABLE_FALLBACK.md)" in setup
-    for language in ("bash", "powershell"):
-        block = readme.split(f"```{language}", 1)[1].split("```", 1)[0]
-        assert "python -m scripts.install_skills" in block
-        assert "python -m scripts.validate_skills" in block
-    assert readme.count("```mermaid") == 1
+    assert ("##", "Install") in headings
+    assert ("##", "Use it") in headings
+    assert "[Install the full pack](#install)" in readme
+    assert "[Use only the portable contract](AGENTS_PORTABLE_FALLBACK.md)" in readme
+    bash = readme.split("```bash", 1)[1].split("```", 1)[0]
+    powershell = readme.split("```powershell", 1)[1].split("```", 1)[0]
+    assert "python3 -m scripts.install_skills" in bash
+    assert "python -m scripts.install_skills" in powershell
+    assert readme.count("```mermaid") == 0
 
 
 def test_triage_is_lean_and_preserves_tracker_boundaries() -> None:

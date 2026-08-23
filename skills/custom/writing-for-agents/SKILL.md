@@ -1,6 +1,6 @@
 ---
 name: writing-for-agents
-description: Create, edit, or audit instructions agents consume, including skills, AGENTS.md, prompts, guides, specs, tickets, and handoffs. Exclude ordinary human-facing prose and application code.
+description: Create, edit, or audit instructions agents consume, including skills, AGENTS.md, prompts, guides, specs, tickets, handoffs, and subagent assignments used in orchestration. Exclude ordinary human-facing prose, application code, and orchestration mechanics such as worker selection, scheduling, or integration.
 ---
 
 # Writing for agents
@@ -15,6 +15,12 @@ Identify the agent that will read the document, what it must accomplish, the
 source of truth for its decisions, and how the document enters context. Trace
 the real prompt, pointer, caller, or workflow far enough to know what the text
 must change.
+
+When orchestrating subagents, use this skill to make each assignment bounded,
+include only context that changes the worker's task, and state what the worker
+returns. Preserve any worker contract owned by the orchestrating workflow. This
+skill improves the assignment text; it does not choose workers, schedule
+dependencies, integrate results, or verify the combined outcome.
 
 For an audit, make no edits. For an authorized edit, change only the requested
 document and directly affected links or metadata. Do not invent missing product

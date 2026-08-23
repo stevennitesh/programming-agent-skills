@@ -312,7 +312,7 @@ every terminal result directly to its current caller or the user.
 ## Boundary Notes
 
 - The global template exposes bootstrap handles; `skill-router` routes or returns a truthful no-match abstention; neither teaches downstream workflow procedures.
-- The bundled system `skill-creator` owns new-package scaffolding and metadata mechanics. `$writing-for-agents` owns the instructions agents consume and their directly affected pointers, including semantic invocation wording for existing skills. It stops before metadata mechanics, installation, or delivery.
+- The bundled system `skill-creator` owns new-package scaffolding and metadata mechanics. `$writing-for-agents` owns the instructions agents consume and their directly affected pointers, including semantic invocation wording for existing skills and assignment wording for orchestrated subagents. It preserves an owning workflow's worker contract and stops before metadata mechanics, installation, or delivery. Worker selection, scheduling, integration, and final verification remain with the orchestrating workflow.
 - Setup docs own tracker, labels, domain routing, and engineering-contract details. Skills should point there instead of restating those mechanics.
 - `$grill-with-docs` owns live composition. It reconciles domain-affecting
   answers before dependent questioning and returns Grilling's decision or gap

@@ -1955,9 +1955,10 @@ def test_install_preserves_recovery_snapshot_when_rollback_cannot_complete(
     assert (installed / "alpha/SKILL.md").read_text(encoding="utf-8") == "v2"
 
 
-def test_readme_documents_the_executable_recovery_path() -> None:
-    readme = (
-        Path(__file__).resolve().parents[1] / "README.md"
+def test_installation_guide_documents_the_executable_recovery_path() -> None:
+    guide = (
+        Path(__file__).resolve().parents[1] / "INSTALLATION.md"
     ).read_text(encoding="utf-8")
 
-    assert "python -m scripts.install_skills --recover-transaction <snapshot-path>" in readme
+    assert "python -m scripts.install_skills" in guide
+    assert "--recover-transaction <snapshot-path>" in guide
