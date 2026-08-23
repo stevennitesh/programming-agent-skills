@@ -980,6 +980,7 @@ def test_codebase_design_preserves_lean_branch_contracts() -> None:
     assert "CodeDesign --> DomainRouter" in relationships
     assert "| `to-spec` | Load | `$codebase-design` |" not in relationships
     assert "| `audit-codebase` | Load | `$codebase-design` |" in relationships
+    assert "| `to-tickets` | Recommend and stop | `$codebase-design` |" in relationships
     for caller in ("research", "tdd", "simplify-code"):
         assert f"| `{caller}` | Recommend and stop | `$codebase-design` |" not in (
             relationships
@@ -3011,6 +3012,12 @@ def test_to_tickets_is_proportional_and_preserves_actionable_frontier() -> None:
         edge for edge in contract["relationships"] if edge["relationship_id"] == "REL-082"
     )
     assert "approved or exact-reuse verified graph" in parallel_edge["entry_condition"]
+    design_edge = next(
+        edge for edge in contract["relationships"] if edge["relationship_id"] == "REL-114"
+    )
+    assert design_edge["verb"] == "Recommend and stop"
+    assert "implementation-architecture" in design_edge["entry_condition"]
+    assert "unstarted Codebase Design recommendation" in design_edge["return_packet"]
     to_tickets_contract = next(
         skill for skill in contract["selected_skills"] if skill["canonical_name"] == "to-tickets"
     )

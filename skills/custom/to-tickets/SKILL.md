@@ -38,6 +38,14 @@ code needed to preserve the source and find useful delivery boundaries. Trace
 the current behavior owner, representative callers, accepted interfaces, and
 nearest credible proof. Do not make a missing product or architecture decision.
 
+Use the trace to shape one coherent repository-native graph. If slicing still
+depends on one bounded consequential implementation-architecture choice within
+the settled source, return that question, relevant evidence, and re-entry
+condition, and recommend unstarted `$codebase-design`. Re-enter only with the
+original source plus an accepted result that preserves its commitments;
+otherwise return to the source owner. Continue directly to Slice when no such
+choice remains.
+
 Inspect the intended parent and existing children before drafting. Reuse only
 one exact semantic graph, including its relationships and readiness. Refetch
 and accept such a graph unchanged; skip Slice, Approve, and Publish, then use

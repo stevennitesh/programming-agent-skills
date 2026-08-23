@@ -216,6 +216,11 @@ graphs through a non-empty ready frontier. It removes unnecessary shared write
 targets before serialization, uses authoritative context pointers in worker
 briefs, and hides complete-parent tracker claim and closeout behind one
 conditional reference.
+Revision 45 materializes machine contract revision 33 by adding one conditional
+unresolved-architecture branch before To Tickets slices a graph. Clear
+repository-native designs continue directly; one bounded consequential
+implementation-architecture question returns to Codebase Design with drafting
+and tracker mutation unstarted.
 It binds the complete fingerprinted pre-discovery fixed point, then freezes the
 tested environment, finite research order, capability
 owners, roles, relationships, exclusions, resolved collisions, acceptance
@@ -3030,6 +3035,31 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
     },
     {
       "affected_capability_ids": [
+        "CAP-012",
+        "CAP-007"
+      ],
+      "callee_owned_gates_mutations": [
+        "No callee execution, mutation, resumption, or completion is authorized by this edge"
+      ],
+      "caller_skill_id": "SK-012",
+      "combined_exit_owner_skill_id": "SK-012",
+      "context_loaded": [],
+      "entry_condition": "Before slicing, repository grounding exposes one bounded consequential implementation-architecture choice within the settled source that prevents coherent slicing.",
+      "failure_behavior": "Return the recommendation or suggestion without executing the target",
+      "input_packet": "Original settled-source identity, accepted behavior and public-contract constraints, exact bounded architecture question, relevant traced evidence, and re-entry condition",
+      "ordering_impact": "none",
+      "relationship_id": "REL-114",
+      "required_proof_ids": [
+        "PROOF-REL-114"
+      ],
+      "resume_owner_skill_id": "SK-012",
+      "return_packet": "Exact bounded architecture question, original settled-source identity, relevant evidence, re-entry condition, and unstarted Codebase Design recommendation, with graph drafting and tracker mutation untouched",
+      "target_skill_id": "SK-007",
+      "verb": "Recommend and stop",
+      "wrong_condition": "The repository-native architecture is clear, the request needs codebase-wide discovery, behavior or a public contract is unsettled, or another owner has the bounded outcome"
+    },
+    {
+      "affected_capability_ids": [
         "CAP-013",
         "CAP-001"
       ],
@@ -3969,7 +3999,8 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "relationship_ids": [
         "REL-081",
         "REL-082",
-        "REL-083"
+        "REL-083",
+        "REL-114"
       ],
       "required_input": "One identified settled source, its material decision-bearing pointers, and authority for any approved tracker publication or repair",
       "return_packet": "One verified approved or exact-reuse graph, one bounded direct item, or one exact source, setup, conflict, or recovery result",
