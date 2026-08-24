@@ -6,12 +6,15 @@ import argparse
 import json
 import re
 import shutil
+import stat
 import subprocess
 from pathlib import Path
 from typing import Any
 
 
 LANE_NAME = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]{0,79}")
+COMMIT_ID = re.compile(r"(?:[0-9a-f]{40}|[0-9a-f]{64})")
+CLEANUP_RECEIPT_FORMAT = 1
 
 
 class LaneError(RuntimeError):
@@ -102,6 +105,13 @@ def lane_state(root: Path, name: str) -> Path:
     return state
 
 
+def cleanup_receipt(root: Path, name: str) -> Path:
+    receipt = (root / ".state" / f"{name}.cleanup.json").resolve()
+    if not contained(receipt, root):
+        raise LaneError("cleanup receipt path escapes the configured root")
+    return receipt
+
+
 def state_paths(root: Path, name: str) -> tuple[Path, Path, Path, Path]:
     state = lane_state(root, name)
     paths = state / "tmp", state / "pytest", state / "cache"
@@ -110,10 +120,109 @@ def state_paths(root: Path, name: str) -> tuple[Path, Path, Path, Path]:
     return state, *paths
 
 
+def write_cleanup_receipt(
+    repo: Path,
+    root: Path,
+    worktree: Path,
+    lane_head: str,
+    integration_head: str,
+) -> Path:
+    state = lane_state(root, worktree.name)
+    if not state.is_dir():
+        raise LaneError("lane state is missing")
+    receipt = cleanup_receipt(root, worktree.name)
+    temporary = receipt.with_name(f"{receipt.name}.tmp")
+    payload = {
+        "format": CLEANUP_RECEIPT_FORMAT,
+        "repository": str(repo),
+        "root": str(root),
+        "worktree": str(worktree),
+        "lane": worktree.name,
+        "lane_head": lane_head,
+        "integration_head": integration_head,
+        "clean": True,
+        "integrated": True,
+    }
+    try:
+        temporary.write_text(
+            json.dumps(payload, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        temporary.replace(receipt)
+    finally:
+        temporary.unlink(missing_ok=True)
+    return receipt
+
+
+def read_cleanup_receipt(
+    repo: Path, root: Path, worktree: Path
+) -> tuple[dict[str, Any] | None, str | None]:
+    receipt = cleanup_receipt(root, worktree.name)
+    if not receipt.is_file():
+        return None, "cleanup receipt is missing"
+    try:
+        payload = json.loads(receipt.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return None, "cleanup receipt is unreadable"
+    expected = {
+        "format": CLEANUP_RECEIPT_FORMAT,
+        "repository": str(repo),
+        "root": str(root),
+        "worktree": str(worktree),
+        "lane": worktree.name,
+        "clean": True,
+        "integrated": True,
+    }
+    if not isinstance(payload, dict) or any(
+        payload.get(key) != value for key, value in expected.items()
+    ):
+        return None, "cleanup receipt does not match the requested lane"
+    if not all(
+        isinstance(payload.get(key), str)
+        and COMMIT_ID.fullmatch(payload[key])
+        for key in ("lane_head", "integration_head")
+    ):
+        return None, "cleanup receipt has invalid commit evidence"
+    return payload, None
+
+
+def is_reparse_point(path: Path) -> bool:
+    details = path.lstat()
+    attributes = getattr(details, "st_file_attributes", 0)
+    reparse_flag = getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0x400)
+    return path.is_symlink() or bool(attributes & reparse_flag)
+
+
+def tree_has_reparse_point(path: Path) -> bool:
+    pending = [path]
+    while pending:
+        current = pending.pop()
+        if is_reparse_point(current):
+            return True
+        if current.is_dir():
+            pending.extend(current.iterdir())
+    return False
+
+
+def finish_lane_cleanup(
+    root: Path, worktree: Path
+) -> tuple[str | None, str | None]:
+    state = lane_state(root, worktree.name)
+    receipt = cleanup_receipt(root, worktree.name)
+    if state.exists():
+        try:
+            shutil.rmtree(state)
+        except OSError as error:
+            return "lane state cleanup failed", str(error)
+    try:
+        receipt.unlink(missing_ok=True)
+    except OSError as error:
+        return "cleanup receipt removal failed", str(error)
+    return None, None
+
+
 def remove_worktree(repo: Path, worktree: Path) -> tuple[bool, dict[str, str]]:
     result = git(repo, "worktree", "remove", str(worktree), check=False)
-    if result.returncode == 0:
-        return True, {}
     try:
         registered = worktree in registered_worktrees(repo)
         exists = worktree.exists()
@@ -121,7 +230,11 @@ def remove_worktree(repo: Path, worktree: Path) -> tuple[bool, dict[str, str]]:
         registered = None
         exists = True
     evidence = {
-        "error": command_error(result),
+        "error": (
+            command_error(result)
+            if result.returncode != 0
+            else "worktree removal read-back incomplete"
+        ),
         "worktree_state": (
             "registered" if registered is True else "unregistered" if registered is False else "uncertain"
         ),
@@ -205,19 +318,34 @@ def prepare(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
         raise LaneError(str(error)) from error
 
 
-def recover_unregistered_lane(root: Path, worktree: Path) -> tuple[bool, str | None]:
-    state = lane_state(root, worktree.name)
-    if not state.is_dir():
-        return False, "completed path is not a registered worktree"
+def recover_unregistered_lane(
+    repo: Path, root: Path, worktree: Path, repo_head: str
+) -> tuple[bool, str | None]:
+    receipt, reason = read_cleanup_receipt(repo, root, worktree)
+    if receipt is None:
+        return False, reason
+    integrated = git(
+        repo,
+        "merge-base",
+        "--is-ancestor",
+        receipt["lane_head"],
+        repo_head,
+        check=False,
+    )
+    if integrated.returncode == 1:
+        return False, "cleanup receipt commit is no longer integrated"
+    if integrated.returncode != 0:
+        return False, "cleanup receipt integration is uncertain"
     if worktree.exists():
         try:
-            worktree.rmdir()
-        except OSError:
-            return False, "unregistered residual path preserved"
-    try:
-        shutil.rmtree(state)
-    except OSError as error:
-        return False, f"lane state cleanup failed: {error}"
+            if tree_has_reparse_point(worktree):
+                return False, "unregistered residual path contains a reparse point"
+            shutil.rmtree(worktree)
+        except OSError as error:
+            return False, f"unregistered residual path cleanup failed: {error}"
+    failure, error = finish_lane_cleanup(root, worktree)
+    if failure:
+        return False, f"{failure}: {error}"
     return True, None
 
 
@@ -253,7 +381,9 @@ def cleanup(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
 
     for worktree in completed:
         if worktree not in registered:
-            recovered, reason = recover_unregistered_lane(root, worktree)
+            recovered, reason = recover_unregistered_lane(
+                repo, root, worktree, repo_head
+            )
             if recovered:
                 removed.append(str(worktree))
             else:
@@ -279,8 +409,30 @@ def cleanup(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
             continue
 
         state = lane_state(root, worktree.name)
+        try:
+            receipt = write_cleanup_receipt(
+                repo,
+                root,
+                worktree,
+                head.stdout.strip(),
+                repo_head,
+            )
+        except (LaneError, OSError) as error:
+            preserved.append(
+                {
+                    "worktree": str(worktree),
+                    "reason": "cleanup receipt failed",
+                    "error": str(error),
+                }
+            )
+            continue
         worktree_removed, evidence = remove_worktree(repo, worktree)
         if not worktree_removed:
+            if evidence["worktree_state"] == "registered":
+                try:
+                    receipt.unlink(missing_ok=True)
+                except OSError as error:
+                    evidence["cleanup_receipt_error"] = str(error)
             preserved.append(
                 {
                     "worktree": str(worktree),
@@ -290,21 +442,19 @@ def cleanup(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
                 }
             )
             continue
-        if state.exists():
-            try:
-                shutil.rmtree(state)
-            except OSError as error:
-                preserved.append(
-                    {
-                        "worktree": str(worktree),
-                        "reason": "lane state cleanup failed",
-                        "error": str(error),
-                        "lane_state": "preserved",
-                        "worktree_state": "unregistered",
-                        "path_state": "missing",
-                    }
-                )
-                continue
+        failure, error = finish_lane_cleanup(root, worktree)
+        if failure:
+            preserved.append(
+                {
+                    "worktree": str(worktree),
+                    "reason": failure,
+                    "error": str(error),
+                    "lane_state": "preserved" if state.exists() else "absent",
+                    "worktree_state": "unregistered",
+                    "path_state": "missing",
+                }
+            )
+            continue
         removed.append(str(worktree))
 
     packet = {"ok": not preserved, "removed": removed, "preserved": preserved}

@@ -42,5 +42,11 @@ is registered, clean, and integrated into current repository `HEAD`. It also
 supports an exact retry after Git removed the worktree but helper-owned state
 remains. Dirty, unintegrated, active, or uncertain work stays in place.
 
+Before unregistering a lane, the helper writes an authorization receipt beside
+its state. If Git unregisters the worktree before filesystem cleanup finishes,
+rerun the same command. The helper rechecks the exact repository, root, lane,
+commit ancestry, and path, rejects reparse points, then removes residual lane
+and state content. It removes the receipt last.
+
 The helper never forces removal, deletes branches, changes global Git config,
 or chooses a lane on the caller's behalf.

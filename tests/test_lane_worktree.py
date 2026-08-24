@@ -118,7 +118,7 @@ def test_dependent_lane_uses_integration_head_after_predecessor_lands(
     (first_lane / "predecessor.txt").write_text("landed\n", encoding="utf-8")
     git(first_lane, "add", "predecessor.txt")
     git(first_lane, "commit", "-m", "predecessor")
-    git(repo, "cherry-pick", git(first_lane, "rev-parse", "HEAD"))
+    git(repo, "merge", "--ff-only", git(first_lane, "rev-parse", "HEAD"))
     current_head = git(repo, "rev-parse", "HEAD")
 
     second_result, second = prepare(repo, lane_root, current_head, "dependent")
@@ -126,6 +126,38 @@ def test_dependent_lane_uses_integration_head_after_predecessor_lands(
     second_lane = Path(str(second["worktree"]))
     assert git(second_lane, "rev-parse", "HEAD") == current_head
     assert (second_lane / "predecessor.txt").read_text(encoding="utf-8") == "landed\n"
+
+
+def test_cleanup_accepts_fast_forward_and_merged_sibling_commits(
+    tmp_path: Path,
+) -> None:
+    repo, base = repository(tmp_path)
+    lane_root = tmp_path / "lanes"
+    prepared: list[Path] = []
+    heads: list[str] = []
+    for name in ("first", "second"):
+        result, packet = prepare(repo, lane_root, base, name)
+        assert result.returncode == 0, packet
+        lane = Path(str(packet["worktree"]))
+        (lane / f"{name}.txt").write_text(f"{name}\n", encoding="utf-8")
+        git(lane, "add", f"{name}.txt")
+        git(lane, "commit", "-m", name)
+        prepared.append(lane)
+        heads.append(git(lane, "rev-parse", "HEAD"))
+
+    git(repo, "merge", "--ff-only", heads[0])
+    git(repo, "merge", "--no-ff", "-m", "merge second", heads[1])
+    integration_head = git(repo, "rev-parse", "HEAD")
+    for head in heads:
+        git(repo, "merge-base", "--is-ancestor", head, integration_head)
+
+    arguments = ["cleanup", "--repo", str(repo), "--root", str(lane_root)]
+    for lane in prepared:
+        arguments.extend(["--completed", str(lane)])
+    result, cleaned = helper(*arguments)
+
+    assert result.returncode == 0, cleaned
+    assert cleaned["removed"] == [str(lane.resolve()) for lane in prepared]
 
 
 def test_cleanup_removes_named_safe_lanes_and_preserves_dirty_and_unintegrated(
@@ -239,9 +271,7 @@ def test_cleanup_rejects_unregistered_completed_lane(tmp_path: Path) -> None:
     assert result.returncode == 1
     assert blocked["ok"] is False
     assert blocked["error"] == "cleanup incomplete"
-    assert blocked["preserved"][0]["reason"] == (
-        "completed path is not a registered worktree"
-    )
+    assert blocked["preserved"][0]["reason"] == "cleanup receipt is missing"
 
 
 def test_cleanup_rejects_nested_registered_worktree(tmp_path: Path) -> None:
@@ -509,6 +539,7 @@ def test_cleanup_reports_unregistered_residual_path_after_remove_error(
             removed = original_git(checkout, *args, check=check)
             assert removed.returncode == 0
             worktree.mkdir()
+            (worktree / "residual.txt").write_text("retry me\n", encoding="utf-8")
             return subprocess.CompletedProcess(args, 1, "", "late filesystem error")
         return original_git(checkout, *args, check=check)
 
@@ -534,29 +565,50 @@ def test_cleanup_reports_unregistered_residual_path_after_remove_error(
         }
     ]
     state = lane_root / ".state" / "residual-path"
+    receipt = lane_root / ".state" / "residual-path.cleanup.json"
     assert state.exists()
+    assert receipt.is_file()
 
-    foreign = worktree / "foreign.txt"
-    foreign.write_text("preserve\n", encoding="utf-8")
     monkeypatch.setitem(cleanup.__globals__, "git", original_git)
     arguments = Namespace(
         repo=str(repo),
         root=str(lane_root),
         completed=[str(worktree)],
     )
+
+    receipt_payload = json.loads(receipt.read_text(encoding="utf-8"))
+    receipt_payload["repository"] = str(repo / "wrong")
+    receipt.write_text(json.dumps(receipt_payload), encoding="utf-8")
     code, blocked = cleanup(arguments)
     assert code == 1
     assert blocked["error"] == "cleanup incomplete"
-    assert blocked["preserved"][0]["reason"] == "unregistered residual path preserved"
-    assert foreign.read_text(encoding="utf-8") == "preserve\n"
+    assert blocked["preserved"][0]["reason"] == (
+        "cleanup receipt does not match the requested lane"
+    )
+    assert (worktree / "residual.txt").exists()
     assert state.exists()
 
-    foreign.unlink()
+    receipt_payload["repository"] = str(repo)
+    receipt.write_text(json.dumps(receipt_payload), encoding="utf-8")
+    monkeypatch.setitem(
+        cleanup.__globals__, "tree_has_reparse_point", lambda _path: True
+    )
+    code, blocked = cleanup(arguments)
+    assert code == 1
+    assert blocked["preserved"][0]["reason"] == (
+        "unregistered residual path contains a reparse point"
+    )
+    assert worktree.exists()
+
+    monkeypatch.setitem(
+        cleanup.__globals__, "tree_has_reparse_point", lambda _path: False
+    )
     code, retried = cleanup(arguments)
     assert code == 0
     assert retried == {"ok": True, "removed": [str(worktree)], "preserved": []}
     assert not worktree.exists()
     assert not state.exists()
+    assert not receipt.exists()
 
 
 def test_cleanup_preserves_failed_lane_state_and_continues_named_lanes(
@@ -606,6 +658,25 @@ def test_cleanup_preserves_failed_lane_state_and_continues_named_lanes(
     assert not worktrees[0].exists()
     assert first_state.exists()
     assert not worktrees[1].exists()
+    first_receipt = lane_root / ".state" / "first.cleanup.json"
+    assert first_receipt.is_file()
+
+    monkeypatch.setattr(cleanup.__globals__["shutil"], "rmtree", original_rmtree)
+    code, retried = cleanup(
+        Namespace(
+            repo=str(repo),
+            root=str(lane_root),
+            completed=[str(worktrees[0])],
+        )
+    )
+    assert code == 0
+    assert retried == {
+        "ok": True,
+        "removed": [str(worktrees[0])],
+        "preserved": [],
+    }
+    assert not first_state.exists()
+    assert not first_receipt.exists()
 
 
 def test_cleanup_preserves_git_uncertainty(tmp_path: Path, monkeypatch) -> None:

@@ -83,11 +83,19 @@ Verify and land accepted worker commits one at a time. After each landing,
 read back integration `HEAD`, inspect the resulting diff, run proof invalidated
 by that transition or required by repository policy, recompute the ready
 frontier, and dispatch another independent item without waiting for a batch.
+Preserve each lane commit as an ancestor of integration `HEAD`. Fast-forward
+when integration `HEAD` still equals the lane base; merge later independent
+siblings. Do not cherry-pick lane commits. Cleanup uses ancestry as integration
+proof.
+
+When behavior depends on repository bytes or generated identities, checkout
+normalization invalidates lane proof. Rerun that proof in the integration
+checkout after landing.
 
 When integration `HEAD` advanced since dispatch:
 
-- Land directly when the intervening changes do not touch the item's behavior
-  owner, inputs, callers, fixtures, configuration, resources, or proof.
+- Merge the lane commit when the intervening changes do not touch the item's
+  behavior owner, inputs, callers, fixtures, configuration, resources, or proof.
 - Return the same worker to update from current `HEAD` and rerun affected proof
   when any of those overlap.
 - Preserve an active Git conflict and invoke `$resolving-merge-conflicts`.

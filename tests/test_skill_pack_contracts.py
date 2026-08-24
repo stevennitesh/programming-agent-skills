@@ -3188,6 +3188,9 @@ def test_parallel_implement_exposes_live_frontier_and_closeout_contracts() -> No
     assert "When two or more admitted writers can overlap" in flat
     assert "that commit is already landed" in flat
     assert "Do not reapply the commit or perform lane cleanup" in flat
+    assert "Preserve each lane commit as an ancestor of integration `HEAD`" in flat
+    assert "Do not cherry-pick lane commits" in flat
+    assert "checkout normalization invalidates lane proof" in flat
     assert "Verify and land accepted worker commits one at a time" in flat
     assert "Complete when every accepted item is landed" in flat
     assert "every named completed lane is safely removed" in flat
