@@ -3183,7 +3183,11 @@ def test_parallel_implement_exposes_live_frontier_and_closeout_contracts() -> No
     assert "Leave blocked descendants unclaimed" in tracker_delivery_flat
     assert "only when every child is implemented" in tracker_delivery_flat
     assert "a dependent item starts only after its predecessors land" in flat
-    assert "Accept that direct landing without applying its commit again" in flat
+    assert "Choose isolation for the current ready frontier, not the campaign" in flat
+    assert "Do not create a lane because later descendants may run concurrently" in flat
+    assert "When two or more admitted writers can overlap" in flat
+    assert "that commit is already landed" in flat
+    assert "Do not reapply the commit or perform lane cleanup" in flat
     assert "Verify and land accepted worker commits one at a time" in flat
     assert "Complete when every accepted item is landed" in flat
     assert "every named completed lane is safely removed" in flat

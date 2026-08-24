@@ -40,12 +40,15 @@ active for the root to inspect and land their returns promptly.
 
 ## Isolate
 
-Read [Agent Lanes](references/AGENT-LANES.md). Give every concurrent writer a
+Choose isolation for the current ready frontier, not the campaign. When one
+item is ready and no other writer is active, give its worker the integration
+checkout under exclusive custody. Do not create a lane because later
+descendants may run concurrently. When two or more admitted writers can
+overlap, read [Agent Lanes](references/AGENT-LANES.md) and give each writer a
 distinct helper-created worktree at current integration `HEAD`. Siblings
 admitted from one frontier share that exact base; a dependent item starts only
-after its predecessors land and therefore uses the newer `HEAD`. Give a serial
-writer the integration checkout only after every other actor that can write
-there is idle. Root landing and direct serial implementation never overlap.
+after its predecessors land and therefore uses the newer `HEAD`. Root landing
+and direct serial implementation never overlap.
 
 Use one fresh worker per item. Give it the exact absolute worktree path, base,
 scope, allowed writes, acceptance, predecessor outcomes, proof, assigned
@@ -72,9 +75,9 @@ lane and commit state. Never run two actors on one item.
 
 ## Land
 
-When a serial worker commits in the integration checkout, reacquire custody and
-verify current `HEAD`, the commit, diff, scope, and proof. Accept that direct
-landing without applying its commit again.
+When a serial worker commits in the integration checkout, that commit is
+already landed. Reacquire custody and verify current `HEAD`, the commit, diff,
+scope, and proof in place. Do not reapply the commit or perform lane cleanup.
 
 Verify and land accepted worker commits one at a time. After each landing,
 read back integration `HEAD`, inspect the resulting diff, run proof invalidated
