@@ -2631,6 +2631,87 @@ def test_research_owns_one_authorized_cited_note() -> None:
     assert "$wayfinder" not in research
 
 
+def test_context_hygiene_owns_persistent_context_without_project_mutation() -> None:
+    skill_dir = CUSTOM / "context-hygiene"
+    skill = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+    codex_memory = (skill_dir / "references/CODEX-MEMORY.md").read_text(
+        encoding="utf-8"
+    )
+    metadata = yaml.safe_load(
+        (skill_dir / "agents/openai.yaml").read_text(encoding="utf-8")
+    )
+    normalized = " ".join(skill.split())
+    normalized_codex_memory = " ".join(codex_memory.split())
+    contract = pack_contract.parse_contract(
+        (ROOT / "docs/synthesis/skill-pack.md").read_text(encoding="utf-8")
+    )
+    context_hygiene = next(
+        selected
+        for selected in contract["selected_skills"]
+        if selected["canonical_name"] == "context-hygiene"
+    )
+    capability = next(
+        capability
+        for capability in contract["capabilities"]
+        if capability["capability_id"] == "CAP-028"
+    )
+    names = {
+        selected["skill_id"]: selected["canonical_name"]
+        for selected in contract["selected_skills"]
+    }
+
+    assert implicit_policy(skill_dir)
+    assert metadata["interface"]["display_name"] == "Context Hygiene"
+    assert {
+        path.relative_to(skill_dir).as_posix()
+        for path in skill_dir.rglob("*")
+        if path.is_file()
+    } == {"SKILL.md", "agents/openai.yaml", "references/CODEX-MEMORY.md"}
+    assert all(
+        classification in skill
+        for classification in (
+            "`SYSTEM_FACT`",
+            "`PROJECT_CONTRACT`",
+            "`WORK_STATE`",
+            "`BEHAVIORAL_RULE`",
+        )
+    )
+    assert "Treat every memory entry as a claim to verify" in normalized
+    assert "Audit is read-only" in normalized
+    assert "Reflect is also read-only" in normalized
+    assert "A recommendation is not mutation authority" in normalized
+    assert (
+        "recovery method when the approved change is destructive or has material "
+        "partial-effect risk"
+    ) in normalized
+    assert "This skill does not edit project instructions" in normalized
+    assert "[Codex memory](references/CODEX-MEMORY.md)" in skill
+    assert "update mechanism authorized by the selected store" in normalized
+    assert all(
+        state in skill
+        for state in ("`AUDIT COMPLETE`", "`CLEANUP PENDING`", "`CLEANUP APPLIED`")
+    )
+    assert "candidate change requests" in normalized_codex_memory
+    assert "does not prove that consolidation applied" in normalized_codex_memory
+    assert "Deleting old notes is a separate effect" in normalized_codex_memory
+    assert "Do not assume that owner is `AGENTS.md`" in normalized
+    assert context_hygiene["invocation_mode"] == "implicit"
+    assert context_hygiene["relationship_ids"] == []
+    assert "CLEANUP PENDING" in context_hygiene["completion_condition"]
+    assert "CLEANUP APPLIED" in context_hygiene["return_packet"]
+    assert "CLEANUP PENDING" in capability["completion_return"]
+    inbound = {
+        (names[relationship["caller_skill_id"]], relationship["verb"])
+        for relationship in contract["relationships"]
+        if relationship["target_skill_id"] == context_hygiene["skill_id"]
+    }
+    assert inbound == {("skill-router", "Recommend and stop")}
+    assert all(
+        relationship["caller_skill_id"] != context_hygiene["skill_id"]
+        for relationship in contract["relationships"]
+    )
+
+
 def test_writing_for_agents_keeps_a_lean_common_path_and_conditional_branches() -> None:
     skill_dir = CUSTOM / "writing-for-agents"
     skill = (skill_dir / "SKILL.md").read_text(encoding="utf-8")

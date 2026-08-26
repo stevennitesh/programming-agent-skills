@@ -144,7 +144,7 @@ def test_first_epoch_contract_freezes_complete_h1_free_composition() -> None:
             *(capability_owner[skill_id] for skill_id in issue["involved_skill_ids"])
         )
     assert contract["epoch_header"]["composition_epoch_id"] == EPOCH
-    assert contract["epoch_header"]["contract_revision"] == 32
+    assert contract["epoch_header"]["contract_revision"] == 33
     assert contract["epoch_header"]["status"] == "frozen"
     assert contract["epoch_header"]["integration_result"] == {
         "decision": None,
@@ -178,7 +178,7 @@ def test_first_epoch_contract_freezes_complete_h1_free_composition() -> None:
         f"{fixed_point['fixed_point_fingerprint']}"
     )
     assert selected_names == active_names
-    assert len(contract["capabilities"]) == len(selected_names) == 26
+    assert len(contract["capabilities"]) == len(selected_names) == 27
     assert {
         skill["primary_role"] for skill in contract["selected_skills"]
     } == {"leaf", "executable-aggregate", "router"}
@@ -223,15 +223,13 @@ def test_first_epoch_revision_preserves_history_and_derives_current_blueprints()
     }
 
     order = pack_contract.campaign_order(contract)
-    assert len(order) == len(skill_by_id) == 26
+    assert len(order) == len(skill_by_id) == 27
     for skill_id in order:
         projected = pack_contract.contract_blueprint(
             contract,
             skill_id,
         )
-        assert projected["slice"]["slice_id"].startswith(
-                f"{EPOCH}:r32:"
-        )
+        assert projected["slice"]["slice_id"].startswith(f"{EPOCH}:r33:")
         assert projected["slice"]["skill"] == skill_by_id[skill_id]
     assert {
         skill_by_id["SK-014"]["canonical_name"],
@@ -247,7 +245,7 @@ def test_current_contract_preserves_review_and_tdd_topology() -> None:
         skill["canonical_name"]: skill for skill in contract["selected_skills"]
     }
     assert contract["epoch_header"]["status"] == "frozen"
-    assert contract["epoch_header"]["contract_revision"] == 32
+    assert contract["epoch_header"]["contract_revision"] == 33
     assert {
         name: (skill_by_name[name]["skill_id"], skill_by_name[name]["invocation_mode"])
         for name in (

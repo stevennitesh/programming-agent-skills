@@ -147,6 +147,7 @@ flowchart TD
   CodeDesign -. "wide scan" .-> Audit
   Writing["writing-for-agents"] --> SkillMechanics["references/SKILL-MECHANICS.md<br/>skill-only mechanics"]
   Writing -. "user requests behavioral testing" .-> BehaviorEvals["references/BEHAVIOR-EVALS.md<br/>counterfactual wording evaluation"]
+  ContextHygiene["context-hygiene"] --> PersistentContext["persistent coding-agent context<br/>admission, audit, approved cleanup"]
 ```
 
 ## Invocation Map
@@ -181,6 +182,7 @@ Source: `skills/custom/*/agents/openai.yaml`.
 | `triage` | explicit-only |
 | `wayfinder` | explicit-only |
 | `writing-for-agents` | implicitly invocable |
+| `context-hygiene` | implicitly invocable |
 
 ## Runtime Composition
 
@@ -213,6 +215,7 @@ Return.
 | `skill-router` | Recommend and stop | `$high-assurance-review` | The user explicitly requests high-assurance, heavy, or final review of one fixed complete code candidate. Return the route and leave review unstarted. |
 | `skill-router` | Recommend and stop | `$hillclimb` | The user explicitly requests a bounded sustained campaign to improve one frozen measurable runtime, resource, cost, capacity, or product outcome against a settled target. Return the route and leave the campaign unstarted. |
 | `skill-router` | Recommend and stop | `$wizard` | The user explicitly requests one bounded procedure with several settled steps only the current human can perform and a guided repository-native script is more useful than live guidance. Return the route and leave script creation unstarted. |
+| `skill-router` | Recommend and stop | `$context-hygiene` | Persistent coding-agent context needs memory admission, reflection, audit, or explicitly approved pruning. Return the route and leave inspection and mutation unstarted. |
 | `skill-router` | Recommend and stop | `$repo-bootstrap` | The chosen engineering route needs missing, incompatible, or outdated setup. Return Repo Bootstrap as the one route and leave it unstarted. |
 | `wayfinder` | Invoke | `$research` | One selected ticket needs claim-owning source evidence. Pass its question, map use, scope, applicable state, approved note path or no-write mode, and Wayfinder return owner. |
 | `wayfinder` | Invoke | `$prototype` | One selected ticket needs runnable evidence. Pass its question, decision owner, named human judge or objective rule, representative evidence, bounded run, mutation authority, and cleanup or custody. |

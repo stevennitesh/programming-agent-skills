@@ -1,0 +1,7 @@
+interface:
+  display_name: "Context Hygiene"
+  short_description: "Audit and route coding-agent memory"
+  default_prompt: "Use $context-hygiene to audit this persistent coding context, route every claim to its proper owner, and propose only justified cleanup."
+
+policy:
+  allow_implicit_invocation: true

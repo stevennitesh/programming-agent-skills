@@ -221,6 +221,9 @@ unresolved-architecture branch before To Tickets slices a graph. Clear
 repository-native designs continue directly; one bounded consequential
 implementation-architecture question returns to Codebase Design with drafting
 and tracker mutation unstarted.
+The same revision adds Context Hygiene as the owner for persistent coding-agent
+memory admission, audit, and separately approved cleanup. It routes project
+facts and invariants to their current owners without performing those changes.
 It binds the complete fingerprinted pre-discovery fixed point, then freezes the
 tested environment, finite research order, capability
 owners, roles, relationships, exclusions, resolved collisions, acceptance
@@ -878,6 +881,31 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "required_authority_mutation": [
         "One local script inside the requested scope; no procedure execution, dependency installation, Git delivery, publication, or unrelated documentation"
       ]
+    },
+    {
+      "acceptance_scenario_ids": [
+        "PS-028"
+      ],
+      "allowed_contributor_skill_ids": [],
+      "capability_id": "CAP-028",
+      "completion_return": "A routed disposition for every reflection candidate; AUDIT COMPLETE for a fully accounted read-only audit; CLEANUP PENDING for an accepted update with unverified effects; or CLEANUP APPLIED after retained effects are present and expired or removed effects are absent",
+      "disposition": "selected",
+      "entry_conditions": [
+        "Persistent coding-agent context needs admission, reflection, audit, or explicitly approved cleanup"
+      ],
+      "essential": true,
+      "exclusions": [
+        "Live-thread compaction or continuation handoff",
+        "Ordinary repository documentation cleanup",
+        "Creating project authority from an unverified memory claim",
+        "Implementing recommended project guidance, architecture, test, lint, CI, tracker, or history changes"
+      ],
+      "observable_outcome": "Classify every scoped persistent-context claim, route it to its current authority, and apply exact approved memory changes only through the selected store's authorized mechanism",
+      "primary_owner_skill_id": "SK-028",
+      "proof_class": "claim-level source tracing, complete disposition accounting, and active-store effect read-back when cleanup is authorized",
+      "required_authority_mutation": [
+        "Read-only reflection and audit by default; exact explicitly approved persistent-memory changes through the selected store's authorized mechanism only"
+      ]
     }
   ],
   "epoch_header": {
@@ -1011,6 +1039,11 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "description": "Positive entry, nearest-negative exclusion, effect-boundary failure, and completion for wizard: create one repository-native interactive script for a settled multi-stage human-only procedure without running it",
         "expected_owner_skill_id": "SK-027",
         "scenario_id": "PS-027"
+      },
+      {
+        "description": "Positive entry, nearest-negative exclusion, authority or provenance failure, effect-boundary failure, and completion for context-hygiene: classify every scoped persistent-context claim and apply exact approved cleanup only through the selected store's authorized mechanism",
+        "expected_owner_skill_id": "SK-028",
+        "scenario_id": "PS-028"
       }
     ],
     "campaign_proof_graph": [
@@ -1185,10 +1218,14 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       {
         "predecessor_skill_id": "SK-027",
         "successor_skill_id": "SK-025"
+      },
+      {
+        "predecessor_skill_id": "SK-028",
+        "successor_skill_id": "SK-025"
       }
     ],
     "composition_epoch_id": "FCE-20260727-01",
-    "contract_revision": 32,
+    "contract_revision": 33,
     "epoch_lock": null,
     "exclusions": [
       "Per-skill H1 or candidate wording",
@@ -1234,7 +1271,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "github-issue-body:stevennitesh/programming-agent-skills#39#sha256-v1:f8115df444ab80f15fdb49610d96152cdff2edc12a5f03bb50efaba308a840a3",
       "github-issue-body:stevennitesh/programming-agent-skills#50#sha256-v1:21d89976101c1815c6e08f921d6045f97615bfdad8b3a3babc6ed40ca9d463bb",
       "git-commit:2710890325c51a2120656a8d1233d442f6454c1a",
-      "docs/synthesis/skill-context-relationships.md#sha256-v1:f746c8d907a9aa244c5e58e078be38748d12df568492713c3638dd0eaaf6e700"
+      "docs/synthesis/skill-context-relationships.md#sha256-v1:2bae80521ff9ac909c15464c72c2b8f296be65151f904c5bd328ea326747852f"
     ],
     "status": "frozen"
   },
@@ -1271,7 +1308,8 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "SK-023",
         "SK-025",
         "SK-026",
-        "SK-027"
+        "SK-027",
+        "SK-028"
       ],
       "issue_id": "ECG-001",
       "negative_control_scenario_id": "PS-003",
@@ -1331,7 +1369,8 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "CAP-023",
         "CAP-025",
         "CAP-026",
-        "CAP-027"
+        "CAP-027",
+        "CAP-028"
       ],
       "involved_skill_ids": [
         "SK-001",
@@ -1359,7 +1398,8 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "SK-023",
         "SK-025",
         "SK-026",
-        "SK-027"
+        "SK-027",
+        "SK-028"
       ],
       "issue_id": "ECG-003",
       "negative_control_scenario_id": "PS-025",
@@ -1507,7 +1547,8 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "SK-023",
         "SK-025",
         "SK-026",
-        "SK-027"
+        "SK-027",
+        "SK-028"
       ],
       "issue_id": "ECG-007",
       "negative_control_scenario_id": "PS-007",
@@ -1549,7 +1590,8 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "SK-023",
         "SK-025",
         "SK-026",
-        "SK-027"
+        "SK-027",
+        "SK-028"
       ],
       "issue_id": "ECG-008",
       "negative_control_scenario_id": "PS-012",
@@ -3567,6 +3609,31 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "target_skill_id": "SK-027",
       "verb": "Recommend and stop",
       "wrong_condition": "The agent can perform the work, one manual action or live guidance is enough, a decision or source fact is unresolved, or the requested result is maintained automation"
+    },
+    {
+      "affected_capability_ids": [
+        "CAP-025",
+        "CAP-028"
+      ],
+      "callee_owned_gates_mutations": [
+        "No context audit, memory mutation, resumption, or completion is authorized by this edge"
+      ],
+      "caller_skill_id": "SK-025",
+      "combined_exit_owner_skill_id": "SK-025",
+      "context_loaded": [],
+      "entry_condition": "Persistent coding-agent context needs memory admission, reflection, audit, or explicitly approved pruning.",
+      "failure_behavior": "Return the recommendation without inspecting or changing memory",
+      "input_packet": "The current situation and visible facts that can change the route",
+      "ordering_impact": "callee-before-caller",
+      "relationship_id": "REL-115",
+      "required_proof_ids": [
+        "PROOF-REL-115"
+      ],
+      "resume_owner_skill_id": "SK-025",
+      "return_packet": "One Context Hygiene recommendation with memory inspection and mutation unstarted",
+      "target_skill_id": "SK-028",
+      "verb": "Recommend and stop",
+      "wrong_condition": "The request is live-thread compaction, handoff, ordinary documentation cleanup, or implementation of a project change"
     }
   ],
   "selected_skills": [
@@ -4477,7 +4544,8 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "REL-070",
         "REL-111",
         "REL-112",
-        "REL-113"
+        "REL-113",
+        "REL-115"
       ],
       "required_input": "The user's route-selection request and any visible facts that can change the route",
       "return_packet": "One exact skill or none with a reason, an applicable precondition when one exists, and downstream work unstarted",
@@ -4552,6 +4620,41 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "required_input": "One bounded settled multi-stage human-only procedure, authoritative instructions, applicable exact targets and destinations, target runtime, and authority to write one local script",
       "return_packet": "The script path, one run command, possible effects, checks run, unresolved manual detail, and execution left unstarted",
       "skill_id": "SK-027"
+    },
+    {
+      "acceptance_scenario_ids": [
+        "PS-028"
+      ],
+      "canonical_name": "context-hygiene",
+      "completion_condition": "Every reflection candidate is routed; every scoped Audit claim has one supported disposition with AUDIT COMPLETE; or every exact approved retained effect is present and every expired or removed effect is absent with CLEANUP APPLIED; an update request with unverified effects returns CLEANUP PENDING",
+      "contract_order": 28,
+      "essential_outcome": "Classify persistent coding-agent context and keep durable memory limited to non-derivable behavioral guidance",
+      "failure_return": "Return the exact provenance, scope, authority, project identity, conflict, or mutation gap without guessing or widening the audit",
+      "invocation_mode": "implicit",
+      "load_budget_class": "conditional-leaf",
+      "negative_exclusion_predicates": [
+        "The request is live-thread compaction or continuation handoff",
+        "The request is ordinary repository documentation cleanup",
+        "The request is to implement a recommended project guidance, architecture, test, lint, CI, tracker, or history change",
+        "No persistent-context candidate or bounded store, namespace, project, or entry set is selected"
+      ],
+      "owned_authority_mutation_surfaces": [
+        "Claim-level classification, disposition reporting, and exact explicitly approved persistent-memory changes through the selected store's authorized update mechanism only"
+      ],
+      "owned_capability_ids": [
+        "CAP-028"
+      ],
+      "positive_entry_predicate": "Persistent coding-agent context needs admission, reflection, audit, or explicitly approved cleanup",
+      "primary_role": "leaf",
+      "prohibited_ownership": [
+        "Project guidance, architecture, tests, lint, CI, trackers, history, or live-thread continuation",
+        "Memory mutation without exact targets and explicit user approval",
+        "Pack integration acceptance, epoch Lock, installation, or Git delivery unless explicitly owned"
+      ],
+      "relationship_ids": [],
+      "required_input": "Candidate context or an exact memory scope, related current authority when applicable, exclusions, and explicit effect authority for cleanup",
+      "return_packet": "A routed disposition for every reflection candidate; an itemized audit with one disposition per claim and AUDIT COMPLETE; CLEANUP PENDING with the exact unverified remainder; or CLEANUP APPLIED after retained effects are present and expired or removed effects are absent",
+      "skill_id": "SK-028"
     }
   ]
 }

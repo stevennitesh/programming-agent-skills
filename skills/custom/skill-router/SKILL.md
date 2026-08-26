@@ -115,6 +115,7 @@ that needs dedicated investigation to `$diagnosing-bugs`.
 | Decide the architecture of one bounded module or interface | `$codebase-design` |
 | Resolve or capture domain terms, invariants, context boundaries, or relationships; assess or record an already-settled ADR candidate | `$domain-modeling` |
 | Create, edit, or audit instructions agents consume | `$writing-for-agents` |
+| Persistent coding-agent context needs memory admission, reflection, audit, or approved pruning | `$context-hygiene` |
 
 `$domain-modeling` and `$codebase-design` are shared disciplines. Route
 unresolved code shape, interfaces, or module ownership to Codebase Design;

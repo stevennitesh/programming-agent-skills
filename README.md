@@ -62,7 +62,7 @@ needs more than one job, but they are not a mandatory pipeline.
 | Shape decisions | `$grilling`, `$grill-with-docs`, `$research`, `$prototype`, `$domain-modeling`, `$wayfinder`, `$to-questionnaire` | Live decisions, evidence, design probes, domain meaning, coupled multi-session decision routes, and drafting a questionnaire for an external stakeholder. |
 | Plan and deliver | `$to-spec`, `$to-tickets`, `$parallel-implement`, `$triage`, `$handoff` | Durable specs, ticket graphs, parallel delivery, incoming tracker work, and continuation in a fresh context. |
 | Review and conflict resolution | `$change-review`, `$high-assurance-review`, `$audit-codebase`, `$resolving-merge-conflicts` | Change review, explicitly heavy review, organized codebase audits, and inspecting or resolving an active Git conflict. |
-| Setup and instructions | `$repo-bootstrap`, `$skill-router`, `$writing-for-agents`, `$wizard` | Repository setup, skill selection, instructions for agents, and guided scripts for procedures only a human can perform. |
+| Setup and instructions | `$repo-bootstrap`, `$skill-router`, `$writing-for-agents`, `$context-hygiene`, `$wizard` | Repository setup, skill selection, instructions for agents, persistent-context hygiene, and guided scripts for procedures only a human can perform. |
 
 The active skills live in [`skills/custom/`](skills/custom). Optional skills
 live in [`skills/extra/`](skills/extra) and are not part of the managed install.
