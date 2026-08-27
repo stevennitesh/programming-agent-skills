@@ -224,6 +224,13 @@ and tracker mutation unstarted.
 The same revision adds Context Hygiene as the owner for persistent coding-agent
 memory admission, audit, and separately approved cleanup. It routes project
 facts and invariants to their current owners without performing those changes.
+Revision 46 materializes machine contract revision 34 by keeping Wizard
+explicit-only while admitting procedures with at least two dependent human-only
+stages when scripting materially reduces secret exposure or configuration
+mistakes. Wizard now exercises safe local helpers against dummy targets and may
+launch the checked script in an isolated visible terminal when the invoking
+request already asks to begin. Manual, credentialed, destructive, and external
+stages remain human-owned and outside agent-visible input and output.
 It binds the complete fingerprinted pre-discovery fixed point, then freezes the
 tested environment, finite research order, capability
 owners, roles, relationships, exclusions, resolved collisions, acceptance
@@ -863,23 +870,23 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       ],
       "allowed_contributor_skill_ids": [],
       "capability_id": "CAP-027",
-      "completion_return": "One secret-free statically verified script, its run command and possible effects, and any unresolved manual detail with execution unstarted",
+      "completion_return": "One secret-free checked script, its run command and possible effects, whether it was launched, and any unresolved manual detail with the human-owned procedure unverified",
       "disposition": "selected",
       "entry_conditions": [
-        "The user explicitly invokes Wizard for one bounded procedure with several settled steps only the current human can perform and a guided script is more useful than live guidance"
+        "The user explicitly invokes Wizard for one bounded procedure with at least two dependent settled stages only the current human can perform, and scripting materially reduces secret exposure or configuration mistakes"
       ],
       "essential": true,
       "exclusions": [
         "Work the agent can perform with current tools and authority",
-        "One manual action, approval, or live walkthrough",
+        "One manual action or approval",
         "Unsettled decisions, missing stakeholder knowledge, or disposable design evidence",
         "Maintained automation or ordinary implementation"
       ],
-      "observable_outcome": "Create one repository-native interactive script for a settled multi-stage human-only procedure, verify it statically, and stop before execution",
+      "observable_outcome": "Create and safely check one repository-native interactive script for a settled procedure with at least two dependent human-only stages, then launch it in an isolated terminal only when the invoking request asks to begin",
       "primary_owner_skill_id": "SK-027",
-      "proof_class": "static artifact and source-to-effect tracing plus structural identity and boundary proof",
+      "proof_class": "syntax, source-to-effect tracing, safe dummy-target helper execution, and launch-isolation boundary proof",
       "required_authority_mutation": [
-        "One local script inside the requested scope; no procedure execution, dependency installation, Git delivery, publication, or unrelated documentation"
+        "One local script inside the requested scope and, when the invoking request asks to begin, one isolated visible terminal launch; no agent participation in the human-owned procedure, dependency installation, Git delivery, publication, or unrelated documentation"
       ]
     },
     {
@@ -1036,7 +1043,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "scenario_id": "PS-026"
       },
       {
-        "description": "Positive entry, nearest-negative exclusion, effect-boundary failure, and completion for wizard: create one repository-native interactive script for a settled multi-stage human-only procedure without running it",
+        "description": "Positive entry, nearest-negative exclusion, local-helper proof failure, launch-isolation failure, and completion for wizard: create and check one repository-native interactive script for a settled procedure with at least two dependent human-only stages, then launch it only when requested",
         "expected_owner_skill_id": "SK-027",
         "scenario_id": "PS-027"
       },
@@ -1225,7 +1232,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       }
     ],
     "composition_epoch_id": "FCE-20260727-01",
-    "contract_revision": 33,
+    "contract_revision": 34,
     "epoch_lock": null,
     "exclusions": [
       "Per-skill H1 or candidate wording",
@@ -3596,7 +3603,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "caller_skill_id": "SK-025",
       "combined_exit_owner_skill_id": "SK-025",
       "context_loaded": [],
-      "entry_condition": "The user explicitly requests one bounded procedure with several settled steps only the current human can perform and a guided repository-native script is more useful than live guidance.",
+      "entry_condition": "The user explicitly requests one bounded procedure with at least two dependent settled stages only the current human can perform, and scripting materially reduces secret exposure or configuration mistakes.",
       "failure_behavior": "Return the recommendation without creating or running the script",
       "input_packet": "The current situation and visible facts that can change the route",
       "ordering_impact": "none",
@@ -3608,7 +3615,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "return_packet": "One Wizard recommendation with script creation and procedure execution unstarted",
       "target_skill_id": "SK-027",
       "verb": "Recommend and stop",
-      "wrong_condition": "The agent can perform the work, one manual action or live guidance is enough, a decision or source fact is unresolved, or the requested result is maintained automation"
+      "wrong_condition": "The agent can perform the work, one manual action is enough, scripting does not materially reduce exposure or mistakes, a decision or source fact is unresolved, or the requested result is maintained automation"
     },
     {
       "affected_capability_ids": [
@@ -4591,34 +4598,34 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "PS-027"
       ],
       "canonical_name": "wizard",
-      "completion_condition": "One secret-free statically verified script covers every admitted human-only stage, the run command fits the target environment, and no manual or external stage has been executed",
+      "completion_condition": "One secret-free checked script covers every admitted human-only stage and the run command fits the target environment; when launch was requested, the isolated terminal is started or the exact separation gap is returned, while the human-owned procedure and external outcome remain unverified",
       "contract_order": 27,
-      "essential_outcome": "Create one repository-native interactive script for a settled multi-stage human-only procedure, verify it statically, and stop before execution",
-      "failure_return": "Return why Wizard is not admitted or the exact instruction, target, authority, destination, runtime, or proof gap without creating or running the procedure",
+      "essential_outcome": "Create and safely check one repository-native interactive script for a settled procedure with at least two dependent human-only stages, then launch it in an isolated visible terminal only when the invoking request asks to begin",
+      "failure_return": "Return why Wizard is not admitted or the exact instruction, target, authority, destination, runtime, proof, or terminal-separation gap without exposing secrets or entering the human-owned procedure",
       "invocation_mode": "explicit-only",
       "load_budget_class": "selected-owner-common",
       "negative_exclusion_predicates": [
         "The agent can perform the work with current tools and authority",
-        "The user needs one manual action, approval, or live guidance rather than a script",
+        "The user needs one manual action or approval rather than a script",
         "A decision, source fact, stakeholder answer, or design verdict remains unresolved",
         "The requested result is ordinary implementation or maintained automation"
       ],
       "owned_authority_mutation_surfaces": [
-        "One local repository-native script inside the requested scope; no execution, installation, Git delivery, publication, or unrelated documentation"
+        "One local repository-native script inside the requested scope and, when the invoking request asks to begin, one isolated visible terminal launch; no agent participation in the human-owned procedure, installation, Git delivery, publication, or unrelated documentation"
       ],
       "owned_capability_ids": [
         "CAP-027"
       ],
-      "positive_entry_predicate": "The user explicitly invokes Wizard for one bounded procedure with several settled steps only the current human can perform and a guided script is more useful than live guidance",
+      "positive_entry_predicate": "The user explicitly invokes Wizard for one bounded procedure with at least two dependent settled stages only the current human can perform, and scripting materially reduces secret exposure or configuration mistakes",
       "primary_role": "leaf",
       "prohibited_ownership": [
-        "Agent-executable setup, ordinary implementation, maintained automation, live guidance, decision discovery, stakeholder questionnaires, or disposable probes",
-        "Procedure execution, real secret handling in agent context, dependency installation, commit, publication, cleanup, or unrelated documentation",
+        "Agent-executable setup, ordinary implementation, maintained automation, one manual action, decision discovery, stakeholder questionnaires, or disposable probes",
+        "Agent participation in the human-owned procedure, real secret handling in agent context, captured wizard input or output, dependency installation, commit, publication, cleanup, or unrelated documentation",
         "Pack integration acceptance, epoch Lock, cleanup, installation, or Git delivery unless explicitly owned"
       ],
       "relationship_ids": [],
-      "required_input": "One bounded settled multi-stage human-only procedure, authoritative instructions, applicable exact targets and destinations, target runtime, and authority to write one local script",
-      "return_packet": "The script path, one run command, possible effects, checks run, unresolved manual detail, and execution left unstarted",
+      "required_input": "One bounded settled procedure with at least two dependent human-only stages, authoritative instructions, applicable exact targets and destinations, target runtime, authority to write one local script, and launch intent when the human wants to begin immediately",
+      "return_packet": "The script path, one run command, possible effects, checks run, whether it was launched, unresolved manual detail, and the human-owned procedure left unverified",
       "skill_id": "SK-027"
     },
     {

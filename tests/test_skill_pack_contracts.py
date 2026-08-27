@@ -2228,7 +2228,7 @@ def test_hillclimb_owns_only_bounded_comparable_improvement_campaigns() -> None:
     }
 
 
-def test_wizard_is_an_explicit_template_free_human_procedure_leaf() -> None:
+def test_wizard_is_an_explicit_checked_human_procedure_leaf() -> None:
     skill_dir = CUSTOM / "wizard"
     skill = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
     contract = pack_contract.parse_contract(
@@ -2245,6 +2245,12 @@ def test_wizard_is_an_explicit_template_free_human_procedure_leaf() -> None:
     assert not any(path.name == "template.sh" for path in skill_dir.rglob("*"))
     assert wizard["invocation_mode"] == "explicit-only"
     assert wizard["relationship_ids"] == []
+    flat = " ".join(skill.split())
+    assert "at least two dependent" in flat
+    assert "isolated dummy target" in flat
+    assert "separate visible terminal" in flat
+    assert "input and output are not attached to the agent" in flat
+    assert "human-owned procedure and its external outcome remain unverified" in flat
     inbound = {
         (relationship["caller_skill_id"], relationship["verb"])
         for relationship in contract["relationships"]

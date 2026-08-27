@@ -1,6 +1,6 @@
 interface:
   display_name: "Wizard"
   short_description: "Build a guided human-only procedure"
-  default_prompt: "Use $wizard to create one repository-native interactive script for this bounded human-only procedure, verify it statically, and stop before running it."
+  default_prompt: "Use $wizard to create and safely check one repository-native interactive script for this bounded human-only procedure, then launch it in an isolated terminal so I can complete it."
 policy:
   allow_implicit_invocation: false

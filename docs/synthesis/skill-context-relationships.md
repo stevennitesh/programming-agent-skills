@@ -214,7 +214,7 @@ Return.
 | `to-questionnaire` | Recommend and stop | `$grilling` | The current user owns the unresolved conversation-only decision. |
 | `skill-router` | Recommend and stop | `$high-assurance-review` | The user explicitly requests high-assurance, heavy, or final review of one fixed complete code candidate. Return the route and leave review unstarted. |
 | `skill-router` | Recommend and stop | `$hillclimb` | The user explicitly requests a bounded sustained campaign to improve one frozen measurable runtime, resource, cost, capacity, or product outcome against a settled target. Return the route and leave the campaign unstarted. |
-| `skill-router` | Recommend and stop | `$wizard` | The user explicitly requests one bounded procedure with several settled steps only the current human can perform and a guided repository-native script is more useful than live guidance. Return the route and leave script creation unstarted. |
+| `skill-router` | Recommend and stop | `$wizard` | The user explicitly requests one bounded procedure with at least two dependent settled stages only the current human can perform, and scripting materially reduces secret exposure or configuration mistakes. Return the route and leave script creation unstarted. |
 | `skill-router` | Recommend and stop | `$context-hygiene` | Persistent coding-agent context needs memory admission, reflection, audit, or explicitly approved pruning. Return the route and leave inspection and mutation unstarted. |
 | `skill-router` | Recommend and stop | `$repo-bootstrap` | The chosen engineering route needs missing, incompatible, or outdated setup. Return Repo Bootstrap as the one route and leave it unstarted. |
 | `wayfinder` | Invoke | `$research` | One selected ticket needs claim-owning source evidence. Pass its question, map use, scope, applicable state, approved note path or no-write mode, and Wayfinder return owner. |
@@ -290,7 +290,7 @@ every terminal result directly to its current caller or the user.
 | `audit-codebase` | Organized HTML repository atlas plus current-source, user-selected subsystem Audit and candidate Analyze; six-class coverage loads detailed owners on observable triggers, records cross-subsystem patterns, and stops before tickets or implementation | `skill-router`, `change-review`, `high-assurance-review`, returned evidence, and humans explicitly invoking repository audits |
 | `simplify-code` | Proved behavior-preserving simplification of one user-selected target or a truthful no-change result | `skill-router`, `audit-codebase`, humans invoking bounded cleanup |
 | `hillclimb` | Bounded comparable experiments that improve one frozen runtime, resource, cost, capacity, or product result against a settled target | `skill-router`, humans explicitly invoking sustained measured improvement |
-| `wizard` | One repository-native interactive script for a settled multi-stage procedure containing actions only the current human can perform | `skill-router`, humans explicitly invoking a guided human-only procedure |
+| `wizard` | One checked repository-native interactive script for a settled procedure with at least two dependent human-only stages, optionally launched in an isolated terminal when requested | `skill-router`, humans explicitly invoking a guided human-only procedure |
 
 ## Supporting Files
 

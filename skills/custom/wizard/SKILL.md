@@ -1,17 +1,19 @@
 ---
 name: wizard
-description: Create one repository-native interactive script for a bounded procedure with several settled steps only the current human can perform. Use only when explicitly selected; exclude agent-executable work, single approvals, live guidance, unresolved decisions, questionnaires, and ordinary implementation.
+description: Create one repository-native interactive script for a bounded, settled procedure with at least two dependent stages only the current human can perform. Use only when explicitly selected and scripting materially reduces secret exposure or configuration mistakes; exclude agent-executable work, single manual actions, unresolved decisions, questionnaires, and ordinary implementation.
 ---
 
 # Wizard
 
 Turn one settled human-only procedure into one guided local script. The script
 may direct browser or physical actions and collect values at runtime. The
-authoring agent never receives real secrets or runs the manual, credentialed,
-destructive, or external-mutation stages.
+authoring agent never receives real secrets or participates in the manual,
+credentialed, destructive, or external-mutation stages.
 
-The invocation authorizes one local script inside the requested scope. It does
-not authorize executing the procedure, installing a runtime or dependency,
+The invocation authorizes one local script inside the requested scope. When the
+same request clearly asks to begin, run, or be walked through the procedure, it
+also authorizes launching the verified script for the human in an isolated
+visible terminal. It does not authorize installing a runtime or dependency,
 committing, publishing, or changing unrelated documentation.
 
 ## 1. Qualify
@@ -20,10 +22,11 @@ Inspect the repository, available tools, and requested result. Separate work the
 agent can perform with current authority from steps that require the human's
 identity, credentials, judgment, physical access, or dashboard session.
 
-Use Wizard only when several settled human-only steps form a procedure and a
-script is more useful than live guidance. Otherwise perform authorized work in
-its current owner or return the one manual action directly. Return an unresolved
-decision or missing fact to its owner instead of encoding a guess.
+Use Wizard only when at least two dependent settled stages require the current
+human and scripting materially reduces secret exposure, copy-paste mistakes,
+target-selection mistakes, or ordering mistakes. Otherwise perform authorized
+work in its current owner or return the one manual action directly. Return an
+unresolved decision or missing fact to its owner instead of encoding a guess.
 
 ## 2. Map
 
@@ -75,16 +78,26 @@ Run the nearest syntax or lint check for the chosen runtime. Statically trace
 every declared input to its destination and every effect to its target,
 applicable confirmation, read-back, and applicable recovery path.
 
-Do not execute browser, credential, destructive, or external-mutation stages.
-State what syntax and static tracing prove and what the operator's first run
-must still verify.
+When safe, execute non-credentialed local helpers against an isolated dummy
+target under the repository's ignored scratch convention. Exercise the
+creation, update, cancellation, and read-back paths the script actually
+supports. Do not open a browser, request credentials, alter real configuration,
+or perform destructive or durable external mutation during these checks.
+
+State what the checks prove and what the operator's first run must still
+verify. If the invoking request already asks to begin, launch the checked script
+in a separate visible terminal whose input and output are not attached to the
+agent. Do not ask for another confirmation merely to open it. Pass no secret in
+its arguments or environment, and do not read, poll, or capture the terminal.
+If that separation is unavailable, return the run command instead.
 
 ## 5. Return
 
 Return the script path, one run command, the effects it may perform, the checks
-run, and any unresolved manual detail. Stop before execution, installation,
-commit, publication, cleanup, or another workflow.
+run, whether it was launched, and any unresolved manual detail. Stop before
+installation, commit, publication, unrelated cleanup, or another workflow.
 
-Complete when one secret-free, statically verified script covers every admitted
-human-only stage, the run command fits the target environment, and no manual or
-external stage has been executed.
+Complete when one secret-free, checked script covers every admitted human-only
+stage and the run command fits the target environment. When launch was
+requested, start the isolated terminal or return the exact separation gap. The
+human-owned procedure and its external outcome remain unverified.
