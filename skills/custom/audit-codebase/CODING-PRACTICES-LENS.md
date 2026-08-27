@@ -30,11 +30,12 @@ diagnostic clarity. Different layers may deliberately prove different risks.
 
 ## Admission Boundary
 
-Function length, nesting, magic values, comments, mutation, broad types, test
-count, and suite time are discovery hints. Admit an item only when direct
-evidence ties the practice to ambiguity, invalid states, duplicated expression,
-change spread, proof friction, or avoidable maintenance cost in one supported
-scenario.
+Function length, nesting, cyclomatic complexity, magic values, comments,
+mutation, broad types, test count, and suite time are discovery hints. Do not
+split cohesive logic or scatter an invariant merely to lower a metric. Admit an
+item only when direct evidence ties the practice to ambiguity, invalid states,
+duplicated expression, change spread, proof friction, or avoidable maintenance
+cost in one supported scenario.
 
 Reliability owns validation correctness, failure semantics, concurrency
 invariants, and behavioral coverage. Performance owns measured runtime and
