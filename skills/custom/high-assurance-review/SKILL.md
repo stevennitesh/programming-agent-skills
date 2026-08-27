@@ -58,10 +58,24 @@ The accepted request is always required. Treat an issue or specification as
 required when the caller requests conformance to it or repository and candidate
 evidence make it governing; otherwise record why it is optional.
 
+Resolve the accepted request and governing sources before dispatch; apply only
+their accepted scope. Treat superseded behavior and historical procedural
+material as context. Retain current repository instructions as governing
+context and candidate-bound proof as evidence. Cover failure, recovery,
+compatibility, or security behavior only when accepted requirements or the
+candidate activate it.
+
+When changed behavior affects a handoff across owners or stages, identify each
+material handoff that can change accepted caller-visible behavior. Name its
+producer, actual returned or persisted representation, lowest real
+consuming caller, and terminal effect. Omit unchanged and
+non-decision-bearing internals. An untraced material handoff makes coverage
+`incomplete`.
+
 Build one factual brief shared by both reviewers. Include the fixed candidate,
-governing sources, relevant repository context, existing proof, and material
-evidence limits. Withhold coordinator hypotheses, peer output, and terminal
-cues.
+governing sources, affected handoffs, relevant repository context, existing
+proof, and material evidence limits. Withhold coordinator hypotheses, peer
+output, and terminal cues.
 
 Coverage must account for:
 
@@ -94,6 +108,22 @@ Give the lanes different primary emphasis without creating blind spots:
    causal ownership, data shape, simplicity, maintainability, and proof
    proportional to the claim.
 
+When accepted behavior changes how an intermediate result requests additional
+work or how a later invocation consumes an earlier result, both reviewers
+independently trace a supported real-caller journey through the changed
+continuation to its terminal effect. Cover each materially
+distinct accepted request profile or terminal outcome, including a declared
+exhaustion or capacity bound when it changes that effect. Both lanes may inspect
+the same candidate-bound artifact; do not rerun the workflow for symmetry.
+
+For each affected handoff, each reviewer challenges whether the proof could
+distinguish a consumer that uses the actual result from one that ignores it,
+uses stale identity, or ends the transition early, as applicable. Give the
+handoff coverage only when the lowest ordinary consuming caller receives the
+actual returned or persisted representation and exposes the expected terminal
+effect. Direct-helper or producer-only proof does not cover the handoff unless
+accepted behavior exposes that helper directly.
+
 Both trace actual execution paths, distinguish reachable failures from
 hypotheticals, inspect the canonical owner, challenge unnecessary branches or
 dual paths, and prefer real-artifact evidence over summaries or proxies.
@@ -112,6 +142,12 @@ Disposition every reviewer finding candidate under the Finding Contract.
 Verify every candidate that could be admitted against the pinned sources,
 candidate, callers, and contrary evidence. Reviewer agreement raises review
 priority but never establishes truth.
+
+Apply the Finding Contract's Reach and Impact gates through a supported real
+caller before admitting a behavioral or contract finding or closing coverage
+as complete. A direct-helper invocation is diagnostic unless accepted behavior
+exposes that helper directly. Return `incomplete` when required reach remains
+uncertain.
 
 Deduplicate overlaps. Resolve disagreements from evidence, not votes. Reject
 speculation, optional hardening, unrelated cleanup, and preference-only
