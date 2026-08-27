@@ -75,9 +75,13 @@ contains only what a fresh implementer must not have to invent:
 - true blockers, or `none`;
 - material compatibility, migration, trust, authority, or recovery constraints.
 
-When acceptance depends on a caller-visible sequence across tickets, assign one
-ticket that consumes a required predecessor outcome to prove the sequence.
-State the sequence and consumed outcome in that ticket.
+When the graph splits an introduced or materially changed caller-visible path
+across tickets, designate the earliest dependency-complete consuming ticket as
+a vertical behavior slice through one representative ordinary path. Its
+acceptance names the sequence and actual predecessor result and proves that
+result through the lowest ordinary caller. When another ticket owns the
+predecessor result, make that ticket a blocker. A named risk may also give this
+slice the tracer-bullet learning role; otherwise do not call it a tracer bullet.
 
 Add stable repository or proof pointers only when they materially narrow the
 work or preserve a settled decision. Do not freeze live file lists, commands,

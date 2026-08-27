@@ -1,15 +1,17 @@
 # To Tickets Deploy Synthesis
 
-> Current runtime reconciliation (2026-08-23): Pack Composition Contract
+> Current runtime reconciliation (2026-08-27): Pack Composition Contract
 > revision 45 and machine contract revision 33 replace the earlier runtime
 > projection below with one proportional graph-publication job. To Tickets now
 > admits settled multi-slice source, returns one bounded item unchanged, routes
 > one bounded unresolved implementation-architecture choice before Slice,
-> creates the fewest cohesive tickets, obtains graph approval, and publishes
-> through verified external mutation without owning design, proof ledgers,
-> human frontiers, claim transfer, or delivery. Canonical
-> `skills/custom/to-tickets/` is current runtime authority at campaign-tree SHA-256
-> `3a5a68d67df2ec8930561ad9a5969fcf7b83e9cd539eaaada71b6b724b48c0a2`.
+> creates the fewest cohesive tickets, anchors a new multi-stage path in one
+> real-caller behavior slice, assigns actual predecessor-result consumption and
+> its blocker, obtains graph approval, and publishes through verified external
+> mutation without owning design, proof ledgers, human frontiers, claim
+> transfer, or delivery. Canonical `skills/custom/to-tickets/` is current runtime
+> authority at campaign-tree SHA-256
+> `169ef4bc1007aaa404d4710e196bb69918c456f851bbe291b0188eb5c1bc9815`.
 > The 2026-07-25 campaign below remains historical evidence and does not own
 > current runtime behavior. No installed sync or fresh wording-efficacy proof
 > is claimed.

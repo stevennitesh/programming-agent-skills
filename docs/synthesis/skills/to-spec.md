@@ -1,14 +1,16 @@
 # To Spec Deploy Synthesis
 
-> Current runtime reconciliation (2026-08-20): Pack Composition Contract
+> Current runtime reconciliation (2026-08-27): Pack Composition Contract
 > revision 31 and machine contract revision 19 replace the earlier runtime
 > projection below with one proportional synthesis-and-publication job. To Spec
 > now admits settled source, skips a parent for one bounded implementation,
 > removes architecture delegation and draft ceremony, publishes at most one
-> verified durable parent, then recommends To Tickets or Implement without
-> starting either. Canonical `skills/custom/to-spec/` is current runtime
+> verified durable parent, and preserves representative multi-stage journeys,
+> materially distinct terminal outcomes, request-profile effects, and
+> contract-owned identity authority before recommending To Tickets or Implement
+> without starting either. Canonical `skills/custom/to-spec/` is current runtime
 > authority at campaign-tree SHA-256
-> `4404ecfbdf7eb29ae15fd7af4fcee7faca9a16e23d09ae9e37eba4e4767a3f95`.
+> `28ed10cd533571a9e8257bef360b481cb5e33950e6df055c8c8478aaa610e7cd`.
 > The 2026-07-25 campaign and the analysis below remain historical evidence;
 > they do not own current runtime behavior. No installed sync or fresh
 > wording-efficacy proof is claimed.

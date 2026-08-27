@@ -24,6 +24,12 @@ here: reproduce the symptom and trace it to its cause. Return
 such as intermittent, performance, environment-only, production-only, or still
 causally ambiguous behavior.
 
+Treat any consuming path and predecessor result assigned by the governing
+source or selected item as part of its acceptance and proof boundary, even when
+another ticket owns the producer. This proof obligation does not expand the
+item's write scope. If the predecessor result is missing or incorrect, return
+the gap to its owning ticket unless repair is explicitly assigned.
+
 ## 2. Choose The Design
 
 Choose the smallest integrated design that makes the requested behavior clear.
@@ -85,9 +91,31 @@ policy requires them or when they are the cheapest durable protection for the
 behavior—not to satisfy a ritual. Run broader suites only when policy or shared
 impact justifies them.
 
+Reuse proof for unchanged behavior. For each materially distinct accepted
+state, transition, or request profile, run only the smallest proof that
+distinguishes it. Rerun a full inventory only when repository policy, shared
+impact, or materially different inputs or resources require it.
+
 For a bug fix, use proof capable of distinguishing the defect from the repaired
-behavior. When the defect depends on a produced result being used later,
-exercise the lowest ordinary consuming caller that can expose it.
+behavior.
+
+Whenever acceptance crosses a producer-consumer handoff, exercise the lowest
+ordinary consuming caller that can expose an incorrect handoff. Capture the
+producer return or its documented persisted form and pass that actual
+representation to the consumer; a separately reconstructed equivalent does not
+count.
+
+When acceptance names escalation, retry, or additional-evidence behavior, prove
+the initial path, each materially distinct request profile, and each terminal
+outcome whose behavior materially differs. Exercise the largest declared
+profile only when it is accepted behavior and changes allocation, batching,
+timeout, exhaustion, or another caller-visible result.
+
+When accepted behavior derives identity or duplicate fields from authoritative
+content, vary one authoritative field and prove that every affected derived
+value changes or remains consistent as specified. When a boundary accepts both
+authoritative content and a supplied derived value, prove that contradictory
+input is rejected before mutation.
 
 When an operation has material partial-effect risk or must recover after
 interruption, exercise that boundary. Any proxy must be capable of exposing the

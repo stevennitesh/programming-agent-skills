@@ -65,9 +65,23 @@ only where behavior materially differs. At an external or trust boundary,
 state the authoritative representation and observable invalid-input behavior;
 do not prescribe redundant internal validation.
 
-When the settled source makes later behavior materially depend on durable
-state, state what must persist, how later behavior uses it, and the observable
-outcome.
+When accepted behavior spans several stages, include one representative
+ordinary caller journey from initiating input to terminal caller-visible
+outcome. For durable state on that journey, state what persists, what produces
+it, which ordinary caller consumes it, how it affects that caller, and the
+observable outcome.
+
+When behavior retries, escalates, or gathers additional evidence, define each
+reachable terminal outcome whose caller-visible behavior materially differs.
+Include continued disagreement or insufficient evidence after the declared
+limit, exhaustion, and failure when those are terminal outcomes. When
+escalation materially changes a request profile, state the initial and
+escalated profiles and their observable limits or effects.
+
+When the accepted contract defines an identity or duplicate field as derived
+from authoritative content, name the authoritative representation and require
+derivation from it. If input can supply both, define the observable outcome for
+contradictory values; do not silently reconcile them.
 
 Paths may support a source claim, but ticket slices, expected writes, concrete
 commands, test ownership, dependency order, and implementation technique stay
