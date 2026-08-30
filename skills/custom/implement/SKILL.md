@@ -99,6 +99,18 @@ impact, or materially different inputs or resources require it.
 For a bug fix, use proof capable of distinguishing the defect from the repaired
 behavior.
 
+When a request combines independently selected items and failure is item-local,
+compare one supported item alone with that item mixed with one missing,
+unsupported, or invalid item capable of exposing interference. The supported
+result must remain equivalent unless the contract defines request-wide failure.
+
+For typed or provenance-bearing output, exercise the materially reachable
+empty, partial, reported, and derived states needed to prove that the declared
+schema and field meanings remain stable. Prove that ordinary consumers do not
+need undeclared coercion or reconstruction. In derived output,
+contribution-level identity, status, and source fields must describe the
+contribution rather than inherit the parent result.
+
 Whenever acceptance crosses a producer-consumer handoff, exercise the lowest
 ordinary consuming caller that can expose an incorrect handoff. Capture the
 producer return or its documented persisted form and pass that actual
@@ -136,6 +148,11 @@ Inspect the complete diff and current repository state. Remove displaced code,
 debugging residue, stale comments, and unnecessary complexity. Update
 documentation only when the public contract, operator workflow, or a durable
 non-obvious decision changed.
+
+When the governing source ties observable shape or meaning to a version or
+content identity, compare the final change with that identity's triggers.
+Advance every required identity and prove that ordinary output or a receipt
+exposes it. Do not advance unrelated identities.
 
 Call the item complete only when the requested behavior works, the relevant
 proof passes, and the final diff contains only intended changes. Otherwise

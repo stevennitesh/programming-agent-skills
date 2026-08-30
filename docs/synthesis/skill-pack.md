@@ -231,6 +231,14 @@ mistakes. Wizard now exercises safe local helpers against dummy targets and may
 launch the checked script in an isolated visible terminal when the invoking
 request already asks to begin. Manual, credentialed, destructive, and external
 stages remain human-owned and outside agent-visible input and output.
+Revision 47 materializes machine contract revision 35 by preserving three
+caller-visible contract details through the specification-to-implementation
+path. To Spec defines item-local failure, stable result shapes and field
+meaning, and governing identity triggers when present. To Tickets places any
+violable parent invariant and its smallest decisive mixed-input case in the
+owning ticket. Implement proves independent-item isolation, stable typed and
+provenance-bearing results, and required identity changes without adding a
+universal matrix, review gate, or broader test requirement.
 It binds the complete fingerprinted pre-discovery fixed point, then freezes the
 tested environment, finite research order, capability
 owners, roles, relationships, exclusions, resolved collisions, acceptance
@@ -498,9 +506,9 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Unbounded foreign procedure loading",
         "Automated semantic acceptance"
       ],
-      "observable_outcome": "Publish one verified durable parent when it earns its cost, or return one bounded item unchanged",
+      "observable_outcome": "Publish one verified durable parent that preserves applicable item-local failure, stable result shapes and field meaning, and governing identity triggers when it earns its cost, or return one bounded item unchanged",
       "primary_owner_skill_id": "SK-011",
-      "proof_class": "proportionate structural, boundary, and consumer proof; fresh behavioral proof only when the user requests it",
+      "proof_class": "proportionate structural, boundary, result-contract, and consumer proof; fresh behavioral proof only when the user requests it",
       "required_authority_mutation": [
         "Settled-source synthesis, proportional parent publication, and read-back"
       ]
@@ -522,9 +530,9 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Unbounded foreign procedure loading",
         "Automated semantic acceptance"
       ],
-      "observable_outcome": "Publish the smallest useful dependency-ordered implementation graph from settled source, or return one bounded item unchanged",
+      "observable_outcome": "Publish the smallest useful dependency-ordered implementation graph from settled source with each violable parent invariant and decisive mixed-input case in its owning ticket, or return one bounded item unchanged",
       "primary_owner_skill_id": "SK-012",
-      "proof_class": "proportionate structural, boundary, and consumer proof; fresh behavioral proof only when the user requests it",
+      "proof_class": "proportionate structural, boundary, parent-invariant, and consumer proof; fresh behavioral proof only when the user requests it",
       "required_authority_mutation": [
         "Ticket boundaries, dependency order, approval, authorized publication, and read-back"
       ]
@@ -779,7 +787,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Unbounded foreign procedure loading",
         "Automated semantic acceptance"
       ],
-      "observable_outcome": "Deliver one caller-selected ready item through focused proof, final read-back, condition-triggered review, and branch-applicable Git or tracker closeout",
+      "observable_outcome": "Deliver one caller-selected ready item through focused proof of applicable item isolation, stable typed and provenance-bearing result meaning, and governing identity changes, final read-back, condition-triggered review, and branch-applicable Git or tracker closeout",
       "primary_owner_skill_id": "SK-022",
       "proof_class": "fresh behavioral proof plus structural identity and boundary proof",
       "required_authority_mutation": [
@@ -968,12 +976,12 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "scenario_id": "PS-010"
       },
       {
-        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for to-spec: Publish one verified durable parent when it earns its cost, or return one bounded item unchanged",
+        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for to-spec: Publish one verified durable parent that preserves applicable item-local failure, result-shape, provenance-field, and identity semantics when it earns its cost, or return one bounded item unchanged",
         "expected_owner_skill_id": "SK-011",
         "scenario_id": "PS-011"
       },
       {
-        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for to-tickets: Publish the smallest useful dependency-ordered implementation graph from settled source, or return one bounded item unchanged",
+        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for to-tickets: Publish the smallest useful dependency-ordered implementation graph with each violable parent invariant in its owning ticket, or return one bounded item unchanged",
         "expected_owner_skill_id": "SK-012",
         "scenario_id": "PS-012"
       },
@@ -1023,7 +1031,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "scenario_id": "PS-021"
       },
       {
-        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for implement: Deliver one caller-selected ready item through focused proof, final read-back, condition-triggered review, and branch-applicable Git or tracker closeout",
+        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for implement: Deliver one caller-selected ready item through focused proof of applicable item isolation, stable result meaning, and governing identities, final read-back, condition-triggered review, and branch-applicable Git or tracker closeout",
         "expected_owner_skill_id": "SK-022",
         "scenario_id": "PS-022"
       },
@@ -1232,7 +1240,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       }
     ],
     "composition_epoch_id": "FCE-20260727-01",
-    "contract_revision": 34,
+    "contract_revision": 35,
     "epoch_lock": null,
     "exclusions": [
       "Per-skill H1 or candidate wording",
@@ -4008,7 +4016,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "PS-011"
       ],
       "canonical_name": "to-spec",
-      "completion_condition": "One proportionate parent preserves every material source commitment, is read back, and starts no downstream work, or the bounded no-parent branch returns unchanged source",
+      "completion_condition": "One proportionate parent preserves every material source commitment, including applicable item-local failure, result-shape and field-meaning semantics, and governing identity triggers, is read back, and starts no downstream work, or the bounded no-parent branch returns unchanged source",
       "contract_order": 11,
       "essential_outcome": "Publish one verified durable parent when it earns its cost, or return one bounded item unchanged",
       "failure_return": "Return the exact source, authority, existing-state, or publication gap",
@@ -4046,7 +4054,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "PS-012"
       ],
       "canonical_name": "to-tickets",
-      "completion_condition": "The skill returns either one bounded item unchanged, one exact observed blocker, or an approved or exact-reuse actionable graph whose bodies, categories, relationships, and readiness were read back, with no delivery started",
+      "completion_condition": "The skill returns either one bounded item unchanged, one exact observed blocker, or an approved or exact-reuse actionable graph whose bodies preserve every ticket-violable parent invariant and decisive mixed-input acceptance case and whose categories, relationships, and readiness were read back, with no delivery started",
       "contract_order": 12,
       "essential_outcome": "Publish the smallest useful dependency-ordered implementation graph from settled source, or return one bounded item unchanged",
       "failure_return": "Return the exact source, setup, existing-state, approval, or publication gap with observed state",
@@ -4424,7 +4432,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "PS-022"
       ],
       "canonical_name": "implement",
-      "completion_condition": "The exact accepted tree has focused proof and final read-back, every triggered review passes, and every branch-applicable Git and tracker closeout is verified",
+      "completion_condition": "The exact accepted tree has focused proof of every applicable item-isolation, result-contract, provenance-field, and governing-identity obligation plus final read-back, every triggered review passes, and every branch-applicable Git and tracker closeout is verified",
       "contract_order": 22,
       "essential_outcome": "Deliver one caller-selected ready item through focused proof, final read-back, condition-triggered review, and branch-applicable Git or tracker closeout",
       "failure_return": "Return the failed gate, retained state, evidence, authority need, and safest recovery",

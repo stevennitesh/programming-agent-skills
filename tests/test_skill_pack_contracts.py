@@ -2466,6 +2466,30 @@ def test_implementation_workflows_trace_acceptance_before_completion() -> None:
     )
 
 
+def test_spec_ticket_implement_path_preserves_result_contract_semantics() -> None:
+    to_spec = " ".join(
+        (CUSTOM / "to-spec/SKILL.md").read_text(encoding="utf-8").split()
+    )
+    to_tickets = " ".join(
+        (CUSTOM / "to-tickets/SKILL.md").read_text(encoding="utf-8").split()
+    )
+    implement = " ".join(
+        (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8").split()
+    )
+
+    assert "item-local or rejects the whole request" in to_spec
+    assert "require those states to remain type-compatible" in to_spec
+    assert "governing version identity" in to_spec
+    assert "A source pointer does not replace ticket acceptance" in to_tickets
+    assert "smallest mixed case that proves their required isolation" in to_tickets
+    assert "compare one supported item alone" in implement
+    assert "declared schema and field meanings remain stable" in implement
+    assert "describe the contribution rather than inherit the parent result" in implement
+    assert "compare the final change with that identity's triggers" in implement
+    assert "Do not advance unrelated identities" in implement
+    assert "matrix" not in f"{to_spec} {to_tickets} {implement}".lower()
+
+
 def test_planning_and_delivery_activate_lean_integrated_quality_contract() -> None:
     to_spec = (CUSTOM / "to-spec/SKILL.md").read_text(encoding="utf-8")
     tickets = (CUSTOM / "to-tickets/SKILL.md").read_text(encoding="utf-8")

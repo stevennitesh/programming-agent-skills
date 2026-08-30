@@ -83,6 +83,14 @@ from authoritative content, name the authoritative representation and require
 derivation from it. If input can supply both, define the observable outcome for
 contradictory values; do not silently reconcile them.
 
+When a caller-visible interface combines independently requested items, state
+whether missing, unsupported, or invalid state is item-local or rejects the
+whole request. When typed or provenance-bearing results have materially
+different empty, partial, reported, or derived states, name the authoritative
+schema, require those states to remain type-compatible, and define what each
+contribution-level identity or status describes. Name any governing version
+identity and the observable changes that advance it.
+
 Paths may support a source claim, but ticket slices, expected writes, concrete
 commands, test ownership, dependency order, and implementation technique stay
 downstream. Include code only when a source-authorized prototype fragment is

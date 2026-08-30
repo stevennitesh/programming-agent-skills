@@ -75,6 +75,12 @@ contains only what a fresh implementer must not have to invent:
 - true blockers, or `none`;
 - material compatibility, migration, trust, authority, or recovery constraints.
 
+A source pointer does not replace ticket acceptance. Inline the trigger and
+observable result of any parent invariant the ticket can violate, including
+item-local failure, stable result shape or field meaning, and governed version
+identity. When a ticket combines independently selected inputs, include the
+smallest mixed case that proves their required isolation.
+
 When the graph splits an introduced or materially changed caller-visible path
 across tickets, designate the earliest dependency-complete consuming ticket as
 a vertical behavior slice through one representative ordinary path. Its

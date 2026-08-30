@@ -5,9 +5,11 @@
 > spine with identity-aware proof reuse and then aligned its source-packet,
 > default-budget, refresh, proof, and repair-routing contracts with To Tickets.
 > The latest pass consumes a canonical proof responsibility and consolidates
-> only proved in-slice test overlap. Prior hashes and evaluations below do not
-> prove current wording. `skills/custom/implement/` is runtime authority. No
-> installed sync is claimed.
+> only proved in-slice test overlap. Current runtime wording also conditionally
+> proves independent-item isolation, stable typed and provenance-bearing result
+> meaning, and governing identity changes. Prior hashes and evaluations below
+> do not prove current wording. `skills/custom/implement/` is runtime authority.
+> No installed sync is claimed.
 
 ## Active Promoted And Installed Decision — 2026-07-24
 
