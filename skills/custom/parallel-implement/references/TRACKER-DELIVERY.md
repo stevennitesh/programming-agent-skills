@@ -16,6 +16,13 @@ the claim back and confirm one current actor before dispatch.
 When landing exposes another ready child, refetch it and apply the same claim
 and read-back rule before dispatch. Leave blocked descendants unclaimed.
 
+When the next frontier requires user authorization or another external
+decision, stop new dispatch. Let healthy workers finish and land unless the
+gate invalidates their scope or continued mutation is unsafe. Then close
+completed children, remove completed lanes, and return a clean integration
+state. Leave the gated child unclaimed until the decision is recorded. Preserve
+dirty or incomplete work instead of treating the pause as cleanup authority.
+
 ## Finish
 
 For each completed child, preserve its category, remove its readiness roles,

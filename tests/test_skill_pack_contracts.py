@@ -3233,7 +3233,7 @@ def test_parallel_implement_owns_recovery_authority_and_outcome_gates() -> None:
     flat = " ".join(parallel.split())
 
     assert "Silence or a missed checkpoint triggers inspection" in flat
-    assert "stop the prior actor, confirm it stopped" in flat
+    assert "stop the prior actor and confirm it stopped" in flat
     assert "Never run two actors on one item" in flat
     assert "Let healthy active workers finish" in flat
     assert "cleanup failure or residual helper-owned state is unfinished" in flat
@@ -3261,18 +3261,27 @@ def test_parallel_implement_has_one_lean_worktree_lifecycle() -> None:
 
     assert "Run only at the top-level root" in parallel
     assert "lane_worktree.py prepare" in flat
+    assert "lane_worktree.py inspect" in flat
     assert "lane_worktree.py cleanup" in flat
-    assert "`temp_root`, `pytest_basetemp`, and `pytest_cache`" in lanes
+    for runtime_path in (
+        "`runtime_root`",
+        "`temp_root`",
+        "`cache_root`",
+        "`pytest_basetemp`",
+        "`pytest_cache`",
+    ):
+        assert runtime_path in lanes
     assert "quick pytest collection" not in flat
     assert "Start the worker only when" in flat and "`ok: true`" in flat
     assert "--oldest" not in lanes and "--completed" in lanes
     assert "Dirty, unintegrated, active, or uncertain work stays in place" in flat
     assert "exact retry after Git removed the worktree" in flat
     assert 'operations.add_parser("prepare")' in lane_script
+    assert 'operations.add_parser("inspect")' in lane_script
     assert 'operations.add_parser("cleanup")' in lane_script
     assert '"--collect-only"' not in lane_script and '"--oldest"' not in lane_script
     assert "lane_state(root, worktree.name)" in lane_script
-    assert "shutil.rmtree(state)" in lane_script and "--global" not in lane_script
+    assert "receipt_authorized" in lane_script and "--global" not in lane_script
     assert not (skill_dir / "assets/luna_max.toml").exists()
     expected_lane_root = str(Path(ROOT.anchor) / "pi" / "pas-001" / "wt")
     assert expected_lane_root.replace("\\", "\\\\") in codex_config
@@ -3305,6 +3314,8 @@ def test_parallel_implement_exposes_live_frontier_and_closeout_contracts() -> No
     assert "confirm one current actor before dispatch" in tracker_delivery_flat
     assert "Leave blocked descendants unclaimed" in tracker_delivery_flat
     assert "only when every child is implemented" in tracker_delivery_flat
+    assert "requires user authorization or another external decision" in tracker_delivery_flat
+    assert "Leave the gated child unclaimed" in tracker_delivery_flat
     assert "a dependent item starts only after its predecessors land" in flat
     assert "Choose isolation for the current ready frontier, not the campaign" in flat
     assert "Do not create a lane because later descendants may run concurrently" in flat
@@ -3317,6 +3328,14 @@ def test_parallel_implement_exposes_live_frontier_and_closeout_contracts() -> No
     assert "Verify and land accepted worker commits one at a time" in flat
     assert "Complete when every accepted item is landed" in flat
     assert "every named completed lane is safely removed" in flat
+    assert "Pin every writable Git repository independently" in flat
+    assert "at most one writable Git repository" in flat
+    assert "for cohesive reslicing or separate serial implementation" in flat
+    assert "final state of each assigned domain" in flat
+    assert "reads back each named landing or rollback" in flat
+    assert "full helper-returned lane packet" in flat
+    assert "exact proof commands" in flat
+    assert "no known session remains attached to its lane" in flat
     assert re.search(
         r"(?m)^\| One explicit fixed delivery set has at least two accepted "
         r"implementation items and a non-empty ready frontier "

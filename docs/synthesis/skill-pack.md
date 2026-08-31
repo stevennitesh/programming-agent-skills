@@ -253,6 +253,14 @@ tested environment, finite research order, capability
 owners, roles, relationships, exclusions, resolved collisions, acceptance
 scenarios, load policy, and acyclic campaign proof graph. It contains no H1,
 candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
+Revision 49 materializes machine contract revision 37 by making Parallel
+Implement's existing isolation control mechanically inspectable. Each
+concurrent lane now has one versioned external runtime contract, bounded write
+probes, explicit cache-path evidence, read-only inspection, and
+receipt-authorized Windows cleanup retry. The orchestrator also accounts for
+every mutation domain and drains completed work before a human gate. It adds no
+campaign ledger, shared cache, parent-body scanner, review mandate, or ordinary
+implementation burden.
 
 <!-- pack-composition-contract:v1:begin -->
 ```json
@@ -825,11 +833,11 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "Unbounded foreign procedure loading",
         "Automated semantic acceptance"
       ],
-      "observable_outcome": "Deliver one fixed set with isolated concurrent workers where ownership and write effects are independent",
+      "observable_outcome": "Deliver one fixed set with inspectable isolated lanes and concurrent workers where ownership and write effects are independent",
       "primary_owner_skill_id": "SK-023",
-      "proof_class": "fresh behavioral proof plus structural identity and boundary proof",
+      "proof_class": "focused helper behavior plus structural identity and concurrent-boundary proof",
       "required_authority_mutation": [
-        "Wave qualification, isolated lanes, serial integration, focused proof, conditional review, and child-first closeout"
+        "Frontier qualification, versioned isolated lanes, mutation-domain custody, serial integration, focused proof, conditional review, and child-first closeout"
       ]
     },
     {
@@ -1045,7 +1053,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "scenario_id": "PS-022"
       },
       {
-        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for parallel-implement: Deliver one fixed set with isolated concurrent workers where ownership and write effects are independent",
+        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for parallel-implement: Deliver one fixed set with inspectable isolated lanes and concurrent workers where ownership and write effects are independent",
         "expected_owner_skill_id": "SK-023",
         "scenario_id": "PS-023"
       },
@@ -1249,7 +1257,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       }
     ],
     "composition_epoch_id": "FCE-20260727-01",
-    "contract_revision": 36,
+    "contract_revision": 37,
     "epoch_lock": null,
     "exclusions": [
       "Per-skill H1 or candidate wording",
@@ -4482,7 +4490,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
       "canonical_name": "parallel-implement",
       "completion_condition": "Every item is integrated, material interactions are proved, tracker closeout is read back when applicable, and every named completed lane is safely removed with helper read-back",
       "contract_order": 23,
-      "essential_outcome": "Deliver one fixed set with isolated concurrent workers where ownership and write effects are independent",
+      "essential_outcome": "Deliver one fixed set with inspectable isolated lanes and concurrent workers where ownership and write effects are independent",
       "failure_return": "Preserve work and return the integration HEAD plus each unfinished item's actor, lane, base, commit or dirty state, landing state, blocker, and next safe action",
       "invocation_mode": "explicit-only",
       "load_budget_class": "conditional-aggregate",
@@ -4492,7 +4500,7 @@ candidate wording, efficacy judgment, pack acceptance, or cleanup authority.
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
       "owned_authority_mutation_surfaces": [
-        "Concurrency admission, isolated lanes, worker replacement safety, serial integration, focused proof, and conditional tracker state transitions and closeout"
+        "Concurrency admission, versioned isolated lanes, worker replacement safety, mutation-domain custody, serial integration, focused proof, and conditional tracker state transitions and closeout"
       ],
       "owned_capability_ids": [
         "CAP-023"

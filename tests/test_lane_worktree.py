@@ -82,11 +82,174 @@ def test_prepare_creates_exact_base_and_isolated_temp_environment(
     worktree = Path(str(prepared["worktree"]))
     assert git(worktree, "rev-parse", "HEAD") == base
     assert git(worktree, "status", "--porcelain") == ""
-    for field in ("temp_root", "pytest_basetemp", "pytest_cache"):
+    assert prepared["schema_version"] == 1
+    assert prepared["repository"] == str(repo.resolve())
+    for field in (
+        "runtime_root",
+        "temp_root",
+        "cache_root",
+        "pytest_basetemp",
+        "pytest_cache",
+    ):
         path = Path(str(prepared[field]))
         assert path.is_dir()
         assert not path.is_relative_to(worktree)
         assert path.is_relative_to(lane_root / ".state" / "ticket-67")
+    manifest = Path(str(prepared["lane_manifest"]))
+    assert json.loads(manifest.read_text(encoding="utf-8")) == {
+        key: value for key, value in prepared.items() if key not in {"ok", "reused"}
+    }
+    assert Path(str(prepared["cleanup_receipt"])) == (
+        lane_root / ".state" / "ticket-67.cleanup.json"
+    ).resolve()
+
+
+def test_prepare_rolls_back_when_a_runtime_probe_fails(
+    tmp_path: Path, monkeypatch,
+) -> None:
+    repo, base = repository(tmp_path)
+    lane_root = tmp_path / "lanes"
+    namespace = runpy.run_path(str(HELPER))
+    prepare_lane = namespace["prepare"]
+    original_probe = prepare_lane.__globals__["probe_directory"]
+
+    def fail_cache(path: Path) -> None:
+        if Path(path).name == "cache":
+            raise OSError("cache probe denied")
+        original_probe(path)
+
+    monkeypatch.setitem(prepare_lane.__globals__, "probe_directory", fail_cache)
+    with pytest.raises(namespace["LaneError"], match="cache probe denied"):
+        prepare_lane(
+            Namespace(repo=str(repo), root=str(lane_root), base=base, name="probe")
+        )
+    assert not (lane_root / "probe").exists()
+    assert not (lane_root / ".state" / "probe").exists()
+
+
+def test_inspect_reports_lane_runtime_and_checkout_cache_violations(
+    tmp_path: Path,
+) -> None:
+    repo, base = repository(tmp_path)
+    lane_root = tmp_path / "lanes"
+    result, prepared = prepare(repo, lane_root, base, "inspectable")
+    assert result.returncode == 0, prepared
+    worktree = Path(str(prepared["worktree"]))
+
+    result, inspected = helper(
+        "inspect",
+        "--repo",
+        str(repo),
+        "--root",
+        str(lane_root),
+        "--lane",
+        str(worktree),
+    )
+    assert result.returncode == 0, inspected
+    assert inspected["manifest"] == {
+        "valid": True,
+        "schema_version": 1,
+        "error": None,
+    }
+    assert inspected["registered"] is True
+    assert inspected["clean"] is True
+    assert inspected["integrated"] is True
+    assert inspected["checkout_cache_violations"] == []
+    assert inspected["mechanical"] == {
+        "resume_or_land_eligible": True,
+        "cleanup_eligible": True,
+        "actor_quiescence_unverified": True,
+    }
+    assert set(inspected["runtime"]) == {
+        "runtime_root",
+        "temp_root",
+        "cache_root",
+        "pytest_basetemp",
+        "pytest_cache",
+    }
+
+    (worktree / ".tmp" / "uv-cache").mkdir(parents=True)
+    (worktree / ".pytest_cache").mkdir()
+    (worktree / ".tmp" / "uv-cache" / "entry").write_text("cache", encoding="utf-8")
+    (worktree / ".pytest_cache" / "entry").write_text("cache", encoding="utf-8")
+    result, inspected = helper(
+        "inspect",
+        "--repo",
+        str(repo),
+        "--root",
+        str(lane_root),
+        "--lane",
+        str(worktree),
+    )
+    assert result.returncode == 0, inspected
+    assert inspected["clean"] is False
+    assert inspected["mechanical"]["resume_or_land_eligible"] is False
+    assert inspected["checkout_cache_violations"] == [
+        str(worktree / ".tmp" / "uv-cache"),
+        str(worktree / ".pytest_cache"),
+    ]
+
+
+def test_inspect_never_marks_uncertain_residual_ancestry_cleanup_eligible(
+    tmp_path: Path, monkeypatch,
+) -> None:
+    repo, base = repository(tmp_path)
+    lane_root = tmp_path / "lanes"
+    result, prepared = prepare(repo, lane_root, base, "residual")
+    assert result.returncode == 0, prepared
+    worktree = Path(str(prepared["worktree"]))
+    namespace = runpy.run_path(str(HELPER))
+    write_receipt = namespace["write_cleanup_receipt"]
+    write_receipt(repo.resolve(), lane_root.resolve(), worktree, base, base)
+    git(repo, "worktree", "remove", str(worktree))
+
+    inspect_lane = namespace["inspect_lane"]
+    original_git = inspect_lane.__globals__["git"]
+
+    def uncertain_ancestry(checkout, *args, check=True):
+        if args[:2] == ("merge-base", "--is-ancestor"):
+            return subprocess.CompletedProcess(args, 2, "", "ancestry unavailable")
+        return original_git(checkout, *args, check=check)
+
+    monkeypatch.setitem(inspect_lane.__globals__, "git", uncertain_ancestry)
+    code, inspected = inspect_lane(
+        Namespace(repo=str(repo), root=str(lane_root), lane=str(worktree))
+    )
+    assert code == 0
+    assert inspected["integrated"] is None
+    assert inspected["mechanical"]["cleanup_eligible"] is False
+
+
+def test_inspect_rejects_a_redirected_runtime_path(
+    tmp_path: Path, monkeypatch,
+) -> None:
+    repo, base = repository(tmp_path)
+    lane_root = tmp_path / "lanes"
+    result, prepared = prepare(repo, lane_root, base, "redirected")
+    assert result.returncode == 0, prepared
+    worktree = Path(str(prepared["worktree"]))
+    cache_root = Path(str(prepared["cache_root"]))
+    namespace = runpy.run_path(str(HELPER))
+    inspect_lane = namespace["inspect_lane"]
+    original_reparse = inspect_lane.__globals__["is_reparse_point"]
+
+    def redirect_cache(path: Path) -> bool:
+        return Path(path) == cache_root or original_reparse(path)
+
+    monkeypatch.setitem(
+        inspect_lane.__globals__, "is_reparse_point", redirect_cache
+    )
+    code, inspected = inspect_lane(
+        Namespace(repo=str(repo), root=str(lane_root), lane=str(worktree))
+    )
+    assert code == 0
+    assert inspected["runtime"]["cache_root"] == {
+        "path": str(cache_root),
+        "exists": True,
+        "directory": False,
+        "error": "runtime path is a reparse point",
+    }
+    assert inspected["mechanical"]["resume_or_land_eligible"] is False
 
 
 def test_prepare_reuses_only_the_clean_expected_base(tmp_path: Path) -> None:
@@ -468,8 +631,13 @@ def test_cleanup_reports_partial_failure_and_continues_named_lanes(
     assert packet["preserved"] == [
         {
             "worktree": str(worktrees[0]),
-            "reason": "remove failed",
-            "error": "worktree locked",
+                "reason": "remove failed",
+                "phase": "worktree removal",
+                "path": str(worktrees[0]),
+                "error": "worktree locked",
+                "errno": None,
+                "winerror": None,
+                "retry_count": 0,
             "lane_state": "preserved",
             "worktree_state": "registered",
             "path_state": "present",
@@ -557,8 +725,13 @@ def test_cleanup_reports_unregistered_residual_path_after_remove_error(
     assert cleaned["preserved"] == [
         {
             "worktree": str(worktree),
-            "reason": "remove failed",
-            "error": "late filesystem error",
+                "reason": "remove failed",
+                "phase": "worktree removal",
+                "path": str(worktree),
+                "error": "late filesystem error",
+                "errno": None,
+                "winerror": None,
+                "retry_count": 0,
             "lane_state": "preserved",
             "worktree_state": "unregistered",
             "path_state": "present",
@@ -648,11 +821,16 @@ def test_cleanup_preserves_failed_lane_state_and_continues_named_lanes(
     assert packet["preserved"] == [
         {
             "worktree": str(worktrees[0]),
-            "reason": "lane state cleanup failed",
-            "error": "state locked",
+            "reason": "cleanup incomplete",
             "lane_state": "preserved",
             "worktree_state": "unregistered",
             "path_state": "missing",
+            "phase": "lane state cleanup",
+            "path": str(first_state),
+            "error": "state locked",
+            "errno": None,
+            "winerror": None,
+            "retry_count": 0,
         }
     ]
     assert not worktrees[0].exists()
@@ -712,3 +890,48 @@ def test_cleanup_preserves_git_uncertainty(tmp_path: Path, monkeypatch) -> None:
         "error": "cleanup incomplete",
     }
     assert worktree.exists()
+
+
+def test_remove_tree_retries_only_named_windows_errors(
+    tmp_path: Path, monkeypatch,
+) -> None:
+    namespace = runpy.run_path(str(HELPER))
+    remove_tree = namespace["remove_tree"]
+    original_rmtree = remove_tree.__globals__["shutil"].rmtree
+    calls = 0
+    target = tmp_path / "runtime"
+    target.mkdir()
+
+    def transient(path: Path) -> None:
+        nonlocal calls
+        calls += 1
+        if calls == 1:
+            error = OSError(5, "sharing violation")
+            error.winerror = 32
+            raise error
+        original_rmtree(path)
+
+    monkeypatch.setattr(remove_tree.__globals__["shutil"], "rmtree", transient)
+    monkeypatch.setattr(remove_tree.__globals__["time"], "sleep", lambda _delay: None)
+    assert remove_tree(
+        target, phase="runtime cleanup", receipt_authorized=False
+    ) is None
+    assert calls == 2
+
+    target.mkdir()
+
+    def persistent(path: Path) -> None:
+        error = OSError(13, "denied")
+        raise error
+
+    monkeypatch.setattr(remove_tree.__globals__["shutil"], "rmtree", persistent)
+    assert remove_tree(
+        target, phase="runtime cleanup", receipt_authorized=False
+    ) == {
+        "phase": "runtime cleanup",
+        "path": str(target),
+        "error": "[Errno 13] denied",
+        "errno": 13,
+        "winerror": None,
+        "retry_count": 0,
+    }

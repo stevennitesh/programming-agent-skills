@@ -34,6 +34,16 @@ ownership can give the items independent outputs. Otherwise assign one
 exclusive owner to a shared writable resource or run the affected items
 serially.
 
+Pin every writable Git repository independently. Give each worker exclusive
+custody of its mutation domains and at most one writable Git repository. Return
+an item that must change multiple repositories for cohesive reslicing or
+separate serial implementation before admitting the campaign. Keep installed
+packages, user-level destinations, and external systems with the serial root
+after repository work. The worker returns the final state of each assigned
+domain; the root reads back each named landing or rollback before marking the
+item landed. Apply external read-back and partial-effect recovery only when
+their contract triggers.
+
 Run a shared enabling refactor before dependent slices when that preserves the
 real design better than artificial file boundaries. Keep only enough workers
 active for the root to inspect and land their returns promptly.
@@ -50,11 +60,14 @@ admitted from one frontier share that exact base; a dependent item starts only
 after its predecessors land and therefore uses the newer `HEAD`. Root landing
 and direct serial implementation never overlap.
 
-Use one fresh worker per item. Give it the exact absolute worktree path, base,
-scope, allowed writes, acceptance, predecessor outcomes, proof, assigned
-exclusive resources, and prohibited external effects. Point to accessible
-specifications, tickets, research, and predecessor commits instead of copying
-them; include only context the worker cannot recover from those sources.
+Use one fresh worker per item. Give it the exact checkout, base, scope, allowed
+writes, acceptance, predecessor outcomes, proof, assigned exclusive resources,
+and prohibited external effects. For a concurrent lane, also give it the full
+helper-returned lane packet and treat every absolute runtime path in its
+manifest as part of the lane contract. Point to
+accessible specifications, tickets, research, and predecessor commits instead
+of copying them; include only context the worker cannot recover from those
+sources.
 
 ## Dispatch
 
@@ -64,14 +77,18 @@ workers do not stash, switch or rebase shared branches, mutate shared refs,
 change tracker state, land commits, or dispatch successors.
 
 Each worker implements its bounded item, runs focused proof, makes one task
-commit, and returns the commit, changed scope, proof, skips, and blocker if one
-remains. The root verifies the registered lane, base, current status, commit,
-diff, scope, and proof from the checkout. Worker prose is evidence, not state.
+commit, and returns the commit, changed scope, exact proof commands, applicable
+runtime paths, assigned-domain states, skips, and blocker if one remains. For a
+concurrent lane, the root runs the helper's inspection operation. For a serial
+worker, it verifies the integration checkout in place. Reject off-contract
+runtime use when it can change repository bytes, shared state, cleanup, or the
+truth of proof. Worker prose is evidence, not state.
 
 Send an actionable item-local gap back to the same worker while its lane is
 safe. Silence or a missed checkpoint triggers inspection, not another worker.
-Before replacement, stop the prior actor, confirm it stopped, and inspect its
-lane and commit state. Never run two actors on one item.
+Before replacement, stop the prior actor and confirm it stopped. Inspect a
+concurrent lane and commit with the helper; inspect a serial worker's
+integration checkout in place. Never run two actors on one item.
 
 ## Land
 
@@ -130,6 +147,9 @@ For tracker-backed delivery, finish through
 [Tracker Delivery](references/TRACKER-DELIVERY.md). Otherwise create no
 closeout state.
 
+Before final return, each worker stops background processes and command
+sessions it started. Before cleanup, the root confirms the worker is idle and
+no known session remains attached to its lane, then runs helper inspection.
 Remove only named lanes whose commits are integrated and whose checkouts are
 clean. If the run stops early, preserve work and report the integration `HEAD`,
 each unfinished item's actor, lane, base, commit or dirty state, landing state,
