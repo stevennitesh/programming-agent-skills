@@ -27,7 +27,8 @@ def test_value_stock_common_path_is_small_and_ordered() -> None:
     assert "Evidence Pack owns sourced facts" in normalized
     assert "Model Lock owns the calculation inputs" in normalized
     assert "mechanical_status: pass" in skill
-    assert "Use verdict mode by default" in skill
+    assert "Return the strongest report the passed receipts support" in skill
+    assert "If the selected intrinsic path is failed or unsupported" in skill
 
 
 def test_value_stock_uses_only_repository_owned_calculation() -> None:
