@@ -11,7 +11,7 @@ installed by the atomic deployment gate in stock-valuation ticket 05.
 - Canonical branch: `main`
 - Base commit: `8518c5ba52d2b8b64673b7dfe3481a9708b29102`
 - Revalidated cutover tree identity:
-  `sha256:4e1940a781d9f153fefae4e585468da20b71ea64ec1fa4df83ae61f24b770787`
+  `sha256:19d4aa3dbd79a9777be81b817e3246ea373cb925002b0086aea791a00670fc22`
 - Identity algorithm: repository `skill-tree-v1` via
   `scripts.install_skills.skill_tree_hash()`, excluding only generated
   `__pycache__` directories and `.pyc` files.
@@ -33,8 +33,8 @@ Ticket 05 consumes this exact revalidated identity.
 
 ## Proof
 
-- `python -m pytest tests\test_value_stock_calculator_convenience.py -q -p
-  no:cacheprovider --basetemp .tmp\pytest-ticket4`: 14 passed.
+- `python -m pytest tests\test_value_stock_calculator_convenience.py -q`:
+  16 passed.
 - `python -m scripts.validate_skills`: passed.
 - `python -m scripts.install_skills --dry-run`: 27 managed skills, 27
   unchanged, global bootstrap present.
@@ -51,16 +51,22 @@ pre-install installed-package identity under the same algorithm is
 ## Deployment proof
 
 - Canonical and installed `skill-tree-v1` identities after installation:
-  `sha256:4e1940a781d9f153fefae4e585468da20b71ea64ec1fa4df83ae61f24b770787`.
+  `sha256:19d4aa3dbd79a9777be81b817e3246ea373cb925002b0086aea791a00670fc22`.
 - Recoverable pre-cutover backup:
-  `C:/Users/steve/.agents/skill-backups/value-stock-before-ticket5-20260830-191827`.
+  `C:/Users/steve/.agents/skill-backups/value-stock-before-failure-binding-20260830-2130`.
 - Focused three-route contract test: 1 passed.
 - Installed semantic route smoke: all three route shapes and typed-operation
   routing passed.
-- Full canonical repository test suite: 476 passed, 5 skipped.
+- Full canonical repository test suite: 478 passed, 5 skipped.
 - Final skill validation passed. The managed-pack dry run reported 27 managed
   skills unchanged and the global bootstrap present.
-- The stock-valuation runtime gate passed 381 tests, Ruff format and lint, MyPy,
+- The stock-valuation runtime gate passed 398 tests, Ruff format and lint, MyPy,
   and the active CLI probe before this record was closed.
+
+The final remediation replaced the stale `AnalystAssessmentV2` runbook name
+with the active `AnalystAssessment` export, documented exact identity binding
+for failed receipts, added negative contract tests, and reinstalled only the
+canonical `value-stock` tree. The canonical and installed trees were read back
+with the repository-owned hasher and matched the identity above.
 
 No commit or push is part of ticket 05.

@@ -226,6 +226,15 @@ def test_interactive_verdict_stops_before_publication_and_redundant_audit() -> N
     assert "The checklist does not require persistence" in runbook
 
 
+def test_runbook_uses_the_active_unversioned_assessment_name() -> None:
+    runbook = RUNBOOK.read_text(encoding="utf-8")
+
+    assert "`AnalystAssessment`" in runbook
+    assert "AnalystAssessmentV2" not in runbook
+    assert "stockval.valuation_receipt_identity(receipt)" in runbook
+    assert "A failed receipt also requires its exact gap." in runbook
+
+
 def test_runbook_resolves_capability_before_dependent_work_and_preserves_catalog_states() -> None:
     runbook = RUNBOOK.read_text(encoding="utf-8")
     method_position = runbook.index("### Method Disposition")

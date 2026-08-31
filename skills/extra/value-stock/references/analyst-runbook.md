@@ -266,8 +266,12 @@ mechanical tracer into fair value by wording.
 When `market_context_scope` is `required`, render every lane disposition from
 the MarketContextReceipt, including unavailable lanes and exact gaps. Bind the
 business-quality judgment, price-demanded judgment, mechanism reconciliation,
-and supported thesis breakers through `AnalystAssessmentV2`. Do not create new
+and supported thesis breakers through `AnalystAssessment`. Do not create new
 relative arithmetic or explanatory prose while formatting the report.
+
+Bind each top-level receipt with `stockval.valuation_receipt_identity(receipt)`.
+A failed receipt also requires its exact gap. A price-implied gap with no
+attempted receipt carries the gap alone.
 
 If the intervening-event sweep finds a material event, show dated bridges from
 the latest balance sheet through the cutoff, and from cutoff to valuation date
