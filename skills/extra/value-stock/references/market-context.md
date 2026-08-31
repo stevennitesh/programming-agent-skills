@@ -1,162 +1,116 @@
-# Market context procedure
+# Market context
 
-Read this reference when the request uses current price, asks whether a stock
-is cheap or expensive, or explicitly asks for relative valuation. Do not load
-or collect market context for an intrinsic valuation that does not use price.
+Read this reference when the request uses current price, asks whether a stock is
+cheap or expensive, or explicitly requests relative valuation. Do not collect
+market context for price-free intrinsic work.
 
-## Route the request
+## Set scope and capability first
 
-Record one scope before market evidence collection:
+Set `market_context_scope` before collecting outcomes:
 
-| Request shape | Market-context scope | Required result |
-| --- | --- | --- |
-| Price-dependent intrinsic valuation | `required` | Five lane dispositions plus a separate price-implied receipt or exact gap |
-| Explicit relative valuation | `required` | Five lane dispositions using a method-fit metric |
-| Intrinsic valuation without price | `not_requested` | No market-price, peer-multiple, history-multiple, industry, or broad-market collection |
+| Request | Scope |
+| --- | --- |
+| Price-dependent intrinsic valuation | `required` |
+| Explicit relative valuation | `required` |
+| Intrinsic valuation without price | `not_requested` |
 
-An unsupported optional diagnostic does not reduce a supported intrinsic
-result. It does affect status when the user requested it or the analyst declared
-it load-bearing to a conclusion.
+Select one primary relative metric from the target claim, denominator quality,
+business economics, lifecycle, cyclicality, and the active calculator's exact
+capability. A companion metric is useful only when it catches a different
+material failure.
 
-## Select a metric before outcomes
+The metric contract must fix claim identity, period, estimate vintage,
+accounting basis, dilution, currency, calendarization, normalization,
+denominator eligibility, and statistic policy. Read the active repository's
+valuation methodology and method contract before collecting dependent outcome
+evidence. A formula in this reference is not runtime support.
 
-Choose one primary relative metric from the target claim, business economics,
-denominator quality, lifecycle, cycle, and available deterministic capability.
-Add one companion metric only when it catches a different material failure.
-Do not invent a universal multiple, peer rule, history window, estimator,
-outlier cutoff, or threshold.
+If the repository does not support the chosen metric or lane, return the exact
+capability gap. Do not substitute manual premium, discount, percentile, PEG, or
+target-price arithmetic.
 
-A metric is usable only when its contract fixes the numerator and denominator
-claims, period, forecast vintage, earnings or cash-flow basis, dilution basis,
-currency and FX treatment, calendarization, normalizations, denominator
-eligibility, companion fundamentals, and method-fit rationale. A formula named
-in a reference does not establish runtime support. Resolve the exact
-caller-owned operation before collecting its dependent outcome evidence.
+## Freeze selection before outcomes
 
-The proven schema-3 runtime supports positive, claim-compatible as-of forward
-P/E and exposes typed gaps outside that capability. Do not replace a missing
-operation with manual multiple, percentile, premium, discount, PEG, or target
-price arithmetic.
+Choose candidates and policies without seeing their prices, multiples, targets,
+or later results. Preserve two evidence groups:
 
-## Freeze selection before pricing outcomes
+- selection evidence contains identity, business economics, structural era,
+  taxonomy, and benchmark membership;
+- outcome evidence contains price, denominator, estimate, and calculated
+  market observations.
 
-Keep two evidence packages. The selection package contains only candidate
-identity, business economics, structural-era facts, taxonomy, and benchmark
-membership. It must exclude prices, observed multiples, valuation targets,
-hurdles, actions, and later outcomes. The market-context package admits the
-later price and denominator evidence.
+Use the repository's public selection, evidence, freeze, and calculation path.
+Lock the peer policy, history window and structural era, industry membership,
+broad-market benchmark, statistic, weighting, outlier rule, and subject
+exclusion before admitting outcomes. If the environment cannot enforce that
+separation, stop the affected lane with a capability gap.
 
-Use the caller-owned public operations in this order:
+## Require apples-to-apples evidence
 
-1. Seal the outcome-free package with `seal_selection_evidence_pack()`.
-2. Freeze the economic-peer policy with `freeze_peer_selection()`.
-3. Freeze own-history, competitive-peer, industry, and broad-market policy
-   with `freeze_history_selection()`, `freeze_additional_selection()`, and
-   `freeze_benchmark_selection()` as applicable.
-4. Seal outcome evidence with `seal_market_context_evidence_pack()`.
-5. Bind the exact selection locks and market evidence with
-   `freeze_market_context()`.
-6. Send the frozen lock through the public `calculate()` route.
+Give every candidate a final inclusion or exclusion disposition. Admit it only
+when material differences are passed, reproduced through a disclosed
+normalization, or irrelevant to the chosen metric. Check:
 
-If the environment cannot separate selection evidence from outcomes, return a
-`capability_gap`. An analyst attestation cannot make that lane `used`. Never
-change candidates, thresholds, weights, history eras, benchmark membership,
-estimators, or outlier policy after inspecting outcomes.
-
-## Enforce apples-to-apples admission
-
-Every candidate needs one final disposition. Admit it only when each material
-dimension is `pass`, `normalized`, or `not_applicable`:
-
-- security and claim identity;
-- price date, denominator period, estimate vintage, and information cutoff;
-- currency, FX date, quote scale, and units;
-- accounting treatment and any reproducible normalization bridge;
+- security, issuer perimeter, and target claim;
+- price date, denominator period, estimate vintage, and cutoff;
+- currency, FX date, units, and quote scale;
+- accounting, dilution, and normalization;
 - business mix, geography, growth, margins, returns, reinvestment, capital
-  intensity, lifecycle, cyclicality, and risk for the selected metric; and
+  intensity, lifecycle, cyclicality, and risk; and
 - denominator sign, magnitude, missing-data state, and estimator eligibility.
 
 Use price-independent size measures for candidate selection. Exclude the
-subject, its other listings or classes, and duplicate consolidated issuers.
-One eligible peer is a named observation, not a cohort statistic. Missing
-required evidence produces `capability_gap`; a complete observed universe in
-which every candidate fails comparability produces `not_comparable`.
+subject, duplicate listings or classes, and duplicate consolidated issuers.
+One eligible peer is an observation, not a cohort statistic. A fully examined
+universe with no comparable candidates is `not_comparable`; missing evidence is
+a `capability_gap`.
 
-## Disposition exactly five lanes
+## Account for five lanes
 
-The `MarketContextReceipt` must account for these lanes once each:
+The typed result must disposition each lane exactly once:
 
 | Lane | Question |
 | --- | --- |
-| `own_history` | Is the current multiple unusual within a declared comparable era or cycle? |
-| `competitive_peers` | How are direct rivals priced, and what operating differences explain the spread? |
-| `economic_peers` | How are companies with similar multiple drivers priced? |
-| `industry` | Is the classification cohort historically rich or cheap, and is the spread explained? |
-| `broad_market` | Is the issuer or industry premium unusual in the current market regime? |
+| `own_history` | Is the current metric unusual within a comparable era or cycle? |
+| `competitive_peers` | How are direct rivals priced, and what explains the spread? |
+| `economic_peers` | How are firms with similar multiple drivers priced? |
+| `industry` | Is the industry itself rich or cheap against comparable history? |
+| `broad_market` | Is the issuer or industry premium unusual in the current regime? |
 
 Each lane ends as `used`, `not_applicable`, `not_comparable`,
-`capability_gap`, or `mechanical_failure`. Preserve the reason, exact unlock,
-candidate funnel, exclusions, missing and invalid observations, denominator
-coverage, forecast-contributor dispersion, transformed multiple interval, and
-leave-one-out influence supplied by the receipt. Do not hide a failed lane or
-turn it into a neutral comparison.
+`capability_gap`, or `mechanical_failure`. Preserve the candidate funnel,
+exclusions, missing observations, denominator coverage, dispersion,
+instability, influence, reason, and unlock condition supplied by the receipt.
+Do not hide a failed lane or turn it into a neutral result.
 
-The broad-market metric must have the same economic meaning as the issuer
-metric. Do not force broad P/E onto a bank P/TBV, REIT P/FFO, or asset-level
-biotech valuation. An industry aggregate does not establish intrinsic value,
-and a published benchmark containing the target remains
-`subject_influenced`, not independent support.
+The benchmark metric must carry the same economic meaning as the issuer metric.
+Do not compare a bank P/TBV, REIT P/FFO, or asset-level biotech valuation with a
+broad P/E simply because that benchmark is available. Relative cheapness does
+not establish intrinsic value, and the whole comparison group may be expensive.
 
-## Keep price-implied expectations separate
+## Separate price-implied expectations
 
-When current price is in scope and the caller supports it, declare one bounded
-operating variable or coupled path with `freeze_price_implied_expectation()`
-and calculate it through the public gateway. Use only the typed receipt's fixed
-leaves, equation, bounds, solver, residual, roots, completeness proof, and
-solution-set status.
+When current price is in scope and the repository supports the operation,
+solve only the declared operating variable or coupled path through its public
+typed route. Report the bounds, fixed assumptions, residual, solution-set
+status, and completeness limits from the receipt.
 
-Report exhaustive unique, exhaustive multiple, bounded no-solution, and
-non-exhaustive partial results distinctly. A solved path states what would
-satisfy the observed price while other declared inputs stay fixed. It does not
-show that the path is reasonable, likely, unique outside its bounded proof, or
-an intrinsic value.
+A solved path states what satisfies the observed price while other declared
+inputs stay fixed. It does not prove that the path is reasonable, likely, or
+unique outside the tested bounds.
 
-## Reconcile quality and price
+Keep business quality separate from price demanded. If one mechanism supports
+both the intrinsic forecast and relative-premium explanation, use distinct
+evidence and state the causal bridge so it is not double counted.
 
-Keep two typed judgments:
+## Report without new arithmetic
 
-- `business_quality` covers operating durability, returns, competitive
-  position, balance-sheet resilience, cash conversion, reinvestment runway,
-  and counterevidence;
-- `price_demanded` binds the observed-price evidence, price-implied receipt or
-  exact gap, all five lane receipt identities, and the demanded growth, margin,
-  reinvestment, risk, or duration paths.
+Render the five lanes, price-implied result or gap, quality judgment, price
+judgment, instability warnings, and up to three supported thesis breakers from
+the typed receipts and analyst assessment. Full may add the candidate funnel,
+peer exclusions, structural breaks, industry and ex-industry context, premium
+bridge, and leave-one-out sensitivity when they affect the conclusion.
 
-Disposition every quality mechanism as `intrinsic_forecast`,
-`relative_premium_interpretation`, `both_distinct_evidence`, or
-`rejected_double_count`. Using one mechanism in both lenses requires disjoint
-evidence sets and an explicit causal bridge. Quality does not imply an
-attractive price.
-
-Carry no more than three supported thesis breakers. Each must name an
-observable indicator, current evidence, issuer-specific trigger, affected
-Model Lock or MarketContextLock path, expected direction, causal rationale,
-current conclusion, a result or gate that would change the conclusion, new-run
-evidence, and a review or expiry condition. "Reassess" is not a mind-change
-condition.
-
-## Render receipts, not new analysis
-
-Compact and Full use the same validated receipts. Compact shows the five-lane
-pricing table, one primary metric and optional companion, price-implied result
-or exact gap, forecast dispersion and instability, the two quality and price
-judgments, and supported thesis breakers. Full may add the candidate funnel,
-peer tables, inclusion and exclusion reasons, structural breaks, industry and
-ex-industry context, premium bridge and unexplained residual, leave-one-out
-sensitivity, and the falsification ledger when those items carry the
-conclusion.
-
-Render no arithmetic or explanatory claim that is absent from a typed receipt
-or analyst judgment. Never average intrinsic and relative results. Explain a
-disagreement through the recorded forecast, margin, return, reinvestment,
-risk, claim, denominator, accounting, or regime differences.
+Never average intrinsic and relative values. Explain disagreement through the
+recorded differences in forecast, margin, return, reinvestment, risk, claim,
+denominator, accounting, or regime.
