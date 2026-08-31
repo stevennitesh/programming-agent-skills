@@ -4,6 +4,16 @@ Use this contract for the default Compact path. Compact changes the breadth of
 research and reporting, not the minimum evidence needed to call a range fair
 value.
 
+These rendering gates apply to both Compact and Full. Render only fields owned
+by compatible typed receipts or exact typed gaps; do no valuation or comparison
+arithmetic while formatting. A failed or unsupported intrinsic path renders a
+blocked report with no intrinsic value, range, sensitivity band, observed
+discount, attractiveness statement, entry level, or price verdict. A passed
+single case may be labeled only as a conditional estimate; only passed coherent
+causal cases support a fair-value range, and a sensitivity band stays labeled as
+sensitivity. The renderer owns conclusion language and analyst prose cannot
+override the typed intrinsic, price-comparison, or decision state.
+
 ## 1. Snapshot
 
 Lead with:
@@ -15,8 +25,8 @@ Lead with:
   band and an explicit statement that no causal range was established;
 - observed price discount to estimated value using the named formula when
   authoritative price evidence exists;
-- required margin-of-safety hurdle and pass/fail when the user supplied one,
-  otherwise `required hurdle: not supplied; pass/fail: not assessed`;
+- the hurdle decision state authorized under `SKILL.md`, or otherwise
+  `required hurdle: not supplied; pass/fail: not assessed`;
 - confidence, status (`complete`, `partial`, or `blocked`), and any failed gate.
 
 When `market_context_scope` is `required`, also show the separate
@@ -95,9 +105,8 @@ compare a future value directly with today's price as current upside.
 Give up to three supported thesis breakers. For each, render its observable
 indicator, issuer-specific trigger, affected model path, current conclusion,
 and mind-change condition. Omit unsupported prose that only says to reassess.
-If the user requested Full analysis only after a stated attractiveness hurdle,
-say whether that hurdle was met and either continue to Full or stop here. If no
-hurdle was supplied, do not invent one.
+If the user made Full conditional on the authorized hurdle state, render that
+state and either continue to Full or stop.
 
 End with one sentence stating that the work is impersonal research, not
 personalized investment advice.

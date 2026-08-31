@@ -13,7 +13,7 @@ valuation date and information cutoff:
 requested output, currency, and horizon:
 price source, timestamp, and timezone when used:
 depth: Compact | Full
-user-supplied hurdle, if any:
+pre-existing decision hurdle and authority, if any:
 scope exclusions:
 ```
 
@@ -90,14 +90,48 @@ the latest reported period to the first forecast period and disposition current
 guidance that can change the path. Keep growth, margin, reinvestment, returns,
 capital structure, dilution, and terminal economics mutually consistent.
 
-Freeze one Model Lock through the selected repository API. Bind it to the exact
-security, valuation date, cutoff, currency, Evidence Pack, and claim receipt.
-Do not author calculator-derived totals as analyst facts.
+Freeze the selected intrinsic Model Lock through the public repository freezer.
+Bind it to the exact security, dates, currency, sealed Evidence Pack, historical
+and claim receipts, and method-required rate evidence or receipt. Never author
+derived totals or substitute a test helper, fixture-shaped lock, placeholder
+identity, or direct serialized lock for live authoring receipts.
 
-Calculate through the resolved public path. Repair identity, timing, sign,
-unit, definition, or reproduction failures before interpretation. A failed
-receipt cannot support a partial value. Keep causal scenarios separate from
-parameter sensitivities.
+Calculate through the resolved public path. If the intrinsic freezer, calculator,
+or required upstream receipt fails or is unsupported, stop dependent numerical
+work and assemble the blocked report required by `SKILL.md` from the typed gap.
+Do not try dependent optional operations or substitute calculation paths.
+Otherwise repair nonterminal contract failures before interpretation. Keep
+causal scenarios separate from parameter sensitivities.
+
+For FCFF work in the active `stockval` repository, the live gate is:
+
+1. `seal_evidence_pack()` over preserved source artifacts;
+2. `reconcile_historical_fcff()` and `reconcile_security_claims()`;
+3. `build_wacc()` when WACC is issuer-built;
+4. `freeze_fcff_model_lock()` followed by `calculate()`;
+5. `calculate_scenarios()` for causal cases and typed sensitivity functions for fixed-parameter stress tests;
+6. `freeze_price_implied_expectation()` plus `calculate()` for an operating expectation solve, distinct from the conditional rate `calculate_reverse()`;
+7. the typed five-lane market-context path or exact lane dispositions when price
+   is in scope; and
+8. `assemble_valuation_report()` before a supported verdict.
+
+For residual-income work, the proved `residual-income-2` sequence is:
+
+1. `seal_evidence_pack()` over schema-2 point-in-time source artifacts;
+2. `reconcile_common_equity_claims()` through the cutoff;
+3. `reconcile_residual_income_history()` on one matched common-equity/ROE or tangible-common-equity/ROTCE basis;
+4. `freeze_residual_income_model_lock()` followed by shared `calculate()`;
+5. when needed, `calculate_residual_income_scenarios()`, `calculate_residual_income_sensitivity()`, and `calculate_residual_income_price_implied()`;
+6. the typed `as_of_ptbv` five-lane market-context path when required; and
+7. `assemble_valuation_report()` with the passed RI receipts and typed gaps.
+
+Do not project FCFF-specific receipts or WACC semantics onto this direct-common
+equity path. Persistence and audit follow only when separately requested.
+
+The Evidence Ledger is the analyst-facing collection view. Every admitted ledger
+row must map to an Evidence Pack artifact, reference, claim, and admission; a
+derived row must also carry calculator-verifiable input lineage. Unmapped notes or
+browser facts remain research leads, not Model Lock support.
 
 Use optional operations only when requested or conclusion-changing:
 
@@ -135,8 +169,11 @@ Show up to three evidence-backed thesis breakers. Each needs an observable
 indicator, issuer-specific trigger, affected model input, and the conclusion it
 would change.
 
+Use one intrinsic spine in the verdict. Other intrinsic methods are typed
+cross-checks or gaps unless a precommitted reconciliation rule owns their use.
 Return `complete`, `partial`, or `blocked` under `SKILL.md`. Report mechanical
-status separately. Present the verdict and stop.
+status separately. Present the strongest report the passed receipts support and
+stop.
 
 ## 6. Persist only on request
 
@@ -156,3 +193,8 @@ or gapped; method fit and claim bridge are resolved; the calculation
 reproduces; scenarios and sensitivities remain separate; market context has the
 required lane dispositions; no hurdle or target was invented; and precision
 does not exceed the weakest material evidence.
+
+Also confirm that no fixture or placeholder entered the live chain, every
+optional number came from its public typed route, conditional rate solves are
+not operating expectations, and every report field binds to a receipt or exact
+gap.

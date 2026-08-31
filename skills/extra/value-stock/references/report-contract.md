@@ -1,35 +1,23 @@
 # Full Valuation Return Contract
 
-Use this contract only for the Full path. Full adds challenge and corroboration,
-not mandatory filler. Keep four core sections and insert a branch only when it
-can change the method, range, confidence, or a thesis breaker.
+Use this contract only for the Full path. First apply every common rendering gate
+and section contract in [compact-report.md](compact-report.md). Full inherits
+those rules and adds challenge and corroboration; it never replaces or weakens
+them. Keep four core sections and insert a branch only when it can change the
+method, range, confidence, or a thesis breaker.
 
 ## 1. Decision Snapshot
 
-Lead with:
-
-- company, ticker, exchange, exact security, reporting currency, valuation date,
-  information cutoff, and price timestamp when price is used;
-- present causal fair-value range and base value when supported; otherwise a
-  supported base plus a narrowly labeled sensitivity band and an explicit
-  statement that no causal range was established;
-- observed price discount using the named formula when authoritative price
-  evidence exists;
-- the user-supplied margin-of-safety hurdle and pass/fail, or
-  `required hurdle: not supplied; pass/fail: not assessed`;
-- confidence with its main evidence limit; and
-- status (`complete`, `partial`, or `blocked`) plus any failed gate.
-
-When `market_context_scope` is `required`, also state the separate
-business-quality and price-demanded conclusions and any market-context or
-price-implied gap that narrows them.
-
-Do not lead with a generic company description or imply a precise per-share
-claim when the security bridge is unresolved.
+Use the Compact Snapshot unchanged. Add only the main evidence limit behind
+confidence and any market-context or price-implied gap that materially narrows
+the typed business-quality or price-demanded conclusion.
 
 ## 2. Valuation And Price Expectations
 
-For each applicable method, state why it fits, the assumptions carrying the
+Use one selected intrinsic method as the report spine. Treat every other method
+as a typed cross-check, bound, rejection, or capability gap; do not present several
+unreconciled intrinsic outputs as interchangeable fair values. For each applicable
+method, state why it fits, the assumptions carrying the
 value, the reproducible calculation, the enterprise-to-equity or
 asset-to-security bridge, the resulting causal range or supported base plus
 labeled sensitivity band, and its principal limitation. Show a reverse DCF or
@@ -102,14 +90,10 @@ mind-change condition.
 ## 4. Risks, Monitoring, And Decision Boundary
 
 Rank load-bearing risks by valuation effect. For each, name an observable
-indicator and the model input it would change. Conclude with the causal
-fair-value range, or supported base plus labeled sensitivity band, current-price
-timestamp, observed discount, and hurdle status when supported, plus the single
-most important unknown and the evidence that would trigger revaluation. When
-explicitly requested and supported, characterize price only relative to the
-present-value estimate and any causal range or labeled sensitivity band;
-without a supplied rule, do not state formal pass/fail, an entry price, or a
-rule-derived threshold.
+indicator and the model input it would change. Conclude under the Compact gates
+with the strongest supported typed intrinsic and price-comparison state, plus
+the single most important unknown and the evidence that would trigger
+revaluation.
 
 End with one sentence stating that the work is impersonal research, not
 personalized investment advice.

@@ -29,6 +29,25 @@ If the repository does not support the chosen metric or lane, return the exact
 capability gap. Do not substitute manual premium, discount, percentile, PEG, or
 target-price arithmetic.
 
+The current `stockval` market-context engine proves positive, claim-compatible
+as-of forward P/E and `as_of_ptbv`. Every other formula family remains a typed
+capability gap until its complete public path is proved.
+
+For bank `as_of_ptbv`, use synchronized common-equity market capitalization over
+normalized tangible common equity. Choose one book-timing convention per lane:
+`latest_public_as_of` uses the latest TCE available by each price time;
+`same_period_ex_post` is hindsight and must be labeled unavailable to an as-of
+investor at that price date. Do not mix the conventions in one lane. Peer prices
+use one declared session and synchronized measurement policy.
+
+Reconcile every TCE observation from issuer-reported common equity. Preserve the
+treatment of preferred equity, noncontrolling interests, goodwill, identifiable
+intangibles, related tax effects, mortgage-servicing rights, and issuer-specific
+exclusions. An unresolved material definition difference is `not_comparable`.
+Keep reported, issuer-adjusted, and analyst-normalized ROTCE distinct; a
+conclusion-bearing cohort uses one earnings basis, return period, and average-TCE
+definition. ROTCE explains P/TBV economics but does not choose a target multiple.
+
 ## Freeze selection before outcomes
 
 Choose candidates and policies without seeing their prices, multiples, targets,
@@ -65,6 +84,13 @@ One eligible peer is an observation, not a cohort statistic. A fully examined
 universe with no comparable candidates is `not_comparable`; missing evidence is
 a `capability_gap`.
 
+For banks, label candidates as whole-firm competitors, segment competitors, or
+economic peers. A segment competitor cannot enter a whole-firm P/TBV statistic
+unless it independently passes that lane's frozen policy. Industry P/TBV is
+aggregate common market capitalization divided by aggregate normalized TCE, not
+a mean or median of constituent ratios. Broad-market P/E is not comparable with
+bank P/TBV and produces no premium, discount, or forced ratio.
+
 ## Account for five lanes
 
 The typed result must disposition each lane exactly once:
@@ -98,6 +124,12 @@ status, and completeness limits from the receipt.
 A solved path states what satisfies the observed price while other declared
 inputs stay fixed. It does not prove that the path is reasonable, likely, or
 unique outside the tested bounds.
+
+Keep two reverse questions distinct. `calculate_reverse()` conditionally solves
+WACC or terminal growth while the operating forecast stays fixed.
+`freeze_price_implied_expectation()` plus `calculate()` solves the declared
+operating variable or coupled path while the named fixed leaves stay fixed. Never
+rename the conditional rate solution as the market's operating expectation.
 
 Keep business quality separate from price demanded. If one mechanism supports
 both the intrinsic forecast and relative-premium explanation, use distinct

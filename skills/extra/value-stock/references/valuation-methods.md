@@ -399,12 +399,38 @@ The equivalent driver is `(ROE - cost of equity) x beginning book value`.
 Forecast continuing residual income from sustainable ROE, growth, payout, and
 competition; do not assume excess returns persist forever.
 
-The continuing-state calculator exposes the clean-surplus economics implied by
-the admitted terminal book value, ROE, growth, and required return: next-period
-net income, book growth, ending book value, distribution, and payout. It assumes
-zero direct-to-equity adjustment because the terminal input has no separate
-adjustment field; if that assumption is not supportable, do not use the result.
-This arithmetic does not judge whether the resulting payout or economics are
+Use exactly one accounting basis. Pair `reported_common_equity` with common
+earnings and ROE, or pair `tangible_common_equity` with ROTCE-compatible common
+earnings and a reconciled TCE basis. Do not apply ROTCE to reported common book,
+consume an opaque adjusted return, or create an arbitrary adjusted-book basis.
+TCE starts from reported common equity and separately reconciles goodwill,
+identifiable intangibles, related tax effects, and each issuer-specific
+exclusion.
+
+The historical receipt must close clean surplus through common income,
+dividends, gross repurchases, issuance, employee-equity effects, AOCI or other
+comprehensive-income effects, other direct-to-common adjustments, and every
+basis-specific change. Preserve reported and adjusted earnings separately. Each
+normalization identifies gross amount, tax effect, common attribution,
+accounting location, recurrence disposition, and evidence. An unexplained
+material difference or irreproducible return denominator blocks the dependent
+valuation.
+
+Each forecast period declares direct common earnings or a matched return-derived
+path, an explicit beginning, admitted-average, or reproducible simple-average
+capital convention, common cost of equity, and one owner-distribution or
+ending-capital driver. Keep dividends, repurchases, issuance, employee-equity
+effects, and other direct-equity movements separate. The calculator derives the
+dependent earnings, distribution, ending capital, equity charge, residual
+income, retention, and payout; do not supply those outputs as assumptions.
+
+The continuing state declares sustainable return, common cost of equity, book
+growth, zero direct-equity adjustment, and either franchise support or a finite
+fade. The calculator derives next-period capital, earnings, retention, payout,
+residual income, and terminal value. Require `cost of equity > growth`; perpetual
+excess return needs explicit franchise support. If distributable capital is
+load-bearing, the payout and growth path must pass the declared regulatory-
+capital constraint. This arithmetic does not judge whether the economics are
 plausible.
 
 Reconcile the clean-surplus relation: ending common book value should equal
@@ -505,15 +531,9 @@ from the decision hurdle below. Always name the formula because conventions
 vary.
 
 A **required margin-of-safety hurdle** is a decision rule layered on an
-uncertain valuation, not another valuation method. Report its pass/fail only
-when the user or a stated policy supplies the hurdle. Without one, report the
-observed discount and `required hurdle: not supplied; pass/fail: not assessed`.
-When the user explicitly asks for a valuation-relative assessment of
-attractiveness, cheapness, or over/undervaluation and authoritative current-price
-evidence supports comparison, describe where price lies relative to the
-supported present-value estimate and any causal range or labeled sensitivity
-band. Do not characterize a blocked comparison. Reserve formal pass/fail,
-entry-price, and rule-derived price thresholds for a supplied rule.
+uncertain valuation, not another valuation method. Apply the authority and
+language boundary in `SKILL.md`. Keep any observed price discount distinct from
+the hurdle decision state, and do not characterize a blocked comparison.
 
 Do not invent one threshold for every company or automatically print arbitrary
 entry-price thresholds. A wider hurdle is generally warranted when value is more

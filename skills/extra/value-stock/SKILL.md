@@ -24,6 +24,9 @@ branch references only when their stated condition applies.
 - The analyst selects evidence, method, assumptions, scenarios, confidence, and
   conclusion. Deterministic code validates typed inputs and owns material
   arithmetic when a supported path exists.
+- Test fixtures, browser facts, hand arithmetic, spreadsheets, standalone
+  scripts, placeholder identities, direct serialized locks, and failed receipts
+  cannot replace an unsupported or failed repository operation.
 - Do not install a package, data vendor, or connector as a side effect.
 
 ## Common path
@@ -40,9 +43,12 @@ branch references only when their stated condition applies.
    the capability gap and unlock condition.
 4. Collect only evidence that can change method fit, forecast drivers, claim
    bridge, required return, range, confidence, or thesis breakers.
-5. Freeze admitted calculator inputs in one immutable Model Lock. The Evidence
-   Pack owns sourced facts; the Model Lock owns the calculation inputs. A
-   load-bearing change creates a new lock version.
+5. Freeze one selected intrinsic spine in an immutable Model Lock. Keep its
+   Evidence Pack and claim receipts distinct from separately typed market-context,
+   price-implied, forward-multiple, residual-income, or analyst-comparison locks
+   and packs. The Evidence Pack owns sourced facts; every Model Lock owns the
+   calculation inputs for its typed calculation. A load-bearing change creates a
+   new version of every dependent lock.
 6. Calculate through the resolved public path. Treat its receipt as authority
    for normalized inputs, arithmetic, assertions, and reproducibility.
 7. Interpret the result, reconcile material alternatives, and return the
@@ -80,18 +86,32 @@ investment conclusion. A mechanical failure excludes the affected result.
 Return:
 
 - `complete` when the method fits, all load-bearing evidence and claim bridges
-  are resolved, the result reproduces, and material alternatives are reconciled;
-- `partial` when a justified finite bound supports a narrower claim and its
-  full valuation effect is shown; or
-- `blocked` when identity, required current primary evidence, or an unbounded
-  load-bearing gap prevents a defensible number.
+  are resolved, a passed intrinsic receipt supports the claim, the result
+  reproduces, and material alternatives are reconciled;
+- `partial` when a mechanically passed intrinsic spine supports a narrower
+  conclusion but a typed material limitation remains, with its exact effect or
+  unlock condition shown. A justified finite bound is one valid partial case,
+  not a requirement for every partial result; or
+- `blocked` when no passed intrinsic receipt exists because identity, required
+  evidence, an upstream receipt, the selected freezer or calculator, or method
+  support failed.
+
+If the selected intrinsic path is failed or unsupported, go directly to a
+blocked report. Omit every intrinsic value, range, sensitivity band, observed
+discount, attractiveness statement, entry level, and price verdict that depends
+on that path. Retain only sourced nonvaluation facts, exact gaps, and unlock
+conditions. Mechanical pass alone does not establish method fit, evidence
+sufficiency, a causal range, or an investment conclusion.
 
 Do not invent a universal hurdle, margin of safety, normalized earnings level,
-exit multiple, PEG target, or investment action. A user-supplied hurdle may
-produce formal pass/fail or an entry-price calculation. Otherwise describe
-price only relative to the supported value estimate.
+exit multiple, PEG target, or investment action. Formal pass/fail,
+attractiveness, entry-price, and action language requires a hurdle supplied
+before outcome inspection by the user or by a named pre-existing policy.
+Without that authority, state only the typed relative price position and that no
+decision was assessed.
 
-Use verdict mode by default. Stop after the supported report. Persist or audit
-a run only when the user asks for a durable or independently verified artifact.
-When the repository's `persist_run()` already audits before commit, do not run
-an immediate duplicate audit.
+Return the strongest report the passed receipts support; it may be blocked.
+Stop after that report. Persist or audit a run only when the user asks for a
+durable or independently verified artifact. When the repository's
+`persist_run()` already audits before commit, do not run an immediate duplicate
+audit.
