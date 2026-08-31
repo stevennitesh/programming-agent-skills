@@ -83,6 +83,11 @@ Use these branches only when their condition is present:
   target and authority. Read back every durable external mutation. Establish a
   recovery path before an operation that can partially succeed.
 
+After installation or deployment, verify that the invoked mechanism manages
+the intended target and compare the exact source and target with the
+repository-owned identity or inventory. Exit status and general success text
+are insufficient.
+
 ## 4. Prove
 
 Run the nearest useful check that can fail for the behavior you changed. Use an
@@ -111,6 +116,18 @@ need undeclared coercion or reconstruction. In derived output,
 contribution-level identity, status, and source fields must describe the
 contribution rather than inherit the parent result.
 
+When a provenance-bearing result feeds another accepted public result, pass
+the actual result through each materially affected downstream reduction to the
+lowest ordinary caller. Assert the public outcome as one coherent contract:
+value or null, retained contribution evidence, item-local issues, availability,
+and governing identity. A value-only assertion cannot close this proof.
+
+When the item claims a user-facing end-to-end workflow and safe representative
+input or preserved real artifacts are available, run one through the public
+producing and consuming path. Test helpers, placeholder identities, direct
+serialized internals, and reconstructed predecessor objects cannot close that
+claim.
+
 Whenever acceptance crosses a producer-consumer handoff, exercise the lowest
 ordinary consuming caller that can expose an incorrect handoff. Capture the
 producer return or its documented persisted form and pass that actual
@@ -122,6 +139,10 @@ the initial path, each materially distinct request profile, and each terminal
 outcome whose behavior materially differs. Exercise the largest declared
 profile only when it is accepted behavior and changes allocation, batching,
 timeout, exhaustion, or another caller-visible result.
+
+When several stopping conditions can disagree, exercise one case where they
+do. A successful result must satisfy the result-authorizing condition, not
+merely an iteration, width, timeout, or exhaustion condition.
 
 When accepted behavior derives identity or duplicate fields from authoritative
 content, vary one authoritative field and prove that every affected derived

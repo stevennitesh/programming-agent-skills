@@ -81,6 +81,17 @@ item-local failure, stable result shape or field meaning, and governed version
 identity. When a ticket combines independently selected inputs, include the
 smallest mixed case that proves their required isolation.
 
+When a consuming ticket accepts a derived predecessor that can succeed or be
+rejected, its acceptance exercises both states through the lowest ordinary
+caller. Include each materially affected public reduction that could discard
+the predecessor's evidence, issues, availability, or identity.
+
+When accepted behavior depends on several stopping criteria, include the
+smallest case where they disagree and name the criterion that controls the
+result. A deployment or installation ticket names the exact managed target and
+target-specific read-back; general command success does not prove that target
+changed.
+
 When the graph splits an introduced or materially changed caller-visible path
 across tickets, designate the earliest dependency-complete consuming ticket as
 a vertical behavior slice through one representative ordinary path. Its

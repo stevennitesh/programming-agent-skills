@@ -42,6 +42,12 @@ incidental current-state statement without changing a commitment, record the
 correction and pointer in the Source Trace. If it changes a commitment, return
 the contradiction to its owner.
 
+When the settled source names an existing command, installer, public API,
+migration mechanism, or external target as accepted capability, inspect enough
+implementation to verify that it owns the named target. Otherwise record the
+capability gap or leave the mechanism downstream instead of freezing it as a
+commitment.
+
 ## Write
 
 Freeze one title, body, and intended parent state that a fresh agent can use
@@ -90,6 +96,19 @@ different empty, partial, reported, or derived states, name the authoritative
 schema, require those states to remain type-compatible, and define what each
 contribution-level identity or status describes. Name any governing version
 identity and the observable changes that advance it.
+
+When one public result can consume another, define which value or null state,
+evidence, issues, availability, and governing identity must survive
+composition. Define successful and rejected predecessor outcomes separately.
+
+When several limits or stopping criteria govern one outcome, distinguish the
+criteria that authorize success from those that only stop further work. Define
+the observable result when they disagree.
+
+When acceptance claims a public end-to-end workflow, distinguish deterministic
+fixture proof from one production-shaped ordinary-caller journey. Require the
+latter only when safe representative inputs or preserved artifacts are
+available; otherwise state what remains unproved.
 
 Paths may support a source claim, but ticket slices, expected writes, concrete
 commands, test ownership, dependency order, and implementation technique stay

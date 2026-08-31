@@ -2480,11 +2480,23 @@ def test_spec_ticket_implement_path_preserves_result_contract_semantics() -> Non
     assert "item-local or rejects the whole request" in to_spec
     assert "require those states to remain type-compatible" in to_spec
     assert "governing version identity" in to_spec
+    assert "verify that it owns the named target" in to_spec
+    assert "successful and rejected predecessor outcomes separately" in to_spec
+    assert "criteria that authorize success" in to_spec
+    assert "production-shaped ordinary-caller journey" in to_spec
     assert "A source pointer does not replace ticket acceptance" in to_tickets
     assert "smallest mixed case that proves their required isolation" in to_tickets
+    assert "derived predecessor that can succeed or be rejected" in to_tickets
+    assert "smallest case where they disagree" in to_tickets
+    assert "target-specific read-back" in to_tickets
     assert "compare one supported item alone" in implement
     assert "declared schema and field meanings remain stable" in implement
     assert "describe the contribution rather than inherit the parent result" in implement
+    assert "each materially affected downstream reduction" in implement
+    assert "A value-only assertion cannot close this proof" in implement
+    assert "safe representative input or preserved real artifacts" in implement
+    assert "repository-owned identity or inventory" in implement
+    assert "result-authorizing condition" in implement
     assert "compare the final change with that identity's triggers" in implement
     assert "Do not advance unrelated identities" in implement
     assert "matrix" not in f"{to_spec} {to_tickets} {implement}".lower()
