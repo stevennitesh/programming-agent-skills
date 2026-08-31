@@ -19,6 +19,10 @@ Lead with:
   otherwise `required hurdle: not supplied; pass/fail: not assessed`;
 - confidence, status (`complete`, `partial`, or `blocked`), and any failed gate.
 
+When `market_context_scope` is `required`, also show the separate
+business-quality and price-demanded conclusions. A quality conclusion cannot
+stand in for price attractiveness.
+
 Do not lead with a generic company description.
 
 ## 2. Load-Bearing Valuation
@@ -30,7 +34,8 @@ State the selected primary method and why it fits. Show:
   asset-to-security bridge;
 - current-price-implied expectations from a reverse DCF or equivalent only
   when the selected intrinsic spine declares a compatible operation and
-  authoritative price evidence exists; and
+  authoritative price evidence exists, using the typed
+  PriceImpliedExpectationReceipt's solution and gap fields; and
 - sensitivities for the two or three inputs that can materially move the range.
 
 If that optional reverse operation is unsupported, show a separate adjunct
@@ -49,13 +54,34 @@ short bridge from the locked baseline through each correction, convention, or
 scenario to the recomputed value. Otherwise omit the internal lock and review
 ceremony.
 
-## 3. Material Evidence And Quality
+## 3. Market context, evidence, and quality
+
+When `market_context_scope` is `required`, render this table from the typed
+receipt. Keep all five rows even when a lane is unavailable.
+
+| Lens | Current observation | Benchmark | Relative position | What explains it | Status or gap |
+| --- | --- | --- | --- | --- | --- |
+| Own history | | | | | |
+| Competitive peers | | | | | |
+| Economic peers | | | | | |
+| Industry | | | | | |
+| Broad market | | | | | |
+
+Show one primary relative metric and one companion only when the companion
+catches a different material failure. Include forecast-contributor count,
+dispersion, transformed multiple interval, and any unstable relative claim
+supplied by the receipt. Do not calculate or infer a missing value while
+rendering.
 
 Include only the historical, latest-reporting, guidance, accounting, dilution,
 peer, and post-period evidence needed to support or challenge the model.
 Identify any unresolved conflict or missing input. Do not include a generic
 business overview, broad news digest, peer table, PEG, or sentiment section
 unless it changes value, method, range, confidence, or a thesis breaker.
+
+Render `business_quality`, `price_demanded`, and every mechanism disposition
+from `QualityVsPriceAssessment`. A mechanism used in both intrinsic and
+relative reasoning must carry disjoint evidence and an explicit causal bridge.
 
 ## 4. Future Value When Requested
 
@@ -66,15 +92,18 @@ compare a future value directly with today's price as current upside.
 
 ## 5. Thesis Breakers And Next Depth
 
-Give the three most important observable thesis breakers and the model input
-each would change. If the user requested Full analysis only after a stated
-attractiveness hurdle, say whether that hurdle was met and either continue to
-Full or stop here. If no hurdle was supplied, do not invent one.
+Give up to three supported thesis breakers. For each, render its observable
+indicator, issuer-specific trigger, affected model path, current conclusion,
+and mind-change condition. Omit unsupported prose that only says to reassess.
+If the user requested Full analysis only after a stated attractiveness hurdle,
+say whether that hurdle was met and either continue to Full or stop here. If no
+hurdle was supplied, do not invent one.
 
 End with one sentence stating that the work is impersonal research, not
 personalized investment advice.
 
 Apply only the source and method sections already selected by the runbook from
 [source-protocol.md](source-protocol.md) and
-[valuation-methods.md](valuation-methods.md). Do not reload either whole
-reference while formatting the return.
+[valuation-methods.md](valuation-methods.md). Do not reload either whole reference
+while formatting the return. When market context is required, also apply
+[market-context.md](market-context.md) without reloading it during formatting.

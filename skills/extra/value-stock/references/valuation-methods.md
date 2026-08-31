@@ -424,6 +424,11 @@ one place: either the dated share count or the RI claim bridge, never both.
 
 ## Relative Valuation
 
+Use [market-context.md](market-context.md) for selection timing,
+apples-to-apples admission, exact lane dispositions, and caller-owned
+calculation. The table below guides metric fit. It does not authorize manual
+multiple, premium, percentile, PEG, or target-price arithmetic.
+
 Match numerator and denominator:
 
 | Multiple | Appropriate use | Major controls |
@@ -436,8 +441,8 @@ Match numerator and denominator:
 | P/B or P/TBV | Financial firms and asset economics | ROE, asset quality, growth, cost of equity |
 | P/FFO or P/AFFO | REITs | recurring capex, leverage, property mix, NAV |
 
-Use consistent forward or trailing periods for target and peers. Prefer medians
-when outliers are material, but inspect the distribution. A comparable is
+Use consistent forward or trailing periods for target and peers. The frozen
+StatisticContract owns the estimator and outlier policy. A comparable is
 similar in growth, risk, and cash-flow economics, not merely sector label:
 
 - [Damodaran: What is a comparable firm?](https://pages.stern.nyu.edu/~adamodar/New_Home_Page/littlebook/comparables.htm)
@@ -450,15 +455,10 @@ them away:
 
 ## Forward P/E
 
-Define explicitly:
-
-```text
-forward P/E = current equity price / forecast diluted EPS for a named period
-```
-
-State whether the denominator is next fiscal year, next twelve months, GAAP, or
-adjusted; name the estimate source and date. A P/E is not meaningful with
-negative earnings. Its fundamental drivers include growth, risk, payout or
+The typed MetricContract fixes current equity price, forecast diluted EPS,
+named period, estimate vintage, earnings basis, and dilution basis. Use the
+caller-owned receipt. Do not calculate it in the report. A P/E is not meaningful
+with negative earnings. Its fundamental drivers include growth, risk, payout or
 reinvestment, and return on equity:
 [Damodaran: Price Earnings Ratio](https://pages.stern.nyu.edu/~adamodar/New_Home_Page/invfables/peratio.htm).
 
@@ -468,18 +468,12 @@ tax, margins, or growth duration.
 
 ## PEG
 
-Define the convention, commonly:
-
-```text
-PEG = forward P/E / expected annual EPS growth expressed as a whole percent
-```
-
-Example: `P/E 20 / growth 10 = PEG 2.0`, not `20 / 0.10`.
-
-Use the same EPS definition and a matched growth horizon. Do not use PEG for
-negative, near-zero, highly cyclical, or one-off-recovery growth. `PEG < 1` is
-not a universal bargain rule. PEG does not fully control for risk, payout,
-growth quality, or the nonlinear relationship between growth and value:
+Use PEG only when a caller-owned typed contract fixes the forward P/E, growth
+definition, scale, estimate vintage, and matched horizon. Do not calculate it
+manually. Reject PEG for negative, near-zero, highly cyclical, or
+one-off-recovery growth. `PEG < 1` is not a universal bargain rule. PEG does not
+fully control for risk, payout, growth quality, or the nonlinear relationship
+between growth and value:
 [Damodaran: PEG Ratios](https://pages.stern.nyu.edu/~adamodar/New_Home_Page/lectures/peg.htm).
 
 ## SOTP, NAV, And Distress

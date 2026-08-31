@@ -76,6 +76,22 @@ When several primary methods remain plausible, classify each as `admit`,
 conclusion. A bounded method remains `partial`; a cross-check cannot carry the
 conclusion; reject a method that fails fit or has an unbounded load-bearing gap.
 
+## Market context invariant
+
+For every price-dependent valuation or explicitly relative request, read
+[market-context.md](references/market-context.md) before selecting peers,
+history, industry, or market benchmarks. Freeze outcome-free selection evidence
+and every selection policy before admitting price, multiple, target, hurdle, or
+relative-result evidence. Then disposition exactly `own_history`,
+`competitive_peers`, `economic_peers`, `industry`, and `broad_market` through
+the caller-owned typed route. Do not calculate relative results in prose.
+
+For an intrinsic valuation that does not use price, mark market context
+`not_requested` and do not collect it. An unsupported optional diagnostic does
+not reduce a supported intrinsic result unless the user requested it or the
+analyst declared it load-bearing. Keep price-implied expectations separate from
+intrinsic value and from the five comparison lanes.
+
 ## One Model Lock, Five Gates
 
 Use one immutable, versioned run-local **Model Lock** as the canonical evidence
@@ -137,6 +153,26 @@ distinct, and material alternatives are reconciled. Return a narrowed
 effect. Return `blocked` when identity, required current primary evidence, or
 an unbounded load-bearing input prevents a defensible numerical result. Missing
 authoritative price evidence blocks only price-dependent outputs.
+
+## Execution boundary
+
+Use verdict mode by default. Stop after the evidence, applicable gates, frozen
+inputs, required calculations and comparisons, assessment, and selected Compact
+or Full report support the conclusion. Do not persist, construct a manifest,
+audit, or perform filesystem and ACL work during an ordinary interactive
+valuation.
+
+Enter publication mode only when the user asks to save, archive, publish,
+reproduce, or verify a durable run, or when a named downstream consumer requires
+the immutable run directory. In publication mode, `persist_run()` performs the
+staged audit before commit. Do not call `audit_run()` again after a passed
+`persist_run()` unless the user separately requests verification of the stored
+run. Use standalone `audit_run()` only for an existing run.
+
+Run an optional scenario, sensitivity, reverse solve, analyst-target
+comparison, or additional diagnostic only when the user requested it or it can
+materially change the valuation range, status, confidence, or verdict. Runtime
+availability alone is not a reason to run it.
 
 ## Depth Router
 

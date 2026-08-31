@@ -14,6 +14,12 @@ depth, requested methods, and any user-supplied hurdle. Record price source,
 timestamp, and timezone only when a price-dependent output is in scope. State
 material exclusions and unavailable sources.
 
+Also record `market_context_scope`. Use `required` when the request uses current
+price, asks whether the security is cheap or expensive, or explicitly requests
+relative valuation. Use `not_requested` for intrinsic valuation without price.
+Set the scope before market evidence collection. Do not change it after seeing
+multiples or relative results.
+
 Before company-specific financial collection or method selection, perform
 identity-only discovery and create the cited Security Identity receipt. Record:
 
@@ -52,9 +58,11 @@ claim-bridge, or method identity.
 
 Choose the primary method from the business economics and target claim. Use an
 intrinsic or asset-based method when supportable and a reverse valuation when
-authoritative current-price evidence exists. Add relative valuation only when
-requested or able to challenge the primary result. For each materially
-plausible candidate, record target claim, required identity, owning evidence,
+authoritative current-price evidence exists. When `market_context_scope` is
+`required`, route the separate comparison work through
+[market-context.md](market-context.md). Relative observations may challenge the
+primary result but cannot become intrinsic value. For each materially plausible
+candidate, record target claim, required identity, owning evidence,
 load-bearing gaps, and `admit`, `cross-check`, `bound`, or `reject` disposition.
 
 ### Operation Capability Resolution
@@ -74,6 +82,20 @@ solve route. Never use both paths for one material result. An absent,
 conflicting, or unverified operation is a capability gap with an exact unlock
 condition, not authority for manual arithmetic. Stop that operation's dependent
 numerical branch; independent evidence work may continue.
+
+### Market context selection
+
+Use this subsection only when `market_context_scope` is `required`. Read
+[market-context.md](market-context.md). Before retrieving price, multiple,
+target, hurdle, or relative-result evidence, seal the outcome-free Selection
+Evidence Pack and freeze the economic-peer, own-history, competitive-peer,
+industry, and broad-market selection declarations through the caller-owned
+public operations. Record the exact lock identities.
+
+Only after those locks exist may the later market-context Evidence Pack admit
+outcomes. If the environment cannot enforce that separation, stop the numeric
+and directional market-context branch with its typed `capability_gap`. Do not
+replace the lock with an analyst-selected peer list or manual arithmetic.
 
 ### Selected Evidence And Gates
 
@@ -134,6 +156,14 @@ At the calculation boundary, consume the operation binding recorded in Section
 state changed. Require the selected path to declare the calculation it will
 perform; never improvise material arithmetic when the binding is unavailable.
 
+When `market_context_scope` is `required`, bind the frozen selection locks and
+the later market-context Evidence Pack with `freeze_market_context()`, then use
+the public `calculate()` route. Require one disposition for each of the five
+lanes named in [market-context.md](market-context.md). When the caller supports
+a price-implied operating expectation, freeze it separately with
+`freeze_price_implied_expectation()` and calculate that lock through the same
+public gateway. It is not a market-context lane or intrinsic value.
+
 When the selected caller path uses a method-specific lock, bind it to the
 run-level security, valuation date, cutoff, currency, and upstream evidence
 identities. The method lock is not another analyst ledger or authority to mix
@@ -186,10 +216,11 @@ once.
 ### Forward P/E Or PEG
 
 Use this subsection only when Forward P/E or PEG is requested or could
-materially challenge the primary result. Resolve the caller-owned
-forward-multiple calculation and contract under Section 3. If unavailable,
-report the capability gap and do not invent a command or manual parallel
-calculation.
+materially challenge the primary result. Follow the metric-fit, selection,
+comparability, and five-lane procedure in
+[market-context.md](market-context.md). Resolve the caller-owned typed
+calculation under Section 3. If unavailable, report the capability gap and do
+not invent a command or manual parallel calculation.
 
 ### Independent Review
 
@@ -220,7 +251,7 @@ evaluation, a reusable fixture, or evidence for improving `$value-stock`.
 Complete the valuation and applicable review before reading
 [run-feedback.md](run-feedback.md).
 
-## 5. Interpret, Report, And Persist
+## 5. Interpret, Report, And Conditionally Persist
 
 When the output is ready to compose, read exactly one return contract:
 [compact-report.md](compact-report.md) for Compact or
@@ -231,6 +262,12 @@ valuation status, and the two or three assumptions dominating value. Explain
 method fit, causal scenarios, useful sensitivities, uncertainty, and thesis
 breakers. Do not convert a target, peer multiple, PEG heuristic, hurdle, or
 mechanical tracer into fair value by wording.
+
+When `market_context_scope` is `required`, render every lane disposition from
+the MarketContextReceipt, including unavailable lanes and exact gaps. Bind the
+business-quality judgment, price-demanded judgment, mechanism reconciliation,
+and supported thesis breakers through `AnalystAssessmentV2`. Do not create new
+relative arithmetic or explanatory prose while formatting the report.
 
 If the intervening-event sweep finds a material event, show dated bridges from
 the latest balance sheet through the cutoff, and from cutoff to valuation date
@@ -243,10 +280,14 @@ partial result must name the failed gate or unavailable component, narrow the
 claim, and show the bound's effect. A blocked result must state the precise
 unlock condition. Report calculation status separately from valuation status.
 
-Persist or present only artifacts authorized by the caller. Keep the evidence
-ledger, Security Identity, Model Lock versions, calculation receipts, and any
-review receipt traceable to the same run. Do not create a second ledger,
-silently combine versions, or retain unsupported conclusions.
+Present the report in verdict mode and stop. Persist only when the caller
+requested publication or a named downstream consumer requires an immutable run
+directory. `persist_run()` already performs the staged audit; do not follow it
+with another `audit_run()` unless the caller separately requests verification
+of the stored run. Keep the evidence ledger, Security Identity, Model Lock
+versions, calculation receipts, and any review receipt traceable to the same
+run. Do not create a second ledger, silently combine versions, or retain
+unsupported conclusions.
 
 If run feedback was requested, report `valuation status` and `feedback status`
 separately after both reach a terminal state. Feedback cannot upgrade, relabel,
@@ -263,5 +304,12 @@ Before returning, verify:
 - all applicable gates have dispositions and the immutable result reproduces;
 - scenario, sensitivity, mechanical status, and valuation status are distinct;
 - alternatives, uncertainty, thesis breakers, and unlock conditions are visible;
+- required market context accounts for exactly the five named lanes, while a
+  price-free intrinsic run collected none;
+- quality evidence, price demanded, and any dual-use mechanism remain separate
+  and evidence-bound;
 - precision and conclusion do not outrun the weakest load-bearing evidence; and
 - no automated hurdle, normalization, target, or investment action was invented.
+
+The checklist does not require persistence, manifest construction, hashes,
+filesystem checks, ACL work, or replay audit in verdict mode.

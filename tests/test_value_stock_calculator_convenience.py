@@ -25,6 +25,7 @@ RUNBOOK = ROOT / "skills/extra/value-stock/references/analyst-runbook.md"
 METHODS = ROOT / "skills/extra/value-stock/references/valuation-methods.md"
 COMPACT_REPORT = ROOT / "skills/extra/value-stock/references/compact-report.md"
 FULL_REPORT = ROOT / "skills/extra/value-stock/references/report-contract.md"
+MARKET_CONTEXT = ROOT / "skills/extra/value-stock/references/market-context.md"
 WORKFLOW_PROOF = ROOT / "docs/validation/skills/value-stock"
 
 
@@ -107,6 +108,7 @@ def test_skill_routes_operations_to_conditional_references_and_calculators() -> 
     normalized_runbook_lower = normalized_runbook.lower()
 
     assert skill.count("[analyst-runbook.md](references/analyst-runbook.md)") == 1
+    assert skill.count("[market-context.md](references/market-context.md)") == 1
     assert "completely at the start of every valuation run" not in skill
     assert (
         "Do not preload the whole runbook or a branch-only reference"
@@ -163,6 +165,65 @@ def test_skill_routes_operations_to_conditional_references_and_calculators() -> 
     )
     assert oracle["source_fixture"] == canonical_path
     assert negatives["base_fixture"] == canonical_path
+
+
+def test_market_context_package_routes_three_request_shapes_without_manual_arithmetic() -> None:
+    skill = SKILL.read_text(encoding="utf-8")
+    runbook = RUNBOOK.read_text(encoding="utf-8")
+    methods = METHODS.read_text(encoding="utf-8")
+    compact = COMPACT_REPORT.read_text(encoding="utf-8")
+    full = FULL_REPORT.read_text(encoding="utf-8")
+    market = MARKET_CONTEXT.read_text(encoding="utf-8")
+    normalized_market = " ".join(market.split())
+
+    assert "| Price-dependent intrinsic valuation | `required` |" in market
+    assert "| Explicit relative valuation | `required` |" in market
+    assert "| Intrinsic valuation without price | `not_requested` |" in market
+    assert "market_context_scope" in runbook
+    assert "not_requested" in runbook
+    assert "do not collect it" in skill
+
+    selection_position = market.index("seal_selection_evidence_pack()")
+    outcome_position = market.index("seal_market_context_evidence_pack()")
+    calculation_position = market.index("Send the frozen lock through the public")
+    assert selection_position < outcome_position < calculation_position
+
+    lanes = (
+        "own_history",
+        "competitive_peers",
+        "economic_peers",
+        "industry",
+        "broad_market",
+    )
+    for lane in lanes:
+        assert f"`{lane}`" in market
+        assert f"`{lane}`" in skill
+    assert "forward P/E =" not in methods
+    assert "PEG =" not in methods
+    assert "Do not calculate it in the report" in full
+    assert "Do not calculate or infer a missing value" in compact
+
+    for report_contract in (compact, full):
+        assert "QualityVsPriceAssessment" in report_contract
+        assert "up to three supported thesis breakers" in report_contract
+        assert "market-context.md" in report_contract
+
+    assert "does not reduce a supported intrinsic result" in normalized_market
+    assert "user requested it" in normalized_market
+    assert "declared it load-bearing" in normalized_market
+
+
+def test_interactive_verdict_stops_before_publication_and_redundant_audit() -> None:
+    skill = " ".join(SKILL.read_text(encoding="utf-8").split())
+    runbook = " ".join(RUNBOOK.read_text(encoding="utf-8").split())
+
+    assert "Use verdict mode by default" in skill
+    assert "Do not persist, construct a manifest, audit" in skill
+    assert "Enter publication mode only when the user asks" in skill
+    assert "Runtime availability alone is not a reason to run it" in skill
+    assert "Present the report in verdict mode and stop" in runbook
+    assert "`persist_run()` already performs the staged audit" in runbook
+    assert "The checklist does not require persistence" in runbook
 
 
 def test_runbook_resolves_capability_before_dependent_work_and_preserves_catalog_states() -> None:

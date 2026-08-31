@@ -20,6 +20,10 @@ Lead with:
 - confidence with its main evidence limit; and
 - status (`complete`, `partial`, or `blocked`) plus any failed gate.
 
+When `market_context_scope` is `required`, also state the separate
+business-quality and price-demanded conclusions and any market-context or
+price-implied gap that narrows them.
+
 Do not lead with a generic company description or imply a precise per-share
 claim when the security bridge is unresolved.
 
@@ -31,7 +35,9 @@ asset-to-security bridge, the resulting causal range or supported base plus
 labeled sensitivity band, and its principal limitation. Show a reverse DCF or
 equivalent only when the selected intrinsic spine declares a compatible
 operation and authoritative current-price evidence exists. Name the solved
-variable and fixed assumptions. If that optional reverse operation is
+variable and fixed assumptions from the PriceImpliedExpectationReceipt. Keep
+exhaustive unique, exhaustive multiple, bounded no-solution, and non-exhaustive
+partial states distinct. If that optional reverse operation is
 unsupported, show a separate adjunct capability gap and its unlock condition.
 It does not downgrade an otherwise complete intrinsic result unless the user
 explicitly requested it or it is load-bearing to the requested conclusion.
@@ -73,6 +79,26 @@ Show only evidence that supports or challenges the model:
 Separate reported, guided, estimated, assumed, and calculated values. Preserve
 conflicts and unknowns rather than merging them.
 
+When `market_context_scope` is `required`, add one pricing-context table with
+exactly `own_history`, `competitive_peers`, `economic_peers`, `industry`, and
+`broad_market`. Render each lane's current observation, benchmark, relative
+position, explanation, and disposition or exact gap from the receipt.
+
+Add only conclusion-bearing detail: metric-selection rationale, candidate and
+peer count funnel, core competitor and economic-peer observations, inclusion
+and exclusion reasons in the attached receipt view, applicable LTM, NTM,
+normalized and companion fundamentals, own-history structural breaks,
+industry and ex-industry context, premium bridge and unexplained residual, and
+peer-choice or leave-one-out sensitivity. Do not turn a descriptive cohort
+center into a target price or average it with intrinsic value.
+
+Render the `QualityVsPriceAssessment` as two judgments plus the mechanism
+reconciliation. Preserve disjoint evidence and the causal bridge for any
+mechanism used in both intrinsic and relative reasoning. Add the falsification
+ledger with up to three supported thesis breakers, including each observable
+indicator, issuer-specific trigger, affected path, current conclusion, and
+mind-change condition.
+
 ## 4. Risks, Monitoring, And Decision Boundary
 
 Rank load-bearing risks by valuation effect. For each, name an observable
@@ -96,17 +122,19 @@ Add the smallest relevant insert:
 | --- | --- |
 | Deep normalization changes the value base | Historical and normalization bridge |
 | Guidance revisions or delivery are load-bearing | Chronological guidance ledger |
-| Relative valuation can challenge the intrinsic result | Controlled peers, forward multiples, or PEG |
+| Required market context can challenge the intrinsic result | Five-lane receipt view, controlled peers, method-fit relative metrics, and explicit gaps |
 | A post-period event has a demonstrated value transmission | Dated news or event table |
 | A future-date value was requested | Bottom-up horizon roll-forward or clearly subordinate shortcut |
 | Independent review ran or a convention changed value | Review coverage and correction bridge |
 
-For forward multiples, use matching periods, definitions, estimate dates, and
-peer economics. If PEG is not meaningful, say `PEG: not applicable`. For news
-or sentiment, distinguish changed fundamentals from catalysts and unsupported
-tone.
+For forward multiples, render only caller-owned typed receipts with matching
+periods, definitions, estimate dates, and peer economics. If PEG is not
+meaningful, say `PEG: not applicable`. Do not calculate it in the report. For
+news or sentiment, distinguish changed fundamentals from catalysts and
+unsupported tone.
 
 Apply only the source and method sections already selected by the runbook from
 [source-protocol.md](source-protocol.md) and
-[valuation-methods.md](valuation-methods.md). Do not reload either whole
-reference while formatting the return.
+[valuation-methods.md](valuation-methods.md). Do not reload either whole reference
+while formatting the return. When market context is required, also apply
+[market-context.md](market-context.md) without reloading it during formatting.
