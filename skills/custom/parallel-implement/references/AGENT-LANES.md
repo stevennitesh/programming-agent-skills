@@ -16,7 +16,8 @@ python <skill-dir>/scripts/lane_worktree.py prepare \
 
 Start the worker only when the result says `ok: true`. The helper persists the
 returned lane packet as `lane_manifest`. Pass the whole packet to the
-worker. It includes absolute `worktree`, `runtime_root`, `temp_root`,
+worker and retain it in the root's run-local cleanup set until verification
+discharges it. It includes absolute `worktree`, `runtime_root`, `temp_root`,
 `cache_root`, `pytest_basetemp`, `pytest_cache`, and cleanup paths. The worker
 must confirm the lane's `HEAD` and clean status before mutation, use the
 worktree for every repository and Git command, and route temporary files,
@@ -46,10 +47,13 @@ python <skill-dir>/scripts/lane_worktree.py inspect \
 
 The result reports manifest validity, registration, `HEAD`, clean and
 integration state, runtime directory presence, cleanup receipt state, known
-checkout-local cache violations, and mechanical eligibility for landing or
-cleanup. It cannot prove that an actor or command session stopped. The root
-checks that separately. Never infer cancellation from silence and never start a
-replacement while the prior actor may still write.
+checkout-local cache violations, and mechanical eligibility. `ok: true` means
+inspection succeeded; it does not make the lane eligible to resume, land, or
+clean up. Require `resume_or_land_eligible` before either action and
+`cleanup_eligible` before cleanup. The helper cannot prove that an actor or
+command session stopped. The root checks that separately. Never infer
+cancellation from silence and never start a replacement while the prior actor
+may still write.
 
 ## Cleanup
 
@@ -60,23 +64,28 @@ python <skill-dir>/scripts/lane_worktree.py cleanup \
   --repo <repo> --root <worktree-root> --completed <path>
 ```
 
-After the root confirms actor quiescence, the helper removes only a direct
-child of the exact external root when the lane is registered, clean, and
-integrated into current repository `HEAD`. It also
-supports an exact retry after Git removed the worktree but helper-owned state
-remains. Dirty, unintegrated, active, or uncertain work stays in place.
+After the root confirms actor quiescence, the helper removes only a named lane
+that is clean and integrated into current repository `HEAD`. It also supports
+an exact retry after Git removed the worktree but helper-owned state remains.
+Dirty, unintegrated, active, or uncertain work stays in place.
 
-Before unregistering a lane, the helper writes an authorization receipt beside
-its state. If Git unregisters the worktree before filesystem cleanup finishes,
-rerun the same command. The helper rechecks the exact repository, root, lane,
-commit ancestry, and path, rejects reparse points, then removes residual lane
-and state content. It removes the receipt last.
+Before unregistering a lane, the helper records exact retry authority. Runtime
+cleanup failure preserves the registered checkout and its recovery state. The
+helper rechecks lane identity and integration ancestry immediately before
+unregistering, and a pending cleanup blocks lane reuse.
 
-Cleanup retries only Windows sharing or access failures 32 and 5 on a bounded
-250 ms, 500 ms, 1 second, and 2 second schedule. It may clear read-only
-attributes only below the exact receipt-authorized lane or helper state. It
-never changes ownership or ACLs. A persistent failure reports its phase, exact
-path, errno, Windows error, retry count, registration, and path state.
+After every cleanup attempt, verify the full retained set:
+
+```text
+python <skill-dir>/scripts/lane_worktree.py verify-cleanup \
+  --repo <repo> --root <worktree-root> \
+  --integration-head <proved-sha> \
+  --lane <path> [--lane <path> ...]
+```
+
+The result names lanes that need cleanup, exact retry, or preservation. Pass
+every retained lane and finish only when `finish_clean` is true for the proved
+integration `HEAD`.
 
 The helper never forces removal, deletes branches, changes global Git config,
 or chooses a lane on the caller's behalf.

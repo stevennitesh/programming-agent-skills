@@ -281,6 +281,16 @@ public transformations, and closes only claims its evidence can distinguish.
 Conditional mixed-input, composed-result, stopping-condition, production-shaped,
 external-effect, and recovery controls remain. It adds no glossary, proof
 ledger, fixture catalog, universal matrix, review mandate, or broader suite.
+Revision 52 materializes machine contract revision 40 by tightening Parallel
+Implement around demonstrated concurrent-delivery failures. Concurrent
+admission now rejects items that can change each other's accepted behavior or
+proof. Cross-item proof uses
+the actual produced result through affected public transformations. Lane
+cleanup durably preserves retry authority, blocks contaminated reuse, removes
+runtime before unregistering, and verifies the root's retained lane set at the
+proved integration commit. One-item scope returns an unstarted Implement
+recommendation. It adds no campaign ledger, runtime inventory, worker status
+schema, process supervisor, universal full suite, or ticket metadata.
 
 <!-- pack-composition-contract:v1:begin -->
 ```json
@@ -853,11 +863,11 @@ ledger, fixture catalog, universal matrix, review mandate, or broader suite.
         "Unbounded foreign procedure loading",
         "Automated semantic acceptance"
       ],
-      "observable_outcome": "Deliver one fixed set with inspectable isolated lanes and concurrent workers where ownership and write effects are independent",
+      "observable_outcome": "Deliver one fixed set with concurrent workers only where accepted behavior, proof, and write effects are independent, prove cross-item behavior through actual integrated results, and verify cleanup of the retained lane set",
       "primary_owner_skill_id": "SK-023",
       "proof_class": "focused helper behavior plus structural identity and concurrent-boundary proof",
       "required_authority_mutation": [
-        "Frontier qualification, versioned isolated lanes, mutation-domain custody, serial integration, focused proof, conditional review, and child-first closeout"
+        "Frontier qualification, versioned isolated lanes, mutation-domain custody, serial integration, cross-item proof, verified lane cleanup, conditional review, and child-first closeout"
       ]
     },
     {
@@ -1073,7 +1083,7 @@ ledger, fixture catalog, universal matrix, review mandate, or broader suite.
         "scenario_id": "PS-022"
       },
       {
-        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for parallel-implement: Deliver one fixed set with inspectable isolated lanes and concurrent workers where ownership and write effects are independent",
+        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for parallel-implement: Deliver one fixed set with concurrent workers only where behavior, proof, and write effects are independent, prove actual cross-item results, and verify the retained lane set is removed",
         "expected_owner_skill_id": "SK-023",
         "scenario_id": "PS-023"
       },
@@ -1277,7 +1287,7 @@ ledger, fixture catalog, universal matrix, review mandate, or broader suite.
       }
     ],
     "composition_epoch_id": "FCE-20260727-01",
-    "contract_revision": 39,
+    "contract_revision": 40,
     "epoch_lock": null,
     "exclusions": [
       "Per-skill H1 or candidate wording",
@@ -2401,6 +2411,31 @@ ledger, fixture catalog, universal matrix, review mandate, or broader suite.
       "target_skill_id": "SK-012",
       "verb": "Recommend and stop",
       "wrong_condition": "The issue is an ordinary blocker, implementation defect, conflict, or review finding, or another selected owner has the bounded outcome"
+    },
+    {
+      "affected_capability_ids": [
+        "CAP-023",
+        "CAP-022"
+      ],
+      "callee_owned_gates_mutations": [
+        "No implementation, mutation, resumption, or completion is authorized by this edge"
+      ],
+      "caller_skill_id": "SK-023",
+      "combined_exit_owner_skill_id": "SK-023",
+      "context_loaded": [],
+      "entry_condition": "The requested delivery scope contains one accepted implementation item rather than a parallel delivery set.",
+      "failure_behavior": "Return the recommendation without exposing or invoking the target",
+      "input_packet": "The exact bounded accepted item with implementation unstarted",
+      "ordering_impact": "none",
+      "relationship_id": "REL-116",
+      "required_proof_ids": [
+        "PROOF-REL-116"
+      ],
+      "resume_owner_skill_id": "SK-023",
+      "return_packet": "One Implement recommendation with implementation unstarted",
+      "target_skill_id": "SK-022",
+      "verb": "Recommend and stop",
+      "wrong_condition": "The fixed delivery scope contains two or more accepted items, the item is unsettled, or another selected owner has the outcome"
     },
     {
       "affected_capability_ids": [
@@ -4508,9 +4543,9 @@ ledger, fixture catalog, universal matrix, review mandate, or broader suite.
         "PS-023"
       ],
       "canonical_name": "parallel-implement",
-      "completion_condition": "Every item is integrated, material interactions are proved, tracker closeout is read back when applicable, and every named completed lane is safely removed with helper read-back",
+      "completion_condition": "Every item is integrated, each cross-item claim is proved through the actual produced result on integrated HEAD, tracker closeout is read back when applicable, and the root supplies every retained lane to helper verification and confirms that set is absent at the proved integration commit",
       "contract_order": 23,
-      "essential_outcome": "Deliver one fixed set with inspectable isolated lanes and concurrent workers where ownership and write effects are independent",
+      "essential_outcome": "Deliver one fixed set with concurrent workers only where accepted behavior, proof, and write effects are independent, then prove the integrated result and verify the retained lane set",
       "failure_return": "Preserve work and return the integration HEAD plus each unfinished item's actor, lane, base, commit or dirty state, landing state, blocker, and next safe action",
       "invocation_mode": "explicit-only",
       "load_budget_class": "conditional-aggregate",
@@ -4520,7 +4555,7 @@ ledger, fixture catalog, universal matrix, review mandate, or broader suite.
         "The action would cross a caller-owned commitment or mutation boundary"
       ],
       "owned_authority_mutation_surfaces": [
-        "Concurrency admission, versioned isolated lanes, worker replacement safety, mutation-domain custody, serial integration, focused proof, and conditional tracker state transitions and closeout"
+        "Concurrency admission, versioned isolated lanes, worker replacement safety, mutation-domain custody, serial integration, cross-item proof, verified lane cleanup, and conditional tracker state transitions and closeout"
       ],
       "owned_capability_ids": [
         "CAP-023"
@@ -4536,7 +4571,8 @@ ledger, fixture catalog, universal matrix, review mandate, or broader suite.
         "REL-032",
         "REL-033",
         "REL-034",
-        "REL-036"
+        "REL-036",
+        "REL-116"
       ],
       "required_input": "A fixed caller-owned delivery set with at least two accepted items, a non-empty ready frontier, dependencies, acceptance, proof, and mutation authority; tracker mutation additionally requires one complete parent graph",
       "return_packet": "Integrated HEAD and proof, tracker closeout when applicable, or exact preserved resume state",

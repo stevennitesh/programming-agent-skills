@@ -388,6 +388,20 @@ def test_graph_end_cleanup_removes_all_safe_lanes(tmp_path: Path) -> None:
     assert result.returncode == 0, cleaned
     assert cleaned["removed"] == [str(path.resolve()) for path in worktrees]
     assert all(not path.exists() for path in worktrees)
+    verify_arguments = [
+        "verify-cleanup",
+        "--repo",
+        str(repo),
+        "--root",
+        str(lane_root),
+        "--integration-head",
+        base,
+    ]
+    for worktree in worktrees:
+        verify_arguments.extend(["--lane", str(worktree)])
+    result, verified = helper(*verify_arguments)
+    assert result.returncode == 0, verified
+    assert verified["finish_clean"] is True
 
 
 def test_cleanup_rejects_completed_lane_outside_exact_root(tmp_path: Path) -> None:
@@ -935,3 +949,361 @@ def test_remove_tree_retries_only_named_windows_errors(
         "winerror": None,
         "retry_count": 0,
     }
+
+
+def test_prepare_rejects_pending_cleanup_and_residual_state(tmp_path: Path) -> None:
+    repo, base = repository(tmp_path)
+    lane_root = tmp_path / "lanes"
+    result, packet = prepare(repo, lane_root, base, "stale")
+    assert result.returncode == 0, packet
+    worktree = Path(str(packet["worktree"]))
+
+    namespace = runpy.run_path(str(HELPER))
+    namespace["write_cleanup_receipt"](
+        repo.resolve(), lane_root.resolve(), worktree, base, base
+    )
+    result, blocked = prepare(repo, lane_root, base, "stale")
+    assert result.returncode == 1
+    assert "pending cleanup" in str(blocked["error"])
+
+    Path(str(packet["cleanup_receipt"])).unlink()
+    git(repo, "worktree", "remove", str(worktree))
+    result, blocked = prepare(repo, lane_root, base, "stale")
+    assert result.returncode == 1
+    assert "residual helper state" in str(blocked["error"])
+
+
+def test_cleanup_preserves_registered_lane_when_runtime_cleanup_fails(
+    tmp_path: Path, monkeypatch,
+) -> None:
+    repo, base = repository(tmp_path)
+    lane_root = tmp_path / "lanes"
+    result, packet = prepare(repo, lane_root, base, "runtime-locked")
+    assert result.returncode == 0, packet
+    worktree = Path(str(packet["worktree"]))
+    cache = Path(str(packet["cache_root"]))
+    (cache / "large.bin").write_bytes(b"x" * 1024)
+
+    namespace = runpy.run_path(str(HELPER))
+    cleanup_lane = namespace["cleanup"]
+    original_remove_tree = cleanup_lane.__globals__["remove_tree"]
+
+    def fail_cache(path, *, phase, receipt_authorized):
+        if Path(path) == cache:
+            return {
+                "phase": phase,
+                "path": str(path),
+                "error": "cache locked",
+                "errno": 13,
+                "winerror": 5,
+                "retry_count": 4,
+            }
+        return original_remove_tree(
+            path, phase=phase, receipt_authorized=receipt_authorized
+        )
+
+    monkeypatch.setitem(
+        cleanup_lane.__globals__, "remove_tree", fail_cache
+    )
+    code, blocked = cleanup_lane(
+        Namespace(repo=str(repo), root=str(lane_root), completed=[str(worktree)])
+    )
+    assert code == 1
+    assert blocked["preserved"][0]["reason"] == "runtime cleanup incomplete"
+    assert worktree.exists()
+    assert worktree in {
+        Path(path.removeprefix("worktree ")).resolve()
+        for path in git(repo, "worktree", "list", "--porcelain").splitlines()
+        if path.startswith("worktree ")
+    }
+    assert Path(str(packet["lane_manifest"])).is_file()
+    assert Path(str(packet["cleanup_receipt"])).is_file()
+
+    monkeypatch.setitem(
+        cleanup_lane.__globals__, "remove_tree", original_remove_tree
+    )
+    code, cleaned = cleanup_lane(
+        Namespace(repo=str(repo), root=str(lane_root), completed=[str(worktree)])
+    )
+    assert code == 0, cleaned
+    assert not worktree.exists()
+    assert not Path(str(packet["runtime_root"])).exists()
+    assert not Path(str(packet["cleanup_receipt"])).exists()
+
+
+def test_cleanup_reports_runtime_enumeration_failure_and_continues(
+    tmp_path: Path, monkeypatch,
+) -> None:
+    repo, base = repository(tmp_path)
+    lane_root = tmp_path / "lanes"
+    packets = []
+    for name in ("blocked", "cleaned"):
+        result, packet = prepare(repo, lane_root, base, name)
+        assert result.returncode == 0, packet
+        packets.append(packet)
+
+    namespace = runpy.run_path(str(HELPER))
+    cleanup_lane = namespace["cleanup"]
+    path_type = type(Path())
+    original_iterdir = path_type.iterdir
+    blocked_state = Path(str(packets[0]["runtime_root"]))
+
+    def fail_blocked_state(path):
+        if Path(path) == blocked_state:
+            raise OSError("state enumeration denied")
+        return original_iterdir(path)
+
+    monkeypatch.setattr(path_type, "iterdir", fail_blocked_state)
+    code, packet = cleanup_lane(
+        Namespace(
+            repo=str(repo),
+            root=str(lane_root),
+            completed=[str(item["worktree"]) for item in packets],
+        )
+    )
+    assert code == 1
+    assert packet["preserved"][0]["reason"] == "runtime cleanup incomplete"
+    assert packet["preserved"][0]["phase"] == "lane runtime enumeration"
+    assert packet["removed"] == [str(Path(str(packets[1]["worktree"])).resolve())]
+
+
+def test_cleanup_receipt_requires_valid_read_back(
+    tmp_path: Path, monkeypatch,
+) -> None:
+    repo, base = repository(tmp_path)
+    lane_root = tmp_path / "lanes"
+    result, packet = prepare(repo, lane_root, base, "receipt")
+    assert result.returncode == 0, packet
+    worktree = Path(str(packet["worktree"]))
+    namespace = runpy.run_path(str(HELPER))
+    write_receipt = namespace["write_cleanup_receipt"]
+    monkeypatch.setitem(
+        write_receipt.__globals__,
+        "read_cleanup_receipt",
+        lambda *_args: (None, "simulated read-back failure"),
+    )
+    with pytest.raises(namespace["LaneError"], match="read-back failed"):
+        write_receipt(repo.resolve(), lane_root.resolve(), worktree, base, base)
+    assert worktree.exists()
+
+
+def test_cleanup_rechecks_repository_identity_before_unregistering(
+    tmp_path: Path, monkeypatch,
+) -> None:
+    repo, base = repository(tmp_path)
+    lane_root = tmp_path / "lanes"
+    result, packet = prepare(repo, lane_root, base, "head-drift")
+    assert result.returncode == 0, packet
+    worktree = Path(str(packet["worktree"]))
+    namespace = runpy.run_path(str(HELPER))
+    cleanup_lane = namespace["cleanup"]
+    original_git = cleanup_lane.__globals__["git"]
+    repo_head_reads = 0
+
+    def drift_after_receipt(checkout, *args, check=True):
+        nonlocal repo_head_reads
+        if Path(checkout) == repo.resolve() and args[:2] == ("rev-parse", "HEAD"):
+            repo_head_reads += 1
+            if repo_head_reads > 1:
+                return subprocess.CompletedProcess(args, 0, "0" * 40 + "\n", "")
+        return original_git(checkout, *args, check=check)
+
+    monkeypatch.setitem(cleanup_lane.__globals__, "git", drift_after_receipt)
+    code, blocked = cleanup_lane(
+        Namespace(repo=str(repo), root=str(lane_root), completed=[str(worktree)])
+    )
+    assert code == 1
+    assert blocked["preserved"][0]["reason"] == "cleanup identity changed"
+    assert worktree.exists()
+    assert Path(str(packet["cleanup_receipt"])).is_file()
+
+
+def test_verify_cleanup_accounts_for_every_explicit_lane(
+    tmp_path: Path,
+) -> None:
+    repo, base = repository(tmp_path)
+    lane_root = tmp_path / "lanes"
+    worktrees = []
+    for name in ("one", "two"):
+        result, packet = prepare(repo, lane_root, base, name)
+        assert result.returncode == 0, packet
+        worktree = Path(str(packet["worktree"]))
+        worktrees.append(worktree)
+        namespace = runpy.run_path(str(HELPER))
+        namespace["write_cleanup_receipt"](
+            repo.resolve(), lane_root.resolve(), worktree, base, base
+        )
+        git(repo, "worktree", "remove", str(worktree))
+
+    arguments = [
+        "verify-cleanup",
+        "--repo",
+        str(repo),
+        "--root",
+        str(lane_root),
+        "--integration-head",
+        base,
+    ]
+    for worktree in worktrees:
+        arguments.extend(["--lane", str(worktree)])
+
+    result, blocked = helper(*arguments)
+    assert result.returncode == 1
+    assert blocked["finish_clean"] is False
+    assert blocked["retry_cleanup"] == [str(path.resolve()) for path in worktrees]
+    assert {
+        item["required_action"] for item in blocked["lanes"]
+    } == {"retry-cleanup"}
+
+    cleanup_arguments = ["cleanup", "--repo", str(repo), "--root", str(lane_root)]
+    for worktree in worktrees:
+        cleanup_arguments.extend(["--completed", str(worktree)])
+    result, cleaned = helper(*cleanup_arguments)
+    assert result.returncode == 0, cleaned
+
+    result, verified = helper(*arguments)
+    assert result.returncode == 0, verified
+    assert verified["finish_clean"] is True
+    assert all(item["required_action"] == "none" for item in verified["lanes"])
+
+
+def test_verify_cleanup_requires_lane_inventory_and_exact_commit_id(
+    tmp_path: Path,
+) -> None:
+    repo, base = repository(tmp_path)
+    lane_root = tmp_path / "lanes"
+    lane_root.mkdir()
+
+    result, blocked = helper(
+        "verify-cleanup",
+        "--repo",
+        str(repo),
+        "--root",
+        str(lane_root),
+        "--integration-head",
+        base,
+    )
+    assert result.returncode == 1
+    assert "at least one --lane" in str(blocked["error"])
+
+    lane = lane_root / "complete"
+    result, blocked = helper(
+        "verify-cleanup",
+        "--repo",
+        str(repo),
+        "--root",
+        str(lane_root),
+        "--integration-head",
+        "HEAD",
+        "--lane",
+        str(lane),
+    )
+    assert result.returncode == 1
+    assert "full commit ID" in str(blocked["error"])
+
+    (repo / "tracked.txt").write_text("advanced\n", encoding="utf-8")
+    git(repo, "add", "tracked.txt")
+    git(repo, "commit", "-m", "advance")
+    result, blocked = helper(
+        "verify-cleanup",
+        "--repo",
+        str(repo),
+        "--root",
+        str(lane_root),
+        "--integration-head",
+        base,
+        "--lane",
+        str(lane),
+    )
+    assert result.returncode == 1
+    assert blocked["head_matches"] is False
+
+
+def test_path_presence_does_not_hide_access_failure(
+    tmp_path: Path, monkeypatch,
+) -> None:
+    namespace = runpy.run_path(str(HELPER))
+    path_type = type(Path())
+    original_lstat = path_type.lstat
+    blocked = tmp_path / "blocked"
+
+    def deny_target(path):
+        if Path(path) == blocked:
+            raise PermissionError(13, "access denied", str(blocked))
+        return original_lstat(path)
+
+    monkeypatch.setattr(path_type, "lstat", deny_target)
+    with pytest.raises(PermissionError, match="access denied"):
+        namespace["path_present"](blocked)
+
+
+def test_verify_cleanup_clears_actions_when_repository_head_changes(
+    tmp_path: Path, monkeypatch,
+) -> None:
+    repo, base = repository(tmp_path)
+    lane_root = tmp_path / "lanes"
+    result, packet = prepare(repo, lane_root, base, "verify-head-drift")
+    assert result.returncode == 0, packet
+    worktree = Path(str(packet["worktree"]))
+    namespace = runpy.run_path(str(HELPER))
+    verify = namespace["verify_cleanup"]
+    original_git = verify.__globals__["git"]
+    repo_head_reads = 0
+
+    def drift_after_scan(checkout, *args, check=True):
+        nonlocal repo_head_reads
+        if Path(checkout) == repo.resolve() and args[:2] == ("rev-parse", "HEAD"):
+            repo_head_reads += 1
+            if repo_head_reads > 1:
+                return subprocess.CompletedProcess(args, 0, "0" * 40 + "\n", "")
+        return original_git(checkout, *args, check=check)
+
+    monkeypatch.setitem(verify.__globals__, "git", drift_after_scan)
+    code, blocked = verify(
+        Namespace(
+            repo=str(repo),
+            root=str(lane_root),
+            integration_head=base,
+            lane=[str(worktree)],
+        )
+    )
+    assert code == 1
+    assert blocked["head_matches"] is False
+    assert blocked["cleanup"] == []
+    assert blocked["retry_cleanup"] == []
+    assert blocked["lanes"][0]["required_action"] == "preserve-and-report"
+    assert "does not match" in blocked["lanes"][0]["reason"]
+
+
+def test_verify_cleanup_rejects_dangling_lane_state_link(tmp_path: Path) -> None:
+    repo, base = repository(tmp_path)
+    lane_root = tmp_path / "lanes"
+    state_root = lane_root / ".state"
+    state_root.mkdir(parents=True)
+    dangling_target = state_root / "missing-target"
+    linked_state = state_root / "linked"
+    if sys.platform == "win32":
+        dangling_target.mkdir()
+        created = run(
+            "cmd", "/c", "mklink", "/J", str(linked_state), str(dangling_target)
+        )
+        if created.returncode != 0:
+            pytest.skip(f"directory junctions unavailable: {created.stderr}")
+        dangling_target.rmdir()
+    else:
+        linked_state.symlink_to(dangling_target, target_is_directory=True)
+
+    result, blocked = helper(
+        "verify-cleanup",
+        "--repo",
+        str(repo),
+        "--root",
+        str(lane_root),
+        "--integration-head",
+        base,
+        "--lane",
+        str(lane_root / "linked"),
+    )
+    assert result.returncode == 1
+    assert blocked["ok"] is False
+    assert runpy.run_path(str(HELPER))["path_present"](linked_state)

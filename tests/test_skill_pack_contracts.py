@@ -3353,7 +3353,6 @@ def test_parallel_implement_exposes_live_frontier_and_closeout_contracts() -> No
     assert "checkout normalization invalidates lane proof" in flat
     assert "Verify and land accepted worker commits one at a time" in flat
     assert "Complete when every accepted item is landed" in flat
-    assert "every named completed lane is safely removed" in flat
     assert "Pin every writable Git repository independently" in flat
     assert "at most one writable Git repository" in flat
     assert "for cohesive reslicing or separate serial implementation" in flat
@@ -3535,6 +3534,7 @@ def test_runtime_composition_edges_respect_lean_review_and_planning_policy() -> 
         ("to-spec", "Recommend and stop", "to-tickets"),
         ("to-tickets", "Recommend and stop", "implement"),
         ("to-tickets", "Recommend and stop", "parallel-implement"),
+        ("parallel-implement", "Recommend and stop", "implement"),
         ("implement", "Invoke", "change-review"),
         ("parallel-implement", "Invoke", "change-review"),
         ("triage", "Recommend and stop", "change-review"),
@@ -3550,10 +3550,6 @@ def test_runtime_composition_edges_respect_lean_review_and_planning_policy() -> 
     assert not any(
         callee == "high-assurance-review"
         and caller in {"implement", "parallel-implement", "change-review"}
-        for caller, _, callee in edges
-    )
-    assert not any(
-        {caller, callee} == {"implement", "parallel-implement"}
         for caller, _, callee in edges
     )
     assert ("implement", "Recommend and stop", "to-tickets") not in edges

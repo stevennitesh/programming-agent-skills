@@ -90,6 +90,7 @@ flowchart TD
   Parallel --> DomainRouter
   Parallel --> AgentLanes["AGENT-LANES.md<br/>worktree prepare + cleanup"]
   Parallel --> TrackerDelivery["TRACKER-DELIVERY.md<br/>complete-graph claim + closeout"]
+  Parallel -. "one-item scope" .-> Implement
   Parallel -. "review trigger" .-> Review
   Parallel --> FindingContract
   Parallel -. "conflicted landing" .-> Conflict
@@ -240,6 +241,7 @@ Return.
 | `implement` | Hand off | `$resolving-merge-conflicts` | Admission finds an active conflict rather than an implementable ready item. Stop implementation, preserve Git state, and supply the requested scope plus whether resolution and finish were requested. The resolver inspects live state. |
 | `parallel-implement` | Invoke | `$change-review` | The user or repository requires review, or a concrete unresolved shared-contract or migration judgment remains after integrated proof. Parallel Implement pins the clean candidate; Change Review owns the procedure and returns its decision. Multiple workers alone do not trigger review. |
 | `parallel-implement` | Invoke | `$resolving-merge-conflicts` | Serial landing enters an active conflict. Preserve Git state and supply the requested scope plus whether resolution and finish were requested. Resume only after the resolver reports current state. |
+| `parallel-implement` | Recommend and stop | `$implement` | The requested delivery scope contains one accepted item rather than a parallel delivery set; return that exact item with implementation unstarted. |
 | `parallel-implement` | Recommend and stop | `$to-tickets` | Admission finds vague work, unsettled meaning, missing dependencies, or an invalidated delivery set. Return the exact defect and leave shaping or graph repair to To Tickets. |
 | `parallel-implement` | Recommend and stop | `$repo-bootstrap` | Tracker-backed delivery needs a missing or incompatible installed issue-tracker contract; return the exact gap with delivery unstarted. |
 | `prototype` | Recommend and stop | `$diagnosing-bugs` | Fit finds that an existing built system has a hard failure needing dedicated causal investigation rather than one disposable design question; return the intact symptom evidence and leave Diagnosis unstarted. |
@@ -310,7 +312,7 @@ every terminal result directly to its current caller or the user.
 | `change-review` | `change-review/references/FORMAL-REVIEW.md`: formal-only required-Spec, independence, remediation, decision, and Return rules |
 | `implement` | `implement/references/WORKER-HANDOFF.md`: plain bounded handoff and provisional evidence return for user-requested delegation |
 | `audit-codebase` | `DEFECT-CONTRACT.md`: defects and gaps; `QUALITY-LENS.md`: six-class coverage, routing, opportunity admission, retained complexity, and systemic widening; detailed lens owners: condition-triggered issue discovery; `CANDIDATE-CONTRACT.md`: current-source candidate comparison; `REPORT-QUICK-REFERENCE.md`: sole CLI procedure; `HTML-REPORT.md` plus `scripts/update_report.py`: deterministic atlas state and rendering |
-| `parallel-implement` | `AGENT-LANES.md`: checkout custody, shared-ref limits, replacement, and cleanup; `TRACKER-DELIVERY.md`: complete-parent claim, readiness, read-back, and closeout; `lane_worktree.py`: exact-base lane preparation, isolated temp/cache paths, and conservative cleanup |
+| `parallel-implement` | `AGENT-LANES.md`: checkout custody, shared-ref limits, replacement, and verified cleanup; `TRACKER-DELIVERY.md`: complete-parent claim, readiness, read-back, and closeout; `lane_worktree.py`: exact-base lane preparation, isolated temp/cache paths, retry-safe cleanup, and full run-local lane verification |
 
 ## Boundary Notes
 
