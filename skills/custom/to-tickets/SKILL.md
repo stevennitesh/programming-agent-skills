@@ -81,6 +81,21 @@ item-local failure, stable result shape or field meaning, and governed version
 identity. When a ticket combines independently selected inputs, include the
 smallest mixed case that proves their required isolation.
 
+When the settled source names a concrete case because it distinguishes
+accepted from rejected behavior, carry its semantic input and observable result
+into the owning ticket. Do not replace it with a nearby generic example or a
+broader category.
+
+For a caller-visible result, do not replace named fields, states, issue scope,
+time semantics, or source identity with a broader category. Carry each
+applicable observable invariant into the consuming ticket.
+
+When settled acceptance includes responsive behavior, ticket acceptance names
+the smallest supported viewport and the observable behavior of primary and
+secondary content there. When a date derives from an instant, ticket acceptance
+names the governing timezone and one case where it yields a different date
+from UTC.
+
 When a consuming ticket accepts a derived predecessor that can succeed or be
 rejected, its acceptance exercises both states through the lowest ordinary
 caller. Include each materially affected public reduction that could discard

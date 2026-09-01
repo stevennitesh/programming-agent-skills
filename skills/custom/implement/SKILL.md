@@ -116,6 +116,11 @@ need undeclared coercion or reconstruction. In derived output,
 contribution-level identity, status, and source fields must describe the
 contribution rather than inherit the parent result.
 
+When acceptance enumerates caller-visible fields or issue scopes, assert the
+complete accepted set through the lowest ordinary caller. When a summary,
+label, or status claims currentness, change the authoritative state and prove
+that the prior value is no longer presented as current.
+
 When a provenance-bearing result feeds another accepted public result, pass
 the actual result through each materially affected downstream reduction to the
 lowest ordinary caller. Assert the public outcome as one coherent contract:
@@ -127,6 +132,11 @@ input or preserved real artifacts are available, run one through the public
 producing and consuming path. Test helpers, placeholder identities, direct
 serialized internals, and reconstructed predecessor objects cannot close that
 claim.
+
+For changed user-facing behavior, inspect the rendered ordinary path for each
+materially distinct accepted state and affected layout boundary. A request
+failure does not prove a successful partial or unavailable response, and
+request completion does not prove rendered content or layout.
 
 Whenever acceptance crosses a producer-consumer handoff, exercise the lowest
 ordinary consuming caller that can expose an incorrect handoff. Capture the
@@ -164,6 +174,11 @@ Pin the clean candidate first and let Change Review own its procedure. Multiple
 authors alone do not trigger review.
 
 ## 5. Finish
+
+Before completion, account for each materially distinct acceptance claim and
+source-named state with specific proof capable of failing for it, or report it
+as unproved. A passing suite supports a claim only when the suite exercises and
+distinguishes that claim.
 
 Inspect the complete diff and current repository state. Remove displaced code,
 debugging residue, stale comments, and unnecessary complexity. Update

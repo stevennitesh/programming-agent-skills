@@ -58,6 +58,11 @@ or later results. Preserve two evidence groups:
 - outcome evidence contains price, denominator, estimate, and calculated
   market observations.
 
+Preserve the owning source artifacts for both groups as they existed by the
+information cutoff. Bind each used observation, membership, role, exclusion,
+and benchmark snapshot to those artifacts. Caller-authored locators, hashes, or
+source labels are metadata, not a substitute for preserved source evidence.
+
 Use the repository's public selection, evidence, freeze, and calculation path.
 Lock the peer policy, history window and structural era, industry membership,
 broad-market benchmark, statistic, weighting, outlier rule, and subject
@@ -85,11 +90,16 @@ universe with no comparable candidates is `not_comparable`; missing evidence is
 a `capability_gap`.
 
 For banks, label candidates as whole-firm competitors, segment competitors, or
-economic peers. A segment competitor cannot enter a whole-firm P/TBV statistic
-unless it independently passes that lane's frozen policy. Industry P/TBV is
-aggregate common market capitalization divided by aggregate normalized TCE, not
-a mean or median of constituent ratios. Broad-market P/E is not comparable with
-bank P/TBV and produces no premium, discount, or forced ratio.
+economic peers, and require role-specific selection evidence for every admitted
+role. A segment competitor cannot enter a whole-firm P/TBV statistic unless it
+independently passes that lane's frozen policy. Freeze a supported adequacy rule
+for each cohort. Universe completeness never defaults to true; an industry lane
+requires a point-in-time taxonomy or benchmark snapshot, membership rule, and
+complete candidate dispositions. A collected peer cohort is not an industry
+universe. Industry P/TBV is aggregate common market capitalization divided by
+aggregate normalized TCE, not a mean or median of constituent ratios.
+Broad-market P/E is not comparable with bank P/TBV and produces no premium,
+discount, or forced ratio.
 
 ## Account for five lanes
 
@@ -108,6 +118,11 @@ Each lane ends as `used`, `not_applicable`, `not_comparable`,
 exclusions, missing observations, denominator coverage, dispersion,
 instability, influence, reason, and unlock condition supplied by the receipt.
 Do not hide a failed lane or turn it into a neutral result.
+
+A correct `not_comparable` disposition is nonblocking when that lane cannot
+supply like-for-like arithmetic and is not load-bearing for the conclusion.
+Unsupported peer roles, inadequate cohorts, missing market artifacts, and an
+unproved industry universe are capability gaps, not nonblocking mismatches.
 
 The benchmark metric must carry the same economic meaning as the issuer metric.
 Do not compare a bank P/TBV, REIT P/FFO, or asset-level biotech valuation with a

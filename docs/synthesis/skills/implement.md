@@ -9,7 +9,12 @@
 > proves independent-item isolation, stable typed and provenance-bearing result
 > meaning, governing identity changes, complete nested public results, safe
 > production-shaped paths, exact managed targets, and disagreeing stopping
-> conditions. Prior hashes and evaluations below do not prove current wording.
+> conditions. Completion now binds each materially distinct acceptance claim
+> to specific distinguishing proof. Caller-visible field and issue sets,
+> currentness transitions, and accepted rendered layout boundaries are proved
+> through their ordinary consumer rather than inferred from aggregate suite or
+> request success. Prior hashes and evaluations below do not prove current
+> wording.
 > `skills/custom/implement/` is runtime authority. No installed sync is claimed.
 
 ## Active Promoted And Installed Decision — 2026-07-24

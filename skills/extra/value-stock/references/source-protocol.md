@@ -10,6 +10,7 @@ regulators to the issuer's jurisdiction.
 - [Minimum Evidence Packet](#minimum-evidence-packet)
 - [Full Diligence Expansion](#full-diligence-expansion)
 - [Evidence Ledger](#evidence-ledger)
+- [Semantic Support](#semantic-support)
 - [Structured Filing Data](#structured-filing-data)
 - [Transformed Issuers](#transformed-issuers)
 - [Earnings And Guidance](#earnings-and-guidance)
@@ -166,6 +167,20 @@ history as mutable. Preserve the artifact or captured content identity available
 by the information cutoff. A later render cannot silently replace it, even when
 the displayed update date is unchanged; treat it as later corroboration or
 preserve the conflict.
+
+## Semantic Support
+
+Treat zero, absence, source classification, and balancing residuals as claims.
+Prove a zero from owning evidence or a reproducible derivation. Prove absence
+from affirmative coverage of the relevant population and interval; an empty
+list or missing row does not prove it. Classify the source and claim as they
+actually exist. A balancing residual is calculated or assumed, never reported
+merely because it makes an identity close.
+
+Match support to the exact concept, value, unit, date or period, evidence class,
+and intended use of the consuming field. A locator, hash, source identity, or
+admission ID proves none of those meanings by itself. Preserve a mismatch as an
+assumption, bound, or capability gap under the main status policy.
 
 ## Structured Filing Data
 

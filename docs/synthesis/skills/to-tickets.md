@@ -1,21 +1,23 @@
 # To Tickets Deploy Synthesis
 
-> Current runtime reconciliation (2026-08-30): Pack Composition Contract
-> revision 48 and machine contract revision 36 replace the earlier runtime
+> Current runtime reconciliation (2026-08-31): Pack Composition Contract
+> revision 50 and machine contract revision 38 replace the earlier runtime
 > projection below with one proportional graph-publication job. To Tickets now
 > admits settled multi-slice source, returns one bounded item unchanged, routes
 > one bounded unresolved implementation-architecture choice before Slice,
 > creates the fewest cohesive tickets, anchors a new multi-stage path in one
 > real-caller behavior slice, assigns actual predecessor-result consumption and
 > its blocker, and places any parent invariant a ticket can violate plus its
-> smallest decisive mixed-input case in that ticket. When activated, it also
-> assigns successful and rejected derived-predecessor proof, disagreeing stop
-> criteria, and exact managed-target read-back. It obtains graph approval and
-> publishes through verified external mutation without owning design, proof
+> smallest decisive mixed-input case in that ticket. It preserves source-named
+> discriminators, caller-visible result invariants, responsive behavior, and
+> timezone boundaries instead of replacing them with broader categories. When
+> activated, it also assigns successful and rejected derived-predecessor proof,
+> disagreeing stop criteria, and exact managed-target read-back. It obtains
+> graph approval and publishes through verified external mutation without owning design, proof
 > ledgers, human frontiers, claim transfer, or delivery. Canonical
 > `skills/custom/to-tickets/` is current runtime authority at campaign-tree
 > SHA-256
-> `ef82fd022aa403e500bf956c20dc405530d30723bb776d626dcf6f7539a727fd`.
+> `5802a45bb1d7782d7705035a11ec49d69c03bae9c17d4bc9ab693a1c060a175e`.
 > The 2026-07-25 campaign below remains historical evidence and does not own
 > current runtime behavior. No installed sync or fresh wording-efficacy proof
 > is claimed.

@@ -93,9 +93,14 @@ When a caller-visible interface combines independently requested items, state
 whether missing, unsupported, or invalid state is item-local or rejects the
 whole request. When typed or provenance-bearing results have materially
 different empty, partial, reported, or derived states, name the authoritative
-schema, require those states to remain type-compatible, and define what each
+schema, require those states to remain type-compatible, define whether each
+issue applies to one item or the combined request, and define what each
 contribution-level identity or status describes. Name any governing version
 identity and the observable changes that advance it.
+
+When caller-visible values can refresh independently but share a label,
+heading, summary, or notice, define which result identity governs that shared
+display and what the caller sees while their freshness differs.
 
 When one public result can consume another, define which value or null state,
 evidence, issues, availability, and governing identity must survive

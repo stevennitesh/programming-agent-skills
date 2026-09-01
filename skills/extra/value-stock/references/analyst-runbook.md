@@ -77,6 +77,11 @@ Preserve unsupported items as explicit assumptions, finite full-effect bounds,
 or capability gaps. Stop forecasting when an unbounded gap affects the selected
 method or target claim.
 
+Before freezing, obtain the repository-owned forecast-foundation disposition
+for every modeled period. Only a passed foundation can support a point forecast;
+preserve a finite bound or exact gap as such and apply the dependent status
+policy. A sealed pack or accepted lock does not replace this disposition.
+
 When market context is required, read
 [market-context.md](market-context.md). Freeze price-blind selection evidence
 and policy before collecting multiples or other outcomes. Use the exact metric
@@ -115,18 +120,10 @@ For FCFF work in the active `stockval` repository, the live gate is:
    is in scope; and
 8. `assemble_valuation_report()` before a supported verdict.
 
-For residual-income work, the proved `residual-income-2` sequence is:
-
-1. `seal_evidence_pack()` over schema-2 point-in-time source artifacts;
-2. `reconcile_common_equity_claims()` through the cutoff;
-3. `reconcile_residual_income_history()` on one matched common-equity/ROE or tangible-common-equity/ROTCE basis;
-4. `freeze_residual_income_model_lock()` followed by shared `calculate()`;
-5. when needed, `calculate_residual_income_scenarios()`, `calculate_residual_income_sensitivity()`, and `calculate_residual_income_price_implied()`;
-6. the typed `as_of_ptbv` five-lane market-context path when required; and
-7. `assemble_valuation_report()` with the passed RI receipts and typed gaps.
-
-Do not project FCFF-specific receipts or WACC semantics onto this direct-common
-equity path. Persistence and audit follow only when separately requested.
+For bank residual-income work, follow
+[bank-residual-income.md](bank-residual-income.md). Do not project FCFF receipts
+or WACC semantics onto its direct-common-equity path. Persistence and audit
+follow only when separately requested.
 
 The Evidence Ledger is the analyst-facing collection view. Every admitted ledger
 row must map to an Evidence Pack artifact, reference, claim, and admission; a
@@ -172,8 +169,8 @@ would change.
 Use one intrinsic spine in the verdict. Other intrinsic methods are typed
 cross-checks or gaps unless a precommitted reconciliation rule owns their use.
 Return `complete`, `partial`, or `blocked` under `SKILL.md`. Report mechanical
-status separately. Present the strongest report the passed receipts support and
-stop.
+status separately. A supported verdict requires passed active report assembly,
+not a collection of terminal receipts. Present that report and stop.
 
 ## 6. Persist only on request
 

@@ -51,8 +51,10 @@ branch references only when their stated condition applies.
    new version of every dependent lock.
 6. Calculate through the resolved public path. Treat its receipt as authority
    for normalized inputs, arithmetic, assertions, and reproducibility.
-7. Interpret the result, reconcile material alternatives, and return the
-   Compact report by default. Use Full only when requested.
+7. Close the request before a supported verdict: disposition every requested or
+   conclusion-bearing branch and assemble the active report. A passed calculator
+   receipt closes only its mechanical calculation branch. Then interpret the
+   assembled result and return Compact by default, or Full when requested.
 
 ## Method and market discipline
 
@@ -76,6 +78,11 @@ parameter or convention around a locked case. Do not blend them. Run an
 optional scenario, sensitivity, reverse solve, peer comparison, or analyst
 target comparison only when requested or when it can change the range, status,
 confidence, or conclusion.
+
+For a bank residual-income valuation, read
+[bank-residual-income.md](references/bank-residual-income.md) when that method is
+selected. It routes the proved public sequence without owning repository fields
+or formulas.
 
 ## Status and output
 
@@ -110,8 +117,8 @@ before outcome inspection by the user or by a named pre-existing policy.
 Without that authority, state only the typed relative price position and that no
 decision was assessed.
 
-Return the strongest report the passed receipts support; it may be blocked.
-Stop after that report. Persist or audit a run only when the user asks for a
-durable or independently verified artifact. When the repository's
-`persist_run()` already audits before commit, do not run an immediate duplicate
-audit.
+Return the strongest actively assembled report the request-wide closure gate
+supports; it may be blocked. Stop after that report. Persist or audit a run only
+when the user asks for a durable or independently verified artifact. When the
+repository's `persist_run()` already audits before commit, do not run an
+immediate duplicate audit.

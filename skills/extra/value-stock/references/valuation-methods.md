@@ -31,6 +31,13 @@ a separately labeled sensitivity band unless each endpoint is a coherent causal
 case. A causal case may change required return when its supported transmission
 changes risk or funding.
 
+A mechanically passed parameter bundle proves only that its declared values and
+arithmetic are valid together. It supports a causal range only when every
+material changed driver has a named company-specific cause, evidence or explicit
+calibration, an inspectable transmission into the modeled economics, and exact
+held-fixed conventions. Otherwise retain it as a sensitivity or analytically
+partial case.
+
 Report no more precision than the weakest load-bearing input supports;
 approximate claims, stale bridges, and broad sensitivities do not support
 cents-level fair value.
