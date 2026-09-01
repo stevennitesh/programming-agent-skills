@@ -1,21 +1,20 @@
 # To Spec Deploy Synthesis
 
 > Current runtime reconciliation (2026-08-31): Pack Composition Contract
-> revision 50 and machine contract revision 38 replace the earlier runtime
+> revision 51 and machine contract revision 39 replace the earlier runtime
 > projection below with one proportional synthesis-and-publication job. To Spec
 > now admits settled source, skips a parent for one bounded implementation,
 > removes architecture delegation and draft ceremony, publishes at most one
-> verified durable parent, and preserves representative multi-stage journeys,
-> materially distinct terminal outcomes, request-profile effects, and
-> contract-owned identity authority. When present, it also defines item-local
-> failure, item-versus-request issue scope, independently refreshed shared
-> display behavior, stable typed and provenance-bearing result meaning, and the
-> changes that advance a governing identity. It verifies a named existing
-> mechanism before freezing it and defines nested-result survival, result-authorizing
-> criteria, and conditional production-shaped evidence before recommending To
-> Tickets or Implement without starting either. Canonical
+> verified durable parent, and defines each material governing rule,
+> caller-visible meaning, ordinary observation point, and source-named
+> disagreement. It preserves representative multi-stage journeys, independently
+> requested failure scope, typed and provenance-bearing meaning, successful and
+> rejected composition, terminal outcomes, and governing identity changes. It
+> verifies a named existing mechanism and records the cheapest evidence capable
+> of distinguishing each claim before recommending To Tickets or Implement
+> without starting either. Canonical
 > `skills/custom/to-spec/` is current runtime authority at campaign-tree SHA-256
-> `89fe4404d49c8d76fcd6aea0fedd026a171afe7f7cfb9813aed352cfd32a9c2e`.
+> `ee0311721f9d82e5e5250813785a6e71497fc8001f1410ab3e777eece5522f3a`.
 > The 2026-07-25 campaign and the analysis below remain historical evidence;
 > they do not own current runtime behavior. No installed sync or fresh
 > wording-efficacy proof is claimed.

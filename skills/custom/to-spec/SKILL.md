@@ -71,49 +71,42 @@ only where behavior materially differs. At an external or trust boundary,
 state the authoritative representation and observable invalid-input behavior;
 do not prescribe redundant internal validation.
 
+When accepted inputs or rules can disagree, define which governs and what the
+caller observes. Keep each companion field bound to the result it describes.
+For independently requested items, state whether missing, unsupported, or
+invalid state is item-local or rejects the whole request. Carry any
+source-named semantic input and observable result that make a material
+distinction visible.
+
 When accepted behavior spans several stages, include one representative
 ordinary caller journey from initiating input to terminal caller-visible
 outcome. For durable state on that journey, state what persists, what produces
 it, which ordinary caller consumes it, how it affects that caller, and the
-observable outcome.
+observable outcome. When one accepted result feeds another, define successful
+and rejected predecessor outcomes separately and name every source-defined
+meaning that must survive the public composition, including value or null,
+evidence, issues, availability, and governing identity when applicable.
 
-When behavior retries, escalates, or gathers additional evidence, define each
-reachable terminal outcome whose caller-visible behavior materially differs.
-Include continued disagreement or insufficient evidence after the declared
-limit, exhaustion, and failure when those are terminal outcomes. When
-escalation materially changes a request profile, state the initial and
-escalated profiles and their observable limits or effects.
+When accepted meaning depends on a field's scope, identity, time
+interpretation, placement, or derivation, define that meaning and its governing
+rule. This includes whether an issue applies to one item or the combined
+request, whether time is a calendar value or an instant and any governing
+conversion, and what happens when authoritative content conflicts with a
+supplied duplicate or derived value. For typed or provenance-bearing results,
+name the authoritative schema, require materially different states to remain
+type-compatible, define contribution-level meaning, and state the observable
+changes that advance any governing version.
 
-When the accepted contract defines an identity or duplicate field as derived
-from authoritative content, name the authoritative representation and require
-derivation from it. If input can supply both, define the observable outcome for
-contradictory values; do not silently reconcile them.
+When behavior retries, escalates, gathers evidence, or has several stopping
+criteria, define the materially different request profiles and terminal
+outcomes. Distinguish conditions that authorize success from those that only
+stop further work, and define the observable result when they disagree.
 
-When a caller-visible interface combines independently requested items, state
-whether missing, unsupported, or invalid state is item-local or rejects the
-whole request. When typed or provenance-bearing results have materially
-different empty, partial, reported, or derived states, name the authoritative
-schema, require those states to remain type-compatible, define whether each
-issue applies to one item or the combined request, and define what each
-contribution-level identity or status describes. Name any governing version
-identity and the observable changes that advance it.
-
-When caller-visible values can refresh independently but share a label,
-heading, summary, or notice, define which result identity governs that shared
-display and what the caller sees while their freshness differs.
-
-When one public result can consume another, define which value or null state,
-evidence, issues, availability, and governing identity must survive
-composition. Define successful and rejected predecessor outcomes separately.
-
-When several limits or stopping criteria govern one outcome, distinguish the
-criteria that authorize success from those that only stop further work. Define
-the observable result when they disagree.
-
-When acceptance claims a public end-to-end workflow, distinguish deterministic
-fixture proof from one production-shaped ordinary-caller journey. Require the
-latter only when safe representative inputs or preserved artifacts are
-available; otherwise state what remains unproved.
+When acceptance claims a public end-to-end, production-shaped, live, or
+measured property, name the cheapest evidence capable of distinguishing it.
+Require evidence beyond deterministic fixtures only when safe representative
+input, a preserved artifact, or an actual measurement is available; otherwise
+state the remaining unproved claim.
 
 Paths may support a source claim, but ticket slices, expected writes, concrete
 commands, test ownership, dependency order, and implementation technique stay
@@ -149,6 +142,7 @@ neither.
 
 Complete through either branch: `not needed` returns the exact bounded source,
 performs no mutation, and leaves `$implement` unstarted; a published or reused
-parent preserves every material source commitment, lets a fresh agent recover
-the same scope and caller-visible contract without inventing a decision, was
-read back from durable state, and starts no downstream work.
+parent preserves every material source commitment, acceptance qualifier, and
+residual uncertainty, lets a fresh agent recover the same scope and
+caller-visible contract without inventing a decision, was read back from
+durable state, and starts no downstream work.

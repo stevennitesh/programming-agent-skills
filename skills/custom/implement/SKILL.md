@@ -96,53 +96,48 @@ policy requires them or when they are the cheapest durable protection for the
 behavior—not to satisfy a ritual. Run broader suites only when policy or shared
 impact justifies them.
 
-Reuse proof for unchanged behavior. For each materially distinct accepted
-state, transition, or request profile, run only the smallest proof that
-distinguishes it. Rerun a full inventory only when repository policy, shared
-impact, or materially different inputs or resources require it.
-
-For a bug fix, use proof capable of distinguishing the defect from the repaired
-behavior.
+Reuse proof for unchanged behavior. For a bug fix, use the demonstrated defect
+as the wrong behavior the proof must distinguish. Otherwise, when the ordinary
+case can also satisfy a plausible wrong rule, use the smallest input or state
+where their observable results differ. Rerun a full inventory only when policy,
+shared impact, or materially different inputs or resources require it.
 
 When a request combines independently selected items and failure is item-local,
 compare one supported item alone with that item mixed with one missing,
 unsupported, or invalid item capable of exposing interference. The supported
 result must remain equivalent unless the contract defines request-wide failure.
 
-For typed or provenance-bearing output, exercise the materially reachable
-empty, partial, reported, and derived states needed to prove that the declared
-schema and field meanings remain stable. Prove that ordinary consumers do not
-need undeclared coercion or reconstruction. In derived output,
-contribution-level identity, status, and source fields must describe the
-contribution rather than inherit the parent result.
+Assert changed caller-visible behavior at the lowest ordinary boundary where it
+can fail. Exercise only the states needed to distinguish it. For typed or
+provenance-bearing output, keep the authoritative schema stable across those
+states and prove that ordinary consumers accept the produced representation
+without undeclared coercion or reconstruction. Contribution-level identity,
+status, and source must describe the contribution rather than its parent.
 
-When acceptance enumerates caller-visible fields or issue scopes, assert the
-complete accepted set through the lowest ordinary caller. When a summary,
-label, or status claims currentness, change the authoritative state and prove
-that the prior value is no longer presented as current.
+Across a producer-consumer handoff, pass the producer's actual return, or the
+persisted form actually produced from it, through every affected public
+transformation to the lowest ordinary caller. Assert each source-named part the
+transformation could lose, including value or null, evidence, issues,
+availability, and governing identity when applicable. Exercise successful and
+rejected outcomes when their accepted behavior differs. A reconstructed
+predecessor, shape-only check, or value-only assertion cannot close this proof.
 
-When a provenance-bearing result feeds another accepted public result, pass
-the actual result through each materially affected downstream reduction to the
-lowest ordinary caller. Assert the public outcome as one coherent contract:
-value or null, retained contribution evidence, item-local issues, availability,
-and governing identity. A value-only assertion cannot close this proof.
+For accepted rendered content, layout, time interpretation, currentness, or
+derived identity, exercise a case where the governing rule and a plausible
+alternative produce different observations. Inspect the accepted location or
+boundary, change the authoritative input or state, and prove that the ordinary
+observation follows it. For a currentness claim, prove the prior value is no
+longer presented as current. When a boundary accepts authoritative content
+together with a supplied duplicate or derived value, prove the specified
+contradiction behavior before mutation.
 
-When the item claims a user-facing end-to-end workflow and safe representative
-input or preserved real artifacts are available, run one through the public
-producing and consuming path. Test helpers, placeholder identities, direct
-serialized internals, and reconstructed predecessor objects cannot close that
-claim.
-
-For changed user-facing behavior, inspect the rendered ordinary path for each
-materially distinct accepted state and affected layout boundary. A request
-failure does not prove a successful partial or unavailable response, and
-request completion does not prove rendered content or layout.
-
-Whenever acceptance crosses a producer-consumer handoff, exercise the lowest
-ordinary consuming caller that can expose an incorrect handoff. Capture the
-producer return or its documented persisted form and pass that actual
-representation to the consumer; a separately reconstructed equivalent does not
-count.
+A fixture, live run, or aggregate suite proves only the claims its input, path,
+and observations distinguish. When acceptance requires a public end-to-end,
+production-shaped, live, or measured property, use the narrowest safe public
+path with representative input, a preserved artifact, or an actual measurement.
+Helpers, placeholder identities, direct serialized internals, and reconstructed
+objects cannot close that claim. Otherwise use the strongest safe proxy and
+state what remains unproved.
 
 When acceptance names escalation, retry, or additional-evidence behavior, prove
 the initial path, each materially distinct request profile, and each terminal
@@ -154,19 +149,9 @@ When several stopping conditions can disagree, exercise one case where they
 do. A successful result must satisfy the result-authorizing condition, not
 merely an iteration, width, timeout, or exhaustion condition.
 
-When accepted behavior derives identity or duplicate fields from authoritative
-content, vary one authoritative field and prove that every affected derived
-value changes or remains consistent as specified. When a boundary accepts both
-authoritative content and a supplied derived value, prove that contradictory
-input is rejected before mutation.
-
 When an operation has material partial-effect risk or must recover after
 interruption, exercise that boundary. Any proxy must be capable of exposing the
 same recovery failure.
-
-Inspect the real output or caller path when a unit check cannot establish that
-the change works. If safe execution is unavailable, use the strongest safe
-proxy and say what remains unproved.
 
 Invoke `$change-review` only when the user or repository requires it, or a
 concrete unresolved shared-contract or migration judgment remains after proof.
@@ -174,11 +159,6 @@ Pin the clean candidate first and let Change Review own its procedure. Multiple
 authors alone do not trigger review.
 
 ## 5. Finish
-
-Before completion, account for each materially distinct acceptance claim and
-source-named state with specific proof capable of failing for it, or report it
-as unproved. A passing suite supports a claim only when the suite exercises and
-distinguishes that claim.
 
 Inspect the complete diff and current repository state. Remove displaced code,
 debugging residue, stale comments, and unnecessary complexity. Update
@@ -190,9 +170,10 @@ content identity, compare the final change with that identity's triggers.
 Advance every required identity and prove that ordinary output or a receipt
 exposes it. Do not advance unrelated identities.
 
-Call the item complete only when the requested behavior works, the relevant
-proof passes, and the final diff contains only intended changes. Otherwise
-preserve useful work and state exactly what remains.
+Call the item complete only when the requested behavior works, the chosen
+evidence could fail for each accepted claim it closes, and the final diff
+contains only intended changes. Reused evidence may support several claims.
+Report any accepted claim left unproved; it prevents completion.
 
 For a completed tracker item, preserve its category, remove readiness roles,
 apply `implemented`, and close only when the tracker configuration says to.

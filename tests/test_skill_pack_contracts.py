@@ -2413,7 +2413,7 @@ def test_implementation_workflows_keep_local_proof_owners() -> None:
         in implement
     )
     assert "Run the nearest useful check" in implement
-    assert "Inspect the real output or caller path" in implement
+    assert "Assert changed caller-visible behavior at the lowest ordinary boundary" in implement
     assert "run proof invalidated by that transition" in parallel
     assert "real callers, and material interactions" in parallel
     assert "Do not repeat worker proof that remains valid" in parallel
@@ -2466,7 +2466,7 @@ def test_implementation_workflows_trace_acceptance_before_completion() -> None:
     )
 
 
-def test_spec_ticket_implement_path_preserves_result_contract_semantics() -> None:
+def test_spec_ticket_implement_path_defines_assigns_and_proves_distinctions() -> None:
     to_spec = " ".join(
         (CUSTOM / "to-spec/SKILL.md").read_text(encoding="utf-8").split()
     )
@@ -2477,41 +2477,43 @@ def test_spec_ticket_implement_path_preserves_result_contract_semantics() -> Non
         (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8").split()
     )
 
+    assert "When accepted inputs or rules can disagree, define which governs" in to_spec
     assert "item-local or rejects the whole request" in to_spec
-    assert "require those states to remain type-compatible" in to_spec
-    assert "issue applies to one item or the combined request" in to_spec
-    assert "which result identity governs that shared display" in to_spec
-    assert "governing version identity" in to_spec
-    assert "verify that it owns the named target" in to_spec
+    assert "Keep each companion field bound to the result it describes" in to_spec
+    assert "require materially different states to remain type-compatible" in to_spec
     assert "successful and rejected predecessor outcomes separately" in to_spec
-    assert "criteria that authorize success" in to_spec
-    assert "production-shaped ordinary-caller journey" in to_spec
-    assert "A source pointer does not replace ticket acceptance" in to_tickets
-    assert "smallest mixed case that proves their required isolation" in to_tickets
-    assert "carry its semantic input and observable result" in to_tickets
-    assert "named fields, states, issue scope, time semantics" in to_tickets
-    assert "smallest supported viewport" in to_tickets
-    assert "different date from UTC" in to_tickets
-    assert "derived predecessor that can succeed or be rejected" in to_tickets
+    assert "conditions that authorize success from those that only stop" in to_spec
+    assert "Require evidence beyond deterministic fixtures only when" in to_spec
+
+    assert "Give each one an owning ticket. Repeat only its source-named" in to_tickets
+    assert "semantic input, observable result, and distinguishing case" in to_tickets
+    assert "persisted form actually produced from it" in to_tickets
+    assert "required evidence class" in to_tickets
     assert "smallest case where they disagree" in to_tickets
-    assert "target-specific read-back" in to_tickets
-    assert "compare one supported item alone" in implement
-    assert "declared schema and field meanings remain stable" in implement
-    assert "describe the contribution rather than inherit the parent result" in implement
-    assert "assert the complete accepted set" in implement
-    assert "prior value is no longer presented as current" in implement
-    assert "each materially affected downstream reduction" in implement
-    assert "A value-only assertion cannot close this proof" in implement
-    assert "safe representative input or preserved real artifacts" in implement
-    assert "rendered ordinary path" in implement
-    assert "request completion does not prove rendered content or layout" in implement
-    assert "repository-owned identity or inventory" in implement
+    assert "managed-target effects" in to_tickets
+
+    assert "demonstrated defect as the wrong behavior" in implement
+    assert "without undeclared coercion or reconstruction" in implement
+    assert "persisted form actually produced from it" in implement
+    assert "fixture, live run, or aggregate suite proves only" in implement
     assert "result-authorizing condition" in implement
-    assert "compare the final change with that identity's triggers" in implement
-    assert "Do not advance unrelated identities" in implement
-    assert "passing suite supports a claim only when" in implement.lower()
-    assert "source-named state with specific proof" in implement
-    assert "matrix" not in f"{to_spec} {to_tickets} {implement}".lower()
+    assert "the chosen evidence could fail for each accepted claim it closes" in implement
+    assert "Report any accepted claim left unproved; it prevents completion" in implement
+
+    contract = pack_contract.parse_contract(
+        (ROOT / "docs/synthesis/skill-pack.md").read_text(encoding="utf-8")
+    )
+    completion_by_name = {
+        skill["canonical_name"]: skill["completion_condition"]
+        for skill in contract["selected_skills"]
+    }
+    assert "governing rules" in completion_by_name["to-spec"]
+    assert "every delivery-changing commitment has an owner" in completion_by_name[
+        "to-tickets"
+    ]
+    assert "evidence capable of failing when the claim is wrong" in completion_by_name[
+        "implement"
+    ]
 
 
 def test_planning_and_delivery_activate_lean_integrated_quality_contract() -> None:
@@ -3201,6 +3203,18 @@ def test_to_spec_canonical_is_lean_and_experimental_evidence_stays_frozen() -> N
     assert exact_tree_hash(experimental) == (
         "47c223639318b041e6c86e6144b7fb23399634ead73e18ddcf306ab8242effeb"
     )
+
+
+def test_implement_current_reconciliation_tracks_runtime_tree() -> None:
+    synthesis = (ROOT / "docs/synthesis/skills/implement.md").read_text(
+        encoding="utf-8"
+    )
+    current_reconciliation = synthesis.split(
+        "## Active Promoted And Installed Decision", 1
+    )[0]
+
+    assert "revision 51 and machine contract revision 39" in current_reconciliation
+    assert exact_tree_hash(CUSTOM / "implement") in current_reconciliation
 
 
 def test_git_and_parallel_delivery_roles_stay_out_of_the_shared_contract() -> None:

@@ -1,21 +1,19 @@
 # Implement Minimum-Runtime Synthesis
 
-> Status (2026-07-27): historical evidence for the exact pre-efficiency bytes.
-> Later authorized Author passes changed canonical `implement` to a four-phase
-> spine with identity-aware proof reuse and then aligned its source-packet,
-> default-budget, refresh, proof, and repair-routing contracts with To Tickets.
-> The latest pass consumes a canonical proof responsibility and consolidates
-> only proved in-slice test overlap. Current runtime wording also conditionally
-> proves independent-item isolation, stable typed and provenance-bearing result
-> meaning, governing identity changes, complete nested public results, safe
-> production-shaped paths, exact managed targets, and disagreeing stopping
-> conditions. Completion now binds each materially distinct acceptance claim
-> to specific distinguishing proof. Caller-visible field and issue sets,
-> currentness transitions, and accepted rendered layout boundaries are proved
-> through their ordinary consumer rather than inferred from aggregate suite or
-> request success. Prior hashes and evaluations below do not prove current
-> wording.
-> `skills/custom/implement/` is runtime authority. No installed sync is claimed.
+> Current runtime reconciliation (2026-08-31): Pack Composition Contract
+> revision 51 and machine contract revision 39 replace the earlier runtime
+> projection below. Implement now chooses the smallest case where accepted and
+> plausible wrong behavior produce different ordinary observations. It proves
+> bug fixes against the demonstrated defect, checks typed consumers without
+> hidden reconstruction, and passes actual predecessor results through affected
+> public transformations. Conditional mixed-input, stopping-condition,
+> production-shaped, external-effect, and recovery proof remains. Completion
+> closes only claims the evidence can distinguish. Canonical
+> `skills/custom/implement/` is current runtime authority at campaign-tree
+> SHA-256
+> `ac34d51433e32b1a0a4369b3e296471f161f38e519f7f72a0742421fcb4476e1`.
+> Prior hashes and evaluations below remain historical evidence and do not prove
+> current wording. No installed sync is claimed.
 
 ## Active Promoted And Installed Decision — 2026-07-24
 

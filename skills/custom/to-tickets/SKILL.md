@@ -67,53 +67,49 @@ When early feedback on a named risk changes how later work should proceed, use
 the first ticket as a tracer bullet through the real path. Name the observable
 signal and the later work it informs. Otherwise omit the learning role.
 
-Account once for every source commitment that changes delivery. Each ticket
-contains only what a fresh implementer must not have to invent:
+Account once for every source commitment that changes delivery. Give each one
+an owning ticket. Repeat only its source-named distinguishing acceptance in a
+consuming ticket whose change can independently violate it. Each ticket contains
+only what a fresh implementer must not have to invent:
 
 - one outcome and observable acceptance;
 - the source identity, fixed decisions, scope, and consequential non-goals;
 - true blockers, or `none`;
 - material compatibility, migration, trust, authority, or recovery constraints.
 
-A source pointer does not replace ticket acceptance. Inline the trigger and
-observable result of any parent invariant the ticket can violate, including
-item-local failure, stable result shape or field meaning, and governed version
-identity. When a ticket combines independently selected inputs, include the
-smallest mixed case that proves their required isolation.
+A source pointer does not replace ticket acceptance. Carry the source-named
+semantic input, observable result, and distinguishing case into its owning
+ticket. When a plausible wrong rule can satisfy the ordinary happy case, use
+the smallest case where their results differ. Do not replace a named field,
+state, issue scope, time meaning, placement, source identity, or evidence
+qualifier with a broader category.
 
-When the settled source names a concrete case because it distinguishes
-accepted from rejected behavior, carry its semantic input and observable result
-into the owning ticket. Do not replace it with a nearby generic example or a
-broader category.
+When independently selected inputs can interfere, include the smallest mixed
+case that proves their required isolation. For responsive placement or time
+conversion, name the governing rule, observation boundary, semantic input, and
+observable result. Preserve a source calendar date without inventing an instant
+conversion.
 
-For a caller-visible result, do not replace named fields, states, issue scope,
-time semantics, or source identity with a broader category. Carry each
-applicable observable invariant into the consuming ticket.
+When a consuming ticket accepts a predecessor owned by another ticket, make
+that producer a blocker. Acceptance passes the actual predecessor result, or
+the persisted form actually produced from it, through the lowest ordinary
+caller. If the result can succeed or be rejected, exercise both states and each
+public transformation that could discard a source-named meaning, including
+evidence, issues, availability, or identity. If the graph splits an introduced
+or materially changed caller-visible path, designate the earliest
+dependency-complete consuming ticket as its representative vertical slice. A
+named risk may also give that slice the tracer-bullet learning role.
 
-When settled acceptance includes responsive behavior, ticket acceptance names
-the smallest supported viewport and the observable behavior of primary and
-secondary content there. When a date derives from an instant, ticket acceptance
-names the governing timezone and one case where it yields a different date
-from UTC.
-
-When a consuming ticket accepts a derived predecessor that can succeed or be
-rejected, its acceptance exercises both states through the lowest ordinary
-caller. Include each materially affected public reduction that could discard
-the predecessor's evidence, issues, availability, or identity.
+When the source distinguishes deterministic fixture proof from a
+production-shaped, live, or measured claim, the owning ticket preserves the
+required evidence class, its safe-input or preserved-artifact condition, and
+any accepted residual gap.
 
 When accepted behavior depends on several stopping criteria, include the
 smallest case where they disagree and name the criterion that controls the
 result. A deployment or installation ticket names the exact managed target and
 target-specific read-back; general command success does not prove that target
 changed.
-
-When the graph splits an introduced or materially changed caller-visible path
-across tickets, designate the earliest dependency-complete consuming ticket as
-a vertical behavior slice through one representative ordinary path. Its
-acceptance names the sequence and actual predecessor result and proves that
-result through the lowest ordinary caller. When another ticket owns the
-predecessor result, make that ticket a blocker. A named risk may also give this
-slice the tracer-bullet learning role; otherwise do not call it a tracer bullet.
 
 Add stable repository or proof pointers only when they materially narrow the
 work or preserve a settled decision. Do not freeze live file lists, commands,
@@ -177,5 +173,8 @@ ticket. Invoke neither.
 
 Complete when the skill returns either the unchanged bounded item, an exact
 source, setup, conflict, or recovery result supported by observed state, or an
-approved or exact-reuse graph whose bodies, relationships, readiness, and
+approved or exact-reuse graph in which every delivery-changing commitment has
+an owner and each ticket that can violate one carries its source-named trigger,
+distinguishing acceptance, actual predecessor and evidence boundary when
+applicable, whose bodies, relationships, readiness, managed-target effects, and
 actionable frontier were read back, with no implementation started.

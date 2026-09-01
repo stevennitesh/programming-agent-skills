@@ -270,6 +270,17 @@ Implement binds completion claims to specific distinguishing proof, complete
 caller-visible fields and issues, currentness transitions, and rendered layout
 boundaries. It adds no acceptance ledger, universal state or viewport matrix,
 fixture catalog, mandatory review, or broader suite requirement.
+Revision 51 materializes machine contract revision 39 by replacing the growing
+defect-family catalog with one stage-owned workflow. To Spec defines each
+governing rule, caller-visible meaning, observation point, and material
+disagreement. To Tickets assigns every delivery-changing commitment and carries
+its smallest distinguishing acceptance into each ticket that can violate it.
+Implement proves each claim where the accepted and plausible wrong behavior
+produce different ordinary observations, uses actual predecessor results across
+public transformations, and closes only claims its evidence can distinguish.
+Conditional mixed-input, composed-result, stopping-condition, production-shaped,
+external-effect, and recovery controls remain. It adds no glossary, proof
+ledger, fixture catalog, universal matrix, review mandate, or broader suite.
 
 <!-- pack-composition-contract:v1:begin -->
 ```json
@@ -532,7 +543,7 @@ fixture catalog, mandatory review, or broader suite requirement.
         "Unbounded foreign procedure loading",
         "Automated semantic acceptance"
       ],
-      "observable_outcome": "Publish one verified durable parent that preserves applicable nested-result guarantees, verified mechanism capability, result-authorizing criteria, production-shaped evidence, shared-display freshness, issue scope, stable result meaning, and governing identity triggers when it earns its cost, or return one bounded item unchanged",
+      "observable_outcome": "Publish one verified durable parent that defines each material governing rule, caller-visible meaning, observation point, distinguishing disagreement, composition guarantee, terminal outcome, and evidence boundary when it earns its cost, or return one bounded item unchanged",
       "primary_owner_skill_id": "SK-011",
       "proof_class": "proportionate structural, boundary, mechanism-capability, result-contract, and consumer proof; fresh behavioral proof only when the user requests it",
       "required_authority_mutation": [
@@ -556,7 +567,7 @@ fixture catalog, mandatory review, or broader suite requirement.
         "Unbounded foreign procedure loading",
         "Automated semantic acceptance"
       ],
-      "observable_outcome": "Publish the smallest useful dependency-ordered implementation graph from settled source with each violable parent invariant, source-named discriminator, caller-visible result invariant, responsive or timezone boundary, derived-predecessor state, controlling stop criterion, and managed-target read-back in its owning ticket, or return one bounded item unchanged",
+      "observable_outcome": "Publish the smallest useful dependency-ordered implementation graph from settled source with every delivery-changing commitment assigned and every ticket that can violate one carrying its source-named trigger, distinguishing acceptance, actual predecessor boundary, evidence qualifier, and applicable managed-target read-back, or return one bounded item unchanged",
       "primary_owner_skill_id": "SK-012",
       "proof_class": "proportionate structural, boundary, parent-invariant, derived-predecessor, and target-read-back proof; fresh behavioral proof only when the user requests it",
       "required_authority_mutation": [
@@ -813,7 +824,7 @@ fixture catalog, mandatory review, or broader suite requirement.
         "Unbounded foreign procedure loading",
         "Automated semantic acceptance"
       ],
-      "observable_outcome": "Deliver one caller-selected ready item through claim-specific proof of applicable composed public results, complete caller-visible fields and issues, currentness transitions, rendered layout boundaries, production-shaped paths, exact deployment targets, disagreeing stopping conditions, stable result meaning, and governing identity changes, final read-back, condition-triggered review, and branch-applicable Git or tracker closeout",
+      "observable_outcome": "Deliver one caller-selected ready item through the smallest evidence that distinguishes each accepted claim from plausible wrong behavior at its ordinary observation boundary, including actual predecessor passage, complete affected public meaning, and any activated measured, external-effect, or recovery proof, followed by final read-back, conditional review, and applicable Git or tracker closeout",
       "primary_owner_skill_id": "SK-022",
       "proof_class": "fresh behavioral proof plus structural identity and boundary proof",
       "required_authority_mutation": [
@@ -1002,12 +1013,12 @@ fixture catalog, mandatory review, or broader suite requirement.
         "scenario_id": "PS-010"
       },
       {
-        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for to-spec: Publish one verified durable parent that preserves applicable composition, capability, shared-display freshness, issue scope, stopping-criterion, result-contract, and identity semantics when it earns its cost, or return one bounded item unchanged",
+        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for to-spec: Publish one verified durable parent that defines material governing rules, caller-visible meanings, observation points, distinguishing disagreements, composition guarantees, terminal outcomes, and evidence boundaries, or return one bounded item unchanged",
         "expected_owner_skill_id": "SK-011",
         "scenario_id": "PS-011"
       },
       {
-        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for to-tickets: Publish the smallest useful dependency-ordered implementation graph with each source-named discriminator, caller-visible invariant, responsive or timezone boundary, derived-predecessor state, stopping criterion, and managed target in its owning ticket, or return one bounded item unchanged",
+        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for to-tickets: Publish the smallest useful dependency-ordered implementation graph with every delivery-changing commitment assigned and every violable distinction carried as source-named distinguishing acceptance, or return one bounded item unchanged",
         "expected_owner_skill_id": "SK-012",
         "scenario_id": "PS-012"
       },
@@ -1057,7 +1068,7 @@ fixture catalog, mandatory review, or broader suite requirement.
         "scenario_id": "PS-021"
       },
       {
-        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for implement: Deliver one caller-selected ready item through claim-specific proof of applicable complete caller-visible results, currentness and rendered-layout boundaries, production-shaped paths, exact deployment targets, stopping conditions, and governing identities, final read-back, condition-triggered review, and branch-applicable Git or tracker closeout",
+        "description": "Positive entry, nearest-negative exclusion, material failure, and completion for implement: Deliver one caller-selected ready item through evidence that distinguishes every accepted claim at its ordinary caller, rendered location, managed target, or other observation boundary, followed by final read-back, conditional review, and applicable Git or tracker closeout",
         "expected_owner_skill_id": "SK-022",
         "scenario_id": "PS-022"
       },
@@ -1266,7 +1277,7 @@ fixture catalog, mandatory review, or broader suite requirement.
       }
     ],
     "composition_epoch_id": "FCE-20260727-01",
-    "contract_revision": 38,
+    "contract_revision": 39,
     "epoch_lock": null,
     "exclusions": [
       "Per-skill H1 or candidate wording",
@@ -4042,7 +4053,7 @@ fixture catalog, mandatory review, or broader suite requirement.
         "PS-011"
       ],
       "canonical_name": "to-spec",
-      "completion_condition": "One proportionate parent preserves every material source commitment, including applicable verified mechanism capability, nested-result guarantees, shared-display freshness, item-versus-request issue scope, result-authorizing criteria, production-shaped evidence, result-shape and field-meaning semantics, and governing identity triggers, is read back, and starts no downstream work, or the bounded no-parent branch returns unchanged source",
+      "completion_condition": "One proportionate parent preserves every material source commitment, acceptance qualifier, and residual uncertainty; defines applicable governing rules, caller-visible meanings, observation points, distinguishing disagreements, composition guarantees, terminal outcomes, and evidence boundaries; is read back; and starts no downstream work, or the bounded no-parent branch returns unchanged source",
       "contract_order": 11,
       "essential_outcome": "Publish one verified durable parent when it earns its cost, or return one bounded item unchanged",
       "failure_return": "Return the exact source, authority, existing-state, or publication gap",
@@ -4080,7 +4091,7 @@ fixture catalog, mandatory review, or broader suite requirement.
         "PS-012"
       ],
       "canonical_name": "to-tickets",
-      "completion_condition": "The skill returns either one bounded item unchanged, one exact observed blocker, or an approved or exact-reuse actionable graph whose bodies preserve every ticket-violable parent invariant, source-named discriminator, caller-visible result invariant, responsive or timezone boundary, successful and rejected derived predecessor, controlling stop criterion, and exact managed-target read-back and whose categories, relationships, and readiness were read back, with no delivery started",
+      "completion_condition": "The skill returns either one bounded item unchanged, one exact observed blocker, or an approved or exact-reuse actionable graph in which every delivery-changing commitment has an owner and every ticket that can violate one carries its source-named trigger, distinguishing acceptance, actual predecessor and evidence boundary when applicable, and whose categories, relationships, readiness, and actionable frontier were read back, with no delivery started",
       "contract_order": 12,
       "essential_outcome": "Publish the smallest useful dependency-ordered implementation graph from settled source, or return one bounded item unchanged",
       "failure_return": "Return the exact source, setup, existing-state, approval, or publication gap with observed state",
@@ -4458,7 +4469,7 @@ fixture catalog, mandatory review, or broader suite requirement.
         "PS-022"
       ],
       "canonical_name": "implement",
-      "completion_condition": "The exact accepted tree has claim-specific proof of every applicable composed-result, complete caller-visible field and issue set, currentness transition, rendered layout boundary, production-shaped path, managed target, stopping condition, item-isolation, result contract, provenance field, and governing-identity obligation plus final read-back, every triggered review passes, and every branch-applicable Git and tracker closeout is verified",
+      "completion_condition": "Every materially distinct acceptance claim and source-named state has passing evidence capable of failing when the claim is wrong at its ordinary observation boundary; actual predecessor, complete affected meaning, measured or production-shaped evidence, external target, and recovery proof apply only when triggered; the final diff and read-back pass; every triggered review and applicable Git or tracker closeout is verified",
       "contract_order": 22,
       "essential_outcome": "Deliver one caller-selected ready item through focused proof, final read-back, condition-triggered review, and branch-applicable Git or tracker closeout",
       "failure_return": "Return the failed gate, retained state, evidence, authority need, and safest recovery",
