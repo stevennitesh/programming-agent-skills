@@ -23,9 +23,10 @@ in its current owner unless moving it solves a demonstrated design problem.
 
 Subtract or reuse before adding machinery. Prefer language, platform, and
 repository capabilities. Add abstractions for meaningful policy or variation;
-small duplication is preferable to coupling different domain meanings. If
-deleting a layer removes complexity, collapse it. If complexity spreads to
-callers, the layer earns its place.
+keep together decisions that must change together. Separate independent policies
+when sharing an owner creates demonstrated coupling; small duplication is
+preferable to coupling different domain meanings. If deleting a layer removes
+complexity, collapse it. If complexity spreads to callers, the layer earns its place.
 
 Model valid states and domain distinctions in data. Use the type system and
 existing schemas to prevent meaningful mistakes without adding precision no
@@ -50,7 +51,9 @@ success. Make partial outcomes explicit when callers need to handle them.
 Migrate owned callers and remove displaced code, configuration, and tests
 together when compatibility permits. Use staged migration when real consumers
 or deployment ordering require coexistence. Keep the reason and removal
-condition for a temporary compatibility path clear.
+condition for a temporary compatibility path clear. When data outlives deployment
+or consumers upgrade independently, account for old and new readers and writers,
+existing-data conversion, and rollback limitations.
 
 Update documentation when behavior, operations, or a non-obvious decision
 changes. Prefer an existing type, constraint, or check to repeated prose when
@@ -72,6 +75,10 @@ the meaning it could lose. A reconstructed object or a passing isolated helper
 does not prove that connection. Check failure or partial-success paths when
 their behavior is part of the changed contract.
 
+Preserve the mechanism relevant to the claim. A substitute may prove application
+policy while leaving persistence, concurrency, transport, or rendering behavior
+unproved.
+
 Reuse evidence while the relevant code, inputs, dependencies, and environment
 remain valid. Broaden verification for shared impact, repository policy, or an
 unresolved risk. If execution is unavailable, report the strongest available
@@ -88,6 +95,10 @@ failure or cancellation paths when applicable.
 For concurrent mutation, eliminate unnecessary shared state first. When sharing
 is required, enforce ownership or serialization through the actual mechanism;
 separate files or worktrees do not isolate shared databases, ports, or services.
+
+When work can accumulate or share scarce resources, define appropriate limits
+and cancellation behavior so a slow dependency or caller cannot cause unbounded
+growth or exhaust unrelated work.
 
 For consequential performance or resource claims, compare equivalent work
 against a baseline under relevant conditions. For external mutations, establish

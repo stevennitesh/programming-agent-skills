@@ -15,6 +15,15 @@ ROOT = Path(__file__).resolve().parents[1]
 HELPER = ROOT / "skills/custom/parallel-implement/scripts/lane_worktree.py"
 
 
+@pytest.fixture(autouse=True, params=["custom", "astra"])
+def helper_pack(request, monkeypatch) -> None:
+    """Run the recovery contract against both independently installable helpers."""
+    monkeypatch.setattr(
+        sys.modules[__name__], "HELPER",
+        ROOT / f"skills/{request.param}/parallel-implement/scripts/lane_worktree.py",
+    )
+
+
 def run(*args: str, cwd: Path | None = None) -> subprocess.CompletedProcess[str]:
     return subprocess.run(
         list(args),
@@ -70,6 +79,33 @@ def prepare(repo: Path, root: Path, base: str, name: str) -> tuple[subprocess.Co
         "--name",
         name,
     )
+
+
+@pytest.mark.parametrize("helper_pack", ["astra"], indirect=True)
+def test_pending_cleanup_cannot_resume_but_remains_cleanup_eligible(tmp_path: Path) -> None:
+    repo, base = repository(tmp_path)
+    lane_root = tmp_path / "lanes"
+    result, packet = prepare(repo, lane_root, base, "pending")
+    assert result.returncode == 0, packet
+    worktree = Path(str(packet["worktree"]))
+    namespace = runpy.run_path(str(HELPER))
+    namespace["write_cleanup_receipt"](
+        repo.resolve(), lane_root.resolve(), worktree, base, base
+    )
+    result, inspected = helper(
+        "inspect", "--repo", str(repo), "--root", str(lane_root),
+        "--lane", str(worktree),
+    )
+    assert result.returncode == 0, inspected
+    assert inspected["cleanup_receipt"]["state"] == "valid"
+    assert inspected["mechanical"]["resume_or_land_eligible"] is False
+    assert inspected["mechanical"]["cleanup_eligible"] is True
+    result, cleaned = helper(
+        "cleanup", "--repo", str(repo), "--root", str(lane_root),
+        "--completed", str(worktree),
+    )
+    assert result.returncode == 0, cleaned
+    assert not worktree.exists()
 
 
 def test_prepare_creates_exact_base_and_isolated_temp_environment(

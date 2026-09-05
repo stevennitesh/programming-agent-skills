@@ -42,6 +42,10 @@ does not establish better behavior.
 ## Accepted choices
 
 - Astra source lives in `skills/astra/`, separately from the managed custom pack.
+- Astra has no `implement` skill. Implement directly using repository guidance
+  and the engineering contract; use specialist skills only when their methods
+  are needed. The limited implementation comparisons did not demonstrate a
+  benefit from the skill. Preserve their research and test evidence.
 - `writing-for-agents` and `repo-bootstrap` are implemented. Installation is a
   separate operation; source presence does not prove a host has installed them.
 - Repository instructions supply local facts and conditional pointers. The
@@ -80,8 +84,8 @@ legacy consumers and a custom-only installer; it is not the desired final state.
 
 The final core and optional inventory, remaining skill boundaries, rewrite order,
 and unified installation approach remain open. Choose them from concrete tasks
-and evidence, not a target skill count. The coding pilot and a comparative
-quality assessment remain unperformed in this workstream.
+and evidence, not a target skill count. Limited implementation comparisons have
+been run; broader comparative quality claims remain unestablished.
 
 For the supporting source comparison and its limits, consult
 [the initial assessment](../research/gpt-6-astra-skill-pack-assessment-2026-09-05.md)

@@ -7,7 +7,69 @@ installed skills, or historical source pins. The user authorized the assessment,
 three initial assessors, a subsequent debate with three agents, and this note.
 No coding experiments or behavioral comparisons were run.
 
-## Decision
+## Revised recommendation after foundation work, 2026-09-05
+
+This section supersedes the original composition recommendation below. The
+original assessment, source comparisons, and debate remain historical evidence.
+The [Astra design brief](../astra/design-brief.md) owns accepted direction;
+the sequence here is the latest recommendation, not a settled final inventory.
+
+The original four default skills plus eighteen optional entries preserved too
+much of the old inventory before establishing what Astra needs. Foundation work
+showed that context ownership, setup assumptions, repeated rules, and tests that
+freeze prose also create friction. Reducing skill count alone would not solve
+those problems.
+
+### Build from the foundation
+
+| Part | Latest recommendation |
+| --- | --- |
+| Foundation | Keep the engineering contract, short global and local instructions, repo-bootstrap, and writing-for-agents. Their distinct responsibilities are now implemented. |
+| Implementation | Build a lean implement candidate next. Compare it with direct coding under the same engineering contract; retain the skill only if its procedure adds value. |
+| Independent review | Retain a focused change-review for a fixed candidate, evidence-backed findings, and an outcome separate from repair. |
+| Research | Retain research for source-backed questions, where source authority and uncertainty require a different method from implementation. |
+| Design | Retain codebase-design for consequential unresolved interfaces or ownership decisions. Ordinary design choices remain within implementation. |
+| Diagnosis | Keep diagnosing-bugs as a candidate for difficult causal investigations. Ordinary reproduction and repair remain within implementation; verify that the separate method earns the transition. |
+
+Reconsidering implement is the main change from the original proposal. Direct
+coding under the contract remains a credible alternative. A bounded comparison
+should reveal whether a skill improves completion and proof without adding
+unnecessary tests, fallback code, documentation, review, or workflow transitions.
+Use the representative coding tasks in issue #94, not another inventory exercise.
+
+### Decide boundaries by the job
+
+Make a separate skill when the user is asking for a distinct outcome, interaction,
+or evidence standard. Use a conditional reference when the detail supports the
+same outcome. A research result can stand independently; producer-consumer proof
+supports implementation. A deliberate design interview may deserve an entry
+point; ordinary design changes do not automatically require one. Provider-specific
+tracker setup belongs in bootstrap references.
+
+Defer wholesale rewrites of routing, handoff, simplification, prototyping, TDD,
+triage, ticket planning, and high-assurance review. Their user intents may remain
+useful, but each existing entry point does not automatically need an Astra
+counterpart. Do not recreate the eighteen-entry optional catalog by default.
+
+### Preserve useful mechanisms
+
+Keep tested worktree, isolation, and recovery mechanisms. The
+[test collection audit](test-collection-audit-2026-09-05.md) distinguished their
+concrete regression checks from assertions about instruction wording. A dedicated
+parallel-delivery skill is justified when work needs coordinated writers and
+integration; ordinary delegation can use native tools and conditional guidance.
+Neither tool availability nor passing helper tests proves every orchestration
+outcome safe.
+
+### Next evidence
+
+Keep the foundation, build and assess implement next, then develop review,
+research, and design around demonstrated needs. The final composition remains
+open. The foundation changes and editorial reviews have not demonstrated better
+coding outcomes; the next evidence should come from coding tasks. No new coding
+comparison was performed for this revision.
+
+## Original decision, superseded by the recommendation above
 
 I would build a smaller default pack around four on-demand methods:
 `codebase-design`, `diagnosing-bugs`, `research`, and `change-review`.
