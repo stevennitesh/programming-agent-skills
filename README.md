@@ -51,7 +51,21 @@ concurrent delivery, recovery, formal review, and measured claims activate the
 extra protection those jobs require. If the condition is absent, it creates no
 checklist, artifact, reviewer, or explanation obligation.
 
+## Astra development
+
+The new Astra pack is being built in [`skills/astra/`](skills/astra/).
+Its [design brief](docs/astra/design-brief.md) records the accepted direction
+from [issue #94](https://github.com/stevennitesh/programming-agent-skills/issues/94)
+and subsequent decisions. Writing for agents and repo-bootstrap are implemented;
+the final skill composition remains open.
+
+The installation commands below still manage `skills/custom/`. They do not
+install Astra and may replace same-named manual Astra installations. The two
+source trees remain separate while their consumers and installation are migrated.
+
 ## What is in the pack
+
+This inventory describes the managed custom pack.
 
 Each skill owns one recognizable engineering job. They compose when the work
 needs more than one job, but they are not a mandatory pipeline.

@@ -8,11 +8,13 @@ created.
 
 | Work | Route |
 | --- | --- |
-| Whole-skill synthesis deployment | [`docs/synthesis/methods/deploy-prompts.md`](../synthesis/methods/deploy-prompts.md) |
+| Astra skill design and migration | [Astra design brief](../astra/design-brief.md), based on [issue #94](https://github.com/stevennitesh/programming-agent-skills/issues/94) and subsequent decisions |
+| Legacy whole-skill synthesis deployment | [`docs/synthesis/methods/deploy-prompts.md`](../synthesis/methods/deploy-prompts.md) |
 | Optional source distillation | [`docs/synthesis/methods/source-distillation-flow.md`](../synthesis/methods/source-distillation-flow.md) |
 | Optional source-distillation prompts | [`docs/synthesis/methods/prompts/`](../synthesis/methods/prompts/) |
 
-Deploy Prompts are the default route once a whole-skill synthesis exists.
+Deploy Prompts govern selected legacy synthesis deployments. They are not an
+automatic prerequisite for Astra work; follow its design brief instead.
 Source distillation is optional evidence work for primary and outside sources,
 upstream skills, books, and engineering practice; it stops at important
 concepts and usable techniques rather than drafting or deploying a skill.

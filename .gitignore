@@ -41,6 +41,8 @@ docs/*
 !docs/adr/**
 !docs/agents/
 !docs/agents/**
+!docs/astra/
+!docs/astra/**
 !docs/plans/
 !docs/plans/**
 !docs/research/

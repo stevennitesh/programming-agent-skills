@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import runpy
 import subprocess
 import sys
@@ -22,6 +23,13 @@ def run(*args: str, cwd: Path | None = None) -> subprocess.CompletedProcess[str]
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         check=False,
+        env={
+            **os.environ,
+            "GIT_AUTHOR_NAME": "Skill Tests",
+            "GIT_AUTHOR_EMAIL": "skills@example.test",
+            "GIT_COMMITTER_NAME": "Skill Tests",
+            "GIT_COMMITTER_EMAIL": "skills@example.test",
+        },
     )
 
 
@@ -35,8 +43,6 @@ def repository(tmp_path: Path) -> tuple[Path, str]:
     repo = tmp_path / "repo"
     repo.mkdir()
     assert run("git", "init", "-b", "main", str(repo)).returncode == 0
-    git(repo, "config", "user.name", "Skill Tests")
-    git(repo, "config", "user.email", "skills@example.test")
     (repo / "tracked.txt").write_text("base\n", encoding="utf-8")
     (repo / "test_smoke.py").write_text(
         "def test_smoke():\n    assert True\n", encoding="utf-8"
