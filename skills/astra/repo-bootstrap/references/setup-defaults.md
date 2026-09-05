@@ -61,6 +61,10 @@ do not authorize external mutations or create a mandatory ticket pipeline.
 
 ## Labels and domain routing
 
+For requested parallel setup or a concrete execution gap, use
+[Parallel support](parallel-support.md). This remains conditional; ordinary
+repository setup does not create lanes or enable broader permissions.
+
 Map existing equivalent labels before using the seed's default names. Writing
 the mapping does not create remote labels. Provision missing labels only when
 the user's authorization covers that operation, then read them back. Otherwise
@@ -78,7 +82,7 @@ For Local Markdown, ensure the selected durable tracker path can be version
 controlled. Correct a conflicting ignore rule only within authorized setup
 scope. Do not create example tickets or commit tracker files during setup.
 
-## Existing repositories and mixed skill use
+## Existing repositories
 
 Initial setup defaults do not authorize wholesale replacement of existing
 guidance. Compare the current bootstrap with repository instructions, the
@@ -95,7 +99,7 @@ Prepare one reviewable proposal with the exact edits across affected files,
 the benefit or incompatibility each addresses, preserved local choices, and the
 checks needed to verify the result. If a validator or test enforces a displaced
 convention, include its narrow migration in the same proposal while preserving
-the underlying protection and remaining legacy consumers. Do not bypass a
+the underlying protection under the current Astra contract. Do not bypass a
 failing check or claim compatibility from prose alone.
 
 Offer the user a single choice to apply this compatibility update or keep the
@@ -105,10 +109,12 @@ requested repair within its original scope. Do not repeat a declined offer for
 the same differences in the same task. Prior explicit approval of the update
 remains sufficient. A repeat run with no relevant changes should produce no edits.
 
-If an older skill remains active, inspect the configuration it reads and preserve
-its required fields and meanings. When a new Astra workflow changes a convention,
-update its consuming guidance and these defaults together. Do not remove old
-fields until the remaining consumers can work without them.
+Projects using this pack target the latest Astra version. Inspect retired routes
+to recover their still-valid meaning, then migrate the affected guidance,
+configuration and enforcement together. Do not preserve old skill routes as an
+alternative. When an Astra workflow changes a convention, update its consuming
+guidance and these defaults together. An unavailable current skill is an access
+or installation gap, not permission to restore a retired route.
 
 Use a legacy validator only to assess that legacy contract. Its requirements
 for markers, fixed documents, or old workflows are not Astra setup requirements.

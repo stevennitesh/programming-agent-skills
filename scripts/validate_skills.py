@@ -375,6 +375,7 @@ def validate_skill_handle_references(root: Path, skill_names: list[str]) -> list
     failures: list[str] = []
     names = set(skill_names)
     paths = {root / relative for relative in ACTIVE_SURFACE_FILES}
+    astra_names = {p.parent.name for p in (root / "skills/astra").glob("*/SKILL.md")}
     custom_root = root / CUSTOM_SKILL_ROOT
     if custom_root.is_dir():
         paths.update(custom_root.rglob("*.md"))
@@ -390,7 +391,8 @@ def validate_skill_handle_references(root: Path, skill_names: list[str]) -> list
             else path.read_text(encoding="utf-8")
         )
         for handle in sorted(set(SKILL_HANDLE_RE.findall(text))):
-            if handle not in names:
+            allowed = names if path.is_relative_to(custom_root) else names | astra_names
+            if handle not in allowed:
                 failures.append(
                     f"Active surface references missing custom skill: {relative} -> ${handle}"
                 )
@@ -566,7 +568,8 @@ def validate_setup_surface(root: Path) -> list[str]:
     if not validator.is_file():
         return [f"Missing setup-surface validator: {validator.relative_to(root).as_posix()}"]
     result = subprocess.run(
-        [sys.executable, str(validator), str(root), "--repository-owned-contract"],
+        [sys.executable, str(validator), str(root), "--repository-owned-contract",
+         "--domain-owner", "shape-work"],
         cwd=root,
         text=True,
         stdout=subprocess.PIPE,

@@ -15,5 +15,5 @@ clarification, settled meaning, and authorized context or ADR reconciliation
 through its conditional domain-modeling path. Repo Bootstrap only configures
 this route.
 
-For explicitly selected legacy workflows, `$domain-modeling` remains the owner
-of settled domain meaning and authorized context or ADR writes.
+Use the current Astra `$shape-work` for these operations; retired domain routes
+are not compatibility alternatives.

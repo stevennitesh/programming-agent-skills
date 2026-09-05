@@ -25,6 +25,13 @@ The consuming workflow defines readiness and transitions. Completing a blocker
 does not establish readiness if other dependencies remain unresolved. Keep the
 durable tracker path available to version control; it is not disposable scratch.
 
+During parallel delivery, the root's selected integration checkout is the canonical
+tracker. Only the root mutates tracker files there; worker copies are read-only
+snapshots, not current claims or readiness. Record run and item actor identities
+in `Claimed by:` so a shared account cannot disguise competing runs. The execution
+workflow owns tracker commits and completion evidence for the code candidate.
+Publication alone does not authorize commits.
+
 ## Mutation read-back
 
 Reread changed files and affected dependents. Verify the intended content,

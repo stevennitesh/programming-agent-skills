@@ -40,6 +40,8 @@ Keep a change requiring coordinated writes across repositories with the serial
 root or reslice at a real compatibility boundary. Global installs and external
 effects stay with the serial root and their existing authorization. For authorized
 tracker delivery, read [Tracker delivery](references/tracker-delivery.md).
+Its local-tracker branch owns canonical checkout, metadata commit ordering, and
+the distinction between proved code and final delivery HEAD.
 
 ## 2. Isolate and dispatch
 
@@ -129,8 +131,9 @@ Read back authorized external landing or rollback effects. Finish applicable
 tracker transitions through the conditional reference. Stop worker-created
 processes and command sessions and verify actor quiescence before cleanup.
 Use the lane reference to clean only named, clean, integrated lanes and verify
-the entire retained set at the proved integration HEAD. Never force removal or
-infer cleanup authority from a worker's success message.
+the entire retained set at the proved integration HEAD. For local tracker metadata,
+use final H after the tracker reference's C..H check. Never force removal or infer
+cleanup authority from a worker's success message.
 
 Completion means the accepted outcome is integrated and proved, all writers are
 idle, required external state is read back, and every created lane is accounted

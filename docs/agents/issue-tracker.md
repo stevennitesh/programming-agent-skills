@@ -30,9 +30,8 @@ Use the GitHub connector when it exposes the required operation. Otherwise use
 - **Close:** add any skill-owned closing comment, then close when configured or
   explicitly directed.
 - **Relationships:** use configured native sub-issue and dependency operations,
-  or their verified REST endpoints when the connector lacks them. To Tickets
-  may use `skills/custom/to-tickets/scripts/github_issue_relationships.py` for
-  these fallback operations.
+  or their verified REST endpoints when the connector lacks them. Resolve current
+  operation support and read-back without routing through a retired skill package.
 
 Resolve the operation and its independent read-back route before the first
 external mutation. GitHub issues and PRs share one number space, so resolve an

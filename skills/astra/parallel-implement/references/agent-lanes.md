@@ -101,5 +101,8 @@ The result names lanes that need cleanup, exact retry, or preservation. Pass
 every retained lane and finish only when `finish_clean` is true for the proved
 integration `HEAD`.
 
+With a version-controlled tracker, pass final delivery HEAD H after the tracker
+reference's C..H evidence-applicability check, not the earlier proved code commit C.
+
 The helper never forces removal, deletes branches, changes global Git config,
 or chooses a lane on the caller's behalf.

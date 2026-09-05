@@ -87,4 +87,6 @@ def test_git_root_check_accepts_only_the_repository_root() -> None:
 
 
 def test_current_repository_setup_is_structurally_valid() -> None:
-    assert VALIDATOR["validate_setup"](ROOT, repository_owned_contract=True) == []
+    assert VALIDATOR["validate_setup"](
+        ROOT, repository_owned_contract=True, domain_owner="shape-work"
+    ) == []

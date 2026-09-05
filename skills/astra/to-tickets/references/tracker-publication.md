@@ -19,6 +19,11 @@ is executing; return that conflict unless coordinated change is authorized.
 Duplicate, ambiguous, or divergent items require reconciliation within authority,
 not silently creating a second graph.
 
+When shaping revises an accepted source, identify the accepted revision and changed
+commitments. Coordinate affected active work with its execution owner before
+repairing tickets; keep affected pending work non-ready until acceptance, source
+pointers, gates and assignments agree. Preserve unaffected tickets and claims.
+
 Prepare the exact titles, bodies, parent/child and blocking relationships, and
 intended state changes. Verify the needed mutation and independent read-back
 operations before the first effect. Missing setup leaves a reviewable draft and
@@ -47,10 +52,20 @@ as actionable under the configured policy. A closed predecessor alone does not
 prove its required outcome exists. Preserve category and state distinctions;
 known dependency-blocked work is not necessarily awaiting triage or information.
 
+Use mapped agent-readiness only for executable agent work; preserve human-only
+readiness for human handoffs. Neither a resolved blocker nor a ready-for-human
+label authorizes an agent to take over the human decision or action.
+
 After publication, read back bodies, relationships, readiness, and affected
 ownership. Derive the actual starting set from the verified graph rather than
 assuming the planned writes succeeded. Keep the source-to-published identity
 mapping so a resumed run can inspect the same items.
+
+For version-controlled local tickets, identify the canonical checkout containing
+the published graph. Publication does not imply a Git commit. Before subsequent
+parallel delivery, the execution owner needs authority to commit owned tracker
+changes and a clean baseline containing the accepted graph. Do not let lane copies
+become independent tracker authorities.
 
 ## Recover without duplicates
 

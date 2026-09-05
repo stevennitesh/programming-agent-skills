@@ -2,8 +2,9 @@
 
 Use for a direct request to clarify or reconcile project meaning, or when shaping
 exposes a durable domain distinction. This path does not require a feature spec,
-ticket graph, or implementation. For persistent writes, also read the publication
-section of [Durable decisions](durable-decisions.md).
+ticket graph, or implementation. For persistent writes, also read
+[Durable decisions](durable-decisions.md), including its revision safeguards when
+tickets or workers already depend on the meaning being changed.
 
 ## Locate the meaning and its authority
 

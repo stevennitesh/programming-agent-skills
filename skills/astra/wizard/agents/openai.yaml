@@ -1,0 +1,6 @@
+interface:
+  display_name: "Wizard"
+  short_description: "Build a guided human-operated procedure"
+  default_prompt: "Use $wizard to create and check a local interactive script for this settled procedure."
+policy:
+  allow_implicit_invocation: false

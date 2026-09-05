@@ -86,7 +86,8 @@ def test_repo_bootstrap_validates_selected_domain_layout() -> None:
     validator = runpy.run_path(
         str(CUSTOM / "repo-bootstrap/scripts/validate_setup.py")
     )
-    check = validator["domain_layout_failures"]
+    def check(text):
+        return validator["domain_layout_failures"](text, domain_owner="shape-work")
     domain = (ROOT / "docs/agents/domain.md").read_text(encoding="utf-8")
 
     assert check(domain) == []
@@ -94,8 +95,8 @@ def test_repo_bootstrap_validates_selected_domain_layout() -> None:
         "docs/agents/domain.md must set Configured layout to "
         "single-context or multi-context"
     ]
-    assert check(domain.replace("$domain-modeling", "$domain-owner")) == [
-        "docs/agents/domain.md must point to $domain-modeling"
+    assert check(domain.replace("$shape-work", "$domain-modeling")) == [
+        "docs/agents/domain.md must point to $shape-work"
     ]
 
 

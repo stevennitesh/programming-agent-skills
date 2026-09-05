@@ -61,6 +61,9 @@ PARALLEL_CONFIG = Path(".codex/config.toml")
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("repo", nargs="?", default=".", help="Target repository root")
+    parser.add_argument("--domain-owner", default="domain-modeling",
+                        choices=("domain-modeling", "shape-work"),
+                        help="Domain owner required by the selected source contract.")
     parser.add_argument(
         "--repository-owned-contract",
         action="store_true",
@@ -223,7 +226,7 @@ def label_configuration_failures(labels: str) -> list[str]:
     ]
 
 
-def domain_layout_failures(domain: str) -> list[str]:
+def domain_layout_failures(domain: str, *, domain_owner: str = "domain-modeling") -> list[str]:
     match = re.search(
         r"(?im)^\*\*Configured layout:\*\*\s*"
         r"(single-context|multi-context)\.?(?:\r?\n|\Z)",
@@ -239,8 +242,8 @@ def domain_layout_failures(domain: str) -> list[str]:
     if markdown_headings(domain, 2).count("Route") != 1:
         failures.append("docs/agents/domain.md must contain one ## Route section")
     visible = visible_markdown(domain)
-    if "$domain-modeling" not in visible:
-        failures.append("docs/agents/domain.md must point to $domain-modeling")
+    if f"${domain_owner}" not in visible:
+        failures.append(f"docs/agents/domain.md must point to ${domain_owner}")
     required_path = "CONTEXT.md" if match.group(1) == "single-context" else "CONTEXT-MAP.md"
     if required_path not in visible:
         failures.append(f"docs/agents/domain.md is missing {required_path}")
@@ -380,7 +383,8 @@ def git_root_failures(root: Path) -> list[str]:
     return []
 
 
-def validate_setup(root: Path, *, repository_owned_contract: bool = False) -> list[str]:
+def validate_setup(root: Path, *, repository_owned_contract: bool = False,
+                   domain_owner: str = "domain-modeling") -> list[str]:
     failures = git_root_failures(root)
     if not failures:
         failures.extend(parallel_support_failures(root))
@@ -405,7 +409,7 @@ def validate_setup(root: Path, *, repository_owned_contract: bool = False) -> li
 
     domain = texts["docs/agents/domain.md"]
     if domain:
-        failures.extend(domain_layout_failures(domain))
+        failures.extend(domain_layout_failures(domain, domain_owner=domain_owner))
 
     contract = texts["docs/agents/engineering-contract.md"]
     if contract:
@@ -444,7 +448,8 @@ def main() -> int:
         print(f"Setup surface is incomplete:\n- Cannot resolve repository root: {error}")
         return 1
 
-    failures = validate_setup(root, repository_owned_contract=args.repository_owned_contract)
+    failures = validate_setup(root, repository_owned_contract=args.repository_owned_contract,
+                              domain_owner=args.domain_owner)
     if failures:
         print("Setup surface is incomplete:")
         for failure in failures:

@@ -11,3 +11,9 @@ and distinguish accepted decisions from proposals and observed implementation.
 Missing records are not automatically setup blockers. Resolve needed meaning
 from its owning source or the user. Capture domain content only within the
 authorized task; this route does not supply that content.
+
+In this pack, shape-work owns domain clarification and accepted context/ADR
+reconciliation. Repo-bootstrap configures this route; it does not invent domain
+content. Use the current Astra skill, with an installed or source pointer verified
+for this repository. If unavailable, report that access gap without restoring a
+retired route or blocking unrelated work.

@@ -43,10 +43,14 @@ and fill absent settings from those defaults. A focused repair changes only its
 requested scope. Configuring a tracker does not require direct coding tasks to
 become tickets.
 
-Link existing domain rules and operating procedures at their owners. When older
-skills remain in use, preserve the documents and fields they consume. Check
-their actual requirements before claiming compatibility; Astra setup alone does
-not establish compatibility with the whole old pack.
+When parallel execution setup is requested or execution reports a concrete
+environment gap, read [Parallel support](references/parallel-support.md).
+Reconcile the prerequisites without creating lanes or starting workers.
+
+Link existing domain rules and operating procedures at their current Astra owners.
+Projects using this pack target the latest Astra contracts. Migrate retired routes
+and obsolete setup fields rather than retaining compatibility branches. Preserve
+repository-specific meaning and historical evidence, not obsolete execution paths.
 
 If global guidance is explicitly in scope, keep only cross-repository preferences
 and a direction to follow each repository's instructions there. Preserve personal
@@ -57,7 +61,7 @@ Otherwise report any relevant global conflict without editing the global file.
 
 For an existing setup, compare its agent docs with this version of bootstrap.
 When a material difference warrants reconciliation, follow
-[Existing repositories and mixed skill use](references/setup-defaults.md#existing-repositories-and-mixed-skill-use)
+[Existing repositories](references/setup-defaults.md#existing-repositories)
 to prepare one proposal covering all affected docs and compatibility checks.
 Show the concrete edits, preserved choices, and any validation changes before
 asking whether to apply the compatibility update or keep the current conventions.
@@ -90,6 +94,9 @@ match their source, and local requirements remain intact. Run relevant existing
 documentation checks. Execute a documented command when practical and necessary
 to substantiate a setup claim; report unexecuted commands as such. Inspect the
 diff for duplicate rules and unintended changes to policy or unrelated work.
+Verify current Astra owner pointers and identify any installed/source mismatch;
+do not claim migration complete while the affected route still selects a retired
+skill. Updating installed copies or other repositories remains separately scoped.
 For an accepted compatibility update, verify the whole approved set together;
 do not leave dependent docs or validation rules for separate follow-up turns.
 

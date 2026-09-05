@@ -13,10 +13,10 @@ skill, read [the Astra design brief](docs/astra/design-brief.md). It records the
 accepted principles from [issue #94](https://github.com/stevennitesh/programming-agent-skills/issues/94),
 subsequent decisions, and what remains unsettled.
 
-The managed custom pack remains supported while Astra develops. When maintaining
-its composition, deployment, review, or worker mechanisms, read
-[Legacy pack context](docs/agents/legacy-pack-context.md). Its vocabulary and
-procedures do not automatically govern Astra work.
+Projects using this pack target the latest Astra version. Retired source remains
+available as evidence; do not preserve legacy routes in current project guidance.
+[Legacy pack context](docs/agents/legacy-pack-context.md) documents that historical
+composition and does not govern current Astra execution.
 
 ## Sources and ownership
 
@@ -53,7 +53,8 @@ installed copies.
 
 The repository's engineering contract is adapted from Astra and is owned here.
 It is not required to match either bootstrap seed. Existing tracker and domain
-settings remain for their current consumers; direct coding requires no ticket.
+settings preserve repository meaning while their routes target current Astra;
+direct coding requires no ticket.
 
 ## Evidence and durable context
 

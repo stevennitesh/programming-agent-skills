@@ -34,6 +34,25 @@ recognize success without guessing a consequential decision? Keep proposed chang
 distinct from accepted requirements. Updating a spec should reconcile affected
 acceptance and references rather than append contradictory current truth.
 
+## Revisions during delivery
+
+Before changing accepted meaning already used by tickets or workers, identify the
+affected source revision, commitments, ticket identities, assignments, and proof.
+Coordinate with the execution owner before changing an active worker's contract;
+do not edit its ticket, release its claim, or redefine success behind its back.
+Return the exact changed commitments and affected work when execution control is
+outside this task's authority. Keep a proposed revision distinct from the current
+accepted source until its decision and coordinated application are settled.
+
+For an authorized revision, the execution owner pauses affected dispatch and
+quiesces affected writers before changing their assignments. Reconcile the accepted
+source, dependent ticket acceptance, gates and worker instructions together; keep
+affected pending work non-ready until that reconciliation is verified. Revalidate
+landed behavior and invalidate proof only where the changed contract affects it.
+Preserve unaffected work and history. Do not reuse a former completion verdict to
+claim the revised outcome; identify further implementation or evidence required.
+Resume affected work only against the reconciled accepted revision.
+
 ## Publish only within authority
 
 A requested local spec may be written directly under applicable repository rules.

@@ -53,7 +53,8 @@ does not establish better behavior.
 - New repositories receive familiar tracker, label, and domain defaults. Those
   settings do not force direct coding into a ticket workflow.
 - Existing setups receive one optional compatibility proposal covering affected
-  docs and enforcement. Preserve local choices and remaining legacy consumers.
+  docs and enforcement. Preserve local meaning while migrating execution routes
+  to the latest Astra version; do not keep legacy compatibility routes.
 - Global updates are a separate explicit scope. Keep personal preferences and
   environment guidance; reconcile local and global files by their different jobs.
 
@@ -72,13 +73,15 @@ structural checks and editorial reviews alone do not establish those effects.
 Legacy composition freezes and Deploy Campaigns remain scoped to their selected
 legacy work. They are not prerequisites for authoring an Astra skill. Historical
 ADRs remain evidence of those decisions, not an implicit instruction to restore
-the old composition. Explicitly requested use of a legacy method follows its
-applicable contract.
+the old composition. Retired source remains historical evidence, not a runtime
+compatibility route for projects using this pack.
 
 As Astra replacements are accepted, migrate their consumers, references,
-validation, routing, and installation together. Retain an old path only while
-named consumers or recovery needs justify it. The current coexistence supports
-legacy consumers and a custom-only installer; it is not the desired final state.
+validation and routing together. All projects using this pack target the latest
+Astra contracts. Do not retain old execution paths for compatibility. Historical
+source and a custom-only installer still exist in this repository; they are not
+the current deployment target. Updating external projects or installed copies
+remains a separately scoped operation, not an automatic effect of editing a seed.
 
 ## Still undecided
 

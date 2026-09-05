@@ -1,6 +1,6 @@
 ---
 name: writing-for-agents
-description: Create, revise, or audit substantive instructions for agents, including skills, AGENTS.md, guides, specs, and reusable prompts. Use when deciding how agents should interpret and act on a document; exclude ordinary prose, incidental messages, and minor wording fixes.
+description: Create, revise, or audit substantive instructions for agents, including skills, AGENTS.md, guides, specs, reusable prompts, and continuation handoffs. Use when deciding how agents should interpret and act on a document; exclude ordinary prose, incidental messages, minor wording fixes, and moving or creating tasks in the app.
 ---
 
 # Writing for agents
@@ -18,6 +18,11 @@ sources; surface any remaining product or policy decision to its owner.
 
 For a worker assignment, include the bounded task, necessary context, and
 expected return. Keep orchestration decisions with the caller.
+
+When preparing a continuation handoff for another agent or fresh context, read
+[Continuation handoffs](references/continuation-handoffs.md). That reference owns
+the packet and its checks; do not turn a request to write a handoff into executing
+the next step or transferring a task. Ordinary progress reports do not require it.
 
 When creating a skill or assessing or changing its discovery, structure, or
 packaging, read

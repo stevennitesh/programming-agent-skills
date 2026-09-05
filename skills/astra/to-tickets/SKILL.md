@@ -80,6 +80,11 @@ result. Missing tracker setup blocks publication, not the useful draft. Do not
 auto-publish merely because the skill is named to-tickets.
 
 Finish with the draft or verified ticket pointers, dependencies, actionable work,
-and material limits. Already-authorized implementation can continue; a planning
+and material limits. Identify whether delivery covers a complete parent or a named
+subset; preserve the exact published identities and unresolved decision or
+permission gates. Readiness means prerequisites are resolved, not that an item
+is safe to run beside every other ready item. Parallel-implement owns that live
+independence check and turns acceptance into worker assignments.
+Already-authorized implementation can continue; a planning
 or ticket-publication request alone does not authorize implementing the graph,
 spawning workers, or closing a parent.
