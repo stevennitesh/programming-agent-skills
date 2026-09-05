@@ -49,7 +49,23 @@ If global guidance is explicitly in scope, keep only cross-repository preference
 and a direction to follow each repository's instructions there. Preserve personal
 environment rules. Keep project commands and the engineering contract local.
 
-## 3. Apply the requested changes
+## 3. Offer a compatibility update
+
+For an existing setup, compare its agent docs with this version of bootstrap.
+When a material difference warrants reconciliation, follow
+[Existing repositories and mixed skill use](references/setup-defaults.md#existing-repositories-and-mixed-skill-use)
+to prepare one proposal covering all affected docs and compatibility checks.
+Show the concrete edits, preserved choices, and any validation changes before
+asking whether to apply the compatibility update or keep the current conventions.
+Explain that the choice is needed because this updates established setup policy.
+
+Wait for the user's choice before applying that optional update. A decline keeps
+the existing conventions and does not block independently authorized work. If
+the user already requested the compatibility update, proceed within that scope
+without asking again. With no material difference, report that the setup is
+current; do not ask merely because wording or a template version differs.
+
+## 4. Apply the requested changes
 
 For an authorized setup or repair, make the supported local edits directly.
 Ask only when an unresolved choice would change a consequential repository
@@ -63,13 +79,15 @@ mechanical enforcement in its owning configuration or tooling; a documentation
 request alone does not authorize new tooling, dependency installation, external
 tracker changes, or global file edits.
 
-## 4. Verify the guidance
+## 5. Verify the guidance
 
 Read the resulting files as a future agent. Check that pointers resolve, commands
 match their source, and local requirements remain intact. Run relevant existing
 documentation checks. Execute a documented command when practical and necessary
 to substantiate a setup claim; report unexecuted commands as such. Inspect the
 diff for duplicate rules and unintended changes to policy or unrelated work.
+For an accepted compatibility update, verify the whole approved set together;
+do not leave dependent docs or validation rules for separate follow-up turns.
 
 Finish when the requested guidance is coherent, discoverable, and supported by
 the repository, or report the specific unresolved gap. State what changed and

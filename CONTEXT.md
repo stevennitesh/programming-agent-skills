@@ -10,6 +10,7 @@ This repository packages a shared engineering discipline as skills, setup contra
 - `docs/agents/engineering-contract.md` owns engineering taste, preventive code quality, shared runtime language, and cross-cutting discipline.
 - `docs/agents/issue-tracker.md`, `triage-labels.md`, and `domain.md` own tracker mechanics, state roles, and domain routing.
 - `skills/custom/` is the active supported install set and the only source for managed installation. `skills/experimental/` holds inactive named alternatives to active skills. `skills/extra/` is optional, and `skills/.archive/` is retired history.
+- `skills/astra/` owns the new Astra packages. They are outside managed installation; edit their source there rather than changing a same-named custom skill.
 - Historical research, synthesis, transcripts, issue notes, and run logs remain evidence. They become current instructions only when an owning README or `docs/plans/README.md` says so.
 - Mechanical rules belong in scripts or config. Prose owns routing, judgment, and behavior that cannot be enforced directly.
 
@@ -43,6 +44,7 @@ Copying downstream procedure upward is duplication. Repeating one leading word a
 - `docs/validation/`: repeatable fixtures and evidence that wording changes behavior.
 - `docs/adr/`: durable decisions that routine skill edits should not relitigate.
 - `skills/custom/<skill>/SKILL.md`: active skill behavior; sibling files hold disclosed branch reference.
+- `skills/astra/<skill>/SKILL.md`: Astra skill behavior; templates are seeds for repository-owned guidance, not managed mirrors.
 - `skills/experimental/<skill>/`: inactive candidate behavior with the same name as an active custom skill; it is not routed, installed, or an edit source for the active pack.
 - `$HOME/.agents/skills/<skill>`: installed mirror, never the edit source of truth.
 
@@ -53,6 +55,22 @@ packaging and metadata mechanics remain with `skill-creator`. Installation,
 publishing, and Git delivery resume only under their own authority.
 
 The installer records pack-managed names in `.programming-agent-skills-manifest.json`. It may update or retire those names while preserving unrelated skills in the shared install directory.
+
+## Astra and legacy coexistence
+
+The Astra `writing-for-agents` and `repo-bootstrap` packages have been installed
+as manual overrides of the same-named custom skills. Before changing an installed
+copy, inspect its current content and selected source. The managed installer
+still selects `skills/custom/`; it does not deploy Astra and may replace these
+overrides. Use the requested source package for a targeted Astra installation.
+
+This repository retains the legacy tracker, labels, and domain routes for their
+current consumers. Direct coding does not require a tracker item. The local
+engineering contract adopts the Astra seed and is repository-owned. Validation
+checks its structure without requiring template parity or a legacy source marker.
+Changes to either bootstrap seed do not automatically change this repository's
+contract. The custom bootstrap retains managed-marker validation by default for
+repositories that still use that contract.
 
 ## Pack Vocabulary
 
@@ -212,18 +230,15 @@ _Avoid_: pack manual, copied route map
   [ADR-0016](docs/adr/0016-ordinary-and-formal-review-share-one-lean-judgment-owner.md).
   The caller owns activation, each review skill validates its admitted
   candidate, and risk expands only applicable candidate-scoped judgment.
-- Agent-instruction vocabulary—context pointers, context and cognitive load,
-  information hierarchy, completion criteria, leading words, environment
-  caches, and pruning—belongs to
-  [`skills/custom/writing-for-agents/SKILL.md`](skills/custom/writing-for-agents/SKILL.md).
-  Skill-only invocation and packaging live in its `SKILL-MECHANICS.md`
-  reference; behavioral evaluation is an explicit-user-request branch.
-- Runtime engineering vocabulary and preventive code-quality
-  defaults—Traceability, bounded slice, commitment boundary, proof seam,
-  repository-owned proof mechanism, fixed point, Spec / Standards,
-  correctness, robustness, Change Closure, code shape, simplification,
-  implementation clarity, measured performance, and residual risk—belong to
-  `docs/agents/engineering-contract.md`.
+- For authoring agent instructions in this repository, use
+  [Astra writing-for-agents](skills/astra/writing-for-agents/SKILL.md).
+  Its conditional [skill-authoring reference](skills/astra/writing-for-agents/references/skill-authoring.md)
+  covers discovery and packaging. The custom version remains the legacy pack's
+  source, not the authoring method selected for this repository.
+- Shared engineering judgment belongs to
+  [the repository-owned contract](docs/agents/engineering-contract.md).
+  Specialized workflow vocabulary remains with the skill or decision that
+  defines it; the contract does not require the legacy vocabulary catalog.
   Project-specific domain language and decisions remain with routed domain
   records.
 - Delegated implementation handoff language and worker evidence Returns belong

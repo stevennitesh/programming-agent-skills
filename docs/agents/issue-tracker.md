@@ -2,6 +2,10 @@
 
 Issues and specifications live in GitHub Issues.
 
+Project: [stevennitesh/programming-agent-skills](https://github.com/stevennitesh/programming-agent-skills).
+Use this guide for tracker-backed work. Direct coding does not require creating
+an issue; the consuming workflow owns readiness and completion evidence.
+
 ## Configuration
 
 **PRs as a request surface:** no.

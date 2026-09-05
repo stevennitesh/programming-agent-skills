@@ -81,9 +81,29 @@ scope. Do not create example tickets or commit tracker files during setup.
 ## Existing repositories and mixed skill use
 
 Initial setup defaults do not authorize wholesale replacement of existing
-guidance. Reconcile missing or requested settings, preserve local additions,
-and avoid duplicate sections. A repeat run with no relevant changes should
-produce no edits.
+guidance. Compare the current bootstrap with repository instructions, the
+engineering contract, domain route, tracker guide, and labels. Follow their
+current pointers to other agent docs and setup enforcement that may depend on
+the old conventions. Include repository-local global-instruction templates only
+when affected; an installed global file remains outside repository setup scope.
+
+Distinguish a local preference from an incompatibility or an available behavior
+update. Compare meaning and consumers, not template identity. A newer bootstrap
+may offer useful changes without making the old setup invalid.
+
+Prepare one reviewable proposal with the exact edits across affected files,
+the benefit or incompatibility each addresses, preserved local choices, and the
+checks needed to verify the result. If a validator or test enforces a displaced
+convention, include its narrow migration in the same proposal while preserving
+the underlying protection and remaining legacy consumers. Do not bypass a
+failing check or claim compatibility from prose alone.
+
+Offer the user a single choice to apply this compatibility update or keep the
+existing setup. Applying it covers the approved document and enforcement changes
+together. A decline preserves the current conventions; continue any separate
+requested repair within its original scope. Do not repeat a declined offer for
+the same differences in the same task. Prior explicit approval of the update
+remains sufficient. A repeat run with no relevant changes should produce no edits.
 
 If an older skill remains active, inspect the configuration it reads and preserve
 its required fields and meanings. When a new Astra workflow changes a convention,

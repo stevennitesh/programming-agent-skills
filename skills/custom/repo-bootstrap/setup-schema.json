@@ -10,5 +10,5 @@
     "scripts/validate_setup.py",
     "triage-labels.md"
   ],
-  "contract_sha256": "b32d86f9f16d63f5f8331258e7748d19fc7e7171dfc00487275d3fa3c7404270"
+  "contract_sha256": "70dd1ab50f04687160e3672bb539c16e1df14d3f8c51ec9fb1e1b79b30e465b8"
 }

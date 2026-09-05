@@ -1,7 +1,9 @@
 # Triage labels
 
-Map active skill-pack roles to this repository's tracker values. Change the
-tracker values when adapting the guide; keep the role names.
+These mappings preserve the roles used by current tracker workflows. The
+consuming workflow owns readiness criteria and permitted transitions. Direct
+coding does not require a tracker item. A mapped label alone does not establish
+that it exists remotely or that an item is ready or complete.
 
 ## Category roles
 

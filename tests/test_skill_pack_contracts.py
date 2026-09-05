@@ -19,6 +19,16 @@ ROOT = Path(__file__).resolve().parents[1]
 CUSTOM = ROOT / "skills/custom"
 
 
+def legacy_engineering_contract() -> str:
+    """Materialize the legacy seed for tests of the custom pack's contract."""
+    source = CUSTOM / "repo-bootstrap/engineering-contract.md"
+    digest = hashlib.sha256(source.read_bytes()).hexdigest()[:12]
+    marker = f"<!-- programming-agent-skills setup-file: engineering-contract.md:{digest} -->"
+    return source.read_text(encoding="utf-8").replace(
+        "# Engineering Contract\n", f"# Engineering Contract\n\n{marker}\n", 1
+    )
+
+
 def exact_tree_hash(directory: Path) -> str:
     files = [
         (name, content)
@@ -686,7 +696,7 @@ def test_engineering_contract_validation_is_structural_and_causal() -> None:
         str(CUSTOM / "repo-bootstrap/scripts/validate_setup.py")
     )
     check = validator["engineering_contract_failures"]
-    contract = (ROOT / "docs/agents/engineering-contract.md").read_text(encoding="utf-8")
+    contract = legacy_engineering_contract()
 
     assert check(contract, "engineering-contract.md") == []
     for invalid in (
@@ -2075,9 +2085,7 @@ def test_tdd_invocation_gate_is_consistent_across_active_owners() -> None:
     contract = pack_contract.parse_contract(
         (ROOT / "docs/synthesis/skill-pack.md").read_text(encoding="utf-8")
     )
-    engineering = (
-        ROOT / "docs/agents/engineering-contract.md"
-    ).read_text(encoding="utf-8")
+    engineering = legacy_engineering_contract()
     projected = (
         CUSTOM / "repo-bootstrap/engineering-contract.md"
     ).read_text(encoding="utf-8")
@@ -2912,7 +2920,7 @@ def test_merge_conflict_resolution_is_three_way_and_finish_bounded() -> None:
 
 def test_portable_fallback_remains_standalone_from_the_repo_contract() -> None:
     fallback = (ROOT / "AGENTS_PORTABLE_FALLBACK.md").read_text(encoding="utf-8")
-    contract = (ROOT / "docs/agents/engineering-contract.md").read_text(encoding="utf-8")
+    contract = legacy_engineering_contract()
     seed = (CUSTOM / "repo-bootstrap/engineering-contract.md").read_text(
         encoding="utf-8"
     )
@@ -2962,7 +2970,7 @@ def test_portable_fallback_remains_standalone_from_the_repo_contract() -> None:
 
 def test_tracer_bullet_is_a_conditional_learning_role_not_a_slice_alias() -> None:
     contract = " ".join(
-        (ROOT / "docs/agents/engineering-contract.md").read_text(encoding="utf-8").split()
+        legacy_engineering_contract().split()
     )
     tickets = " ".join(
         (CUSTOM / "to-tickets/SKILL.md").read_text(encoding="utf-8").split()
@@ -3218,7 +3226,7 @@ def test_implement_current_reconciliation_tracks_runtime_tree() -> None:
 
 
 def test_git_and_parallel_delivery_roles_stay_out_of_the_shared_contract() -> None:
-    contract = (ROOT / "docs/agents/engineering-contract.md").read_text(encoding="utf-8")
+    contract = legacy_engineering_contract()
     seed = (CUSTOM / "repo-bootstrap/engineering-contract.md").read_text(encoding="utf-8")
     implement = (CUSTOM / "implement/SKILL.md").read_text(encoding="utf-8")
     parallel = (CUSTOM / "parallel-implement/SKILL.md").read_text(encoding="utf-8")
@@ -3384,7 +3392,7 @@ def test_parallel_uses_current_landed_state_without_a_dependency_overlay() -> No
 
 
 def test_shared_protection_uses_a_concrete_trigger_not_a_state_catalog() -> None:
-    contract = (ROOT / "docs/agents/engineering-contract.md").read_text(encoding="utf-8")
+    contract = legacy_engineering_contract()
     seed = (CUSTOM / "repo-bootstrap/engineering-contract.md").read_text(encoding="utf-8")
     tickets = (CUSTOM / "to-tickets/SKILL.md").read_text(encoding="utf-8")
 

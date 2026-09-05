@@ -70,10 +70,6 @@ FRONTMATTER_RE = re.compile(r"\A---\s*\r?\n(.*?)\r?\n---\s*(?:\r?\n|\Z)", re.DOT
 FRONTMATTER_FIELD_RE = re.compile(r"(?m)^([a-zA-Z0-9_-]+):\s*(.+?)\s*$")
 TRAILING_WHITESPACE_RE = re.compile(r"[ \t]$")
 SKILL_HANDLE_RE = re.compile(r"\$([a-z0-9][a-z0-9-]*)")
-SETUP_FILE_MARKER_LINE_RE = re.compile(
-    r"(?m)^<!-- programming-agent-skills setup-file: [a-z0-9./-]+:[0-9a-f]{12} -->"
-    r"\r?\n(?:[ \t]*\r?\n)?"
-)
 INVOCATION_ROW_RE = re.compile(
     r"(?m)^\| `([a-z0-9][a-z0-9-]*)` \| "
     r"(implicitly invocable|explicit-only) \|$"
@@ -570,7 +566,7 @@ def validate_setup_surface(root: Path) -> list[str]:
     if not validator.is_file():
         return [f"Missing setup-surface validator: {validator.relative_to(root).as_posix()}"]
     result = subprocess.run(
-        [sys.executable, str(validator), str(root)],
+        [sys.executable, str(validator), str(root), "--repository-owned-contract"],
         cwd=root,
         text=True,
         stdout=subprocess.PIPE,
@@ -580,33 +576,6 @@ def validate_setup_surface(root: Path) -> list[str]:
         return []
     output = (result.stdout + result.stderr).strip()
     return ["Repo setup surface is invalid:", *indent_lines(output)]
-
-
-def unified_file_diff(expected: Path, actual: Path, *, root: Path) -> list[str]:
-    if not expected.is_file() or not actual.is_file():
-        return []
-    if expected.read_bytes() == actual.read_bytes():
-        return []
-    expected_text = SETUP_FILE_MARKER_LINE_RE.sub(
-        "", expected.read_text(encoding="utf-8")
-    )
-    actual_text = SETUP_FILE_MARKER_LINE_RE.sub(
-        "", actual.read_text(encoding="utf-8")
-    )
-    if expected_text == actual_text:
-        return []
-    try:
-        result = subprocess.run(
-            ["git", "diff", "--no-index", "--", str(expected), str(actual)],
-            cwd=root,
-            text=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-        )
-        diff = result.stdout or result.stderr
-    except OSError:
-        diff = f"{expected} differs from {actual}"
-    return ["docs/agents/engineering-contract.md differs from setup template:", *indent_lines(diff)]
 
 
 def global_agents_template_skill_references(root: Path) -> list[str]:
@@ -931,13 +900,6 @@ def main(argv: list[str] | None = None) -> int:
     failures.extend(validate_pack_integration_contract(root))
     failures.extend(validate_research_catalog_contract(root))
     failures.extend(validate_setup_surface(root))
-    failures.extend(
-        unified_file_diff(
-            root / "skills/custom/repo-bootstrap/engineering-contract.md",
-            root / "docs/agents/engineering-contract.md",
-            root=root,
-        )
-    )
     failures.extend(validate_global_agents_template(root, custom_skill_names))
     failures.extend(
         validate_installed_skills(

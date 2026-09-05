@@ -61,6 +61,11 @@ PARALLEL_CONFIG = Path(".codex/config.toml")
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("repo", nargs="?", default=".", help="Target repository root")
+    parser.add_argument(
+        "--repository-owned-contract",
+        action="store_true",
+        help="Check contract structure without requiring a managed source marker.",
+    )
     return parser.parse_args()
 
 
@@ -244,27 +249,31 @@ def domain_layout_failures(domain: str) -> list[str]:
     return failures
 
 
-def engineering_contract_failures(text: str, relative: str) -> list[str]:
+def engineering_contract_failures(
+    text: str, relative: str, *, repository_owned: bool = False
+) -> list[str]:
     failures: list[str] = []
-    if markdown_headings(text, 1) != ["Engineering Contract"]:
+    headings = [heading.casefold() for heading in markdown_headings(text, 1)]
+    if headings != ["engineering contract"]:
         failures.append(f"{relative} must contain one top-level Engineering Contract heading")
 
-    try:
-        source = Path(__file__).resolve().parents[1] / "engineering-contract.md"
-        digest = hashlib.sha256(source.read_bytes()).hexdigest()[:12]
-    except OSError as error:
-        failures.append(f"Cannot read canonical engineering-contract.md: {error}")
-        return failures
+    if not repository_owned:
+        try:
+            source = Path(__file__).resolve().parents[1] / "engineering-contract.md"
+            digest = hashlib.sha256(source.read_bytes()).hexdigest()[:12]
+        except OSError as error:
+            failures.append(f"Cannot read canonical engineering-contract.md: {error}")
+            return failures
 
-    expected_marker = (
-        "<!-- programming-agent-skills setup-file: "
-        f"engineering-contract.md:{digest} -->"
-    )
-    if SETUP_FILE_MARKER_RE.findall(unfenced_markdown(text)) != [expected_marker]:
-        failures.append(
-            f"{relative} must contain exactly one current source marker: "
-            f"{expected_marker}"
+        expected_marker = (
+            "<!-- programming-agent-skills setup-file: "
+            f"engineering-contract.md:{digest} -->"
         )
+        if SETUP_FILE_MARKER_RE.findall(unfenced_markdown(text)) != [expected_marker]:
+            failures.append(
+                f"{relative} must contain exactly one current source marker: "
+                f"{expected_marker}"
+            )
     visible = visible_markdown(text)
     sections = re.split(r"(?m)^##[ \t]+.+$", visible)[1:]
     sections = [re.sub(r"(?m)^#{3,6}[ \t]+.*$", "", section) for section in sections]
@@ -371,7 +380,7 @@ def git_root_failures(root: Path) -> list[str]:
     return []
 
 
-def validate_setup(root: Path) -> list[str]:
+def validate_setup(root: Path, *, repository_owned_contract: bool = False) -> list[str]:
     failures = git_root_failures(root)
     if not failures:
         failures.extend(parallel_support_failures(root))
@@ -401,7 +410,10 @@ def validate_setup(root: Path) -> list[str]:
     contract = texts["docs/agents/engineering-contract.md"]
     if contract:
         failures.extend(
-            engineering_contract_failures(contract, "docs/agents/engineering-contract.md")
+            engineering_contract_failures(
+                contract, "docs/agents/engineering-contract.md",
+                repository_owned=repository_owned_contract,
+            )
         )
 
     for relative, text in texts.items():
@@ -425,13 +437,14 @@ def validate_setup(root: Path) -> list[str]:
 
 
 def main() -> int:
+    args = parse_args()
     try:
-        root = Path(parse_args().repo).resolve()
+        root = Path(args.repo).resolve()
     except OSError as error:
         print(f"Setup surface is incomplete:\n- Cannot resolve repository root: {error}")
         return 1
 
-    failures = validate_setup(root)
+    failures = validate_setup(root, repository_owned_contract=args.repository_owned_contract)
     if failures:
         print("Setup surface is incomplete:")
         for failure in failures:

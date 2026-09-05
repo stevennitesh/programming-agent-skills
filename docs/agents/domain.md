@@ -4,9 +4,10 @@
 
 ## Route
 
-- **single-context:** load the root `CONTEXT.md` and applicable `docs/adr/`.
-- **multi-context:** follow the root `CONTEXT-MAP.md` to the relevant context
-  record and its `docs/adr/`; also load applicable repository-wide ADRs.
+When domain meaning or an accepted decision affects the task, read the relevant
+parts of root `CONTEXT.md` and applicable records in `docs/adr/`. This repository
+uses a single context. Preserve accepted terminology and distinguish decisions
+from proposals and historical research.
 
 Missing domain records are not setup gaps. `$domain-modeling` owns settled
 domain meaning and any authorized context or ADR write. Repo Bootstrap only

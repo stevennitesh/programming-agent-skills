@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import runpy
 import shutil
 import stat
 import subprocess
@@ -13,6 +14,31 @@ from types import SimpleNamespace
 import pytest
 
 from scripts import pytest_focused, pytest_runtime, skill_pack_contract, validate_skills
+
+
+def test_repository_owned_contract_accepts_local_changes_without_a_marker() -> None:
+    root = Path(__file__).resolve().parents[1]
+    check = runpy.run_path(
+        str(root / "skills/custom/repo-bootstrap/scripts/validate_setup.py")
+    )["engineering_contract_failures"]
+    contract = "# Engineering contract\n\n## Local decisions\n\nPreserve ledger identities.\n"
+    assert check(contract, "contract.md", repository_owned=True) == []
+    assert check(contract, "contract.md")  # Legacy mode still requires its marker.
+    assert validate_skills.validate_setup_surface(root) == []
+
+
+@pytest.mark.parametrize("contract", [
+    "# Wrong document\n\n## Rules\n\nContent.\n",
+    "# Engineering contract\n\n# Engineering contract\n\n## Rules\n\nContent.\n",
+    "# Engineering contract\n\n## Rules\n\n<!-- comment only -->\n",
+    "# Engineering contract\n\n## Rules\n\n```text\nexample only\n```\n",
+])
+def test_repository_owned_contract_rejects_missing_structure(contract: str) -> None:
+    root = Path(__file__).resolve().parents[1]
+    check = runpy.run_path(
+        str(root / "skills/custom/repo-bootstrap/scripts/validate_setup.py")
+    )["engineering_contract_failures"]
+    assert check(contract, "contract.md", repository_owned=True)
 
 
 def write_skill(root: Path, name: str, body: str = "") -> Path:
