@@ -25,6 +25,9 @@ must stop. Identify the actual missing information before proposing setup.
 Keep repository instructions short: working commands, non-obvious local
 constraints, and pointers with clear reading conditions. Use the instruction
 file the target agent actually reads; preserve other tools' compatible guidance.
+When creating or reconciling instruction files, read
+[Agent instruction files](references/agent-instructions.md) for local and global
+ownership, nested scopes, and pointer checks.
 
 When shared engineering guidance is missing or needs revision, use
 [the engineering contract](templates/engineering-contract.md) as a seed.
@@ -48,6 +51,7 @@ not establish compatibility with the whole old pack.
 If global guidance is explicitly in scope, keep only cross-repository preferences
 and a direction to follow each repository's instructions there. Preserve personal
 environment rules. Keep project commands and the engineering contract local.
+Otherwise report any relevant global conflict without editing the global file.
 
 ## 3. Offer a compatibility update
 

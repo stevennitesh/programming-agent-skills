@@ -45,6 +45,7 @@ Copying downstream procedure upward is duplication. Repeating one leading word a
 - `docs/adr/`: durable decisions that routine skill edits should not relitigate.
 - `skills/custom/<skill>/SKILL.md`: active skill behavior; sibling files hold disclosed branch reference.
 - `skills/astra/<skill>/SKILL.md`: Astra skill behavior; templates are seeds for repository-owned guidance, not managed mirrors.
+- `skills/astra/repo-bootstrap/templates/global-agents.md`: Astra global guidance seed, separate from the legacy global template; personal environment rules remain user-owned.
 - `skills/experimental/<skill>/`: inactive candidate behavior with the same name as an active custom skill; it is not routed, installed, or an edit source for the active pack.
 - `$HOME/.agents/skills/<skill>`: installed mirror, never the edit source of truth.
 

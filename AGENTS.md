@@ -1,7 +1,5 @@
 # Repository Instructions
 
-Explore imaginatively. Converge under proof. Simplify ruthlessly.
-
 ## Commands
 
 - Create the repo environment if needed: `python -m venv .venv`
@@ -23,10 +21,8 @@ Explore imaginatively. Converge under proof. Simplify ruthlessly.
 
 - Stable vocabulary and repo invariants: `CONTEXT.md`
 - Active plans and runbooks: `docs/plans/README.md`
-- One-skill deployment: each `Run Deploy Campaign on <skill>` uses Contract
-  Lock, Candidate Lock, conditional Behavioral Proof, and Release under
-  `docs/synthesis/methods/deploy-prompts.md`; the obligations are not persisted
-  lifecycle state.
+- For `Run Deploy Campaign on <skill>`, read
+  `docs/synthesis/methods/deploy-prompts.md`.
 - Before nontrivial coding, read `docs/agents/engineering-contract.md`.
 - For tracker-backed work: `docs/agents/issue-tracker.md`,
   `docs/agents/triage-labels.md`
@@ -34,10 +30,6 @@ Explore imaginatively. Converge under proof. Simplify ruthlessly.
 
 ## Invariants
 
-- Keep `AGENTS.md` short: it primes; referenced docs teach; skills execute.
-- Keep skill-pack maintenance vocabulary in `CONTEXT.md`, shared runtime
-  engineering vocabulary in `docs/agents/engineering-contract.md`, and durable
-  decisions in `docs/adr/`.
 - Do not rewrite historical research, synthesis, validation, issue notes, or
   run logs as current instructions.
 - Preserve unrelated dirty work and run both whitespace/diff checks before handoff.
