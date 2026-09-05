@@ -15,5 +15,6 @@ clarification, settled meaning, and authorized context or ADR reconciliation
 through its conditional domain-modeling path. Repo Bootstrap only configures
 this route.
 
-Use the current Astra `$shape-work` for these operations; retired domain routes
-are not compatibility alternatives.
+Suggest `$shape-work` when domain clarification is needed; use it when the user
+requests that workflow. Reading existing domain records does not invoke it.
+Retired domain routes are not compatibility alternatives.

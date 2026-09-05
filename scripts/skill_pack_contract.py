@@ -1,4 +1,4 @@
-"""Shared identities and manifest rules for the custom skill pack."""
+"""Shared identities and manifest rules for the managed skill pack."""
 
 from __future__ import annotations
 
@@ -13,12 +13,16 @@ from pathlib import Path
 
 MANIFEST_NAME = ".programming-agent-skills-manifest.json"
 MANIFEST_FORMAT = 1
-MANIFEST_SOURCE = "skills/custom"
+MANIFEST_SOURCE = "skills/astra"
 EXPERIMENTAL_SOURCE = "skills/experimental"
 EXPERIMENTAL_MANIFEST_NAME = "manifest.json"
 EXPERIMENTAL_MANIFEST_FORMAT = 1
 SKILL_NAME_RE = re.compile(r"^[a-z0-9][a-z0-9-]*$")
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
+
+
+def ignored_skill_cache(path: Path, _is_directory: bool) -> bool:
+    return path.name == "__pycache__" or path.suffix == ".pyc"
 
 
 def level_two_heading_spans(text: str) -> list[tuple[str, int, int]]:
@@ -186,7 +190,7 @@ def manifest_bytes(payload: dict[str, object]) -> bytes:
 
 
 def parse_managed_manifest_payload(
-    payload: object,
+    payload: object, *, allow_legacy_source: bool = False,
 ) -> tuple[set[str], dict[str, str], list[str]]:
     if not isinstance(payload, dict):
         return set(), {}, ["Installed skill manifest must be an object."]
@@ -194,7 +198,10 @@ def parse_managed_manifest_payload(
     failures: list[str] = []
     if payload.get("format") != MANIFEST_FORMAT:
         failures.append(f"Installed skill manifest must use format {MANIFEST_FORMAT}.")
-    if payload.get("source") != MANIFEST_SOURCE:
+    sources = [MANIFEST_SOURCE]
+    if allow_legacy_source:
+        sources.append("skills/custom")  # Ownership evidence for one-way migration only.
+    if payload.get("source") not in sources:
         failures.append(f"Installed skill manifest source must be {MANIFEST_SOURCE}.")
 
     raw_names = payload.get("skills")

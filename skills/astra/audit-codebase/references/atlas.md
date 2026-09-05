@@ -2,7 +2,7 @@
 
 Use the atlas when the user requests a visual map, maintained audit coverage, or
 continuation of an existing Astra report. Focused findings do not require it.
-The helper is `scripts/atlas.py` relative to the skill directory; run it with
+The helper is [atlas.py](../scripts/atlas.py); run it with
 Python 3.11 or later. It uses Git inventory and the standard library.
 
 ## Ownership

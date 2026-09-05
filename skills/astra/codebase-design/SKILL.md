@@ -1,6 +1,6 @@
 ---
 name: codebase-design
-description: Resolve a consequential architecture or integration question about ownership, interfaces, state, dependencies, or migration. Use when the design itself is unresolved; exclude straightforward feature implementation, repository-wide improvement discovery, and standalone runnable experiments.
+description: Resolve unsettled architecture or feature-integration decisions about ownership, interfaces, state, dependencies, or migration. Exclude routine implementation and broad codebase audits.
 ---
 
 # Codebase design

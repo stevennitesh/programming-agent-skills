@@ -79,14 +79,13 @@ compatibility route for projects using this pack.
 As Astra replacements are accepted, migrate their consumers, references,
 validation and routing together. All projects using this pack target the latest
 Astra contracts. Do not retain old execution paths for compatibility. Historical
-source and a custom-only installer still exist in this repository; they are not
-the current deployment target. Updating external projects or installed copies
+source remains in this repository. The managed installer now deploys Astra,
+using old manifests only as ownership evidence for migration. Updating external projects or installed copies
 remains a separately scoped operation, not an automatic effect of editing a seed.
 
 ## Still undecided
 
-The final core and optional inventory, remaining skill boundaries, rewrite order,
-and unified installation approach remain open. Choose them from concrete tasks
+The final core and optional inventory, remaining skill boundaries, and rewrite order remain open. Choose them from concrete tasks
 and evidence, not a target skill count. Limited implementation comparisons have
 been run; broader comparative quality claims remain unestablished.
 

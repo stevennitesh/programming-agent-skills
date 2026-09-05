@@ -13,7 +13,7 @@
   not create cache or `.tmp-*` directories at the repository root.
 - Validate skill-pack integrity: `python -m scripts.validate_skills`
 - Preview managed install/update: `python -m scripts.install_skills --dry-run`
-- Sync the installed custom pack: `python -m scripts.install_skills`.
+- Sync the installed Astra pack: `python -m scripts.install_skills`.
   This uses `skills/custom/`; for Astra installation, read `CONTEXT.md` first.
 - Whitespace/diff checks: `git diff --check`, `git diff --cached --check`
 

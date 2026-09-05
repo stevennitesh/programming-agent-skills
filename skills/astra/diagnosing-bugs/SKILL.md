@@ -1,6 +1,6 @@
 ---
 name: diagnosing-bugs
-description: Investigate and root-cause hard, intermittent, environment-dependent, cross-system, or otherwise causally ambiguous bugs, and apply a fix when authorized. Use when ordinary debugging has not established the cause; exclude straightforward fixes, open product decisions, and optimization without a defect.
+description: Root-cause difficult bugs, intermittent failures, or environment and cross-system faults when the cause is unclear. Exclude obvious fixes and optimization without a defect.
 ---
 
 # Diagnosing bugs

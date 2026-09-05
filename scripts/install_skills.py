@@ -1,4 +1,4 @@
-"""Transactionally install the custom skill pack without touching unrelated skills."""
+"""Transactionally install Astra without touching unrelated skills."""
 
 from __future__ import annotations
 
@@ -19,6 +19,7 @@ from scripts.skill_pack_contract import (
     SHA256_RE,
     SKILL_NAME_RE,
     file_hash,
+    ignored_skill_cache,
     level_two_section_span,
     lexical_path,
     manifest_bytes,
@@ -70,10 +71,6 @@ TRANSACTION_STATUSES = frozenset(
         "rolled-back",
     }
 )
-
-
-def ignored_skill_cache(path: Path, _is_directory: bool) -> bool:
-    return path.name == "__pycache__" or path.suffix == ".pyc"
 
 
 def skill_tree_hash(directory: Path) -> str:
@@ -317,7 +314,7 @@ def read_managed_manifest(skills_dir: Path) -> tuple[set[str], dict[str, str]]:
         payload = json.loads(manifest.read_text(encoding="utf-8"))
     except json.JSONDecodeError as error:
         raise ValueError(f"Invalid installed manifest: {manifest}: {error}") from error
-    names, hashes, failures = parse_managed_manifest_payload(payload)
+    names, hashes, failures = parse_managed_manifest_payload(payload, allow_legacy_source=True)
     if failures:
         raise ValueError(f"Invalid installed manifest: {manifest}: {'; '.join(failures)}")
     return names, hashes
@@ -2188,7 +2185,7 @@ def main() -> int:
             print(f"Updated skills: {', '.join(result['updated'])}")
         print(f"Unchanged skills: {len(result['unchanged'])}")
     else:
-        print(f"Installed {len(result['skills'])} custom skills into {args.skills_dir.expanduser()}")
+        print(f"Installed {len(result['skills'])} Astra skills into {args.skills_dir.expanduser()}")
     if result["retired"]:
         print(f"Retired managed skills: {', '.join(result['retired'])}")
     print(f"Global bootstrap: {result['global_bootstrap']}")

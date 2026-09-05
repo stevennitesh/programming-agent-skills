@@ -1,6 +1,6 @@
 ---
 name: resolving-merge-conflicts
-description: Inspect or resolve conflicts in an active Git merge, rebase, cherry-pick, revert, or unmerged index. Use for conflicting integration intent and safe operation completion; exclude planning a new integration, ordinary diff review, and bugs after a completed integration without unresolved Git state.
+description: Inspect or resolve conflicts in an active Git merge, rebase, cherry-pick, revert, or unmerged index. Exclude planning integrations and debugging completed merges.
 ---
 
 # Resolving merge conflicts

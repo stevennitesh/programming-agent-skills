@@ -35,5 +35,7 @@ installed reference. If the package will not be installed, copy the reference
 to a stable user-owned location and link there. Verify the link from the final
 global file; source-relative links do not survive relocation automatically.
 
-Keep this Astra seed separate from templates distributed with the legacy pack.
+The managed installer updates its own small bootstrap section using the
+repository's `GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md`; this skill's seed supports
+broader, explicitly requested global reconciliation.
 An update to the seed does not authorize updating other users' global files.

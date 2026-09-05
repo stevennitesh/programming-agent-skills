@@ -55,6 +55,37 @@ def write_skill(root: Path, name: str, body: str = "") -> Path:
     return skill_dir
 
 
+def test_astra_validates_implicit_metadata_resources_and_own_routes(tmp_path: Path) -> None:
+    skill = tmp_path / "skills/astra/example"
+    skill.mkdir(parents=True)
+    entry = skill / "SKILL.md"
+    entry.write_text("---\nname: example\ndescription: Example task.\n---\n", encoding="utf-8")
+    write_skill(tmp_path, "retired")
+    assert validate_skills.validate_astra(tmp_path) == (["example"], [])
+    (skill / "agents").mkdir()
+    policy = skill / "agents/openai.yaml"
+    policy.write_text("policy:\n  allow_implicit_invocation: false\n", encoding="utf-8")
+    assert validate_skills.validate_astra(tmp_path)[1] == []
+    policy.write_text("policy:\n  allow_implicit_invocation: 'false'\n", encoding="utf-8")
+    assert any("boolean" in item for item in validate_skills.validate_astra(tmp_path)[1])
+    policy.unlink()
+    entry.write_text(entry.read_text() + (
+        "Read [guide](references/missing.md). Use $retired.\n"
+        "Read [old](../../custom/retired/SKILL.md).\n"
+    ))
+    failures = validate_skills.validate_astra(tmp_path)[1]
+    assert any("resource reference is missing" in item for item in failures)
+    assert any("Astra references missing skill" in item for item in failures)
+    assert any("must stay inside skills/astra/" in item for item in failures)
+
+
+def test_manifest_rejects_nonscalar_source_without_crashing() -> None:
+    _, _, failures = skill_pack_contract.parse_managed_manifest_payload({
+        "format": 1, "source": [], "skills": [], "hashes": {},
+    })
+    assert "Installed skill manifest source must be skills/astra." in failures
+
+
 def install_example_skill(
     root: Path,
     installed: Path,
@@ -63,18 +94,40 @@ def install_example_skill(
     write_manifest: bool = True,
 ) -> tuple[Path, Path, Path]:
     source = write_skill(root, "example")
+    target = root / "skills/astra/example"
+    target.parent.mkdir(parents=True)
+    source.rename(target)
+    source = target
     destination = installed / "example"
     shutil.copytree(source, destination)
     manifest = installed / validate_skills.INSTALLED_MANIFEST
     if write_manifest:
         payload = manifest_payload or {
             "format": 1,
-            "source": "skills/custom",
+            "source": "skills/astra",
             "skills": ["example"],
             "hashes": {"example": skill_pack_contract.tree_hash(source)},
         }
         manifest.write_text(json.dumps(payload), encoding="utf-8")
     return source, destination, manifest
+
+
+def test_installed_astra_parity_ignores_runtime_caches_but_rejects_legacy_source(
+    tmp_path: Path,
+) -> None:
+    root = tmp_path / "repo"
+    installed = tmp_path / "installed"
+    source, destination, manifest = install_example_skill(root, installed)
+    for folder in (source, destination):
+        cache = folder / "__pycache__"
+        cache.mkdir(parents=True)
+        (cache / "helper.pyc").write_bytes(str(folder).encode())
+    assert validate_skills.validate_installed_skills(root, ["example"], str(installed), True) == []
+    payload = json.loads(manifest.read_text())
+    payload["source"] = "skills/custom"
+    manifest.write_text(json.dumps(payload))
+    failures = validate_skills.validate_installed_skills(root, ["example"], str(installed), True)
+    assert any("source must be skills/astra" in item for item in failures)
 
 
 def test_skill_validation_covers_markdown_and_cross_skill_references(tmp_path: Path) -> None:
@@ -447,7 +500,7 @@ def test_installed_validation_rejects_manifest_contract_and_hash_drift(
     )
 
     assert "Installed skill manifest must use format 1." in failures
-    assert "Installed skill manifest source must be skills/custom." in failures
+    assert "Installed skill manifest source must be skills/astra." in failures
     assert "Installed manifest hash differs from repo: example" in failures
 
 

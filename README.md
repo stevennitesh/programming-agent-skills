@@ -1,110 +1,96 @@
 <h1 align="center">Programming Agent Skills</h1>
 
-<p align="center"><strong>Engineering judgment for Codex, without turning every task into a process.</strong></p>
+<p align="center"><strong>Thoughtful engineering for AI-assisted development.</strong></p>
+
+<p align="center">
+  Built specifically for GPT 6 Astra in Codex: clarify the problem, make sound design decisions,<br>
+  and check that the finished work holds up.
+</p>
 
 <p align="center">
   <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-blue.svg"></a>
   <img alt="Python 3.11+" src="https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white">
 </p>
 
-Coding agents can move fast and still leave a mess: speculative abstractions,
-defensive checks nobody needed, compatibility paths with no real consumer, and
-green tests that never touch the behavior a user depends on.
+<p align="center">
+  <a href="#what-it-helps-with">Explore the pack</a> ·
+  <a href="#getting-started">Get started</a> ·
+  <a href="docs/astra/design-brief.md">Read the design brief</a>
+</p>
 
-I built this pack to push Codex toward better engineering judgment without
-turning an ordinary task into a compliance exercise. It combines a shared
-engineering contract with focused skills for shaping work, designing code,
-implementation, diagnosis, delivery, and review.
+---
 
-Ordinary work stays ordinary. Heavier methods activate when the request, the
-repository, or a concrete risk calls for them.
+Good software takes more than working code. It takes a clear understanding of
+the problem, decisions that fit the existing system, and evidence that a change
+does what people need.
 
-[Install the full pack](#install) ·
-[Use only the portable contract](AGENTS_PORTABLE_FALLBACK.md) ·
-[Browse the skills](#what-is-in-the-pack)
+I built this pack to bring those habits into everyday work with coding agents.
+The **Astra skills pack** is designed specifically for **GPT 6 Astra**. It combines
+shared engineering guidance with 15 focused skills for planning, design,
+debugging, review, and delivery. Each skill
+is a set of instructions and, where useful, supporting tools that Codex can use
+for a particular kind of work.
 
-## The philosophy
+The aim is straightforward: code that is easier to understand, changes that are
+easier to review, and decisions that the next person can follow.
+
+The instructions assume GPT 6 Astra's baseline capabilities and concentrate on
+context and methods that add to them. **Smaller models may need the
+[custom skill pack](skills/custom/)**, which contains more detailed instructions.
+The installer below installs the Astra skills pack; it does not install the
+custom pack. Model-specific comparisons are still limited.
+
+## What it helps with
+
+| When the work involves… | The pack provides… |
+| --- | --- |
+| An idea that is still taking shape | Questions that clarify the outcome, constraints, and what success means. |
+| A feature that must fit an existing system | Design guidance and small prototypes to test consequential assumptions. |
+| A difficult bug or an unfamiliar codebase | Methods for tracing root causes and examining architecture, with an optional visual system map. |
+| A change that needs careful review | Focused review of correctness and maintainability, with deeper assurance when requested. |
+| Several people or agents working together | Clear ownership, dependency-aware task planning, and recovery guidance for interrupted work. |
+
+You can use one skill for a specific problem or combine several for a larger
+piece of work. Routine coding can proceed directly; there is no required
+planning-to-ticket-to-implementation pipeline.
+
+## The engineering philosophy
 
 > Explore imaginatively. Converge under proof. Simplify ruthlessly.
 
-The pack teaches Codex to understand the code before changing it, choose the
-smallest integrated design, and prove the result through a caller or artifact
-that matters. It favors readable code, clear data shapes, small interfaces,
-local state, and one obvious owner for each behavior.
+- **Understand before changing.** Read the existing code, follow its callers,
+  and identify the behavior people rely on.
+- **Build what the problem needs.** Prefer a clear, small design. Reuse what
+  fits, and add abstractions when they earn their place.
+- **Check the result that matters.** Use tests and experiments that can expose
+  a real failure. More tests do not automatically mean stronger evidence.
+- **Leave useful context.** Preserve decisions, reasons, and local conventions
+  so future contributors can continue the work confidently.
 
-It also applies YAGNI with some conviction. A local feature does not need a
-framework for imagined future requirements. Internal code does not need to
-defend against states its types and established invariants already exclude.
-Tests are evidence, not a quota. Documentation should explain a real contract
-or decision, not restate readable code.
+These principles live in the
+[engineering contract](skills/astra/repo-bootstrap/templates/engineering-contract.md).
+Repository setup adapts that guidance to a project's own conventions. The skills
+add specialized methods where the task benefits from them.
 
-For one bounded implementation, the common path is deliberately short:
+## Explore the skills
 
-1. Understand the request, current behavior, real callers, and existing proof.
-2. Choose the smallest sound design and a clear data shape.
-3. Implement the whole change in the current behavior owner.
-4. Run the nearest useful check that can fail for the changed behavior.
-5. Inspect the result, remove displaced code, and stop.
+| Purpose | Skills |
+| --- | --- |
+| Clarify and plan | [Shape work](skills/astra/shape-work/SKILL.md) · [Create tickets](skills/astra/to-tickets/SKILL.md) |
+| Design and investigate | [Codebase design](skills/astra/codebase-design/SKILL.md) · [Prototype](skills/astra/prototype/SKILL.md) · [Research](skills/astra/research/SKILL.md) |
+| Assess and improve | [Audit a codebase](skills/astra/audit-codebase/SKILL.md) · [Diagnose bugs](skills/astra/diagnosing-bugs/SKILL.md) · [Hillclimb: measured optimization](skills/astra/hillclimb/SKILL.md) · [Review changes](skills/astra/change-review/SKILL.md) |
+| Coordinate implementation | [Parallel implementation](skills/astra/parallel-implement/SKILL.md) · [Resolve merge conflicts](skills/astra/resolving-merge-conflicts/SKILL.md) |
+| Maintain agent guidance | [Repository setup](skills/astra/repo-bootstrap/SKILL.md) · [Writing for agents](skills/astra/writing-for-agents/SKILL.md) · [Context hygiene](skills/astra/context-hygiene/SKILL.md) |
+| Guide a human-operated procedure | [Wizard](skills/astra/wizard/SKILL.md) |
 
-Risk changes the method. The skills that own external writes, destructive work,
-concurrent delivery, recovery, formal review, and measured claims activate the
-extra protection those jobs require. If the condition is absent, it creates no
-checklist, artifact, reviewer, or explanation obligation.
+<a id="install"></a>
 
-## Astra development
+## Getting started
 
-The new Astra pack is being built in [`skills/astra/`](skills/astra/).
-Its [design brief](docs/astra/design-brief.md) records the accepted direction
-from [issue #94](https://github.com/stevennitesh/programming-agent-skills/issues/94)
-and subsequent decisions. Writing for agents and repo-bootstrap are implemented;
-the final skill composition remains open.
+You'll need [Codex](https://github.com/openai/codex), Git, and Python 3.11 or newer.
+The installer uses only Python's standard library.
 
-The installation commands below still manage `skills/custom/`. They do not
-install Astra and may replace same-named manual Astra installations. The two
-source trees remain separate while their consumers and installation are migrated.
-
-## What is in the pack
-
-This inventory describes the managed custom pack.
-
-Each skill owns one recognizable engineering job. They compose when the work
-needs more than one job, but they are not a mandatory pipeline.
-
-| Area | Skills | Use for |
-| --- | --- | --- |
-| Build and improve | `$implement`, `$diagnosing-bugs`, `$codebase-design`, `$simplify-code`, `$hillclimb`, `$tdd` | Implementation, hard bugs, a design recommendation for one bounded module or interface, simplification, measured improvement, and test-first work. |
-| Shape decisions | `$grilling`, `$grill-with-docs`, `$research`, `$prototype`, `$domain-modeling`, `$wayfinder`, `$to-questionnaire` | Live decisions, evidence, design probes, domain meaning, coupled multi-session decision routes, and drafting a questionnaire for an external stakeholder. |
-| Plan and deliver | `$to-spec`, `$to-tickets`, `$parallel-implement`, `$triage`, `$handoff` | Durable specs, ticket graphs, parallel delivery, incoming tracker work, and continuation in a fresh context. |
-| Review and conflict resolution | `$change-review`, `$high-assurance-review`, `$audit-codebase`, `$resolving-merge-conflicts` | Change review, explicitly heavy review, organized codebase audits, and inspecting or resolving an active Git conflict. |
-| Setup and instructions | `$repo-bootstrap`, `$skill-router`, `$writing-for-agents`, `$context-hygiene`, `$wizard` | Repository setup, skill selection, instructions for agents, persistent-context hygiene, and guided scripts for procedures only a human can perform. |
-
-The active skills live in [`skills/custom/`](skills/custom). Optional skills
-live in [`skills/extra/`](skills/extra) and are not part of the managed install.
-
-### Recommended companion
-
-For clearer, more natural communication with coding agents, I recommend
-pstack's [`unslop`](https://github.com/cursor/plugins/tree/main/pstack/skills/unslop)
-skill. It cleans up agent-written prose without changing its meaning. This
-repository does not bundle or manage it, so install it separately from the
-upstream project.
-
-## Install
-
-You need [Codex](https://github.com/openai/codex), Git, and Python 3.11 or
-newer. GitHub or GitLab authentication is optional. The pack can also use a
-local Markdown tracker.
-
-By default, the installer manages this pack's skills under
-`$HOME/.agents/skills` and its small bootstrap section in
-`$HOME/.codex/AGENTS.md`. It preserves unrelated skills and personal global
-instructions. Add `--skip-global-agents` to both installer commands if you want
-to leave the global `AGENTS.md` untouched.
-
-Preview the affected skills and bootstrap action, then install them. The
-installer uses only the Python standard library.
-
-Bash:
+Clone the repository, preview the changes, then install:
 
 ```bash
 git clone https://github.com/stevennitesh/programming-agent-skills.git
@@ -114,7 +100,8 @@ python3 -m scripts.install_skills --dry-run
 python3 -m scripts.install_skills
 ```
 
-PowerShell:
+<details>
+<summary><strong>PowerShell commands</strong></summary>
 
 ```powershell
 git clone https://github.com/stevennitesh/programming-agent-skills.git
@@ -124,105 +111,88 @@ python -m scripts.install_skills --dry-run
 python -m scripts.install_skills
 ```
 
-Pull the repository and run the same commands to update.
+</details>
 
-See [installation and recovery](INSTALLATION.md) for custom locations, how the
-installer handles global `AGENTS.md`, optional installed-parity validation,
-transaction recovery, and directory ownership.
+The installer deploys the Astra skills pack to `$HOME/.agents/skills` and manages a small
+bootstrap section in `$HOME/.codex/AGENTS.md`. It preserves unrelated skills
+and personal instructions, and stops if managed skills contain local edits or
+an unmanaged folder has the same name. Add `--skip-global-agents` to leave
+global instructions untouched.
 
-## Use it
+To update, pull this repository and repeat the preview and install commands.
+See [installation and recovery](INSTALLATION.md) for migration from the older
+pack, custom locations, and verification.
 
-After installation, you can invoke a skill directly:
+**Prefer to start with just the principles?** Adapt the
+[portable engineering guidance](AGENTS_PORTABLE_FALLBACK.md) into your global
+`AGENTS.md`, preserving your existing preferences. It needs no installer and
+leaves out the specialized skills and managed updates.
 
-```text
-$implement issue 123
-```
+## Try it on real work
 
-If a repository should carry the pack's engineering, tracker, label, or domain
-setup, run `$repo-bootstrap`. It inspects what is missing or outdated, shows the
-proposed change, and waits for approval before writing anything. You can skip
-it when the repository already has the instructions the work needs.
-
-Ask Codex for the work you want. Context-enabled skills can be selected from
-their descriptions. Use a skill's `$`-prefixed name when you want a specific
-workflow or when the skill is intentionally explicit-only.
+Ask Codex for the work you need, or name a skill directly with its `$` prefix:
 
 ```text
-$diagnosing-bugs investigate why the import sometimes stalls
+$shape-work help me clarify how failed imports should be retried
 
-$simplify-code src/billing/reconciliation.py
+$codebase-design where should retry state live in this application?
 
-$high-assurance-review the completed ticket graph before merge
+$diagnosing-bugs investigate why this import sometimes stalls
+
+$change-review review this branch for correctness and maintainability
 ```
 
-Use `$skill-router` when choosing the next skill is itself the question. It
-returns one skill name or `none`, then stops. It does not start that skill.
-
-You do not need a specification or ticket graph for every change.
-
-- Use `$implement` for one ready, bounded item.
-- Use `$to-spec` to publish a settled decision that needs to survive several
-  slices or sessions.
-- Use `$to-tickets` to publish a graph when settled work benefits from
-  dependency-ordered delivery.
-- Use `$parallel-implement` for an explicit set of at least two accepted items
-  with a ready frontier and independent behavior ownership and write effects.
+For repository guidance, ask `$repo-bootstrap` to inspect or set up the project.
+It can reconcile existing instructions and engineering conventions with this pack;
+you can also request an inspection without changes. GitHub, GitLab, and local
+Markdown trackers are supported when the project needs ticketed work.
 
 <details>
-<summary>Skills that require explicit invocation</summary>
+<summary><strong>Which skills run only when requested?</strong></summary>
 
-`$audit-codebase`, `$diagnosing-bugs`, `$handoff`,
-`$high-assurance-review`, `$hillclimb`, `$implement`,
-`$parallel-implement`, `$repo-bootstrap`, `$simplify-code`, `$skill-router`,
-`$to-questionnaire`, `$to-spec`, `$to-tickets`, `$triage`, `$wayfinder`, and
-`$wizard` do not activate from context alone.
+`$audit-codebase`, `$context-hygiene`, `$hillclimb`, `$parallel-implement`,
+`$repo-bootstrap`, `$shape-work`, `$to-tickets`, and `$wizard` require a user
+request. The other seven skills can be selected from matching task descriptions.
+Suggesting an explicit workflow does not automatically start it.
+
+For larger work, shape the outcome first, create tickets when useful, and
+request parallel implementation when the accepted tasks have independent
+ownership. These are optional steps. Continuation handoffs are part of
+`$writing-for-agents`; deeper assurance is an option within `$change-review`.
 
 </details>
 
-## The engineering contract
+## How the pack is developed
 
-[`$repo-bootstrap`](skills/custom/repo-bootstrap/SKILL.md) can install the
-shared [`engineering-contract.md`](docs/agents/engineering-contract.md). The
-contract defines the pack's coding defaults; skills define procedures for
-particular jobs. Repository instructions and the user remain authoritative.
+The Astra skills pack is being refined through source comparisons, critical reviews, and
+focused workflow tests. The repository includes executable helpers and tests
+for areas such as installation, architecture reports, and parallel worktree
+management.
 
-Its advice is concrete: trace the current owner and real callers, subtract
-before adding, model the domain instead of scattering conditionals, validate
-untrusted input once at its owning boundary, trust valid internal
-representations, remove displaced paths, and prove only what the result claims.
-It is engineering taste, not a checklist or review gate.
+Those checks establish specific behavior. Whether the pack improves coding
+quality over an agent's default capabilities needs broader comparative
+validation; the comparisons so far are limited. The
+[design brief](docs/astra/design-brief.md), shaped by
+[issue #94](https://github.com/stevennitesh/programming-agent-skills/issues/94),
+records the decisions, evidence, and open questions behind the current pack.
 
-If you want the engineering defaults without the skills, copy
-[`AGENTS_PORTABLE_FALLBACK.md`](AGENTS_PORTABLE_FALLBACK.md) to your global
-Codex `AGENTS.md`. It needs no installer or Python runtime. It leaves out skill
-routing, specialized workflows, tracker setup, templates, and managed updates.
+## Influences and contributions
 
-## Where this came from
-
-This pack began with
-[Matt Pocock's engineering skills](https://github.com/mattpocock/skills) and
-also draws on [pstack](https://github.com/cursor/plugins/tree/main/pstack),
+This project began with
+[Matt Pocock's skills](https://github.com/mattpocock/skills) and draws on ideas
+from [pstack](https://github.com/cursor/plugins/tree/main/pstack),
 [Ponytail](https://github.com/DietrichGebert/ponytail), and
-[Superpowers](https://github.com/obra/superpowers). Matt's work shaped the
-short, named workflows. Pstack pushed the engineering guidance toward smaller,
-clearer designs. Ponytail reinforced the YAGNI ladder: do not build, reuse,
-reach for the platform, then add the minimum that works. This repository adapts
-those ideas for Codex and adds narrow controls for external writes, parallel
-work, recovery, trackers, and source-backed review.
+[Superpowers](https://github.com/obra/superpowers). Their approaches to focused
+workflows, simple design, and disciplined engineering helped shape this pack.
+See [Acknowledgments](ACKNOWLEDGMENTS.md) for more.
 
-See [Acknowledgments](ACKNOWLEDGMENTS.md) for the broader list of influences.
+If you're exploring the implementation or contributing a change, start with
+[the Astra skills pack source](skills/astra/), [repository context](CONTEXT.md), and
+[contributor instructions](AGENTS.md). The more detailed
+[custom pack](skills/custom/) remains available for users evaluating other models.
+Earlier research is retained as historical evidence; the installer deploys only
+the Astra skills pack.
 
-## For contributors
+---
 
-- [`skills/custom/`](skills/custom): active skills installed by the pack
-- [`skills/experimental/`](skills/experimental): inactive alternatives
-- [`skills/extra/`](skills/extra): optional skills outside the managed install
-- [`CONTEXT.md`](CONTEXT.md): stable repository vocabulary and ownership
-- [`docs/synthesis/`](docs/synthesis): design decisions and source-backed
-  reasoning behind the runtime skills
-- [`scripts/install_skills.py`](scripts/install_skills.py): managed installer
-- [`scripts/validate_skills.py`](scripts/validate_skills.py): pack validation
-
-## License
-
-MIT licensed. See [LICENSE](LICENSE).
+[MIT License](LICENSE)

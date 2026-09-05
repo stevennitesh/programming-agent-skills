@@ -69,8 +69,7 @@ Map existing equivalent labels before using the seed's default names. Writing
 the mapping does not create remote labels. Provision missing labels only when
 the user's authorization covers that operation, then read them back. Otherwise
 state that the local mapping is configured and remote provisioning is unverified
-or still needed. Include Wayfinder labels only when that workflow is adopted;
-use its current contract to determine them.
+or still needed.
 
 Default domain routing to a single root `CONTEXT.md` and `docs/adr/`. Preserve
 an existing multi-context route. Create a new multi-context layout only when

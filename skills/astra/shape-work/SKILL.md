@@ -98,7 +98,8 @@ and evidence still needed. Distinguish confirmed choices from proposals. Do not
 label work ready when implementation would need to invent consequential policy.
 
 For one coherent outcome, authorized implementation can proceed directly. Use
-`$to-tickets` when tickets are explicitly requested, including a single ticket,
-or when durable delivery boundaries or coordination justify several items;
-neither a spec nor tickets are a prerequisite for ordinary coding. Creating
+`$to-tickets` when the user requests ticketing, including a single ticket.
+When durable delivery boundaries or coordination would benefit from tickets,
+suggest that explicit next step; do not start it merely because it could help.
+Neither a spec nor tickets are a prerequisite for ordinary coding. Creating
 plans does not itself authorize implementation, publication, or delegation.

@@ -33,7 +33,7 @@ def test_campaign_install_cli_flags_remain_supported(
 
 
 def write_source_skill(root: Path, name: str, marker: str) -> None:
-    skill = root / "skills/custom" / name
+    skill = root / "skills/astra" / name
     skill.mkdir(parents=True)
     (skill / "SKILL.md").write_text(marker, encoding="utf-8")
 
@@ -46,6 +46,82 @@ def write_template(root: Path) -> None:
         "- **Route:** Suggest `$skill-router`.\n",
         encoding="utf-8",
     )
+
+
+@pytest.mark.parametrize("modified", [None, "alpha", "retired"])
+def test_custom_manifest_migrates_ownership_to_astra_without_losing_edits(
+    tmp_path: Path, modified: str | None,
+) -> None:
+    root = tmp_path / "repo"
+    installed = tmp_path / "installed"
+    write_source_skill(root, "alpha", "Astra")
+    hashes = {}
+    for name in ("alpha", "retired", "personal"):
+        folder = installed / name
+        folder.mkdir(parents=True)
+        (folder / "SKILL.md").write_text("old", encoding="utf-8")
+        if name != "personal":
+            hashes[name] = install_skills.skill_tree_hash(folder)
+    manifest = installed / install_skills.MANIFEST_NAME
+    manifest.write_text(json.dumps({
+        "format": 1, "source": "skills/custom", "skills": sorted(hashes), "hashes": hashes,
+    }), encoding="utf-8")
+    before = manifest.read_bytes()
+    if modified:
+        (installed / modified / "SKILL.md").write_text("local edit", encoding="utf-8")
+        with pytest.raises(ValueError, match="modified managed skill"):
+            install_skills.install(root, installed, None)
+        assert manifest.read_bytes() == before
+        assert (installed / modified / "SKILL.md").read_text() == "local edit"
+        assert (installed / "retired").is_dir()
+        return
+    preview = install_skills.install(root, installed, None, dry_run=True)
+    assert preview["updated"] == ["alpha"]
+    assert preview["retired"] == ["retired"]
+    assert manifest.read_bytes() == before
+    install_skills.install(root, installed, None)
+    assert json.loads(manifest.read_text())["source"] == "skills/astra"
+    assert (installed / "alpha/SKILL.md").read_text() == "Astra"
+    assert not (installed / "retired").exists()
+    assert (installed / "personal/SKILL.md").read_text() == "old"
+
+
+@pytest.mark.parametrize("modified", [None, "alpha", "retired"])
+def test_custom_manifest_migrates_ownership_to_astra_without_losing_edits(
+    tmp_path: Path, modified: str | None,
+) -> None:
+    root = tmp_path / "repo"
+    installed = tmp_path / "installed"
+    write_source_skill(root, "alpha", "Astra")
+    hashes = {}
+    for name in ("alpha", "retired", "personal"):
+        folder = installed / name
+        folder.mkdir(parents=True)
+        (folder / "SKILL.md").write_text("old", encoding="utf-8")
+        if name != "personal":
+            hashes[name] = install_skills.skill_tree_hash(folder)
+    manifest = installed / install_skills.MANIFEST_NAME
+    manifest.write_text(json.dumps({
+        "format": 1, "source": "skills/custom", "skills": sorted(hashes), "hashes": hashes,
+    }), encoding="utf-8")
+    before = manifest.read_bytes()
+    if modified:
+        (installed / modified / "SKILL.md").write_text("local edit", encoding="utf-8")
+        with pytest.raises(ValueError, match="modified managed skill"):
+            install_skills.install(root, installed, None)
+        assert manifest.read_bytes() == before
+        assert (installed / modified / "SKILL.md").read_text() == "local edit"
+        assert (installed / "retired").is_dir()
+        return
+    preview = install_skills.install(root, installed, None, dry_run=True)
+    assert preview["updated"] == ["alpha"]
+    assert preview["retired"] == ["retired"]
+    assert manifest.read_bytes() == before
+    install_skills.install(root, installed, None)
+    assert json.loads(manifest.read_text())["source"] == "skills/astra"
+    assert (installed / "alpha/SKILL.md").read_text() == "Astra"
+    assert not (installed / "retired").exists()
+    assert (installed / "personal/SKILL.md").read_text() == "old"
 
 
 def test_dry_run_returns_stable_structured_cohort_and_identities(
@@ -194,7 +270,7 @@ def test_incomplete_transaction_blocks_another_root_sharing_global_bootstrap(
     install_skills.install(root_a, skills_a, global_agents)
     before_agents = global_agents.read_bytes()
 
-    (root_a / "skills/custom/alpha/SKILL.md").write_text("v2", encoding="utf-8")
+    (root_a / "skills/astra/alpha/SKILL.md").write_text("v2", encoding="utf-8")
     (root_a / "GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md").write_text(
         "# Global Codex Instructions\n\n"
         "## Skill Pack Bootstrap\n\n"
@@ -299,7 +375,7 @@ def test_install_preserves_preexisting_temporary_siblings(tmp_path: Path) -> Non
     write_source_skill(root, "alpha", "v1")
     write_template(root)
     install_skills.install(root, installed, None)
-    (root / "skills/custom/alpha/SKILL.md").write_text("v2", encoding="utf-8")
+    (root / "skills/astra/alpha/SKILL.md").write_text("v2", encoding="utf-8")
 
     tree_collision = installed / ".alpha.installing"
     tree_collision.mkdir()
@@ -388,7 +464,7 @@ def test_committed_cleanup_failure_recovers_without_rolling_back(
     write_source_skill(root, "alpha", "v1")
     write_template(root)
     install_skills.install(root, installed, None)
-    (root / "skills/custom/alpha/SKILL.md").write_text("v2", encoding="utf-8")
+    (root / "skills/astra/alpha/SKILL.md").write_text("v2", encoding="utf-8")
     original_clear = install_skills.clear_operation_claims
     monkeypatch.setattr(
         install_skills,
@@ -429,7 +505,7 @@ def test_truncated_active_state_temporary_uses_committed_state(
     write_source_skill(root, "alpha", "v1")
     write_template(root)
     install_skills.install(root, installed, None)
-    (root / "skills/custom/alpha/SKILL.md").write_text("v2", encoding="utf-8")
+    (root / "skills/astra/alpha/SKILL.md").write_text("v2", encoding="utf-8")
     original_clear = install_skills.clear_operation_claims
     monkeypatch.setattr(
         install_skills,
@@ -563,7 +639,7 @@ def test_post_crash_temporary_sibling_drift_is_preserved(
     write_source_skill(root, "alpha", "v1")
     write_template(root)
     install_skills.install(root, installed, None)
-    (root / "skills/custom/alpha/SKILL.md").write_text("v2", encoding="utf-8")
+    (root / "skills/astra/alpha/SKILL.md").write_text("v2", encoding="utf-8")
     original_manifest = install_skills.write_manifest
     original_restore = install_skills.restore_tree
 
@@ -611,7 +687,7 @@ def test_post_crash_applied_displacement_drift_is_preserved(
     write_source_skill(root, "alpha", "v1")
     write_template(root)
     install_skills.install(root, installed, None)
-    (root / "skills/custom/alpha/SKILL.md").write_text("v2", encoding="utf-8")
+    (root / "skills/astra/alpha/SKILL.md").write_text("v2", encoding="utf-8")
     original_manifest = install_skills.write_manifest
     original_restore = install_skills.restore_tree
 
@@ -648,7 +724,7 @@ def test_edit_between_identity_check_and_rollback_is_quarantined_and_preserved(
     write_source_skill(root, "alpha", "v1")
     write_template(root)
     install_skills.install(root, installed, None)
-    (root / "skills/custom/alpha/SKILL.md").write_text("v2", encoding="utf-8")
+    (root / "skills/astra/alpha/SKILL.md").write_text("v2", encoding="utf-8")
     original_manifest = install_skills.write_manifest
     original_rollback = install_skills.rollback_install
 
@@ -759,7 +835,7 @@ def test_install_updates_managed_skills_and_preserves_unrelated(tmp_path: Path) 
     assert (installed / "finance-brain/SKILL.md").read_text(encoding="utf-8") == "personal"
     assert install_skills.BOOTSTRAP_HEADING in global_agents.read_text(encoding="utf-8")
 
-    (root / "skills/custom/alpha/SKILL.md").write_text("v2", encoding="utf-8")
+    (root / "skills/astra/alpha/SKILL.md").write_text("v2", encoding="utf-8")
     write_source_skill(root, "beta", "new")
     second = install_skills.install(root, installed, global_agents)
 
@@ -789,7 +865,7 @@ def test_current_bootstrap_preserves_personal_mixed_line_endings(
         b"- **Route:** Suggest `$skill-router`.\r\n"
     )
     global_agents.write_bytes(original)
-    (root / "skills/custom/alpha/SKILL.md").write_text("v2", encoding="utf-8")
+    (root / "skills/astra/alpha/SKILL.md").write_text("v2", encoding="utf-8")
 
     result = install_skills.install(root, installed, global_agents)
 
@@ -815,7 +891,7 @@ def test_install_ignores_same_named_experimental_skill(tmp_path: Path) -> None:
     manifest = json.loads(
         (installed / install_skills.MANIFEST_NAME).read_text(encoding="utf-8")
     )
-    assert manifest["source"] == "skills/custom"
+    assert manifest["source"] == "skills/astra"
     assert manifest["skills"] == ["alpha"]
 
 
@@ -824,7 +900,7 @@ def test_install_excludes_and_ignores_python_cache_artifacts(tmp_path: Path) -> 
     installed = tmp_path / ".agents/skills"
     write_source_skill(root, "alpha", "v1")
     write_template(root)
-    source_scripts = root / "skills/custom/alpha/scripts"
+    source_scripts = root / "skills/astra/alpha/scripts"
     (source_scripts / "__pycache__").mkdir(parents=True)
     (source_scripts / "__pycache__/helper.cpython-312.pyc").write_bytes(b"cached")
     (source_scripts / "helper.pyc").write_bytes(b"loose-cache")
@@ -850,11 +926,11 @@ def test_install_migrates_a_legacy_cache_inclusive_manifest(tmp_path: Path) -> N
     installed = tmp_path / ".agents/skills"
     write_source_skill(root, "alpha", "v1")
     write_template(root)
-    source_cache = root / "skills/custom/alpha/scripts/__pycache__"
+    source_cache = root / "skills/astra/alpha/scripts/__pycache__"
     source_cache.mkdir(parents=True)
     (source_cache / "helper.cpython-312.pyc").write_bytes(b"legacy-cache")
     installed.mkdir(parents=True)
-    shutil.copytree(root / "skills/custom/alpha", installed / "alpha")
+    shutil.copytree(root / "skills/astra/alpha", installed / "alpha")
     install_skills.write_manifest(
         installed / install_skills.MANIFEST_NAME,
         {
@@ -934,7 +1010,7 @@ def test_install_rejects_manifest_path_traversal_without_touching_siblings(
         json.dumps(
             {
                 "format": 1,
-                "source": "skills/custom",
+                "source": "skills/astra",
                 "skills": ["../victim"],
                 "hashes": {"../victim": skill_pack_contract.tree_hash(victim)},
             }
@@ -1038,7 +1114,7 @@ def test_install_refuses_to_overwrite_a_modified_managed_skill(tmp_path: Path) -
     install_skills.install(root, installed, global_agents)
 
     (installed / "alpha/SKILL.md").write_text("personal change", encoding="utf-8")
-    (root / "skills/custom/alpha/SKILL.md").write_text("v2", encoding="utf-8")
+    (root / "skills/astra/alpha/SKILL.md").write_text("v2", encoding="utf-8")
     before_skills = tree_snapshot(installed)
     before_agents = global_agents.read_bytes()
 
@@ -1214,8 +1290,8 @@ def test_install_refuses_to_retire_a_modified_managed_skill(tmp_path: Path) -> N
     write_template(root)
     install_skills.install(root, installed, None)
 
-    (root / "skills/custom/retired/SKILL.md").unlink()
-    (root / "skills/custom/retired").rmdir()
+    (root / "skills/astra/retired/SKILL.md").unlink()
+    (root / "skills/astra/retired").rmdir()
     (installed / "retired/SKILL.md").write_text("personal change", encoding="utf-8")
 
     with pytest.raises(ValueError, match="modified managed skill"):
@@ -1361,10 +1437,10 @@ def test_install_removes_only_previously_managed_retired_skills(tmp_path: Path) 
     install_skills.install(root, installed, None)
     (installed / "personal").mkdir()
 
-    for path in (root / "skills/custom/alpha").rglob("*"):
+    for path in (root / "skills/astra/alpha").rglob("*"):
         if path.is_file():
             path.unlink()
-    (root / "skills/custom/alpha").rmdir()
+    (root / "skills/astra/alpha").rmdir()
     write_source_skill(root, "beta", "v1")
 
     result = install_skills.install(root, installed, None)
@@ -1384,8 +1460,8 @@ def test_retirement_uses_atomic_displacement_not_recursive_live_deletion(
     write_template(root)
     write_source_skill(root, "retired", "v1")
     install_skills.install(root, installed, None)
-    (root / "skills/custom/retired/SKILL.md").unlink()
-    (root / "skills/custom/retired").rmdir()
+    (root / "skills/astra/retired/SKILL.md").unlink()
+    (root / "skills/astra/retired").rmdir()
     original_rmtree = install_skills.shutil.rmtree
 
     def reject_live_retirement(path: Path, *args, **kwargs) -> None:
@@ -1411,9 +1487,9 @@ def test_dry_run_reports_new_updated_unchanged_and_retired(tmp_path: Path) -> No
     write_source_skill(root, "old", "v1")
     install_skills.install(root, installed, global_agents)
 
-    (root / "skills/custom/beta/SKILL.md").write_text("v2", encoding="utf-8")
-    (root / "skills/custom/old/SKILL.md").unlink()
-    (root / "skills/custom/old").rmdir()
+    (root / "skills/astra/beta/SKILL.md").write_text("v2", encoding="utf-8")
+    (root / "skills/astra/old/SKILL.md").unlink()
+    (root / "skills/astra/old").rmdir()
     write_source_skill(root, "gamma", "v1")
 
     result = install_skills.install(
@@ -1456,8 +1532,8 @@ def test_install_rolls_back_every_skill_when_the_second_swap_fails(
     before_skills = tree_snapshot(installed)
     before_agents = global_agents.read_bytes()
 
-    (root / "skills/custom/alpha/SKILL.md").write_text("v2", encoding="utf-8")
-    (root / "skills/custom/beta/SKILL.md").write_text("v2", encoding="utf-8")
+    (root / "skills/astra/alpha/SKILL.md").write_text("v2", encoding="utf-8")
+    (root / "skills/astra/beta/SKILL.md").write_text("v2", encoding="utf-8")
     original = install_skills.replace_tree
     calls = 0
 
@@ -1487,7 +1563,7 @@ def test_recovery_handles_interruption_between_update_renames(
     write_template(root)
     write_source_skill(root, "alpha", "v1")
     install_skills.install(root, installed, None)
-    (root / "skills/custom/alpha/SKILL.md").write_text("v2", encoding="utf-8")
+    (root / "skills/astra/alpha/SKILL.md").write_text("v2", encoding="utf-8")
     original_rename = Path.rename
     interrupted = False
 
@@ -1537,9 +1613,9 @@ def test_install_restores_a_retired_skill_when_retirement_fails(
     before_skills = tree_snapshot(installed)
     before_agents = global_agents.read_bytes()
 
-    (root / "skills/custom/alpha/SKILL.md").write_text("v2", encoding="utf-8")
-    (root / "skills/custom/retired/SKILL.md").unlink()
-    (root / "skills/custom/retired").rmdir()
+    (root / "skills/astra/alpha/SKILL.md").write_text("v2", encoding="utf-8")
+    (root / "skills/astra/retired/SKILL.md").unlink()
+    (root / "skills/astra/retired").rmdir()
     original = install_skills.retire_tree
     failed = False
 
@@ -1574,9 +1650,9 @@ def test_install_restores_skills_and_retirements_when_manifest_write_fails(
     before_skills = tree_snapshot(installed)
     before_agents = global_agents.read_bytes()
 
-    (root / "skills/custom/alpha/SKILL.md").write_text("v2", encoding="utf-8")
-    (root / "skills/custom/retired/SKILL.md").unlink()
-    (root / "skills/custom/retired").rmdir()
+    (root / "skills/astra/alpha/SKILL.md").write_text("v2", encoding="utf-8")
+    (root / "skills/astra/retired/SKILL.md").unlink()
+    (root / "skills/astra/retired").rmdir()
     original = install_skills.write_manifest
 
     def fail_after_manifest(path: Path, payload: dict[str, object]) -> None:
@@ -1602,7 +1678,7 @@ def test_rollback_records_terminal_state_before_recursive_quarantine_cleanup(
     write_template(root)
     write_source_skill(root, "alpha", "v1")
     install_skills.install(root, installed, None)
-    (root / "skills/custom/alpha/SKILL.md").write_text("v2", encoding="utf-8")
+    (root / "skills/astra/alpha/SKILL.md").write_text("v2", encoding="utf-8")
     original_manifest = install_skills.write_manifest
     original_clear = install_skills.clear_claims_then_transaction
     observed_terminal_quarantine = False
@@ -1649,7 +1725,7 @@ def test_install_restores_the_pack_when_global_bootstrap_write_fails(
     before_skills = tree_snapshot(installed)
     before_agents = global_agents.read_bytes()
 
-    (root / "skills/custom/alpha/SKILL.md").write_text("v2", encoding="utf-8")
+    (root / "skills/astra/alpha/SKILL.md").write_text("v2", encoding="utf-8")
     (root / "GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md").write_text(
         "# Global Codex Instructions\n\n"
         "## Skill Pack Bootstrap\n\n"
@@ -1689,7 +1765,7 @@ def test_install_rolls_back_when_global_step_corrupts_the_manifest(
     before_skills = tree_snapshot(installed)
     before_agents = global_agents.read_bytes()
 
-    (root / "skills/custom/alpha/SKILL.md").write_text("v2", encoding="utf-8")
+    (root / "skills/astra/alpha/SKILL.md").write_text("v2", encoding="utf-8")
     original_bootstrap = install_skills.install_global_bootstrap
 
     def corrupt_manifest(template: Path, target: Path) -> str:
@@ -1740,7 +1816,7 @@ def test_preparing_interruption_leaves_a_safe_recovery_path(
     before_skills = tree_snapshot(installed)
     before_agents = global_agents.read_bytes()
 
-    (root / "skills/custom/alpha/SKILL.md").write_text("v2", encoding="utf-8")
+    (root / "skills/astra/alpha/SKILL.md").write_text("v2", encoding="utf-8")
     original_copytree = install_skills.shutil.copytree
 
     def interrupt_staging(source: Path, destination: Path, *args, **kwargs):
@@ -1783,7 +1859,7 @@ def test_preparation_cleanup_failure_preserves_safe_recovery_state(
     before_skills = tree_snapshot(installed)
     before_agents = global_agents.read_bytes()
 
-    (root / "skills/custom/alpha/SKILL.md").write_text("v2", encoding="utf-8")
+    (root / "skills/astra/alpha/SKILL.md").write_text("v2", encoding="utf-8")
     transaction = installed.parent / install_skills.ACTIVE_TRANSACTION_NAME
     original_copytree = install_skills.shutil.copytree
     original_rmtree = install_skills.shutil.rmtree
@@ -1836,7 +1912,7 @@ def test_install_preserves_recovery_snapshot_when_rollback_cannot_complete(
     before_skills = tree_snapshot(installed)
     before_agents = global_agents.read_bytes()
 
-    (root / "skills/custom/alpha/SKILL.md").write_text("v2", encoding="utf-8")
+    (root / "skills/astra/alpha/SKILL.md").write_text("v2", encoding="utf-8")
     original_restore_tree = install_skills.restore_tree
     original_manifest = install_skills.write_manifest
     def fail_rollback_restore(source: Path, destination: Path) -> None:

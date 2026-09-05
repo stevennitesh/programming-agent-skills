@@ -1,6 +1,6 @@
 ---
 name: research
-description: Investigate a question or compare options using inspected sources, resolve conflicting evidence, and deliver a cited conclusion or recommendation with explicit limits. Use when evidence quality or applicability matters; ordinary lookups need no research workflow, and new experiments belong to prototype.
+description: Research questions or compare options requiring source evaluation, synthesis, or reconciliation of conflicting evidence. Exclude quick factual lookups and runnable experiments.
 ---
 
 # Research

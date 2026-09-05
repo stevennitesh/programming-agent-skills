@@ -1,6 +1,6 @@
 ---
 name: prototype
-description: Build and observe a small runnable experiment to resolve an empirical design question, such as feasibility, state behavior, interaction, or comparative performance. Exclude ordinary implementation, diagnosis of an existing defect, and architecture decisions that need no experiment.
+description: Build a runnable experiment to test design feasibility, behavior, interaction, or performance before committing to an approach. Exclude production implementation and existing-bug diagnosis.
 ---
 
 # Prototype

@@ -186,7 +186,7 @@ def integration_fixture(root: Path) -> Path:
         contract_path.read_text(encoding="utf-8")
     )
 
-    canonical = root / "skills/custom/fixture-leaf"
+    canonical = root / "skills/astra/fixture-leaf"
     installed = root / "installed/fixture-leaf"
     canonical.mkdir(parents=True)
     installed.mkdir(parents=True)
@@ -200,7 +200,7 @@ def integration_fixture(root: Path) -> Path:
         installed_manifest,
         {
             "format": 1,
-            "source": "skills/custom",
+            "source": "skills/astra",
             "skills": ["fixture-leaf"],
             "hashes": {
                 "fixture-leaf": install_skills.skill_tree_hash(installed)

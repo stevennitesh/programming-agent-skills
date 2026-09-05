@@ -9,13 +9,19 @@ By default, the installer manages active skills in
 `$HOME/.agents/skills` and the pack bootstrap in
 `$HOME/.codex/AGENTS.md`.
 
-`skills/custom/` is the only managed skill source. The installer does not
-install `skills/experimental/`, `skills/extra/`, or `skills/.archive/`.
+`skills/astra/` is the only managed skill source. The installer does not
+install `skills/custom/`, `skills/experimental/`, `skills/extra/`, or `skills/.archive/`.
 
 The manifest at
 `$HOME/.agents/skills/.programming-agent-skills-manifest.json` records the
 skill names owned by this pack. Updates may replace or retire those managed
 names. They do not touch unrelated personal skills.
+
+Old custom manifests are accepted only to identify ownership during migration
+to Astra. Preview lists replacements and retirements; modified managed files
+and unmanaged same-name folders still block the transaction. Manually installed
+Astra folders are not silently adopted. Preserve or relocate those copies before
+installing, or use a clean target. New manifests always identify `skills/astra`.
 
 ## Preview and install
 

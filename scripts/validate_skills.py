@@ -11,6 +11,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+import yaml
+
 from scripts import fresh_epoch_contract
 from scripts import pack_contract as pack_composition_contract
 from scripts import pack_integration
@@ -34,7 +36,7 @@ REQUIRED_REPO_FILES = (
     "scripts/install_skills.py",
     "scripts/skill_pack_contract.py",
 )
-GLOBAL_AGENTS_SKILLS = frozenset(("repo-bootstrap", "skill-router"))
+GLOBAL_AGENTS_SKILLS = frozenset(("repo-bootstrap",))
 GLOBAL_AGENTS_FORBIDDEN_TOKENS = ("## Shell Search Safety", "rg -F --")
 REQUIRED_SETUP_DOCS = (
     "AGENTS.md",
@@ -120,9 +122,9 @@ def repo_root() -> Path:
     return Path(result.stdout.strip())
 
 
-def iter_skill_dirs(root: Path) -> list[Path]:
+def iter_skill_dirs(root: Path, roots: tuple[str, ...] = SKILL_ROOTS) -> list[Path]:
     dirs: list[Path] = []
-    for relative_root in SKILL_ROOTS:
+    for relative_root in roots:
         skill_root = root / relative_root
         if not skill_root.is_dir():
             continue
@@ -275,10 +277,26 @@ def skill_resource_references(markdown_file: Path) -> list[str]:
     return sorted(references)
 
 
-def validate_skill_policy(skill_dir: Path) -> list[str]:
+def validate_skill_policy(skill_dir: Path, *, optional: bool = False) -> list[str]:
     policy_file = skill_dir / "agents/openai.yaml"
     if not policy_file.is_file():
+        if optional:
+            return []  # Codex permits metadata omission for implicit skills.
         return [f"Skill missing invocation policy: {skill_dir.name}/agents/openai.yaml"]
+    if optional:
+        try:
+            data = yaml.safe_load(policy_file.read_text(encoding="utf-8"))
+        except yaml.YAMLError as error:
+            return [f"Invalid skill metadata: {policy_file}: {error}"]
+        if not isinstance(data, dict):
+            return [f"Skill metadata must be a mapping: {policy_file}"]
+        policy = data.get("policy", {})
+        if not isinstance(policy, dict):
+            return [f"Skill policy must be a mapping: {policy_file}"]
+        if "allow_implicit_invocation" not in policy:
+            return []
+        if type(policy["allow_implicit_invocation"]) is not bool:
+            return [f"Skill invocation policy must be boolean: {policy_file}"]
     values = re.findall(
         r"(?m)^\s*allow_implicit_invocation:\s*(true|false)\s*$",
         policy_file.read_text(encoding="utf-8"),
@@ -291,14 +309,16 @@ def validate_skill_policy(skill_dir: Path) -> list[str]:
     return []
 
 
-def validate_skill_folders(root: Path) -> tuple[list[str], list[str]]:
+def validate_skill_folders(
+    root: Path, roots: tuple[str, ...] = SKILL_ROOTS, *, optional_policy: bool = False,
+) -> tuple[list[str], list[str]]:
     failures: list[str] = []
     skill_names: list[str] = []
 
     if not (root / "skills").is_dir():
         return [], ["Missing skills/ directory."]
 
-    skill_dirs = iter_skill_dirs(root)
+    skill_dirs = iter_skill_dirs(root, roots)
     if not skill_dirs:
         failures.append("No skill directories found under skills/.")
     duplicate_names = {
@@ -332,15 +352,16 @@ def validate_skill_folders(root: Path) -> tuple[list[str], list[str]]:
             if not description:
                 failures.append(f"Skill description is missing: {skill_file.as_posix()}")
 
-        failures.extend(validate_skill_policy(skill_dir))
+        failures.extend(validate_skill_policy(skill_dir, optional=optional_policy))
 
         for markdown_file in sorted(skill_dir.rglob("*.md")):
             for resource_ref in skill_resource_references(markdown_file):
                 resource_path = (markdown_file.parent / resource_ref).resolve()
-                skills_root = (root / "skills").resolve()
+                boundary = roots[0] if roots == (pack_contract.MANIFEST_SOURCE,) else "skills"
+                skills_root = (root / boundary).resolve()
                 if not resource_path.is_relative_to(skills_root):
                     failures.append(
-                        "Skill resource reference must stay inside skills/: "
+                        f"Skill resource reference must stay inside {boundary}/: "
                         f"{markdown_file.as_posix()} -> {resource_ref}"
                     )
                     continue
@@ -351,6 +372,26 @@ def validate_skill_folders(root: Path) -> tuple[list[str], list[str]]:
                     )
 
     return sorted(skill_names), failures
+
+
+def validate_astra(root: Path) -> tuple[list[str], list[str]]:
+    """Validate the deployable pack independently of retained historical packages."""
+    names, failures = validate_skill_folders(
+        root, (pack_contract.MANIFEST_SOURCE,), optional_policy=True,
+    )
+    pack_root = root / pack_contract.MANIFEST_SOURCE
+    paths = list(pack_root.rglob("*.md")) + list(pack_root.rglob("*.yaml"))
+    paths.extend(root / name for name in (
+        "README.md", "AGENTS.md", "CONTEXT.md", "INSTALLATION.md", GLOBAL_AGENTS_TEMPLATE,
+    ) if (root / name).is_file())
+    paths.extend((root / "docs/agents").glob("*.md"))
+    paths = [path for path in paths if path.name != "legacy-pack-context.md"]
+    for path in paths:
+        text = (markdown_without_fenced_code(path) if path.suffix == ".md"
+                else path.read_text(encoding="utf-8"))
+        for handle in sorted(set(SKILL_HANDLE_RE.findall(text)) - set(names)):
+            failures.append(f"Astra references missing skill: {path} -> ${handle}")
+    return names, failures
 
 
 def validate_active_surfaces(root: Path) -> list[str]:
@@ -608,7 +649,7 @@ def validate_global_agents_template(root: Path, skill_names: list[str]) -> list[
         )
     for skill_name in sorted(refs - GLOBAL_AGENTS_SKILLS):
         failures.append(
-            f"{GLOBAL_AGENTS_TEMPLATE} must leave route maps to skill-router; "
+            f"{GLOBAL_AGENTS_TEMPLATE} must keep the bootstrap lean; "
             f"unexpected skill reference: {skill_name}"
         )
 
@@ -652,22 +693,19 @@ def validate_global_agents_template(root: Path, skill_names: list[str]) -> list[
 
 
 def repo_skill_dir(root: Path, skill_name: str) -> Path | None:
-    for relative_root in SKILL_ROOTS:
-        candidate = root / relative_root / skill_name
-        if candidate.is_dir():
-            return candidate
-    return None
+    candidate = root / pack_contract.MANIFEST_SOURCE / skill_name
+    return candidate if candidate.is_dir() else None
 
 
 def compare_dirs(expected: Path, actual: Path) -> list[str]:
     failures: list[str] = []
     try:
-        expected_entries = pack_contract.tree_entries(expected)
+        expected_entries = pack_contract.tree_entries(expected, ignore=pack_contract.ignored_skill_cache)
     except (OSError, ValueError) as error:
         failures.append(f"Unsafe repo skill tree: {error}")
         return failures
     try:
-        actual_entries = pack_contract.tree_entries(actual)
+        actual_entries = pack_contract.tree_entries(actual, ignore=pack_contract.ignored_skill_cache)
     except (OSError, ValueError) as error:
         failures.append(f"Unsafe installed skill tree: {error}")
         return failures
@@ -763,7 +801,7 @@ def validate_installed_skills(
         if source_dir is None:
             continue
         try:
-            source_hash = pack_contract.tree_hash(source_dir)
+            source_hash = pack_contract.tree_hash(source_dir, ignore=pack_contract.ignored_skill_cache)
         except (OSError, ValueError) as error:
             failures.append(f"Unsafe repo skill tree for {skill_name}: {error}")
             continue
@@ -871,13 +909,13 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--installed-root",
         default=os.environ.get("AGENT_SKILLS_DIR", ""),
-        help="Shared installed skills directory to compare against skills/custom.",
+        help="Shared installed skills directory to compare against skills/astra.",
     )
     parser.add_argument(
         "--require-installed",
         action="store_true",
         default=os.environ.get("AGENT_SKILLS_REQUIRE_ALL", "0") == "1",
-        help="Require every custom skill to exist under --installed-root.",
+        help="Require every Astra skill to exist under --installed-root.",
     )
     parser.add_argument("-v", "--verbose", action="store_true")
     return parser
@@ -892,6 +930,8 @@ def main(argv: list[str] | None = None) -> int:
     skill_names, skill_failures = validate_skill_folders(root)
     custom_skill_names = [path.name for path in custom_skill_dirs(root)]
     failures.extend(skill_failures)
+    astra_names, astra_failures = validate_astra(root)
+    failures.extend(astra_failures)
     failures.extend(validate_experimental_skills(root))
     failures.extend(validate_required_docs(root))
     failures.extend(validate_setup_schema_manifest(root))
@@ -903,11 +943,11 @@ def main(argv: list[str] | None = None) -> int:
     failures.extend(validate_pack_integration_contract(root))
     failures.extend(validate_research_catalog_contract(root))
     failures.extend(validate_setup_surface(root))
-    failures.extend(validate_global_agents_template(root, custom_skill_names))
+    failures.extend(validate_global_agents_template(root, astra_names))
     failures.extend(
         validate_installed_skills(
             root,
-            custom_skill_names,
+            astra_names,
             args.installed_root,
             args.require_installed,
         )
@@ -921,7 +961,7 @@ def main(argv: list[str] | None = None) -> int:
         tracked = run_git(["ls-files"], cwd=root)
         if tracked.returncode == 0:
             print(f"Tracked files: {len([line for line in tracked.stdout.splitlines() if line])}")
-        print(f"Skill folders: {len(skill_names)}")
+        print(f"Astra skill folders: {len(astra_names)}; historical/extra: {len(skill_names)}")
 
     if failures:
         for failure in failures:

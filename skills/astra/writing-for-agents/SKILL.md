@@ -1,6 +1,6 @@
 ---
 name: writing-for-agents
-description: Create, revise, or audit substantive instructions for agents, including skills, AGENTS.md, guides, specs, reusable prompts, and continuation handoffs. Use when deciding how agents should interpret and act on a document; exclude ordinary prose, incidental messages, minor wording fixes, and moving or creating tasks in the app.
+description: Write or audit agent-facing skills, AGENTS.md, guides, specs, prompts, and continuation handoffs. Exclude product discovery, ordinary prose, minor wording edits, and app task transfers.
 ---
 
 # Writing for agents

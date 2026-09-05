@@ -38,18 +38,18 @@ tools for mechanical facts; retain reasons and local conventions in guidance.
 
 ## Package distinctions
 
-- **Managed custom skills:** `skills/custom/`, selected by the current installer.
-- **Astra skills:** `skills/astra/`, the new packages and their source of truth.
+- **Managed Astra skills:** `skills/astra/`, the installer source of truth.
+- **Historical custom skills:** `skills/custom/`, retained evidence, not deployed.
 - **Installed skills:** copies in the target host's skill directory. Inspect
   their content before assuming which source or version is installed.
 - **Legacy experiments:** `skills/experimental/`, inactive alternatives governed
   by their manifest. Optional packages live in `skills/extra/`; retired material
   lives in `skills/.archive/`.
 
-The managed installer does not deploy Astra. It may replace a same-named manual
-Astra installation with the custom version. Use the selected source for targeted
-installation and verify source-to-target content. Edit source packages, not
-installed copies.
+The managed installer deploys Astra and verifies ownership before replacement
+or retirement. Old custom manifests are migration evidence only. Modified
+managed copies and unmanaged name collisions stop installation. Preview before
+installing; edit source packages, not installed copies.
 
 The repository's engineering contract is adapted from Astra and is owned here.
 It is not required to match either bootstrap seed. Existing tracker and domain
@@ -64,6 +64,6 @@ rewrite historical records to make them look current. Consult relevant ADRs for
 accepted decisions, with their stated scope and supersession status.
 
 The README explains the product and installation choices. Global templates are
-separate: `GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md` serves the legacy installer;
+separate: `GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md` serves the Astra installer;
 `skills/astra/repo-bootstrap/templates/global-agents.md` seeds Astra guidance.
 Neither template overrides personal global preferences automatically.

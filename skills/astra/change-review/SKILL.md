@@ -1,6 +1,6 @@
 ---
 name: change-review
-description: Review a selected diff, branch, PR, or work in progress for concrete correctness and maintainability problems. Supports high-assurance review with fresh independent reviewers only when explicitly requested by the user. Exclude repository-baseline audits and standalone implementation.
+description: Review a diff, branch, PR, or uncommitted changes for correctness and maintainability problems. Exclude whole-codebase audits and implementation without a review request.
 ---
 
 # Change review
