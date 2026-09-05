@@ -22,14 +22,3 @@ that it exists remotely or that an item is ready or complete.
 | `ready-for-human` | `ready-for-human` |
 | `implemented` | `implemented` |
 | `wontfix` | `wontfix` |
-
-## Wayfinding labels
-
-Include these labels only when Wayfinder is active:
-
-- `wayfinder:map`
-- `wayfinder:research`
-- `wayfinder:prototype`
-- `wayfinder:grilling`
-- `wayfinder:questionnaire`
-- `wayfinder:task`

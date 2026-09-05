@@ -7,7 +7,9 @@ description: Inspect, create, or reconcile a repository's agent guidance when th
 
 Give future agents the repository facts and engineering guidance they need to
 work well. Reconcile existing guidance in place. For an inspection request,
-report findings without editing.
+report findings without editing. A full bootstrap check includes existing
+engineering guidance, not just missing files or broken links. A focused repair
+stays within its requested scope.
 
 ## 1. Read the repository
 
@@ -29,13 +31,16 @@ When creating or reconciling instruction files, read
 [Agent instruction files](references/agent-instructions.md) for local and global
 ownership, nested scopes, and pointer checks.
 
-When shared engineering guidance is missing or needs revision, use
-[the engineering contract](templates/engineering-contract.md) as a seed.
-Reconcile it with repository-owned choices rather than replacing them with the
-template. Prefer an existing authoritative location; otherwise use
+For a full setup or compatibility check, read
+[the current engineering contract](templates/engineering-contract.md) and compare
+it with the repository's actual contract, including guidance embedded in agent
+files. Do not infer currency from the file's existence, a version marker, or
+passing validation. For an approved update, reconcile missing practices and
+outdated pack wording using [Existing repositories](references/setup-defaults.md#existing-repositories).
+Prefer an existing authoritative location; otherwise use
 `docs/agents/engineering-contract.md` and add a pointer for nontrivial coding
 to the repository's instruction file. The resulting contract is repository-owned,
-not a mirror that future bootstrap runs overwrite.
+not a frozen copy of an older pack or a mirror to overwrite mechanically.
 
 For initial repository setup or work on tracker, label, or domain configuration,
 read [Setup defaults](references/setup-defaults.md). Preserve established choices
@@ -59,7 +64,8 @@ Otherwise report any relevant global conflict without editing the global file.
 
 ## 3. Offer a compatibility update
 
-For an existing setup, compare its agent docs with this version of bootstrap.
+For an existing setup, compare its agent docs with this version of bootstrap,
+including the engineering-contract comparison above.
 When a material difference warrants reconciliation, follow
 [Existing repositories](references/setup-defaults.md#existing-repositories)
 to prepare one proposal covering all affected docs and compatibility checks.
@@ -99,6 +105,11 @@ do not claim migration complete while the affected route still selects a retired
 skill. Updating installed copies or other repositories remains separately scoped.
 For an accepted compatibility update, verify the whole approved set together;
 do not leave dependent docs or validation rules for separate follow-up turns.
+Check that obsolete pack instructions have been removed or reconciled in active
+guidance, not merely supplemented with newer paragraphs. In the final report,
+state whether the engineering contract was updated or already current and name
+any retained local exceptions or unresolved migration gaps. A passing legacy
+validator alone does not establish that the guidance is current.
 
 Finish when the requested guidance is coherent, discoverable, and supported by
 the repository, or report the specific unresolved gap. State what changed and

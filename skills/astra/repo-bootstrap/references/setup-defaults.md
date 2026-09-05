@@ -90,9 +90,30 @@ current pointers to other agent docs and setup enforcement that may depend on
 the old conventions. Include repository-local global-instruction templates only
 when affected; an installed global file remains outside repository setup scope.
 
-Distinguish a local preference from an incompatibility or an available behavior
-update. Compare meaning and consumers, not template identity. A newer bootstrap
-may offer useful changes without making the old setup invalid.
+Distinguish deliberate repository policy from inherited pack boilerplate. Use
+local decisions, comments, history, and actual consumers when that distinction
+matters. A rule is not a deliberate local choice merely because an earlier
+bootstrap copied it into a repository-owned file. Preserve repository facts,
+domain meaning, and intentional overrides; reconcile inherited pack guidance
+with the current skill and seeds. Ask about a consequential unresolved conflict
+instead of silently retaining the old default or erasing a local decision.
+
+Compare the engineering contract section by section for meaning and coverage:
+understanding behavior, design, completing changes, proof, and effects. During
+an approved update, incorporate missing applicable guidance, replace superseded
+pack instructions, and consolidate duplication. Rewrite old wording when it
+still directs an agent toward an obsolete practice, even if every link resolves.
+Equivalent local wording can remain; do not reformat solely to match a seed.
+
+Trace active root and nested agent instructions, referenced guides, and their
+enforcement for remnants of the displaced pack. Typical remnants include
+mandatory implementation or ticket pipelines, retired skill routes, unconditional
+TDD or delegation defaults, obsolete setup markers, and stale installer commands.
+Resolve each against its current owner and any deliberate local override. When
+a workflow has no replacement skill, describe direct work or remove the obsolete
+route rather than inventing a new mandatory step. Remove superseded prose in
+place; appending the new contract beneath conflicting instructions is incomplete.
+Historical research and records remain evidence and are not migration targets.
 
 Prepare one reviewable proposal with the exact edits across affected files,
 the benefit or incompatibility each addresses, preserved local choices, and the
