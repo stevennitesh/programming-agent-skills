@@ -110,19 +110,20 @@ covers the proposed route and recovery allowances, not unrelated effects.
 ## 3. Execute the accepted plan
 
 Verify root settings against the accepted route using runtime guidance; resolve
-a missing required switch rather than silently substituting a route. Preserve
-accepted scope, approach, root settings, implementation responsibilities, model/effort
-allocations, concurrency, budget, review requirements, repair allowances, and any
-explicitly required actor. Changes outside accepted alternatives require acceptance
-before dependent work. Available policy models are not blanket role permissions:
-an Astra reviewer allocation does not authorize Astra implementation.
+a missing required switch rather than silently substituting a route.
 
-Within those boundaries, adapt scheduling, coherent subdivisions, actor reuse,
-equivalent replacements, cross-unit repair ownership, and approved recovery without
-renewed acceptance. Subdivisions and actor IDs need not be prelisted. Apply the
-benefit, reuse, and custody rules to new or replacement actors; preserve unaffected
-work and counters. Record material adaptations briefly in existing run context,
-without a new plan artifact.
+- **Changes requiring acceptance:** changes to scope, approach, root settings,
+  implementation responsibilities, model/effort allocations, concurrency, budget,
+  review requirements, repair allowances, or explicitly required actors outside
+  accepted alternatives. Obtain acceptance before dependent work. Available policy
+  models are not blanket role permissions: an Astra reviewer allocation does not
+  authorize Astra implementation.
+- **Coordinator discretion:** adapt scheduling, coherent subdivisions, actor reuse,
+  equivalent replacements, cross-unit repair ownership, and approved recovery within
+  those boundaries without renewed acceptance. Subdivisions and actor IDs need not
+  be prelisted. Apply the benefit, reuse, and custody rules to new or replacement
+  actors; preserve unaffected work and counters. Record material adaptations briefly
+  in existing run context, without a new plan artifact.
 
 Use [Telemetry](references/telemetry.md) for cheap best-effort start/end capture
 when available. Missing telemetry does not delay work unless required accounting

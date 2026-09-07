@@ -14,10 +14,8 @@ Routine incorporation of an advanced integration base is not itself a failed
 implementation attempt. A submitted candidate that fails required acceptance
 does count under cost-aware-coding's attempt definition.
 
-Use cost-aware-coding's integrated review accounting across all items; parallel
-lanes do not create additional review allowances.
-If a composed failure has no existing item owner, assign one coherent integration
-work unit and owner; do not rename an existing failed item to obtain more attempts.
+Use cost-aware-coding's failure attribution and integrated-review accounting
+across all items; parallel lanes do not create additional repair allowances.
 Cost-aware-coding owns when to escalate or ask for further rounds; neither action
 bypasses lane eligibility or confirmed writer quiescence.
 

@@ -34,10 +34,15 @@ coordination and acceptance; product repairs stay delegated. Follow provider ret
 recovery rules; outages do not establish model incapability. Report repeated
 environment failures without new evidence instead of looping indefinitely.
 
+Before review, attribute an integration failure to an existing coherent work unit
+and use its remaining implementation-recovery allowance. Create an integration
+unit only when the failure has no existing owner; never rename or split failed
+work to obtain fresh attempts. During review, corrections use the integrated
+candidate's shared review allowance.
+
 Before dispatching a cross-unit correction, assign one accountable implementer
 and explicit write scope under accepted ownership and custody rules. Preserve
-affected units' implementation counters; reassignment or reslicing does not reset
-them. During review, the correction consumes the shared integrated-review allowance.
+affected units' counters; reassignment or reslicing does not reset them.
 
 Each review round covers one submitted batch of required corrections, repairs by
 the affected units' current implementers, composed checks, and the same reviewer's
