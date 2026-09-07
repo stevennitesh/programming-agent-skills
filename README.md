@@ -191,7 +191,9 @@ Implementation recovery is counted per work unit. The integrated candidate has
 two review-repair rounds total. Each round includes a correction batch, acceptance
 checks, and—if checks pass—the same reviewer's recheck. Failed acceptance still
 uses that round; individual test runs do not count as separate rounds.
-Reviews and rechecks use `change-review`. See the
+The independent reviewer uses `change-review` for the initial review and any
+follow-up review of repairs. Implementers run acceptance checks before returning
+the candidate to that reviewer. See the
 [cost-aware skill](skills/astra/cost-aware-coding/SKILL.md) for exact rules.
 Completion does not itself authorize committing, pushing, or deployment.
 
