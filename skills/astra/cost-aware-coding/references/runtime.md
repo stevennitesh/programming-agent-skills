@@ -45,7 +45,7 @@ Choose context for its purpose:
 - Reviewers and design challengers: use fresh context with accepted requirements,
   candidate, evidence, and necessary decisions; do not supply a preferred verdict.
   Challenge assumptions as well as code. Increasing an author's effort in the same
-  context remains self-review. Repairs and rechecks follow the workflow's ownership
+  context remains self-review. Repairs and follow-up reviews follow the workflow's ownership
   and repair limits.
 
 Use full history when useful and inherited settings are intended. Account for
@@ -63,7 +63,7 @@ worker even when its settings match the root. Settings alone do not establish
 suitability. Recheck availability after interruption.
 
 Reuse the planner for related decisions, the implementer for repairs, and the
-reviewer for rechecks. A specialist may investigate and implement related work
+reviewer for follow-up reviews. A specialist may investigate and implement related work
 once write authority and custody transfer; keep its context rather than commissioning
 an equivalent worker. A reviewer must be independent of the candidate's authors,
 including specialists whose design assumptions the review must challenge.

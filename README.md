@@ -70,7 +70,7 @@ starting points, [find the right skill](#find-the-right-skill) below.
 
 ## Find the right skill
 
-Each `$name` is a skill you can invoke in Codex. **Request explicitly** means
+Each linked skill name is a command you can invoke in Codex. **Request explicitly** means
 Codex waits for a user request; **Automatic when relevant** means it can select
 the skill when the task matches. You can also invoke those skills explicitly.
 These are alternative starting points, not a required pipeline.
