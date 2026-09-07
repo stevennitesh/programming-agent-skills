@@ -3,7 +3,8 @@
 <p align="center"><strong>Thoughtful engineering for AI-assisted development.</strong></p>
 
 <p align="center">
-  Built specifically for GPT 6 Astra in Codex: clarify the problem, make sound design decisions,<br>
+  Built primarily for GPT 6 Astra in Codex, with GPT 5.6 Sol compatibility:<br>
+  clarify the problem, make sound design decisions,
   and check that the finished work holds up.
 </p>
 
@@ -14,6 +15,7 @@
 
 <p align="center">
   <a href="#what-it-helps-with">Explore the pack</a> ·
+  <a href="#cost-aware-coding">Cost-aware coding</a> ·
   <a href="#getting-started">Get started</a> ·
   <a href="docs/astra/design-brief.md">Read the design brief</a>
 </p>
@@ -25,7 +27,8 @@ the problem, decisions that fit the existing system, and evidence that a change
 does what people need.
 
 I built this pack to bring those habits into everyday work with coding agents.
-The **Astra skills pack** is designed specifically for **GPT 6 Astra**. It combines
+The **Astra skills pack** is designed primarily for **GPT 6 Astra**, with
+compatibility for **GPT 5.6 Sol**. It combines
 shared engineering guidance with 16 focused skills for planning, design,
 debugging, review, and delivery. Each skill
 is a set of instructions and, where useful, supporting tools that Codex can use
@@ -34,8 +37,10 @@ for a particular kind of work.
 The aim is straightforward: code that is easier to understand, changes that are
 easier to review, and decisions that the next person can follow.
 
-The instructions assume GPT 6 Astra's baseline capabilities and concentrate on
-context and methods that add to them. **Smaller models may need the
+The instructions are tuned to GPT 6 Astra's baseline capabilities and concentrate
+on context and methods that add to them. GPT 5.6 Sol can also use the pack,
+including as the everyday root in the cost-aware workflow, which assigns
+substantive shaping and independent feature review to Astra. **Smaller models may need the
 [custom skill pack](skills/custom/)**, which contains more detailed instructions.
 The installer below installs the Astra skills pack; it does not install the
 custom pack. Model-specific comparisons are still limited.
@@ -49,6 +54,7 @@ custom pack. Model-specific comparisons are still limited.
 | A difficult bug or an unfamiliar codebase | Methods for tracing root causes and examining architecture, with an optional visual system map. |
 | A change that needs careful review | Focused review of correctness and maintainability, with deeper assurance when requested. |
 | Several people or agents working together | Clear ownership, dependency-aware task planning, and recovery guidance for interrupted work. |
+| Choosing how to use different models | An execution proposal you can approve, with justified delegation and independent feature review. |
 
 You can use one skill for a specific problem or combine several for a larger
 piece of work. Routine coding can proceed directly; there is no required
@@ -80,7 +86,7 @@ add specialized methods where the task benefits from them.
 | Design and investigate | [Codebase design](skills/astra/codebase-design/SKILL.md) · [Prototype](skills/astra/prototype/SKILL.md) · [Research](skills/astra/research/SKILL.md) |
 | Assess and improve | [Audit a codebase](skills/astra/audit-codebase/SKILL.md) · [Diagnose bugs](skills/astra/diagnosing-bugs/SKILL.md) · [Hillclimb: measured optimization](skills/astra/hillclimb/SKILL.md) · [Review changes](skills/astra/change-review/SKILL.md) |
 | Coordinate implementation | [Parallel implementation](skills/astra/parallel-implement/SKILL.md) · [Resolve merge conflicts](skills/astra/resolving-merge-conflicts/SKILL.md) |
-| Experiment with model allocation | [Cost-aware coding](skills/astra/cost-aware-coding/SKILL.md) — route work across models; savings and quality tradeoffs still need calibration |
+| Plan model allocation | [Cost-aware coding](skills/astra/cost-aware-coding/SKILL.md) — approve how the work is assigned, then execute within those boundaries |
 | Maintain agent guidance | [Repository setup](skills/astra/repo-bootstrap/SKILL.md) · [Writing for agents](skills/astra/writing-for-agents/SKILL.md) · [Context hygiene](skills/astra/context-hygiene/SKILL.md) |
 | Guide a human-operated procedure | [Wizard](skills/astra/wizard/SKILL.md) |
 
@@ -163,12 +169,51 @@ ownership. These are optional steps. Continuation handoffs are part of
 
 </details>
 
+## Cost-aware coding
+
+Different parts of a project can benefit from different models. The optional
+[$cost-aware-coding](skills/astra/cost-aware-coding/SKILL.md) workflow helps make
+that choice explicit while keeping useful work in the same context.
+
+1. **Agree on the coordination plan.** The agent proposes who implements, which
+   models to use, dependencies, checks, and recovery options. It reuses an existing
+   feature plan; substantial unresolved feature decisions go through shape-work.
+   Any recommended change to the conversation's model is presented for you to make
+   alongside plan acceptance.
+2. **Execute within the agreed boundaries.** The root agent may implement directly,
+   bring in a specialist for a sequential unit, or concentrate on coordination.
+   It reuses suitable workers and can adjust scheduling and assignments within
+   the accepted boundaries without asking again. Changes beyond those boundaries
+   return to you for acceptance.
+
+```text
+$cost-aware-coding propose a coordination plan for the accepted import-retry feature
+
+I accept the coordination plan. Execute it using $cost-aware-coding.
+```
+
+Feature delivery includes an independent Astra review, even when the root is
+Astra. Repair attempts are bounded, and final review-repair rounds are shared
+across the whole change. Concurrent implementation uses `$parallel-implement`
+when explicitly requested; a multi-step plan alone does not require parallel work.
+
+The current [model policy](skills/astra/cost-aware-coding/references/model-policy.md)
+uses Sol Medium for everyday implementation, Astra Medium for substantive planning,
+difficult work and review, and Luna Max for suitable mechanical tasks. Astra XHigh
+requires an explicit choice. These are experimental starting points, not proven
+task-by-task winners; actual routing depends on the host's available controls.
+
+A bounded, read-only helper can capture logged model settings and usage counters.
+It reuses available evidence and reports missing coverage; it does not establish
+billing totals or prove savings. The aim is lower execution cost **within the
+chosen review and quality requirements**, with comparative savings still to be measured.
+
 ## How the pack is developed
 
 The Astra skills pack is being refined through source comparisons, critical reviews, and
 focused workflow tests. The repository includes executable helpers and tests
-for areas such as installation, architecture reports, and parallel worktree
-management.
+for installation, architecture reports, parallel worktree management, and bounded
+session-metadata capture.
 
 Those checks establish specific behavior. Whether the pack improves coding
 quality over an agent's default capabilities needs broader comparative
