@@ -1,11 +1,9 @@
 # Model policy
 
-Most runs begin on Sol Medium or Astra Medium. Sol Medium is the everyday default;
-an Astra Medium root can brainstorm, plan, and coordinate directly. Retain a suitable
-root rather than switching to match an entry convention. Separate discovery and
-planning passes are optional. The main skill requires delegated review for
-coordinated feature runs. Preserve explicit user model, effort, provider, and budget
-constraints.
+Most runs begin on Sol Medium or Astra Medium; Sol Medium is the everyday default.
+Use the table below subject to explicit user model, effort, provider, and budget
+constraints. The main skill owns coordination-plan acceptance, implementation ownership,
+dispatch, planning, and review gates.
 
 | Model | Effort | Choose it for |
 | --- | --- | --- |
@@ -28,8 +26,6 @@ constraints.
   Use direct search for simple lookups. Large scope alone does not make work easy
   enough for Luna. Its swarm role does not authorize fanout; concurrent implementation
   follows the main skill's parallel-implement route when requested.
-- Retain a sufficient permitted model when switching would erase the savings.
-  Astra can implement directly through completion.
 - Change route for a named capability gap, demonstrated failure, or material change
   in uncertainty. Missing requirements or broken environments need resolution,
   not a more expensive model. Before retrying or escalating, follow
@@ -38,7 +34,6 @@ constraints.
   choose Sol Medium or Astra Medium for the demonstrated weakness. If Astra Medium
   is insufficient, ask for a revised route rather than automatically selecting XHigh.
 
-Choose for the current uncertainty; a phase change alone does not require switching.
 Keep unresolved design questions with the agent resolving them rather than handing
 an untested assumption to an implementer as settled.
 
@@ -47,8 +42,7 @@ an untested assumption to an implementer as settled.
 Select from this table unless the user explicitly chooses otherwise. Astra XHigh
 requires explicit selection; task difficulty alone does not authorize it. Ultra is
 an orchestration choice outside this policy. If no permitted route is sufficient, preserve the
-work and report the limitation. This policy does not itself require review or
-authorize delegation.
+work and report the limitation.
 
 When dispatching, changing models, or deciding whether a current root outside the
 default table can continue directly, read [Runtime selection](runtime.md) for

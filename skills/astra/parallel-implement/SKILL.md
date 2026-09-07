@@ -9,9 +9,11 @@ The root owns decomposition, scheduling, integration, and the final outcome.
 Workers implement directly using repository guidance and the engineering
 contract; no implement skill is required. Keep fanout at the root. Use the
 available agent tools, not a new orchestration service or a fixed model roster.
-When cost-aware-coding governs the run, retain its model and budget restrictions,
+When cost-aware-coding governs the run, retain its accepted implementation ownership, model and budget restrictions,
 repair allowances, and review gate. This skill owns scheduling, custody,
-integration, and safe recovery mechanics.
+integration, and safe recovery mechanics. Root product-write permissions below
+apply only when the accepted ownership allows them; otherwise return
+implementation and product corrections to a suitable worker.
 
 ## 1. Admit independent work
 
@@ -40,7 +42,10 @@ a different agreed delivery method, not a silent bypass of cleanup checks.
 
 Each worker gets at most one writable repository and exclusive mutation domains.
 Keep a change requiring coordinated writes across repositories with the serial
-root or reslice at a real compatibility boundary. Global installs and external
+root or reslice at a real compatibility boundary. Under a coordination-only root,
+reslice or take the coupled unit out of this lane workflow and delegate it serially
+under cost-aware-coding custody, then resume scheduling. Do not broaden lane
+workers' repository permissions. Global installs and external
 effects stay with the serial root and their existing authorization. For authorized
 tracker delivery, read [Tracker delivery](references/tracker-delivery.md).
 Its local-tracker branch owns canonical checkout, metadata commit ordering, and

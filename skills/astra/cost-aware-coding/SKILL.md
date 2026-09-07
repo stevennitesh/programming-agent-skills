@@ -1,6 +1,6 @@
 ---
 name: cost-aware-coding
-description: Route authorized coding work across models to control execution cost, or resume a routed run. Use only when requested; exclude ordinary implementation without a cost-routing request and model comparisons unrelated to execution.
+description: Propose a cost-aware coordination plan or execute an accepted one. Use only when requested for coding work; exclude ordinary implementation and standalone model comparisons.
 ---
 
 # Cost-aware coding
@@ -12,27 +12,28 @@ owns coding quality; this skill owns routing, execution custody, and escalation.
 
 ## 1. Establish the outcome and cost constraint
 
-Infer the requested mode: route-only recommends a route without implementation;
-execute performs authorized work; resume reconciles an existing run before
-continuing. An explicit mode takes precedence over defaults. A bare invocation
-with no identifiable coding task requires the missing task, not speculative work.
+Use two modes:
+
+- **Coordination plan:** analyze the work, propose ownership and routing, and obtain
+  acceptance before product implementation. This is the default for a new task.
+- **Execution:** carry out the accepted coordination plan. An explicit execution
+  request with a settled route counts as acceptance; do not ask again. If the
+  route is unsettled, present it for acceptance first.
+
+A bare invocation without an identifiable task needs the task first. Resume is
+execution after state reconciliation, not a third mode.
 
 Establish the task from current repository guidance, requirements, code and checks.
-Reuse an existing plan or ticket.
 Resolve consequential missing product decisions with the user.
 
-A coordinated feature run means this workflow owns delivery of a feature from its
-idea or accepted requirements through completion, even when the parent implements
-directly. It requires delegated independent review. A bounded fix or edit does not
-acquire this gate merely because it is routed. Preserve existing discovery context;
-use a separate planning pass only for unresolved substantial decisions.
+Reuse existing discovery, decisions, and any plan or ticket; add a planning pass
+only for unresolved substantial decisions, without requiring a new spec artifact.
+Include the [feature review gate](#4-accept-the-actual-result) when selecting the route.
 When planning or revising the feature approach, use
 [shape-work](../shape-work/SKILL.md) to resolve decisions and define behavior and
 acceptance. An Astra Medium root does this directly; other roots delegate planning
 to Astra Medium. Give the planner the shape-work reference and relevant discovery
-context. Reuse settled decisions
-without restarting discovery or requiring a new specification artifact.
-Discussion-only and route-only requests stop at their requested outcome.
+context. Discussion-only requests stop at their requested outcome.
 
 Identify any user-selected model, spending limit, latency requirement, or minimum
 assurance. Distinguish API spend, subscription allowance, and elapsed time; infer
@@ -42,40 +43,76 @@ context transfer, execution, repairs, verification, and integration. Without rel
 accounting, use qualitative judgment; do not invent a budget or promise savings.
 Read [Model policy](references/model-policy.md) when selecting a route.
 Enforce a hard budget only with reliable accounting and bounded dispatch;
-otherwise provide a route-only result or obtain agreement to an observable proxy.
+otherwise present a coordination proposal without executing, or obtain agreement
+to an observable proxy. These limits also apply to planning work.
 
-## 2. Choose direct work, delegation, or handoff
+## 2. Propose and accept the coordination plan
 
-Use direct execution when the current model is sufficient and transfer overhead
-is unlikely to pay back. Group work around coherent behavior and shared context,
-not individual files or checklist bullets. Choose an executor using the model policy.
-The root can fill a working role: Sol Medium can implement directly; Astra Medium
-can brainstorm, plan, or handle difficult work itself. Do not spawn an equivalent
-agent merely to fill a phase.
+The root owns coordination planning: who works, with which model, and in what
+order. Shape-work owns feature design and implementation planning. Reuse its
+accepted output; do not create competing plans. Choose implementation ownership:
 
-Delegate when a bounded chunk benefits from a different model or independent
-judgment enough to justify a new context. This explicitly invoked execution
-workflow permits such bounded delegation within the authorized task. Keep it at
-the execution root; workers must not delegate. Default to one write-capable
+- **Root implements:** a small cohesive assignment, with or without a feature plan; the root
+  implements when its model/effort fits. Several steps through schema, API, UI, and tests can still
+  be one coherent assignment.
+- **Root coordinates:** substantial work units need dependency handoffs, different
+  expertise, or meaningful integration. The root plans, coordinates, integrates,
+  and accepts; delegate product implementation and repairs. One reusable worker
+  may execute several sequential units. Keep root integration to landing and
+  verification; return product-code corrections to their implementer.
+
+Coordination protects the root's attention; it is not automatically cheaper.
+For root implementation, retain sufficient permitted work at the root unless a cheaper
+actor is likely to repay transfer and coordination costs over the remaining work.
+When transferring work, reuse a suitable available actor before creating one.
+Before a new spawn, name in one sentence the concrete benefit that direct work
+or a suitable existing actor cannot provide: capability, worthwhile cost reduction,
+independence, concurrency, or the chosen coordination responsibility. Phases, role labels,
+repository boundaries, and file count alone do not justify a new actor.
+
+Planning permits justified read-only specialists and isolated scratch checks,
+but no product implementation or execution-worker pre-spawning before acceptance.
+Only the root delegates; workers must not delegate. During execution, default to one write-capable
 actor at a time, including the parent. Up to two independent read-only children
 may run when useful. They may use isolated scratch checks, but must not mutate
 the reviewed candidate or shared product state.
 
-For a long execution loop, consider handing ownership to a cheaper sufficient
-parent when transfer costs will pay back. Before any delegation or model transition,
-read [Runtime selection](references/runtime.md) for selection controls and context.
+Read [Runtime selection](references/runtime.md) once when establishing the route;
+reuse it until the runtime, route, or relevant configuration changes. Most runs
+start on Sol Medium; retain a sufficient root. If a different root model/effort
+is justified, recommend it with the proposal and ask the user to switch this
+conversation before execution. A recommendation does not change runtime settings.
 
 For explicitly requested concurrent implementation, use
 [parallel implement](../parallel-implement/SKILL.md). Supply model choices to its
 scheduler. It owns admission, custody, integration, and safe recovery mechanics;
-this skill retains model and budget restrictions, repair allowances, and the
-coordinated feature review gate.
+this skill retains accepted implementation ownership, model and budget restrictions, repair allowances,
+and the feature-delivery review gate.
 
-Route-only ends with the proposed model/effort, rationale, unresolved constraints,
-and next action. Save a record only if requested or needed for continuation.
-Execution proceeds directly when no transfer or delegation is warranted.
+Present a compact proposal: reference the accepted feature approach, name the
+root model/effort and implementation ownership, assign coherent work and reusable
+actors with dependencies, and include acceptance checks, review, and permitted
+recovery from [Repair allowances](references/repairs.md). Identify unresolved
+constraints. A small task may need only two sentences;
+no separate artifact or roster of pre-spawned workers is required.
 
-## 3. Execute with bounded ownership
+End with one acceptance request, including any root-switch instruction. Acceptance
+covers the proposed route and its stated recovery allowances, not unrelated effects.
+If acceptance already exists, reuse it. If a required switch has not occurred, do
+not silently execute on another route; resolve that mismatch with the user.
+
+## 3. Execute the accepted plan
+
+Verify the root settings against the accepted route using runtime guidance. Follow
+the accepted ownership and assignments; routine dispatch, suitable actor reuse,
+and permitted repairs need no renewed approval. Material changes to scope,
+ownership, model constraints, or approach outside the accepted route and recovery
+allowances require an affected plan revision for acceptance before dependent work.
+Preserve unaffected work and counters.
+
+Use [Telemetry](references/telemetry.md) for cheap best-effort start/end capture
+when available. Missing telemetry does not delay work unless required accounting
+makes it necessary.
 
 Before a worker starts, give it the accepted outcome, constraints, owned scope,
 required inputs, acceptance evidence, prohibited effects, and escalation triggers.
@@ -97,8 +134,7 @@ Unknown writer state blocks reassignment, not evidence preservation.
 
 If execution or candidate acceptance fails, or evidence invalidates the approach,
 read [Repair allowances](references/repairs.md) before retrying or escalating.
-It owns separate implementation and review limits, preserved across replanning,
-interruptions, and agent replacements.
+It owns separate implementation and review limits and their persistence.
 
 If a supplied budget is exhausted or cannot be enforced as required, stop before
 further discretionary work, preserve state and report the remaining outcome.
@@ -107,8 +143,10 @@ an extra turn. Do not silently exceed a model restriction or premium-use cap.
 
 ## 4. Accept the actual result
 
-For a coordinated feature run, once accepted requirements and any existing plan
-are implemented and required checks pass, delegate
+A feature-delivery run means this workflow owns a feature from its idea or
+accepted requirements through completion. Whether the root implements or only
+coordinates, once the
+requirements and any existing plan are implemented and required checks pass, delegate
 [change review](../change-review/SKILL.md) before declaring
 completion. Use an independent Astra Medium reviewer; use Astra XHigh only when
 explicitly selected for intensive review. Supply the accepted requirements and
@@ -124,8 +162,9 @@ implementation only after review returns.
 
 If review requires corrections, read [Repair allowances](references/repairs.md)
 before dispatching repairs. If independent review cannot run, report the unmet gate
-rather than substitute self-review or claim completion. Outside coordinated feature
-runs, review remains conditional on the user's request or a concrete correctness concern.
+rather than substitute self-review or claim completion. Bounded fixes and edits
+do not acquire this gate merely by being routed; their review remains conditional
+on the user's request or a concrete correctness concern.
 
 The root accepts the actual candidate under the engineering contract and repository
 checks, including additions, deletions and untracked changes. A worker's PASS is
@@ -141,9 +180,14 @@ Independent review supplements executable proof.
 
 ## 5. Finish with evidence and limits
 
-Report the outcome, actual models used when observed, changed scope, decisive
-checks, escalations, and remaining uncertainty. Distinguish planned/requested
-models from verified effective models. Include usage or cost only when measured,
-with its accounting basis; absent telemetry means cost is unknown. Do not infer
-savings from short output or fewer premium turns. Do not publish, commit, install configuration, or
-transfer to a new app task unless the user's authorization covers that action.
+Report the outcome, decisive checks, material limits, and a brief actor/repair
+summary. Include measured usage with its scope and cutoff; mention missing usage
+only when measurement was requested or its absence affected a decision. Follow
+the telemetry reference for interpretation. Omit empty fields and routine narration.
+
+Existing authorization carries across phases, actor changes, and continuation of
+the same scoped objective; pass its exact boundaries to the receiver. Ask again
+only for a material plan revision, a new effect or scope outside that authority, an exhausted allowance, or
+an unresolved consequential decision. Earlier Git or publication approval does
+not authorize unrelated future work. Commit, publish, install, or create a new
+app task only when the existing authorization covers that action.

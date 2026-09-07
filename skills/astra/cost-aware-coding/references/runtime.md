@@ -4,35 +4,31 @@ Inspect the active tools, host and permitted models before promising a route.
 Use exact identifiers and supported effort values from that runtime. When
 model-specific delegation is selected, pass both explicitly using supported
 spawn arguments or a verified custom-agent configuration. Do not invent agent
-roles from a draft. Verify effective selection from host metadata when exposed;
-a worker's self-description is not verification. If unavailable, report that
-limit; when exact routing or a cost cap is required, return route-only rather
+roles. Verify effective selection from host metadata when exposed. If unavailable,
+report that limit; when exact routing or a cost cap is required, return a coordination proposal rather
 than silently falling back to the current parent.
+
+For the current root, prefer host-provided turn metadata. If absent, use the
+bounded [telemetry lookup](telemetry.md) for the identified session's latest
+observed model and effort. Treat them as current only when the record
+matches the active turn; an older record does not establish current settings.
+Configuration defaults and self-description do not establish
+current settings; per-turn overrides and rerouting may differ. Record unknowns,
+and refresh after a model transition rather than guessing from task difficulty.
 
 ## Context inheritance and model selection
 
-For this Codex collaboration tool, `fork_turns="all"` is a formal full-history
-fork: it inherits the parent's model and reasoning effort and disallows explicit
-overrides. `fork_turns="none"` or a positive turn count permits explicit model
-and reasoning overrides. Confirm the active tool schema before dispatch; this
-restriction belongs to the collaboration tool, not the general OpenAI API.
+For Codex collaboration, confirm the active schema and select the fork mode:
 
-For example, a planner can receive the ten most recent turns plus a focused
-assignment while explicitly selecting Astra Medium:
+| `fork_turns` | Context and settings |
+| --- | --- |
+| `"all"` | Full history; inherits parent model/effort, with no explicit overrides |
+| `"none"` | Assignment only; permits explicit model/effort |
+| Positive turn count | Recent history plus assignment; permits explicit model/effort |
 
-```json
-{
-  "task_name": "feature_plan",
-  "fork_turns": "10",
-  "model": "gpt-6-astra",
-  "reasoning_effort": "medium",
-  "message": "<accepted requirements, relevant findings, open decisions, and expected plan>"
-}
-```
-
-Ten is an example, not a default. Recent turns can omit earlier decisions or
-include unrelated material; supply missing facts in the assignment. Describe
-this as a recent-history fork even when it contains all task-relevant context.
+This restriction belongs to the collaboration tool, not the general OpenAI API.
+Choose recent turns for relevance and supply omitted decisions in the assignment;
+receiving all relevant facts does not make it a formal full-history fork.
 
 Choose context for its purpose:
 
@@ -56,19 +52,22 @@ context volume and rediscovery together; fresh context is not inherently cheaper
 
 ## Reuse and wait
 
-Keep agent identifiers, roles, observed model/effort, assignments, and status in
-working context; no separate artifact is required. Reuse an available agent whose
-role, model/effort, and relevant context all fit before spawning another.
-Keep useful planners, implementers,
-and reviewers available throughout the run where supported; a phase or parent-turn
-boundary alone does not justify replacement. Verify availability after interruption
-instead of assuming an old identifier still works.
+Count the root in the working roster. Keep actor IDs, roles, logged model/effort,
+owned scope, status, and dispatch reasons in existing run context; no separate
+ledger is required. Default to one reusable non-independent actor per needed
+model/effort, created only when needed. Required independence, useful concurrency,
+unavailable actors, or unsuitable accumulated context can justify additional actors.
+A coordination-only root does not fill implementation capacity; reuse one suitable
+worker even when its settings match the root. Settings alone do not establish
+suitability. Recheck availability after interruption.
 
-Use the original planner for related design questions, the implementer for repairs,
-and the reviewer for rechecking fixes. Matching model/effort alone is insufficient:
-do not reuse an author as its independent reviewer. Fresh context is appropriate
-for independent judgment, unrelated scope, or misleading/excessive accumulated
-context. When replacement is needed, preserve useful findings and writer custody.
+Reuse the planner for related decisions, the implementer for repairs, and the
+reviewer for rechecks. A specialist may investigate and implement related work
+once write authority and custody transfer; keep its context rather than commissioning
+an equivalent worker. A reviewer must be independent of the candidate's authors,
+including specialists whose design assumptions the review must challenge.
+Preserve useful actors across phases and parent turns; follow continuation
+guidance before replacement.
 
 Prefer completion notifications or blocking waits using the active tool's documented
 behavior. When bounded waits are needed, roughly 30–60 seconds is a starting point,
@@ -79,41 +78,54 @@ report only when it would inform intervention. Several minutes of silence can be
 normal. Do not reread files, poll workers, or request updates just to fill a routine
 user progress message. Resume dependent work when the result arrives.
 
-## Runtime verification and transitions
+## When the root is outside the model policy
 
 The model policy governs executor selections and substantive direct execution.
 An active parent outside its defaults may do necessary routing and custody work.
-Retain it for a small direct change only when transfer overhead is unlikely to
+For planned root implementation, retain it for a small change only when transfer overhead is unlikely to
 pay back and no explicit user ceiling applies; otherwise use a permitted route
 or provide exact resume instructions. Do not silently substitute providers or
 models when an exact selection is required.
 
-Where custom-agent files are used, inspect their model and effort overrides as
-well as spawn arguments and session defaults. Precedence and available controls
+## When configuring custom agents
+
+Inspect their model/effort overrides, spawn arguments and session defaults. Precedence and available controls
 can differ by build. Validate the selected route with a harmless probe only when
 needed and within the user's task/budget; do not repeat probes on every segment
 when the relevant configuration has not changed.
 
-A skill cannot change the current model by declaring a new parent. Direct work
-keeps execution with the root; delegation assigns bounded work while the root
-retains coordination and acceptance; a handoff transfers coordination ownership
-through a supported mechanism after custody is settled. A child cannot promote
-itself to a delegating root.
+## When the accepted plan changes the root
 
-Use a verified parent-transition mechanism within authorization. If unavailable,
+Prefer a user-applied model/effort change in the same conversation at a completed
+turn boundary. This changes the root settings, not the task or accepted ownership.
+Preserve the accepted plan, active actor identities, custody, and repair counters;
+verify current settings before execution. A user acceptance is not proof of a switch.
+
+A separate coordination handoff is only for an explicitly requested transfer or
+a concrete runtime/task constraint; use continuation guidance. It transfers
+coordination ownership after custody is settled.
+A skill cannot change the current model by declaration, and a child cannot
+promote itself to a delegating root.
+
+For a separate handoff, use a verified transition mechanism within authorization. If unavailable,
 retain the parent for coordination and delegate to a permitted executor, or work
-directly when policy permits. Give resume instructions only when no authorized
+directly when accepted implementation ownership and model policy permit. Do not
+replace a required root switch with an unaccepted route. Give resume instructions only when no authorized
 route can continue; an unavailable optional handoff alone is not a blocker. Creating
 a separate app task requires an explicit request for that task.
 
 Before transferring ownership, use [continuation guidance](continuation.md).
-On routing failure, preserve active ownership and partial work. Stop actors only
+
+## When routing fails
+
+Preserve active ownership and partial work. Stop actors only
 when their authority, restrictions, or ownership are affected; continue unaffected
 authorized work. Reconcile writer state before reassignment: a failed dispatch
 does not stop existing processes.
 
-Installation is separate from execution. Only when requested, configure the
-actual host that runs the task. Prefer scoped profiles or explicit dispatch
+## When host setup is requested
+
+Configure the actual host that runs the task. Prefer scoped profiles or explicit dispatch
 settings over changing global subagent defaults for one workflow. Runtime limits
 can enforce concurrency; prompt instructions alone do not enforce spending or
 prevent every child effect.
