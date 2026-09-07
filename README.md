@@ -1,11 +1,14 @@
 <h1 align="center">Programming Agent Skills</h1>
 
-<p align="center"><strong>Thoughtful engineering for AI-assisted development.</strong></p>
+<p align="center"><strong>Give your coding agent the context and methods the work needs.</strong></p>
 
 <p align="center">
-  Built primarily for GPT 6 Astra in Codex, with GPT 5.6 Sol compatibility:<br>
-  clarify the problem, make sound design decisions,
-  and check that the finished work holds up.
+  16 focused skills, built primarily for GPT 6 Astra in Codex.<br>
+  Compatible with GPT 5.6 Sol. Ordinary coding stays direct.
+</p>
+
+<p align="center">
+  <img src="docs/astra/assets/skill-pack-overview.png" width="960" alt="The pack brings together relevant project context, focused methods for shaping, design, debugging and review, and evidence from meaningful checks. Use each when the task needs it; there is no required pipeline.">
 </p>
 
 <p align="center">
@@ -15,6 +18,7 @@
 
 <p align="center">
   <a href="#what-it-helps-with">Explore the pack</a> ·
+  <a href="#a-real-example-clearing-up-conflicting-guidance">Real example</a> ·
   <a href="#cost-aware-coding">Cost-aware coding</a> ·
   <a href="#getting-started">Get started</a> ·
   <a href="docs/astra/design-brief.md">Read the design brief</a>
@@ -22,28 +26,67 @@
 
 ---
 
-Good software takes more than working code. It takes a clear understanding of
-the problem, decisions that fit the existing system, and evidence that a change
-does what people need.
+A capable coding agent still needs to know what matters in your project: which
+behavior must stay intact, where a decision belongs, and what would prove a change
+works. The **Astra skills pack** combines shared engineering guidance with focused
+methods for planning, design, debugging, review, and delivery. Each skill is a
+small package of instructions and, where useful, executable tools.
 
-I built this pack to bring those habits into everyday work with coding agents.
-The **Astra skills pack** is designed primarily for **GPT 6 Astra**, with
-compatibility for **GPT 5.6 Sol**. It combines
-shared engineering guidance with 16 focused skills for planning, design,
-debugging, review, and delivery. Each skill
-is a set of instructions and, where useful, supporting tools that Codex can use
-for a particular kind of work.
+I built it around a practical question: **what guidance earns its place beyond
+the model's baseline?** That means keeping useful context and methods, testing
+assumptions, and removing instructions that add work without improving decisions.
 
-The aim is straightforward: code that is easier to understand, changes that are
-easier to review, and decisions that the next person can follow.
+<details>
+<summary><strong>Which models is it for?</strong></summary>
 
-The instructions are tuned to GPT 6 Astra's baseline capabilities and concentrate
-on context and methods that add to them. GPT 5.6 Sol can also use the pack,
-including as the everyday root in the cost-aware workflow, which assigns
-substantive shaping and independent feature review to Astra. **Smaller models may need the
-[custom skill pack](skills/custom/)**, which contains more detailed instructions.
-The installer below installs the Astra skills pack; it does not install the
-custom pack. Model-specific comparisons are still limited.
+The pack is tuned primarily for **GPT 6 Astra**, with **GPT 5.6 Sol compatibility**.
+Sol can be the everyday root in the optional cost-aware workflow, which assigns
+substantive shaping and independent feature review to Astra.
+
+Smaller models may benefit from the [custom skill pack](skills/custom/), which
+contains more detailed instructions. The managed installer deploys only the Astra
+skills pack. Model-specific comparisons remain limited.
+
+</details>
+
+## Try it on real work
+
+Suppose an import job sometimes fails halfway through, and you want a safe retry.
+After installation, give Codex a concrete question:
+
+```text
+$shape-work Help me design retries for failed imports in this repo.
+Some records may already have been saved. Clarify what can be retried safely,
+what users should see, and how we will know the feature works.
+```
+
+A useful result settles what counts as the same import, how partial progress is
+handled, and which outcomes acceptance checks must distinguish. Those decisions
+give implementation something concrete to follow. The exact decisions depend on
+your repository.
+
+Once the behavior is settled, ask Codex to implement it directly. If a design
+question remains, use `$codebase-design`; for a hard failure, use `$diagnosing-bugs`;
+for a candidate review, use `$change-review`. Tickets and multiple workers are
+options when the work needs them.
+
+## A real example: clearing up conflicting guidance
+
+We used context-hygiene while maintaining this repository. Older architecture
+decision records (ADRs) still described retired skill routes, and an index notice
+was not enough for someone opening those records directly.
+
+| Before | What changed |
+| --- | --- |
+| Old ADRs retained historical status and route descriptions without current applicability at the top. | Added scoped notices to 17 records and a successor explaining what still applies. |
+| Domain guidance pointed readers toward ADR history broadly. | Narrowed the route to relevant decisions when rationale or applicability is needed. |
+| A completed legacy plan remained under active plans. | Moved it to the archive and repaired its relative evidence links. |
+
+See the [actual cleanup diff](https://github.com/stevennitesh/programming-agent-skills/commit/3f3df36a6befe6d9c221dbd3f2b9252ae34c3f14)
+and the [follow-up scope notices](https://github.com/stevennitesh/programming-agent-skills/commit/daf9fd95755e653b632043cfbf9a4605bd7f5995).
+The historical ADR bodies were preserved. This demonstrates the resulting
+reconciliation, not a measured reduction in tokens or a controlled comparison
+against an agent without the skill.
 
 ## What it helps with
 
@@ -135,19 +178,9 @@ pack, custom locations, and verification.
 `AGENTS.md`, preserving your existing preferences. It needs no installer and
 leaves out the specialized skills and managed updates.
 
-## Try it on real work
+## Using the pack in your project
 
-Ask Codex for the work you need, or name a skill directly with its `$` prefix:
-
-```text
-$shape-work help me clarify how failed imports should be retried
-
-$codebase-design where should retry state live in this application?
-
-$diagnosing-bugs investigate why this import sometimes stalls
-
-$change-review review this branch for correctness and maintainability
-```
+Ask Codex for the work you need, or name a skill directly with its `$` prefix.
 
 For repository guidance, ask `$repo-bootstrap` to inspect or set up the project.
 It can reconcile existing instructions and engineering conventions with this pack;
@@ -175,16 +208,11 @@ Different parts of a project can benefit from different models. The optional
 [$cost-aware-coding](skills/astra/cost-aware-coding/SKILL.md) workflow helps make
 that choice explicit while keeping useful work in the same context.
 
-1. **Agree on the coordination plan.** The agent proposes who implements, which
-   models to use, dependencies, checks, and recovery options. It reuses an existing
-   feature plan; substantial unresolved feature decisions go through shape-work.
-   Any recommended change to the conversation's model is presented for you to make
-   alongside plan acceptance.
-2. **Execute within the agreed boundaries.** The root agent may implement directly,
-   bring in a specialist for a sequential unit, or concentrate on coordination.
-   It reuses suitable workers and can adjust scheduling and assignments within
-   the accepted boundaries without asking again. Changes beyond those boundaries
-   return to you for acceptance.
+1. **Agree on the coordination plan.** Review the proposed responsibilities,
+   models, dependencies, checks, and recovery options.
+2. **Execute within the agreed boundaries.** The root agent implements or
+   coordinates the work, reusing suitable specialists. Changes beyond the
+   accepted boundaries return to you for acceptance.
 
 ```text
 $cost-aware-coding propose a coordination plan for the accepted import-retry feature
@@ -193,9 +221,19 @@ I accept the coordination plan. Execute it using $cost-aware-coding.
 ```
 
 Feature delivery includes an independent Astra review, even when the root is
-Astra. Repair attempts are bounded, and final review-repair rounds are shared
-across the whole change. Concurrent implementation uses `$parallel-implement`
-when explicitly requested; a multi-step plan alone does not require parallel work.
+Astra. The workflow aims to use models efficiently while preserving that review
+requirement.
+
+<details>
+<summary><strong>Coordination details, model policy, and evidence limits</strong></summary>
+
+The coordination proposal reuses an accepted feature plan; substantial unresolved
+feature decisions go through shape-work. Any recommended change to the
+conversation's model is presented for you to make alongside plan acceptance.
+The root can adapt scheduling and assignments within accepted boundaries and
+use a specialist for a sequential unit. Repair attempts are bounded; final
+review-repair rounds are shared across the whole change. Concurrent implementation
+uses `$parallel-implement` when requested, not simply because a plan has several steps.
 
 The current [model policy](skills/astra/cost-aware-coding/references/model-policy.md)
 uses Sol Medium for everyday implementation, Astra Medium for substantive planning,
@@ -207,6 +245,8 @@ A bounded, read-only helper can capture logged model settings and usage counters
 It reuses available evidence and reports missing coverage; it does not establish
 billing totals or prove savings. The aim is lower execution cost **within the
 chosen review and quality requirements**, with comparative savings still to be measured.
+
+</details>
 
 ## How the pack is developed
 
@@ -234,10 +274,7 @@ See [Acknowledgments](ACKNOWLEDGMENTS.md) for more.
 
 If you're exploring the implementation or contributing a change, start with
 [the Astra skills pack source](skills/astra/), [repository context](CONTEXT.md), and
-[contributor instructions](AGENTS.md). The more detailed
-[custom pack](skills/custom/) remains available for users evaluating other models.
-Earlier research is retained as historical evidence; the installer deploys only
-the Astra skills pack.
+[contributor instructions](AGENTS.md). Earlier research remains available as historical evidence.
 
 ---
 
