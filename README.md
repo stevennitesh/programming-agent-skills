@@ -187,8 +187,10 @@ accepted route can enter execution directly when requested. The root may reuse
 suitable agents and adapt scheduling within that route. Concurrent writing uses
 `parallel-implement` when requested.
 
-Implementation recovery is counted per work unit. The two review-repair rounds
-are shared across the integrated candidate; failed checks also consume a round.
+Implementation recovery is counted per work unit. The integrated candidate has
+two review-repair rounds total. Each round includes a correction batch, acceptance
+checks, and—if checks pass—the same reviewer's recheck. Failed acceptance still
+uses that round; individual test runs do not count as separate rounds.
 Reviews and rechecks use `change-review`. See the
 [cost-aware skill](skills/astra/cost-aware-coding/SKILL.md) for exact rules.
 Completion does not itself authorize committing, pushing, or deployment.
