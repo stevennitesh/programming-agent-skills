@@ -1,5 +1,8 @@
 # Shared Delegated Execution Uses A Plain Worker Handoff
 
+> **Current applicability — [ADR-0018](0018-astra-composition-and-decision-applicability.md):** Partially superseded: retain bounded assignments, exclusive writer custody, and integration evidence. Implement ownership and historical dispatch, preparation, cleanup, and review protocols are replaced by current Astra owners; ADR-0017 records the intervening legacy simplification.
+> Status and decisions below preserve the original record; this notice controls present applicability.
+
 ## Status
 
 Superseded in part by ADR-0017.

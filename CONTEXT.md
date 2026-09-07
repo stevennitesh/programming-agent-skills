@@ -8,6 +8,8 @@ Explore imaginatively. Converge under proof. Simplify ruthlessly.
 
 ## Current direction
 
+The pack targets GPT 6 Astra primarily, with GPT 5.6 Sol compatibility.
+
 Build the Astra pack in `skills/astra/`. When designing or changing an Astra
 skill, read [the Astra design brief](docs/astra/design-brief.md). It records the
 accepted principles from [issue #94](https://github.com/stevennitesh/programming-agent-skills/issues/94),

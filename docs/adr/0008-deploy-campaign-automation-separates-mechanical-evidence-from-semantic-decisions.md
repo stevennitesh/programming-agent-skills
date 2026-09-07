@@ -1,5 +1,8 @@
 # Deploy Campaign Automation Separates Mechanical Evidence From Semantic Decisions
 
+> **Current applicability — [ADR-0018](0018-astra-composition-and-decision-applicability.md):** Historical automation decision: ADR-0010 supersedes its campaign automation design. The separation of mechanical evidence from semantic judgment remains useful; no campaign machinery is an Astra authoring prerequisite.
+> Status and decisions below preserve the original record; this notice controls present applicability.
+
 Deploy Campaigns require repeated identity, fixture-isolation, proof,
 installation, and delivery checks. Leaving all of that bookkeeping in prose is
 costly and error-prone, while allowing automation to interpret evidence or

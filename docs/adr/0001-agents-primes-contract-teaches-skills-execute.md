@@ -1,5 +1,8 @@
 # AGENTS Primes, Contract Teaches, Skills Execute
 
+> **Current applicability — [ADR-0018](0018-astra-composition-and-decision-applicability.md):** Retained: AGENTS.md primes, repository guidance teaches, and skills execute. Current owners and conditional loading follow ADR-0018.
+> Status and decisions below preserve the original record; this notice controls present applicability.
+
 This skill pack separates repo-local guidance by job: `AGENTS.md` primes the agent with compact local pointers, `docs/agents/engineering-contract.md` teaches the full discipline, and skills execute their specific workflow. We chose this split to keep always-loaded instructions small while preserving the deeper vocabulary and behavior model in a durable file the agent can read when the work calls for it.
 
 **Consequences**:

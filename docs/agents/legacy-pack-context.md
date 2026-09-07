@@ -51,7 +51,9 @@ _Avoid_: adopted behavior, H1 unit, source summary
 
 **Active skill in the legacy pack**
 
-A supported skill under `skills/custom/`; it is eligible for validation, routing, managed installation, and mirror comparison.
+A skill selected by the historical custom composition. Its old installation and
+mirror contracts explain that system; the current managed installer deploys only
+`skills/astra/`. Custom source is retained for comparison and separate evaluation.
 _Avoid_: custom variant, production experiment
 
 **Experimental skill**

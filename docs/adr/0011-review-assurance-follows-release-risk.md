@@ -1,5 +1,8 @@
 # Review Assurance Follows Release Risk, Not PR Container
 
+> **Current applicability — [ADR-0018](0018-astra-composition-and-decision-applicability.md):** Superseded historical review policy, originally by ADR-0013. No current Astra execution scope remains; review ownership and conditional assurance follow ADR-0018 and the current skills.
+> Status and decisions below preserve the original record; this notice controls present applicability.
+
 The review family previously routed every local pull request to the
 high-assurance path. That made the transport container a proxy for assurance
 need, sent ordinary PRs through fresh-context review, and let optional

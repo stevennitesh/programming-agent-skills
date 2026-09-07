@@ -19,6 +19,12 @@ Source distillation is optional evidence work for primary and outside sources,
 upstream skills, books, and engineering practice; it stops at important
 concepts and usable techniques rather than drafting or deploying a skill.
 
+## Historical plans
+
+[Engineering vocabulary reconciliation](../../.archive/docs/plans/engineering-vocabulary-reconciliation.md)
+is archived completed legacy work. Its old baseline and delivery deferrals are
+historical, not pending Astra tasks. Current direction comes from the brief above.
+
 ## Rules
 
 - Update this router when a plan becomes active or stops being active.

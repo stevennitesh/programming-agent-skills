@@ -1,5 +1,8 @@
 # Source-Native Vocabulary Names Active Pack Concepts
 
+> **Current applicability — [ADR-0018](0018-astra-composition-and-decision-applicability.md):** Legacy scope only for frozen composition vocabulary, identifiers, and update protocols. Clear terminology remains useful, but Astra composition and guidance ownership follow current CONTEXT.md and ADR-0018, without mandatory paired contract copies.
+> Status and decisions below preserve the original record; this notice controls present applicability.
+
 The active pack accumulated local labels that now obscure established
 configuration-management, verification-and-validation, catalog, and testing
 meanings. In particular, `Lock` names several different actions, `Release`

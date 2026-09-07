@@ -1,6 +1,10 @@
 # Synthesis Methods
 
 Methods are reusable ways to distill sources or deploy selected synthesis.
+Fresh Composition Epoch and Deploy Campaign procedures below serve the legacy
+custom-pack workflow when explicitly selected; they are not prerequisites for
+Astra changes. For current pack design use the [Astra brief](../../astra/design-brief.md).
+Source distillation remains optional evidence gathering.
 
 ## Files
 

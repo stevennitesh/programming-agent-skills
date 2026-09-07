@@ -320,16 +320,16 @@ Candidate pairs, selected only for behavior changed by the final delta:
 
 Accepted evidence:
 
-- [condition-triggered Implement review](../validation/skills/implement/evals/EV-implement-condition-triggered-review-20260811-01/evidence/2026-08-11-condition-triggered-review.md):
+- [condition-triggered Implement review](../../../docs/validation/skills/implement/evals/EV-implement-condition-triggered-review-20260811-01/evidence/2026-08-11-condition-triggered-review.md):
   accepted with 25/25 initial candidate, 17/17 successor, and 6/6 protected
   judgments;
-- [cross-skill source-vocabulary quality lift](../validation/evals/2026-08-12-source-vocabulary-quality-lift.md):
+- [cross-skill source-vocabulary quality lift](../../../docs/validation/evals/2026-08-12-source-vocabulary-quality-lift.md):
   accepted with 30/30 entry-positive and 12/12 candidate wrong-condition
   judgments; its compatibility-lane placement is explicitly indexed rather
   than fabricated as per-skill or FCE evidence;
-- [TDD routing](../validation/skills/tdd/evals/EV-tdd-routing-20260812-01/decision.md):
+- [TDD routing](../../../docs/validation/skills/tdd/evals/EV-tdd-routing-20260812-01/decision.md):
   accepted with 40/40 final entry and custody judgments; and
-- [TDD shrinking selection](../validation/skills/tdd/evals/EV-tdd-shrinking-selection-20260812-01/decision.md):
+- [TDD shrinking selection](../../../docs/validation/skills/tdd/evals/EV-tdd-shrinking-selection-20260812-01/decision.md):
   accepted with 25/25 candidate judgments and 6/6 candidate wrong-condition
   judgments.
 

@@ -1,5 +1,8 @@
 # Synthesis Preserves Decision Trace; Runtime Skills Compress
 
+> **Current applicability — [ADR-0018](0018-astra-composition-and-decision-applicability.md):** Retained: preserve decision-changing evidence and compress runtime guidance. Detailed synthesis and campaign obligations apply only to their selected legacy workflow, not every Astra edit; shared engineering rules retain one owner.
+> Status and decisions below preserve the original record; this notice controls present applicability.
+
 `docs/synthesis/` preserves every decision-changing source, current-runtime fact, ownership decision, materially considered alternative and rejection reason, selected design, extraction placement, and proof obligation. It preserves provenance, not every presentation: collapse duplicate prose, repeated representations, and superseded schemas while retaining their decision-bearing history through source pointers or explicit historical notes.
 
 A synthesis is complete when a maintainer can reconstruct why the selected behavior won and how to promote it without rediscovering evidence. Material whose removal changes no selected behavior, ownership boundary, material alternative, or proof obligation does not belong in the current synthesis presentation.

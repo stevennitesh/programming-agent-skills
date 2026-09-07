@@ -1,5 +1,8 @@
 # Automatic Implementation Review Uses One Change Review Path
 
+> **Current applicability — [ADR-0018](0018-astra-composition-and-decision-applicability.md):** Superseded historical review policy, originally by ADR-0015. Implement-based automatic reviews and model profiles have no current Astra execution scope.
+> Status and decisions below preserve the original record; this notice controls present applicability.
+
 **Status**: superseded by ADR-0015
 
 ## Context

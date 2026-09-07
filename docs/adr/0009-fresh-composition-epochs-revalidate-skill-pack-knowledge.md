@@ -1,5 +1,8 @@
 # Fresh Composition Epochs Revalidate Skill-Pack Knowledge
 
+> **Current applicability — [ADR-0018](0018-astra-composition-and-decision-applicability.md):** Legacy scope only: composition epochs and their remaining freeze rules apply to explicitly selected legacy epoch work. Astra maintenance does not require a fresh epoch, research reset, or freeze before inspecting current skills.
+> Status and decisions below preserve the original record; this notice controls present applicability.
+
 Repeated skill deployments accumulated research packets, synthesis decisions,
 validation records, campaign artifacts, and reused conclusions across changing
 skill runtimes, source revisions, models, hosts, fixtures, and evaluation

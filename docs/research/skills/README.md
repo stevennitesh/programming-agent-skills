@@ -1,5 +1,10 @@
 # Per-Skill Research
 
+The packet identities and owner names below belong to legacy research and Deploy
+Campaigns. Retired skill names remain provenance, not current invocation routes.
+Use the [Astra design brief](../../astra/design-brief.md) and source skills for
+current ownership; preserve these packets as evidence.
+
 `docs/research/skills` owns fresh per-skill research packets with stable
 `RP-<skill-at-mint>-YYYYMMDD-NN` identities. A skill directory routes its
 packets; synthesis alone decides whether evidence contributes to H1.

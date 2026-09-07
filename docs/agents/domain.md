@@ -5,9 +5,11 @@
 ## Route
 
 When domain meaning or an accepted decision affects the task, read the relevant
-parts of root `CONTEXT.md` and applicable records in `docs/adr/`. This repository
-uses a single context. Preserve accepted terminology and distinguish decisions
-from proposals and historical research.
+parts of root `CONTEXT.md`. Use the [ADR index](../adr/README.md) only when decision
+rationale or applicability is needed; select relevant records in `docs/adr/`
+instead of loading the history. This repository uses a single context. Preserve
+accepted terminology and distinguish decisions from proposals and historical
+research.
 
 Missing domain records are not setup gaps. Astra
 [shape-work](../../skills/astra/shape-work/SKILL.md) owns domain

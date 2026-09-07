@@ -30,6 +30,11 @@ another collision-free identity. Preserve still-governing portions and historica
 decision evidence; apply the domain reference's supersession rules to ADRs.
 Do not leave two documents presenting conflicting instructions as current.
 
+Before relocating or retiring a document, check affected inbound links and code
+or test consumers. Reconcile affected consumers within scope, or retain the
+document in place with clear applicability when relocation cannot be completed
+safely.
+
 Within the authorized document-update scope, make the replacement readable before
 archiving its predecessor. Update affected indexes, agent pointers, and links to
 the current owner; keep historical links explicitly historical and repair relative

@@ -1,5 +1,8 @@
 # Deploy Campaigns Advance Through Proof Obligations
 
+> **Current applicability — [ADR-0018](0018-astra-composition-and-decision-applicability.md):** Legacy scope only: proof obligations govern the explicitly selected Deploy Campaign workflow. They are not prerequisites for ordinary Astra maintenance; consult the current method when running that workflow.
+> Status and decisions below preserve the original record; this notice controls present applicability.
+
 The mandatory Prompt-stage lifecycle made unit completion a proxy for proof.
 Its later manifest controllers persisted semantic progress, retained legacy
 compatibility paths, and could dispatch behavioral work before complete

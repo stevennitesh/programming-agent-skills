@@ -1,5 +1,8 @@
 # Ordinary And Formal Review Share One Lean Judgment Owner
 
+> **Current applicability — [ADR-0018](0018-astra-composition-and-decision-applicability.md):** Partially superseded: retain lean, evidence-based review judgment. Historical formal-review flags, separate High-Assurance Review routing, and implementation profiles do not govern Astra; current change-review owns its optional assurance detail.
+> Status and decisions below preserve the original record; this notice controls present applicability.
+
 **Status**: superseded in part by ADR-0017
 
 ## Context

@@ -1,5 +1,11 @@
 # Synthesis
 
+The composition contract, relationship map, and per-skill synthesis below describe
+the legacy custom pack. For current Astra composition and execution ownership,
+start with the [Astra design brief](../astra/design-brief.md) and source skills.
+These records are evidence, not a requirement to run a legacy campaign for Astra.
+Reusable methods apply only when that evidence workflow is explicitly selected.
+
 Synthesis docs are the decision-and-evidence bench between source discovery
 and final skills. They preserve decision-changing source pressure,
 current-runtime evidence, ownership collisions, material alternatives,
@@ -30,9 +36,9 @@ current applicable evidence cannot close.
 
 | File Or Folder | Role |
 | --- | --- |
-| [`skill-pack.md`](skill-pack.md) | Canonical marker-bounded Pack Composition Contract and pack-acceptance decision owner |
+| [`skill-pack.md`](skill-pack.md) | Legacy marker-bounded composition and epoch-specific acceptance owner |
 | [`methods/`](methods/) | Reusable deployment, Fresh Composition Epoch, and source-distillation methods |
-| [`skill-context-relationships.md`](skill-context-relationships.md) | Current context pointers, cross-skill relationships, and boundary owners |
+| [`skill-context-relationships.md`](skill-context-relationships.md) | Legacy custom-pack context pointers, relationships, and boundary owners |
 | [`skills/`](skills/) | One whole-skill synthesis note per skill as coverage expands |
 
 Canonical owner paths are `docs/synthesis/skill-pack.md`,

@@ -1,5 +1,9 @@
 # Pack-Integration Validation
 
+This index describes legacy composition-epoch validation, not the current Astra
+inventory or its default checks. Keep its evidence and helper inputs at stable
+paths; use the [Astra design brief](../../astra/design-brief.md) for current work.
+
 `docs/validation/skill-pack` owns structural and behavioral evidence for one
 `FCE-YYYYMMDD-NN` composition epoch. It records protocols, fixtures, results,
 tested bounds, and residual gaps; it cannot accept the pack or declare Lock.

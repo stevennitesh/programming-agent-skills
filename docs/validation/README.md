@@ -1,6 +1,10 @@
 # Validation
 
-Validation docs will hold evidence that the skill pack changes agent behavior.
+Validation docs hold scoped evidence about skill and helper behavior. A passing
+check or historical campaign does not establish a current pack-wide quality gain.
+The epoch and campaign lanes below preserve legacy contracts and results; they do
+not impose evaluation machinery on ordinary Astra work. Use the [Astra design
+brief](../astra/design-brief.md) for current validation expectations.
 
 Use this folder for:
 

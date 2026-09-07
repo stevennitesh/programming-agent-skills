@@ -1,5 +1,10 @@
 # Research
 
+Dated assessments describe their inspected snapshots, not current installation
+state or an active rewrite queue. Use the [Astra design brief](../astra/design-brief.md)
+for accepted direction and [documentation status](../astra/documentation-status.md)
+for known superseded proposals. Preserve research bodies as evidence.
+
 Research docs distill inspected sources into important concepts, usable
 techniques, provenance, limitations, and evidence gaps. They can be verbose
 because they are not runtime instructions.

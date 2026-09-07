@@ -1,5 +1,8 @@
 # Independent Change Review Is Condition-Triggered
 
+> **Current applicability — [ADR-0018](0018-astra-composition-and-decision-applicability.md):** Superseded historical review policy, originally by ADR-0016. Current review triggers and the explicitly selected cost-aware assurance floor belong to the Astra skills, not the author-count or profile rules below.
+> Status and decisions below preserve the original record; this notice controls present applicability.
+
 **Status**: superseded by ADR-0016
 
 ## Context
