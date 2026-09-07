@@ -148,30 +148,48 @@ acquire this independent-review gate.
 flowchart TB
     Plan["PLAN<br/>Propose route<br/>User accepts"] --> Work["EXECUTE<br/>Implement or coordinate<br/>Run required checks"]
     Work -->|Checks pass|Review["REVIEW<br/>Independent Astra agent<br/>Verify final evidence"]
+    Work -->|Checks fail|Recover["Follow recovery decisions below"]
     Review -->|Gate satisfied|Done["Complete"]
-    Work -.->|Checks fail|Recovery["RECOVER<br/>Within accepted roles<br/>and remaining allowance"]
-    Review -.->|Required corrections|Recovery
-    Recovery -->|Permitted repair|Work
-    Recovery -->|Limit or route change|Pause["Preserve work<br/>Ask user"]
+    Review -->|Required corrections|Recover
     classDef plan fill:#e9eef9,stroke:#657ca6,color:#243758
     classDef work fill:#e6f3ef,stroke:#377d70,color:#163e36
     classDef recovery fill:#fff1dc,stroke:#b77a28,color:#53370f
     class Plan plan
     class Work,Review,Done work
-    class Recovery,Pause recovery
+    class Recover recovery
 ```
 
-Before acceptance, revise the proposal as needed and use `shape-work` for
-substantial unresolved feature decisions. Apply any agreed root-model change
-before execution. An execution request with a previously accepted route can
-enter execution directly. Reviews use an independent Astra agent; repairs return
-through checks and the same reviewer’s recheck.
-The root reuses suitable actors and may adapt scheduling within accepted boundaries;
-concurrent writing uses `parallel-implement` when requested. Recovery stays within
-the accepted model roles, ownership, and attempt limits; exhausted allowances or
-changes outside those boundaries return to the user. Implementation recovery and review repairs use separate allowances. After review
-begins, repairs and failed checks consume the shared review allowance across the
-integrated candidate; review and rechecks use `change-review`. See the
+**Recovery decisions.** Choose the applicable path within the accepted route.
+The return endpoint resumes **EXECUTE** above, including checks and the same
+reviewer's recheck when applicable.
+
+```mermaid
+flowchart TB
+    Recovery["RECOVER<br/>Check failure stage<br/>and remaining allowance"]
+    Recovery -->|Repair allowance remains|Repair["REPAIR with current implementer<br/>Before review: one focused repair<br/>During review: two rounds total"]
+    Recovery -->|Before review: focused repair failed|Escalate["ESCALATE<br/>One stronger implementation attempt"]
+    Escalate -->|Permitted and not yet used|Retry["Use stronger implementer"]
+    Escalate -->|Stronger attempt unavailable or failed|Pause["Preserve work<br/>Request more rounds or revised route"]
+    Recovery -->|Two review rounds exhausted<br/>or route change needed|Pause
+    classDef work fill:#e6f3ef,stroke:#377d70,color:#163e36
+    classDef recovery fill:#fff1dc,stroke:#b77a28,color:#53370f
+    Repair --> Resume["Return to EXECUTE"]
+    Retry --> Resume
+    class Repair,Retry,Resume work
+    classDef pause fill:#f8e6e6,stroke:#ad6262,color:#592d2d
+    class Recovery,Escalate recovery
+    class Pause pause
+```
+
+Use `shape-work` for substantial unresolved feature decisions before accepting
+coordination. Apply any agreed root-model change before execution; a previously
+accepted route can enter execution directly when requested. The root may reuse
+suitable agents and adapt scheduling within that route. Concurrent writing uses
+`parallel-implement` when requested.
+
+Implementation recovery is counted per work unit. The two review-repair rounds
+are shared across the integrated candidate; failed checks also consume a round.
+Reviews and rechecks use `change-review`. See the
 [cost-aware skill](skills/astra/cost-aware-coding/SKILL.md) for exact rules.
 Completion does not itself authorize committing, pushing, or deployment.
 
