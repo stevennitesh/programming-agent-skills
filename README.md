@@ -18,7 +18,7 @@
 
 <p align="center">
   <a href="#what-it-helps-with">Explore the pack</a> ·
-  <a href="#a-real-example-clearing-up-conflicting-guidance">Real example</a> ·
+  <a href="#in-practice-clearer-project-guidance">Real example</a> ·
   <a href="#cost-aware-coding">Cost-aware coding</a> ·
   <a href="#getting-started">Get started</a> ·
   <a href="docs/astra/design-brief.md">Read the design brief</a>
@@ -40,7 +40,7 @@ assumptions, and removing instructions that add work without improving decisions
 <summary><strong>Which models is it for?</strong></summary>
 
 The pack is tuned primarily for **GPT 6 Astra**, with **GPT 5.6 Sol compatibility**.
-Sol can be the everyday root in the optional cost-aware workflow, which assigns
+Sol can handle the everyday conversation in the optional cost-aware workflow, which assigns
 substantive shaping and independent feature review to Astra.
 
 Smaller models may benefit from the [custom skill pack](skills/custom/), which
@@ -49,10 +49,10 @@ skills pack. Model-specific comparisons remain limited.
 
 </details>
 
-## Try it on real work
+## What using it looks like
 
 Suppose an import job sometimes fails halfway through, and you want a safe retry.
-After installation, give Codex a concrete question:
+After [installation](#getting-started), give Codex a concrete question:
 
 ```text
 $shape-work Help me design retries for failed imports in this repo.
@@ -70,24 +70,6 @@ question remains, use `$codebase-design`; for a hard failure, use `$diagnosing-b
 for a candidate review, use `$change-review`. Tickets and multiple workers are
 options when the work needs them.
 
-## A real example: clearing up conflicting guidance
-
-We used context-hygiene while maintaining this repository. Older architecture
-decision records (ADRs) still described retired skill routes, and an index notice
-was not enough for someone opening those records directly.
-
-| Before | What changed |
-| --- | --- |
-| Old ADRs retained historical status and route descriptions without current applicability at the top. | Added scoped notices to 17 records and a successor explaining what still applies. |
-| Domain guidance pointed readers toward ADR history broadly. | Narrowed the route to relevant decisions when rationale or applicability is needed. |
-| A completed legacy plan remained under active plans. | Moved it to the archive and repaired its relative evidence links. |
-
-See the [actual cleanup diff](https://github.com/stevennitesh/programming-agent-skills/commit/3f3df36a6befe6d9c221dbd3f2b9252ae34c3f14)
-and the [follow-up scope notices](https://github.com/stevennitesh/programming-agent-skills/commit/daf9fd95755e653b632043cfbf9a4605bd7f5995).
-The historical ADR bodies were preserved. This demonstrates the resulting
-reconciliation, not a measured reduction in tokens or a controlled comparison
-against an agent without the skill.
-
 ## What it helps with
 
 | When the work involves… | The pack provides… |
@@ -102,36 +84,6 @@ against an agent without the skill.
 You can use one skill for a specific problem or combine several for a larger
 piece of work. Routine coding can proceed directly; there is no required
 planning-to-ticket-to-implementation pipeline.
-
-## The engineering philosophy
-
-> Explore imaginatively. Converge under proof. Simplify ruthlessly.
-
-- **Understand before changing.** Read the existing code, follow its callers,
-  and identify the behavior people rely on.
-- **Build what the problem needs.** Prefer a clear, small design. Reuse what
-  fits, and add abstractions when they earn their place.
-- **Check the result that matters.** Use tests and experiments that can expose
-  a real failure. More tests do not automatically mean stronger evidence.
-- **Leave useful context.** Preserve decisions, reasons, and local conventions
-  so future contributors can continue the work confidently.
-
-These principles live in the
-[engineering contract](skills/astra/repo-bootstrap/templates/engineering-contract.md).
-Repository setup adapts that guidance to a project's own conventions. The skills
-add specialized methods where the task benefits from them.
-
-## Explore the skills
-
-| Purpose | Skills |
-| --- | --- |
-| Clarify and plan | [Shape work](skills/astra/shape-work/SKILL.md) · [Create tickets](skills/astra/to-tickets/SKILL.md) |
-| Design and investigate | [Codebase design](skills/astra/codebase-design/SKILL.md) · [Prototype](skills/astra/prototype/SKILL.md) · [Research](skills/astra/research/SKILL.md) |
-| Assess and improve | [Audit a codebase](skills/astra/audit-codebase/SKILL.md) · [Diagnose bugs](skills/astra/diagnosing-bugs/SKILL.md) · [Hillclimb: measured optimization](skills/astra/hillclimb/SKILL.md) · [Review changes](skills/astra/change-review/SKILL.md) |
-| Coordinate implementation | [Parallel implementation](skills/astra/parallel-implement/SKILL.md) · [Resolve merge conflicts](skills/astra/resolving-merge-conflicts/SKILL.md) |
-| Plan model allocation | [Cost-aware coding](skills/astra/cost-aware-coding/SKILL.md) — approve how the work is assigned, then execute within those boundaries |
-| Maintain agent guidance | [Repository setup](skills/astra/repo-bootstrap/SKILL.md) · [Writing for agents](skills/astra/writing-for-agents/SKILL.md) · [Context hygiene](skills/astra/context-hygiene/SKILL.md) |
-| Guide a human-operated procedure | [Wizard](skills/astra/wizard/SKILL.md) |
 
 <a id="install"></a>
 
@@ -178,7 +130,7 @@ pack, custom locations, and verification.
 `AGENTS.md`, preserving your existing preferences. It needs no installer and
 leaves out the specialized skills and managed updates.
 
-## Using the pack in your project
+### Use it in your project
 
 Ask Codex for the work you need, or name a skill directly with its `$` prefix.
 
@@ -202,6 +154,36 @@ ownership. These are optional steps. Continuation handoffs are part of
 
 </details>
 
+## Explore the skills
+
+| Purpose | Skills |
+| --- | --- |
+| Clarify and plan | [Shape work](skills/astra/shape-work/SKILL.md) · [Create tickets](skills/astra/to-tickets/SKILL.md) |
+| Design and investigate | [Codebase design](skills/astra/codebase-design/SKILL.md) · [Prototype](skills/astra/prototype/SKILL.md) · [Research](skills/astra/research/SKILL.md) |
+| Assess and improve | [Audit a codebase](skills/astra/audit-codebase/SKILL.md) · [Diagnose bugs](skills/astra/diagnosing-bugs/SKILL.md) · [Hillclimb: measured optimization](skills/astra/hillclimb/SKILL.md) · [Review changes](skills/astra/change-review/SKILL.md) |
+| Coordinate implementation | [Parallel implementation](skills/astra/parallel-implement/SKILL.md) · [Resolve merge conflicts](skills/astra/resolving-merge-conflicts/SKILL.md) |
+| Plan model allocation | [Cost-aware coding](skills/astra/cost-aware-coding/SKILL.md) — approve how the work is assigned, then execute within those boundaries |
+| Maintain agent guidance | [Repository setup](skills/astra/repo-bootstrap/SKILL.md) · [Writing for agents](skills/astra/writing-for-agents/SKILL.md) · [Context hygiene](skills/astra/context-hygiene/SKILL.md) |
+| Guide a human-operated procedure | [Wizard](skills/astra/wizard/SKILL.md) |
+
+## In practice: clearer project guidance
+
+We used context-hygiene while maintaining this repository. Older architecture
+decision records (ADRs) still described retired skill routes, and an index notice
+was not enough for someone opening those records directly.
+
+| Before | What changed |
+| --- | --- |
+| Old ADRs retained historical status and route descriptions without explaining at the top which instructions still apply. | Added scope notices to 17 records and a new decision record explaining what still applies. |
+| Domain guidance pointed readers toward ADR history broadly. | Narrowed the route to relevant decisions when rationale or applicability is needed. |
+| A completed legacy plan remained under active plans. | Moved it to the archive and updated its links. |
+
+See the [actual cleanup diff](https://github.com/stevennitesh/programming-agent-skills/commit/3f3df36a6befe6d9c221dbd3f2b9252ae34c3f14)
+and the [follow-up scope notices](https://github.com/stevennitesh/programming-agent-skills/commit/daf9fd95755e653b632043cfbf9a4605bd7f5995).
+The historical ADR bodies were preserved. This demonstrates the resulting
+reconciliation, not a measured reduction in tokens or a controlled comparison
+against an agent without the skill.
+
 ## Cost-aware coding
 
 Different parts of a project can benefit from different models. The optional
@@ -210,8 +192,8 @@ that choice explicit while keeping useful work in the same context.
 
 1. **Agree on the coordination plan.** Review the proposed responsibilities,
    models, dependencies, checks, and recovery options.
-2. **Execute within the agreed boundaries.** The root agent implements or
-   coordinates the work, reusing suitable specialists. Changes beyond the
+2. **Execute within the agreed boundaries.** The main conversation's agent
+   (the root) implements or coordinates the work, reusing suitable specialists. Changes beyond the
    accepted boundaries return to you for acceptance.
 
 ```text
@@ -247,6 +229,24 @@ billing totals or prove savings. The aim is lower execution cost **within the
 chosen review and quality requirements**, with comparative savings still to be measured.
 
 </details>
+
+## The engineering philosophy
+
+> Explore imaginatively. Converge under proof. Simplify ruthlessly.
+
+- **Understand before changing.** Read the existing code, follow its callers,
+  and identify the behavior people rely on.
+- **Build what the problem needs.** Prefer a clear, small design. Reuse what
+  fits, and add abstractions when they earn their place.
+- **Check the result that matters.** Use tests and experiments that can expose
+  a real failure. More tests do not automatically mean stronger evidence.
+- **Leave useful context.** Preserve decisions, reasons, and local conventions
+  so future contributors can continue the work confidently.
+
+These principles live in the
+[engineering contract](skills/astra/repo-bootstrap/templates/engineering-contract.md).
+Repository setup adapts that guidance to a project's own conventions. The skills
+add specialized methods where the task benefits from them.
 
 ## How the pack is developed
 
