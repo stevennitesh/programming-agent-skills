@@ -19,8 +19,8 @@
 <p align="center">
   <a href="#find-the-right-skill">Find a skill</a> ·
   <a href="#in-practice-clearer-project-guidance">Real example</a> ·
-  <a href="#getting-started">Get started</a> ·
   <a href="#cost-aware-coding">Cost-aware coding</a> ·
+  <a href="#getting-started">Get started</a> ·
   <a href="docs/astra/design-brief.md">Read the design brief</a>
 </p>
 
@@ -116,51 +116,6 @@ The historical ADR bodies were preserved. This demonstrates the resulting
 reconciliation, not a measured reduction in tokens or a controlled comparison
 against an agent without the skill.
 
-<a id="install"></a>
-
-## Getting started
-
-You'll need [Codex](https://github.com/openai/codex), Git, and Python 3.11 or newer.
-The installer uses only Python's standard library.
-
-Clone the repository, preview the changes, then install:
-
-```bash
-git clone https://github.com/stevennitesh/programming-agent-skills.git
-cd programming-agent-skills
-
-python3 -m scripts.install_skills --dry-run
-python3 -m scripts.install_skills
-```
-
-<details>
-<summary><strong>PowerShell commands</strong></summary>
-
-```powershell
-git clone https://github.com/stevennitesh/programming-agent-skills.git
-Set-Location programming-agent-skills
-
-python -m scripts.install_skills --dry-run
-python -m scripts.install_skills
-```
-
-</details>
-
-The installer deploys the Astra skills pack to `$HOME/.agents/skills` and manages a small
-bootstrap section in `$HOME/.codex/AGENTS.md`. It preserves unrelated skills
-and personal instructions, and stops if managed skills contain local edits or
-an unmanaged folder has the same name. Add `--skip-global-agents` to leave
-global instructions untouched.
-
-To update, pull this repository and repeat the preview and install commands.
-See [installation and recovery](INSTALLATION.md) for migration from the older
-pack, custom locations, and verification.
-
-**Prefer to start with just the principles?** Adapt the
-[portable engineering guidance](AGENTS_PORTABLE_FALLBACK.md) into your global
-`AGENTS.md`, preserving your existing preferences. It needs no installer and
-leaves out the specialized skills and managed updates.
-
 ## Cost-aware coding
 
 Different parts of a project can benefit from different models. The optional
@@ -183,24 +138,7 @@ Feature delivery includes an independent Astra review, even when the root is
 Astra. The workflow aims to use models efficiently while preserving that review
 requirement.
 
-<details>
-<summary><strong>Model policy and evidence limits</strong></summary>
-
-The current [model policy](skills/astra/cost-aware-coding/references/model-policy.md)
-uses Sol Medium for everyday implementation, Astra Medium for substantive planning,
-difficult work and review, and Luna Max for suitable mechanical tasks. Astra XHigh
-requires an explicit choice. These are experimental starting points, not proven
-task-by-task winners; actual routing depends on the host's available controls.
-
-A bounded, read-only helper can capture logged model settings and usage counters.
-It reuses available evidence and reports missing coverage; it does not establish
-billing totals or prove savings. The aim is lower execution cost **within the
-chosen review and quality requirements**, with comparative savings still to be measured.
-
-</details>
-
-<details>
-<summary><strong>Cost-aware feature delivery: who does what?</strong></summary>
+### Cost-aware feature delivery: who does what?
 
 This flow shows feature delivery through `$cost-aware-coding`; shaping, design,
 and review retain their own methods. Bounded fixes and edits do not automatically
@@ -237,7 +175,55 @@ integrated candidate; review and rechecks use `change-review`. See the
 [cost-aware skill](skills/astra/cost-aware-coding/SKILL.md) for exact rules.
 Completion does not itself authorize committing, pushing, or deployment.
 
+<details>
+<summary><strong>Model policy and evidence limits</strong></summary>
+
+The current [model policy](skills/astra/cost-aware-coding/references/model-policy.md)
+uses Sol Medium for everyday implementation, Astra Medium for substantive planning,
+difficult work and review, and Luna Max for suitable mechanical tasks. Astra XHigh
+requires an explicit choice. These are experimental starting points, not proven
+task-by-task winners; actual routing depends on the host's available controls.
+
+A bounded, read-only helper can capture logged model settings and usage counters.
+It reuses available evidence and reports missing coverage; it does not establish
+billing totals or prove savings. The aim is lower execution cost **within the
+chosen review and quality requirements**, with comparative savings still to be measured.
+
 </details>
+
+<a id="install"></a>
+
+## Getting started
+
+You'll need [Codex](https://github.com/openai/codex), Git, and Python 3.11 or newer.
+The installer uses only Python's standard library.
+
+Clone the repository, preview the changes, then install:
+
+```sh
+git clone https://github.com/stevennitesh/programming-agent-skills.git
+cd programming-agent-skills
+
+python -m scripts.install_skills --dry-run
+python -m scripts.install_skills
+```
+
+On macOS/Linux, use `python3` if needed.
+
+The installer deploys the Astra skills pack to `$HOME/.agents/skills` and manages a small
+bootstrap section in `$HOME/.codex/AGENTS.md`. It preserves unrelated skills
+and personal instructions, and stops if managed skills contain local edits or
+an unmanaged folder has the same name. Add `--skip-global-agents` to leave
+global instructions untouched.
+
+To update, pull this repository and repeat the preview and install commands.
+See [installation and recovery](INSTALLATION.md) for migration from the older
+pack, custom locations, and verification.
+
+**Prefer to start with just the principles?** Adapt the
+[portable engineering guidance](AGENTS_PORTABLE_FALLBACK.md) into your global
+`AGENTS.md`, preserving your existing preferences. It needs no installer and
+leaves out the specialized skills and managed updates.
 
 ## The engineering philosophy
 
