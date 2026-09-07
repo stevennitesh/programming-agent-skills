@@ -30,22 +30,23 @@ This restriction belongs to the collaboration tool, not the general OpenAI API.
 Choose recent turns for relevance and supply omitted decisions in the assignment;
 receiving all relevant facts does not make it a formal full-history fork.
 
+Before a worker starts, supply the accepted outcome, constraints, owned scope,
+required inputs, acceptance evidence, prohibited effects, and escalation triggers.
+Include applicable repository instructions and task-relevant references; a worker
+may not see the parent's loaded skills. Do not load the whole custom pack.
+
 Choose context for its purpose:
 
-- Workers: default to a focused packet with requirements, owned scope, relevant
-  file pointers, established findings, decisions, acceptance, and useful failed
-  approaches. Inherit relevant recent turns when reconstructing those facts would
-  cost more or lose meaning. Fresh context does not require repeating discovery;
-  verify the dependencies of the change and inspect gaps or drift.
-- Planners continuing feature discovery: retain relevant discussion, rationale,
-  constraints, and unresolved questions. Use a supported same-task transition or
-  a recent-history fork plus assignment when selecting another model/effort.
-- Reviewers and independent design challengers: use fresh context with accepted
-  requirements, the candidate, relevant evidence, and necessary decisions. Do
-  not supply a preferred verdict or require agreement with the author.
-  Raising the implementer's effort in the same context remains self-review.
-  Review assumptions as well as code; normally return fixes to the implementer
-  and recheck affected behavior within the workflow's ownership and repair limits.
+- Workers: add file pointers, findings, decisions, and useful failed approaches.
+  Inherit relevant turns when reconstructing them would cost more or lose meaning;
+  inspect dependencies, gaps, and drift rather than repeating discovery.
+- Planners: retain relevant discussion, rationale, constraints, and open questions.
+  Use the fork rules above when selecting different model/effort settings.
+- Reviewers and design challengers: use fresh context with accepted requirements,
+  candidate, evidence, and necessary decisions; do not supply a preferred verdict.
+  Challenge assumptions as well as code. Increasing an author's effort in the same
+  context remains self-review. Repairs and rechecks follow the workflow's ownership
+  and repair limits.
 
 Use full history when useful and inherited settings are intended. Account for
 context volume and rediscovery together; fresh context is not inherently cheaper.

@@ -2,7 +2,12 @@
 
 For explicit cost-aware execution, capture inexpensive start/end observations
 when exposed by the host or the helper below. Capture new actors when admitted
-and refresh after model changes or resume. Reuse known paths. Missing records,
+and refresh after model changes or resume. Use exposed metadata or one bounded
+helper attempt per actor at each capture point; reuse known paths. After a failed
+lookup, do not search further or repeat it at later captures without new location
+evidence, unless measurement was requested or affects a hard constraint. Further
+investigation must remain bounded and address that specific measurement or constraint.
+Missing records,
 tools, or telemetry are coverage limits, not a reason for broad searches or delay.
 Report them under the main skill's completion guidance.
 Detailed historical attribution and pricing are conditional on a measurement request.
@@ -15,7 +20,8 @@ Codex, `CODEX_THREAD_ID` can identify the root. Session files normally live unde
 bounded filename lookup by thread ID; verify session identity before using it.
 Track child IDs from dispatch results rather than scanning unrelated conversations.
 For UUIDv7 IDs, the helper first checks nearby creation-date directories, then
-falls back to a capped lookup. If the cap is reached, supply an exact known path.
+falls back to a capped lookup. Use an already-known exact path in preference to
+lookup; reaching the cap does not authorize another search to discover that path.
 
 Run the bundled helper with the available Python interpreter. Paths below are
 relative to this skill; resolve them from its installed location:
