@@ -34,6 +34,11 @@ coordination and acceptance; product repairs stay delegated. Follow provider ret
 recovery rules; outages do not establish model incapability. Report repeated
 environment failures without new evidence instead of looping indefinitely.
 
+Before dispatching a cross-unit correction, assign one accountable implementer
+and explicit write scope under accepted ownership and custody rules. Preserve
+affected units' implementation counters; reassignment or reslicing does not reset
+them. During review, the correction consumes the shared integrated-review allowance.
+
 Each review round covers one submitted batch of required corrections, repairs by
 the affected units' current implementers, composed checks, and the same reviewer's
 recheck when checks pass. Localized findings return to their unit's current

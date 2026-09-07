@@ -20,6 +20,11 @@ Use two modes:
   request with a settled route counts as acceptance; do not ask again. If the
   route is unsettled, present it for acceptance first.
 
+A route is settled by a previously accepted proposal or explicit user-selected
+ownership and model routing, with no material routing decision outstanding. An
+accepted feature spec, a model name alone, or the agent's inference does not
+establish route acceptance.
+
 A bare invocation without an identifiable task needs the task first. Resume is
 execution after state reconciliation, not a third mode.
 
@@ -105,12 +110,19 @@ covers the proposed route and recovery allowances, not unrelated effects.
 ## 3. Execute the accepted plan
 
 Verify root settings against the accepted route using runtime guidance; resolve
-a missing required switch rather than silently substituting a route. Follow
-the accepted ownership and assignments; routine dispatch, suitable actor reuse,
-and permitted repairs need no renewed approval. Material changes to scope,
-ownership, model constraints, or approach outside the accepted route and recovery
-allowances require an affected plan revision for acceptance before dependent work.
-Preserve unaffected work and counters.
+a missing required switch rather than silently substituting a route. Preserve
+accepted scope, approach, root settings, implementation responsibilities, model/effort
+allocations, concurrency, budget, review requirements, repair allowances, and any
+explicitly required actor. Changes outside accepted alternatives require acceptance
+before dependent work. Available policy models are not blanket role permissions:
+an Astra reviewer allocation does not authorize Astra implementation.
+
+Within those boundaries, adapt scheduling, coherent subdivisions, actor reuse,
+equivalent replacements, cross-unit repair ownership, and approved recovery without
+renewed acceptance. Subdivisions and actor IDs need not be prelisted. Apply the
+benefit, reuse, and custody rules to new or replacement actors; preserve unaffected
+work and counters. Record material adaptations briefly in existing run context,
+without a new plan artifact.
 
 Use [Telemetry](references/telemetry.md) for cheap best-effort start/end capture
 when available. Missing telemetry does not delay work unless required accounting

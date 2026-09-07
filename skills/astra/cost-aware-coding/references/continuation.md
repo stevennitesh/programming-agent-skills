@@ -9,6 +9,7 @@ and completion authority. Add routing observations to the existing handoff recor
 rather than maintaining another plan or requiring a separate artifact. Preserve
 the accepted coordination proposal and its acceptance separately from feature
 requirements: an accepted spec alone does not authorize an unsettled route.
+Preserve accepted constraints and material routing adaptations in this same record.
 
 Record as applicable:
 
