@@ -26,15 +26,14 @@ execution after state reconciliation, not a third mode.
 Establish the task from current repository guidance, requirements, code and checks.
 Resolve consequential missing product decisions with the user.
 
-Reuse existing discovery, decisions, and any plan or ticket; add a planning pass
-only for unresolved substantial decisions, without requiring a new spec artifact.
-Include the [feature review gate](#4-accept-the-actual-result) when selecting the route.
-Shape-work owns feature design and implementation planning. When revising or
-planning the feature approach, use
-[shape-work](../shape-work/SKILL.md) to resolve decisions and define behavior and
-acceptance. An Astra Medium root does this directly; other roots delegate planning
-to Astra Medium. Give the planner the shape-work reference and relevant discovery
-context. Discussion-only requests stop at their requested outcome.
+Reuse existing discovery, decisions, and any plan or ticket. Use
+[shape-work](../shape-work/SKILL.md) for unresolved substantial decisions about
+feature behavior or approach, without requiring a new spec artifact. An Astra
+Medium root shapes directly; other roots delegate that pass to Astra Medium with
+the shape-work reference and relevant discovery context. Routine sequencing and
+implementation choices within settled requirements stay with the implementer.
+Include the [feature review gate](#4-accept-the-actual-result) when selecting the
+route. Discussion-only requests stop at their requested outcome.
 
 Identify any user-selected model, spending limit, latency requirement, or minimum
 assurance. Distinguish API spend, subscription allowance, and elapsed time; infer
@@ -53,8 +52,11 @@ The root owns coordination planning: who works, with which model, and in what
 order. Choose implementation ownership:
 
 - **Root implements:** coherent work fits the root's model/effort and benefits from
-  shared context. Bounded read-only specialists and independent review can assist
-  without changing this ownership. Schema, API, UI, and tests can be one assignment.
+  shared context. Specialist assistance and independent review do not change this
+  ownership. The accepted plan may assign a bounded sequential implementation unit
+  to a specialist while the root remains primary implementer. Transfer exclusive
+  writer custody and return unit-local corrections to its current implementer under
+  [Repair allowances](references/repairs.md). Schema, API, UI, and tests can be one assignment.
 - **Root coordinates:** managing dependencies, integration, or competing work units
   warrants dedicated coordination. Size, step count, or specialist assistance alone
   does not establish this need. The root plans, coordinates, integrates,
@@ -138,6 +140,9 @@ Safe cancellation and custody reconciliation still take precedence over saving
 an extra turn. Do not silently exceed a model restriction or premium-use cap.
 
 ## 4. Accept the actual result
+
+Cost optimization operates within the required independent Astra review gate;
+Medium is the default.
 
 A feature-delivery run means this workflow owns a feature from its idea or
 accepted requirements through completion. Whether the root implements or only

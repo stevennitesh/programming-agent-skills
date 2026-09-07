@@ -14,6 +14,12 @@ Detailed historical attribution and pricing are conditional on a measurement req
 
 ## Observe without loading conversation text
 
+Reuse existing runtime or dispatch observations for the fields and capture boundary
+they actually cover; do not call the helper again for equivalent evidence. Requested
+settings do not verify effective settings, and model identity alone supplies no
+starting usage counters. Reuse an identity observation as a start snapshot only
+for fields present at that boundary; missing fields remain unknown.
+
 Prefer runtime metadata and usage events already exposed by the host. On local
 Codex, `CODEX_THREAD_ID` can identify the root. Session files normally live under
 `$CODEX_HOME/sessions` (default `~/.codex/sessions`). Use an exact known path or a

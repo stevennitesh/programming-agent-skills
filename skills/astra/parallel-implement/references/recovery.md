@@ -14,11 +14,8 @@ Routine incorporation of an advanced integration base is not itself a failed
 implementation attempt. A submitted candidate that fails required acceptance
 does count under cost-aware-coding's attempt definition.
 
-Track final review repairs against the integrated candidate. One round covers
-the current batch of required findings, repairs by the affected items' current
-implementers, composed checks, and the same reviewer's recheck when checks pass.
-Multiple affected items do not create separate allowances for the same batch.
-Preserve implementation counters while doing review repairs; do not reopen them.
+Use cost-aware-coding's integrated review accounting across all items; parallel
+lanes do not create additional review allowances.
 If a composed failure has no existing item owner, assign one coherent integration
 work unit and owner; do not rename an existing failed item to obtain more attempts.
 Cost-aware-coding owns when to escalate or ask for further rounds; neither action
