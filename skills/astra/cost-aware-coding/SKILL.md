@@ -113,7 +113,8 @@ Verify root settings against the accepted route using runtime guidance; resolve
 a missing required switch rather than silently substituting a route.
 
 - **Changes requiring acceptance:** changes to scope, approach, root settings,
-  implementation responsibilities, model/effort allocations, concurrency, budget,
+  root implementation versus coordination-only ownership, accepted implementation
+  responsibility boundaries, model/effort allocations, concurrency, budget,
   review requirements, repair allowances, or explicitly required actors outside
   accepted alternatives. Obtain acceptance before dependent work. Available policy
   models are not blanket role permissions: an Astra reviewer allocation does not

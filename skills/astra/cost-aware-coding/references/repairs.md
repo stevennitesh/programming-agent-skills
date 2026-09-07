@@ -36,8 +36,8 @@ environment failures without new evidence instead of looping indefinitely.
 
 Before review, attribute an integration failure to an existing coherent work unit
 and use its remaining implementation-recovery allowance. Create an integration
-unit only when the failure has no existing owner; never rename or split failed
-work to obtain fresh attempts. During review, corrections use the integrated
+unit only when the failure cannot be attributed to an existing coherent work unit;
+never rename or split failed work to obtain fresh attempts. During review, corrections use the integrated
 candidate's shared review allowance.
 
 Before dispatching a cross-unit correction, assign one accountable implementer
