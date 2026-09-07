@@ -17,7 +17,7 @@
 </p>
 
 <p align="center">
-  <a href="#what-it-helps-with">Explore the pack</a> ·
+  <a href="#find-the-right-skill">Find a skill</a> ·
   <a href="#in-practice-clearer-project-guidance">Real example</a> ·
   <a href="#cost-aware-coding">Cost-aware coding</a> ·
   <a href="#getting-started">Get started</a> ·
@@ -65,25 +65,38 @@ handled, and which outcomes acceptance checks must distinguish. Those decisions
 give implementation something concrete to follow. The exact decisions depend on
 your repository.
 
-Once the behavior is settled, ask Codex to implement it directly. If a design
-question remains, use `$codebase-design`; for a hard failure, use `$diagnosing-bugs`;
-for a candidate review, use `$change-review`. Tickets and multiple workers are
-options when the work needs them.
+Once the behavior is settled, ask Codex to implement it directly. For other
+starting points, [find the right skill](#find-the-right-skill) below.
 
-## What it helps with
+## Find the right skill
 
-| When the work involves… | The pack provides… |
-| --- | --- |
-| An idea that is still taking shape | Questions that clarify the outcome, constraints, and what success means. |
-| A feature that must fit an existing system | Design guidance and small prototypes to test consequential assumptions. |
-| A difficult bug or an unfamiliar codebase | Methods for tracing root causes and examining architecture, with an optional visual system map. |
-| A change that needs careful review | Focused review of correctness and maintainability, with deeper assurance when requested. |
-| Several people or agents working together | Clear ownership, dependency-aware task planning, and recovery guidance for interrupted work. |
-| Choosing how to use different models | An execution proposal you can approve, with justified delegation and independent feature review. |
+Each `$name` is a skill you can invoke in Codex. **Request explicitly** means
+Codex waits for a user request; **Automatic when relevant** means it can select
+the skill when the task matches. You can also invoke those skills explicitly.
+These are alternative starting points, not a required pipeline.
 
-You can use one skill for a specific problem or combine several for a larger
-piece of work. Routine coding can proceed directly; there is no required
-planning-to-ticket-to-implementation pipeline.
+| Your task | Skill | Use |
+| --- | --- | --- |
+| Implement a clear, bounded change | **No skill needed**—ask Codex to implement and verify using repository guidance | Direct |
+| Clarify a feature’s behavior and acceptance criteria | [$shape-work](skills/astra/shape-work/SKILL.md) | Request explicitly |
+| Decide how a feature fits the existing system | [$codebase-design](skills/astra/codebase-design/SKILL.md) | Automatic when relevant |
+| Test an uncertain approach with a runnable experiment | [$prototype](skills/astra/prototype/SKILL.md) | Automatic when relevant |
+| Research a question or compare options using sources | [$research](skills/astra/research/SKILL.md) | Automatic when relevant |
+| Find the root cause of a difficult bug | [$diagnosing-bugs](skills/astra/diagnosing-bugs/SKILL.md) | Automatic when relevant |
+| Assess architecture and select worthwhile improvements | [$audit-codebase](skills/astra/audit-codebase/SKILL.md) | Request explicitly |
+| Optimize a measurable outcome through experiments | [$hillclimb](skills/astra/hillclimb/SKILL.md) | Request explicitly |
+| Review a code change for correctness and maintainability | [$change-review](skills/astra/change-review/SKILL.md) | Automatic when relevant |
+| Turn an accepted plan or spec into tracked work units | [$to-tickets](skills/astra/to-tickets/SKILL.md) | Request explicitly |
+| Implement concurrently with separate ownership and clear dependencies | [$parallel-implement](skills/astra/parallel-implement/SKILL.md) | Request explicitly |
+| Agree on model allocation, then execute the accepted route | [$cost-aware-coding](skills/astra/cost-aware-coding/SKILL.md) | Request explicitly |
+| Resolve an active Git merge or rebase conflict | [$resolving-merge-conflicts](skills/astra/resolving-merge-conflicts/SKILL.md) | Automatic when relevant |
+| Set up or reconcile repository agent guidance | [$repo-bootstrap](skills/astra/repo-bootstrap/SKILL.md) | Request explicitly |
+| Write agent instructions, guides, or continuation handoffs | [$writing-for-agents](skills/astra/writing-for-agents/SKILL.md) | Automatic when relevant |
+| Audit persistent context and reconcile requested cleanup | [$context-hygiene](skills/astra/context-hygiene/SKILL.md) | Request explicitly |
+| Create an interactive guide for a human-operated procedure | [$wizard](skills/astra/wizard/SKILL.md) | Request explicitly |
+
+A review or audit alone does not authorize its proposed fixes. Repository setup
+can inspect without changing files; request reconciliation when you want edits.
 
 <a id="install"></a>
 
@@ -130,42 +143,6 @@ pack, custom locations, and verification.
 `AGENTS.md`, preserving your existing preferences. It needs no installer and
 leaves out the specialized skills and managed updates.
 
-### Use it in your project
-
-Ask Codex for the work you need, or name a skill directly with its `$` prefix.
-
-For repository guidance, ask `$repo-bootstrap` to inspect or set up the project.
-It can reconcile existing instructions and engineering conventions with this pack;
-you can also request an inspection without changes. GitHub, GitLab, and local
-Markdown trackers are supported when the project needs ticketed work.
-
-<details>
-<summary><strong>Which skills run only when requested?</strong></summary>
-
-`$audit-codebase`, `$context-hygiene`, `$hillclimb`, `$parallel-implement`,
-`$repo-bootstrap`, `$shape-work`, `$to-tickets`, `$wizard`, and `$cost-aware-coding` require a user
-request. The other seven skills can be selected from matching task descriptions.
-Suggesting an explicit workflow does not automatically start it.
-
-For larger work, shape the outcome first, create tickets when useful, and
-request parallel implementation when the accepted tasks have independent
-ownership. These are optional steps. Continuation handoffs are part of
-`$writing-for-agents`; deeper assurance is an option within `$change-review`.
-
-</details>
-
-## Explore the skills
-
-| Purpose | Skills |
-| --- | --- |
-| Clarify and plan | [Shape work](skills/astra/shape-work/SKILL.md) · [Create tickets](skills/astra/to-tickets/SKILL.md) |
-| Design and investigate | [Codebase design](skills/astra/codebase-design/SKILL.md) · [Prototype](skills/astra/prototype/SKILL.md) · [Research](skills/astra/research/SKILL.md) |
-| Assess and improve | [Audit a codebase](skills/astra/audit-codebase/SKILL.md) · [Diagnose bugs](skills/astra/diagnosing-bugs/SKILL.md) · [Hillclimb: measured optimization](skills/astra/hillclimb/SKILL.md) · [Review changes](skills/astra/change-review/SKILL.md) |
-| Coordinate implementation | [Parallel implementation](skills/astra/parallel-implement/SKILL.md) · [Resolve merge conflicts](skills/astra/resolving-merge-conflicts/SKILL.md) |
-| Plan model allocation | [Cost-aware coding](skills/astra/cost-aware-coding/SKILL.md) — approve how the work is assigned, then execute within those boundaries |
-| Maintain agent guidance | [Repository setup](skills/astra/repo-bootstrap/SKILL.md) · [Writing for agents](skills/astra/writing-for-agents/SKILL.md) · [Context hygiene](skills/astra/context-hygiene/SKILL.md) |
-| Guide a human-operated procedure | [Wizard](skills/astra/wizard/SKILL.md) |
-
 ## In practice: clearer project guidance
 
 We used context-hygiene while maintaining this repository. Older architecture
@@ -207,15 +184,7 @@ Astra. The workflow aims to use models efficiently while preserving that review
 requirement.
 
 <details>
-<summary><strong>Coordination details, model policy, and evidence limits</strong></summary>
-
-The coordination proposal reuses an accepted feature plan; substantial unresolved
-feature decisions go through shape-work. Any recommended change to the
-conversation's model is presented for you to make alongside plan acceptance.
-The root can adapt scheduling and assignments within accepted boundaries and
-use a specialist for a sequential unit. Repair attempts are bounded; final
-review-repair rounds are shared across the whole change. Concurrent implementation
-uses `$parallel-implement` when requested, not simply because a plan has several steps.
+<summary><strong>Model policy and evidence limits</strong></summary>
 
 The current [model policy](skills/astra/cost-aware-coding/references/model-policy.md)
 uses Sol Medium for everyday implementation, Astra Medium for substantive planning,
@@ -227,6 +196,46 @@ A bounded, read-only helper can capture logged model settings and usage counters
 It reuses available evidence and reports missing coverage; it does not establish
 billing totals or prove savings. The aim is lower execution cost **within the
 chosen review and quality requirements**, with comparative savings still to be measured.
+
+</details>
+
+<details>
+<summary><strong>Cost-aware feature delivery: who does what?</strong></summary>
+
+This flow shows feature delivery through `$cost-aware-coding`; shaping, design,
+and review retain their own methods. Bounded fixes and edits do not automatically
+acquire this independent-review gate.
+
+```mermaid
+flowchart TB
+    Plan["PLAN<br/>Propose route<br/>User accepts"] --> Work["EXECUTE<br/>Implement or coordinate<br/>Run required checks"]
+    Work -->|Checks pass|Review["REVIEW<br/>Independent Astra agent<br/>Verify final evidence"]
+    Review -->|Gate satisfied|Done["Complete"]
+    Work -.->|Checks fail|Recovery["RECOVER<br/>Within accepted roles<br/>and remaining allowance"]
+    Review -.->|Required corrections|Recovery
+    Recovery -->|Permitted repair|Work
+    Recovery -->|Limit or route change|Pause["Preserve work<br/>Ask user"]
+    classDef plan fill:#e9eef9,stroke:#657ca6,color:#243758
+    classDef work fill:#e6f3ef,stroke:#377d70,color:#163e36
+    classDef recovery fill:#fff1dc,stroke:#b77a28,color:#53370f
+    class Plan plan
+    class Work,Review,Done work
+    class Recovery,Pause recovery
+```
+
+Before acceptance, revise the proposal as needed and use `shape-work` for
+substantial unresolved feature decisions. Apply any agreed root-model change
+before execution. An execution request with a previously accepted route can
+enter execution directly. Reviews use an independent Astra agent; repairs return
+through checks and the same reviewer’s recheck.
+The root reuses suitable actors and may adapt scheduling within accepted boundaries;
+concurrent writing uses `parallel-implement` when requested. Recovery stays within
+the accepted model roles, ownership, and attempt limits; exhausted allowances or
+changes outside those boundaries return to the user. Implementation recovery and review repairs use separate allowances. After review
+begins, repairs and failed checks consume the shared review allowance across the
+integrated candidate; review and rechecks use `change-review`. See the
+[cost-aware skill](skills/astra/cost-aware-coding/SKILL.md) for exact rules.
+Completion does not itself authorize committing, pushing, or deployment.
 
 </details>
 
