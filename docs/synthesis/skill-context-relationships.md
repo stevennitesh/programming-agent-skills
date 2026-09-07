@@ -1,5 +1,10 @@
 # Skill Context Relationships
 
+> Historical custom-pack analysis. Its global-template relationships and routing
+> advice do not govern current Astra; consult the
+> [Astra design brief](../astra/design-brief.md). The original map below remains
+> in place for legacy consumers and evidence.
+
 Purpose: map context owners, pointers, and cross-skill pressure so skill edits do not duplicate setup docs or creep across workflow boundaries.
 
 Scope: `skills/custom/**` markdown files, their direct supporting files, `README.md`, and `GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md`.

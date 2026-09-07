@@ -1,5 +1,9 @@
 # Astra engineering contract and bootstrap
 
+> Installation and candidate-status statements describe the assessment date.
+> Current ownership is documented in [CONTEXT.md](../../CONTEXT.md) and
+> [INSTALLATION.md](../../INSTALLATION.md); the assessment below is historical evidence.
+
 Date: 2026-09-05. Source-based design assessment and implemented candidate.
 No behavioral comparison was run. This note does not replace the active contract
 or authorize installation of the candidate.
