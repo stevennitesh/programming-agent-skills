@@ -119,7 +119,7 @@ a missing required switch rather than silently substituting a route.
   accepted alternatives. Obtain acceptance before dependent work. Available policy
   models are not blanket role permissions: an Astra reviewer allocation does not
   authorize Astra implementation.
-- **Coordinator discretion:** adapt scheduling, coherent subdivisions, actor reuse,
+- **Root discretion:** adapt scheduling, coherent subdivisions, actor reuse,
   equivalent replacements, cross-unit repair ownership, and approved recovery within
   those boundaries without renewed acceptance. Subdivisions and actor IDs need not
   be prelisted. Apply the benefit, reuse, and custody rules to new or replacement
