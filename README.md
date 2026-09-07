@@ -19,8 +19,8 @@
 <p align="center">
   <a href="#find-the-right-skill">Find a skill</a> ·
   <a href="#in-practice-clearer-project-guidance">Real example</a> ·
-  <a href="#cost-aware-coding">Cost-aware coding</a> ·
   <a href="#getting-started">Get started</a> ·
+  <a href="#cost-aware-coding">Cost-aware coding</a> ·
   <a href="docs/astra/design-brief.md">Read the design brief</a>
 </p>
 
@@ -98,6 +98,24 @@ These are alternative starting points, not a required pipeline.
 A review or audit alone does not authorize its proposed fixes. Repository setup
 can inspect without changing files; request reconciliation when you want edits.
 
+## In practice: clearer project guidance
+
+We used context-hygiene while maintaining this repository. Older architecture
+decision records (ADRs) still described retired skill routes, and an index notice
+was not enough for someone opening those records directly.
+
+| Before | What changed |
+| --- | --- |
+| Old ADRs retained historical status and route descriptions without explaining at the top which instructions still apply. | Added scope notices to 17 records and a new decision record explaining what still applies. |
+| Domain guidance pointed readers toward ADR history broadly. | Narrowed the route to relevant decisions when rationale or applicability is needed. |
+| A completed legacy plan remained under active plans. | Moved it to the archive and updated its links. |
+
+See the [actual cleanup diff](https://github.com/stevennitesh/programming-agent-skills/commit/3f3df36a6befe6d9c221dbd3f2b9252ae34c3f14)
+and the [follow-up scope notices](https://github.com/stevennitesh/programming-agent-skills/commit/daf9fd95755e653b632043cfbf9a4605bd7f5995).
+The historical ADR bodies were preserved. This demonstrates the resulting
+reconciliation, not a measured reduction in tokens or a controlled comparison
+against an agent without the skill.
+
 <a id="install"></a>
 
 ## Getting started
@@ -142,24 +160,6 @@ pack, custom locations, and verification.
 [portable engineering guidance](AGENTS_PORTABLE_FALLBACK.md) into your global
 `AGENTS.md`, preserving your existing preferences. It needs no installer and
 leaves out the specialized skills and managed updates.
-
-## In practice: clearer project guidance
-
-We used context-hygiene while maintaining this repository. Older architecture
-decision records (ADRs) still described retired skill routes, and an index notice
-was not enough for someone opening those records directly.
-
-| Before | What changed |
-| --- | --- |
-| Old ADRs retained historical status and route descriptions without explaining at the top which instructions still apply. | Added scope notices to 17 records and a new decision record explaining what still applies. |
-| Domain guidance pointed readers toward ADR history broadly. | Narrowed the route to relevant decisions when rationale or applicability is needed. |
-| A completed legacy plan remained under active plans. | Moved it to the archive and updated its links. |
-
-See the [actual cleanup diff](https://github.com/stevennitesh/programming-agent-skills/commit/3f3df36a6befe6d9c221dbd3f2b9252ae34c3f14)
-and the [follow-up scope notices](https://github.com/stevennitesh/programming-agent-skills/commit/daf9fd95755e653b632043cfbf9a4605bd7f5995).
-The historical ADR bodies were preserved. This demonstrates the resulting
-reconciliation, not a measured reduction in tokens or a controlled comparison
-against an agent without the skill.
 
 ## Cost-aware coding
 
