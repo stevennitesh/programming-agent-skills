@@ -38,12 +38,16 @@ transition. Derive the interface and data shape from what that caller needs to
 know. An interface includes ordering, errors, effects, and guarantees, not just
 its function signature.
 
+When data access drives the choice, compare representative reads, writes, updates,
+and expected volume. Choose representation and ownership around those patterns;
+make consequential latency, memory, and consistency tradeoffs explicit.
+
 Put each invariant where it can actually be enforced. A small interface earns
 its place by hiding useful decisions, not merely by forwarding calls. Imagine
 removing a proposed boundary while preserving behavior: does complexity vanish,
 or spread into callers? Preserve repository and domain terminology.
 
-For cross-system state, external dependencies, or compatibility-sensitive
+For cross-system state, trust boundaries, external dependencies, or compatibility-sensitive
 migration, read the relevant section of
 [Integration decisions](references/integration-decisions.md). Use it to resolve
 the affected ownership and guarantees, not as a checklist for unrelated risks.
@@ -61,6 +65,11 @@ question. Compare caller burden, enforceable guarantees, concentration of policy
 operational consequences, and migration cost. A smaller diagram or more hidden
 implementation is not enough to outweigh harder failure handling or deployment.
 Treat a design from scratch as a useful comparison, not permission to rewrite.
+
+Walk a plausible change to a governing rule through each credible design. Which
+owners must change together? Group shared knowledge where it can remain consistent,
+while preserving independent policies even when their code looks similar. Use
+current requirements or known variation, not hypothetical future extensibility.
 
 Make technical recommendations within the settled requirements. If the tradeoff
 requires an unresolved product priority or a change to an accepted guarantee

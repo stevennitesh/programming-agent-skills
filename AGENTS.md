@@ -24,7 +24,8 @@
 - Active plans and runbooks: `docs/plans/README.md`
 - For `Run Deploy Campaign on <skill>`, read
   `docs/synthesis/methods/deploy-prompts.md`.
-- Before nontrivial coding, read `docs/agents/engineering-contract.md`.
+- For substantive code design, implementation, debugging, refactoring, or review,
+  read `docs/agents/engineering-contract.md`.
 - For tracker-backed work: `docs/agents/issue-tracker.md`,
   `docs/agents/triage-labels.md`
 - When domain meaning or accepted decisions matter: `docs/agents/domain.md`

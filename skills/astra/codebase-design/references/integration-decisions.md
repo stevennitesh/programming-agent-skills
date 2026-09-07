@@ -21,6 +21,14 @@ For derived views or cached state, identify which lag is acceptable and what
 must consult the authoritative owner. A convenient presentation value should
 not silently become an authorization or concurrency decision.
 
+## Access crosses a trust boundary
+
+Identify the caller identity, protected operation or data, and the owner that
+enforces permission. Walk an allowed and forbidden case through the actual entry
+path; a check in a bypassable caller does not enforce the boundary. Distinguish
+data validity from authorization. Resolve the affected access guarantee without
+expanding the decision into a general security audit.
+
 ## A dependency changes the interface
 
 Keep domain policy separate from transport or vendor translation when they

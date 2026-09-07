@@ -57,6 +57,12 @@ does not establish better behavior.
   to the latest Astra version; do not keep legacy compatibility routes.
 - Global updates are a separate explicit scope. Keep personal preferences and
   environment guidance; reconcile local and global files by their different jobs.
+- `cost-aware-coding` is an explicit-only experimental model-allocation workflow.
+  It owns routing, bounded escalation and execution continuity; the engineering
+  contract continues to own ordinary implementation. Astra planning and parent
+  handoffs are conditional. Model/effort policies require calibration; neither
+  cost savings nor equivalent coding quality has been established. Host setup
+  and global installation remain separately authorized operations.
 
 Issue #94 proposed an `implement` pilot first. The user subsequently chose to
 start with instruction authoring and bootstrap. That choice supersedes the

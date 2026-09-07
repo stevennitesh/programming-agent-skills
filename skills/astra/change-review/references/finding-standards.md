@@ -55,6 +55,12 @@ preserve that coverage limit. Do not use residual risk to disguise missing requi
 proof. Nonblocking findings remain visible even when policy permits a pass. A gate
 judgment is about the reviewed candidate, not permission to merge or accept risk.
 
+Distinguish corrections required by the gate or binding acceptance policy from
+nonblocking findings and optional suggestions. Priority alone does not decide
+whether a correction is required: a P2 can violate binding acceptance. Identify
+any residual-risk decision and its owner; a caller must obtain that acceptance
+before treating a conditional pass as completion, unless already authorized.
+
 For remediation, preserve finding identities and explain each disposition from
 current evidence. A missing prior report limits claims of having resolved that
 report, but does not prevent a clearly labeled fresh review of the selected change.

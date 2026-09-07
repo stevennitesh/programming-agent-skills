@@ -10,7 +10,8 @@ that choice is unresolved.
 For a new Codex repository, create `AGENTS.md` with commands grounded in source,
 local constraints, and these conditional pointers:
 
-- Before nontrivial coding, read the engineering contract.
+- For substantive code design, implementation, debugging, refactoring, or review,
+  read the engineering contract.
 - When domain meaning or an accepted design decision matters, follow the domain
   route.
 - For tracker-backed work, read the tracker guide and label mapping.

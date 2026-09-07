@@ -9,6 +9,9 @@ The root owns decomposition, scheduling, integration, and the final outcome.
 Workers implement directly using repository guidance and the engineering
 contract; no implement skill is required. Keep fanout at the root. Use the
 available agent tools, not a new orchestration service or a fixed model roster.
+When cost-aware-coding governs the run, retain its model and budget restrictions,
+repair allowances, and review gate. This skill owns scheduling, custody,
+integration, and safe recovery mechanics.
 
 ## 1. Admit independent work
 
@@ -54,7 +57,10 @@ A dependent starts at the newer HEAD after its predecessors land. A host-managed
 checkout is not automatically a helper lane; do not double-manage its lifecycle.
 
 Bound concurrency by available resources and the root's ability to inspect and
-land returns. Use a fresh-context worker per item. Send the goal, acceptance,
+land returns. Reuse a suitable worker for related items when its context helps;
+use fresh context for unrelated work or misleading accumulated context. Each
+assignment still requires verified checkout custody and a bounded packet.
+Send the goal, acceptance,
 exact checkout and base, allowed writes, exclusive resources, applicable guidance,
 predecessor outcomes, proof obligations, prohibited effects, and stopping condition.
 Point to accessible source context; supply essential facts the worker cannot read.
@@ -80,7 +86,9 @@ too; a failed command does not establish that nothing was created.
 
 Inspect returned state before accepting it. For a lane use helper inspection;
 require `mechanical.resume_or_land_eligible` before resuming normal work or landing.
-Also inspect scope, commit ancestry, actual diff and proof. Serial worker commits
+Also inspect scope, commit ancestry, actual diff and proof. Target semantic checks
+at acceptance, changed interactions, and gaps in returned evidence; do not repeat
+the worker's assigned investigation. Serial worker commits
 already reside on the integration checkout: reacquire custody and verify them
 in place, never apply them a second time. Root landing never overlaps a writer
 using the integration checkout.
@@ -122,7 +130,11 @@ Reuse worker evidence only while its relevant inputs, code, path, environment,
 and observations remain valid. Missing required proof is incomplete delivery.
 Use change review when requested, required by the repository, or needed for a
 concrete unresolved shared-contract or migration judgment; worker count alone
-does not trigger extra reviewers. Fixes invalidate affected evidence and any
+does not trigger extra reviewers. When cost-aware-coding requires independent
+review, delegate change-review on the stable integrated candidate after these
+checks pass. Lane reviews do not replace that gate. The reviewer owns the
+independent diff review; the root verifies integration and decisive evidence
+without repeating a full review. Fixes invalidate affected evidence and any
 review tied to the previous candidate.
 
 ## 5. Finish or preserve a recoverable handoff

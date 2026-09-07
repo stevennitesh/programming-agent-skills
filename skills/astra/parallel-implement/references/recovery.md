@@ -4,6 +4,28 @@ Read for interrupted, failed, or off-contract work. Reconstruct the run from
 actual Git, helper, process, and applicable tracker state before resuming.
 Retained packets identify the owned set; directory names alone do not.
 
+## Repair accounting for cost-aware runs
+
+When cost-aware-coding governs execution, read its
+[Repair allowances](../../cost-aware-coding/references/repairs.md) and apply its
+model restrictions alongside the custody rules below. Record implementation recovery
+per coherent item; replacement, reslicing, or a new lane does not reset it.
+Routine incorporation of an advanced integration base is not itself a failed
+implementation attempt. A submitted candidate that fails required acceptance
+does count under cost-aware-coding's attempt definition.
+
+Track final review repairs against the integrated candidate. One round covers
+the current batch of required findings, repairs by the affected items' current
+implementers, composed checks, and the same reviewer's recheck when checks pass.
+Multiple affected items do not create separate allowances for the same batch.
+Preserve implementation counters while doing review repairs; do not reopen them.
+If a composed failure has no existing item owner, assign one coherent integration
+work unit and owner; do not rename an existing failed item to obtain more attempts.
+Cost-aware-coding owns when to escalate or ask for further rounds; neither action
+bypasses lane eligibility or confirmed writer quiescence.
+
+## Recover safely
+
 | Observation | Next safe action |
 | --- | --- |
 | Silence or missed checkpoint | Inspect actor and command-session status, then lane state. Silence is not cancellation. |

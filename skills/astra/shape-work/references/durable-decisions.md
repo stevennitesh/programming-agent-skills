@@ -15,6 +15,29 @@ For domain meaning or an ADR, use [Domain modeling](domain-modeling.md) to selec
 the distinction, current owner, and useful record. The publication and dependent
 write rules below apply to that path as well as specifications.
 
+## Reconcile competing documents
+
+Before publishing or revising a spec, inspect existing plans, specs, guides, and
+agent-facing pointers about the same outcome. Follow relevant links and search
+for competing instructions; keep this check bounded to the affected work.
+Distinguish current authority, proposals, and historical evidence. Age alone does
+not make a document obsolete, and a new proposal does not supersede accepted work.
+
+Reconcile a useful document in place when only part needs changing. When an
+accepted replacement makes a local document wholly obsolete, move it out of the
+active context into repository-root `.archive/`, retaining its relative path or
+another collision-free identity. Preserve still-governing portions and historical
+decision evidence; apply the domain reference's supersession rules to ADRs.
+Do not leave two documents presenting conflicting instructions as current.
+
+Within the authorized document-update scope, make the replacement readable before
+archiving its predecessor. Update affected indexes, agent pointers, and links to
+the current owner; keep historical links explicitly historical and repair relative
+links affected by the move. Verify destinations stay within the repository and
+do not overwrite an archive entry. For externally hosted plans, use the configured
+supersession mechanism within authority rather than implying a local archive
+retires the external source. Report unresolved ownership or unapplied consequences.
+
 ## Preserve the contract
 
 Use the project's vocabulary and identify the source of material commitments.

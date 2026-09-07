@@ -1,0 +1,6 @@
+interface:
+  display_name: "Cost-aware coding"
+  short_description: "Allocate models for coding with bounded cost and verified results"
+  default_prompt: "Use $cost-aware-coding to select and execute a justified model route for this authorized coding task."
+policy:
+  allow_implicit_invocation: false

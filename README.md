@@ -26,7 +26,7 @@ does what people need.
 
 I built this pack to bring those habits into everyday work with coding agents.
 The **Astra skills pack** is designed specifically for **GPT 6 Astra**. It combines
-shared engineering guidance with 15 focused skills for planning, design,
+shared engineering guidance with 16 focused skills for planning, design,
 debugging, review, and delivery. Each skill
 is a set of instructions and, where useful, supporting tools that Codex can use
 for a particular kind of work.
@@ -80,6 +80,7 @@ add specialized methods where the task benefits from them.
 | Design and investigate | [Codebase design](skills/astra/codebase-design/SKILL.md) · [Prototype](skills/astra/prototype/SKILL.md) · [Research](skills/astra/research/SKILL.md) |
 | Assess and improve | [Audit a codebase](skills/astra/audit-codebase/SKILL.md) · [Diagnose bugs](skills/astra/diagnosing-bugs/SKILL.md) · [Hillclimb: measured optimization](skills/astra/hillclimb/SKILL.md) · [Review changes](skills/astra/change-review/SKILL.md) |
 | Coordinate implementation | [Parallel implementation](skills/astra/parallel-implement/SKILL.md) · [Resolve merge conflicts](skills/astra/resolving-merge-conflicts/SKILL.md) |
+| Experiment with model allocation | [Cost-aware coding](skills/astra/cost-aware-coding/SKILL.md) — route work across models; savings and quality tradeoffs still need calibration |
 | Maintain agent guidance | [Repository setup](skills/astra/repo-bootstrap/SKILL.md) · [Writing for agents](skills/astra/writing-for-agents/SKILL.md) · [Context hygiene](skills/astra/context-hygiene/SKILL.md) |
 | Guide a human-operated procedure | [Wizard](skills/astra/wizard/SKILL.md) |
 
@@ -151,7 +152,7 @@ Markdown trackers are supported when the project needs ticketed work.
 <summary><strong>Which skills run only when requested?</strong></summary>
 
 `$audit-codebase`, `$context-hygiene`, `$hillclimb`, `$parallel-implement`,
-`$repo-bootstrap`, `$shape-work`, `$to-tickets`, and `$wizard` require a user
+`$repo-bootstrap`, `$shape-work`, `$to-tickets`, `$wizard`, and `$cost-aware-coding` require a user
 request. The other seven skills can be selected from matching task descriptions.
 Suggesting an explicit workflow does not automatically start it.
 

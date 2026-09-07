@@ -1,6 +1,6 @@
 ---
 name: to-tickets
-description: Draft, publish, or repair delivery tickets from settled work, with acceptance and real dependencies. Use for explicit ticket requests or when multiple owners, sessions, or independently checkable outcomes justify decomposition; exclude ordinary implementation without a ticketing request.
+description: Draft, publish, or repair delivery tickets from settled work, with acceptance and real dependencies. Use only for explicit ticketing requests.
 ---
 
 # To tickets
@@ -52,6 +52,9 @@ observable acceptance, consequential constraints, and actual blockers. A source
 link does not replace the acceptance that this ticket must satisfy. Preserve the
 source's distinguishing input, state, result, and evidence class rather than
 replacing them with generic instructions to handle edge cases or add tests.
+When a plausible wrong implementation could satisfy the ordinary happy case,
+retain the smallest source-supported example that distinguishes the intended
+behavior. Preserve settled meaning rather than inventing edge cases or new tests.
 
 Give each delivery-changing commitment an owning ticket. Repeat acceptance only
 at a consumer that can independently lose that meaning. When work produces an
@@ -67,6 +70,13 @@ prerequisite, not an executable agent ticket. Do not claim a starting set exists
 when every item is blocked.
 
 ## 4. Deliver the draft or publish
+
+Read each ticket as an implementer receiving it alone. Ensure it identifies the
+governing shared constraints, required predecessor result, and acceptance needed
+to avoid guessing. Include compact local details or accessible canonical pointers;
+do not copy the entire specification. For measured acceptance, preserve the
+source's workload, metric, threshold or baseline, and operating conditions rather
+than redefining them during decomposition.
 
 Present the proposed outcomes, acceptance, dependencies, and why the boundaries
 are useful. Use one local document or the conversation for a draft unless the

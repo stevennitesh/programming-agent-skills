@@ -35,6 +35,9 @@ errors; surface contradictions that would change an accepted commitment.
 When the mechanism is still open, check whether an existing capability or smaller
 change achieves the intended outcome. Explain any meaningful loss or ceiling;
 do not silently simplify accepted requirements or reopen an explicit choice.
+Separate the required outcome from a proposed mechanism. When the choice matters,
+compare genuinely different approaches, including no software change when credible;
+investigate the assumption most likely to invalidate the choice before refining it.
 
 Ask about choices whose answers could materially change behavior, scope, a
 constraint, acceptance, or a consequential tradeoff. Work on decisions whose
@@ -48,6 +51,11 @@ and its decisive tradeoff when the evidence supports one, while eliciting
 participant-held facts neutrally. Technical decisions within settled requirements
 are yours to recommend and resolve within authorization; product priorities and
 accepted meaning belong to their decision owner. Do not invent their answer.
+
+When a term, invariant, or relationship changes or conflicts with current domain
+meaning, read [Domain modeling](references/domain-modeling.md) and resolve the
+collision before building dependent decisions. Clarifying meaning does not require
+writing a record after every answer.
 
 For an unresolved architecture choice, use `$codebase-design` when available and
 useful. For an empirical question, use `$prototype` or available evidence-gathering
@@ -67,6 +75,10 @@ outcome. Specify materially different rejection, partial-success, or state behav
 when it affects the outcome. State what must remain true and what evidence could
 distinguish success from a plausible wrong result. Avoid implementation recipes
 unless a particular mechanism is itself a settled constraint.
+
+Could two reasonable implementations satisfy the wording but produce materially
+different outcomes? Resolve unintended ambiguity or identify the remaining
+decision; preserve deliberate implementation freedom within accepted behavior.
 
 For composed results, durable state, conflicting rules, or measured claims, read
 [Acceptance meaning](references/acceptance-meaning.md). Preserve consequential

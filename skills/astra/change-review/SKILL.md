@@ -36,6 +36,10 @@ or fabricate intent from tests or implementation. Missing intent may limit
 conformance review while independently evidenced correctness checks can continue.
 State that limit rather than implying all accepted behavior was verified.
 
+When independence matters, identify whether the reviewer authored the change or
+shares its implementation context. Self-review can be useful but does not satisfy
+an independent-review requirement; report an unmet requirement to the caller.
+
 ## 2. Trace behavior and engineering quality
 
 Check the outcome and scope first: does the ordinary caller receive the requested
@@ -44,11 +48,20 @@ Then independently assess correctness, ownership, representation, simplicity,
 maintainability, and proof. Working happy-path behavior does not excuse a concrete
 design cost; attractive structure does not excuse an incomplete outcome.
 
+If the implementation follows a plan whose technical assumptions fail the accepted
+outcome, identify the plan-level problem and affected decision. Do not demand
+faithful implementation of a flawed mechanism or silently redefine the user's goal.
+
 Trace meaningful changes through real callers, owners, and effects. When a result
 crosses stages or tickets, check that its actual produced or persisted form reaches
 the consumer and preserves accepted values, issues, identity, and terminal behavior.
 Follow serialization, configuration, dependency versions, lifecycle, and cross-language
 consumers when they matter even if absent from the visible call graph.
+
+For numerical or data transformations, check material units, time alignment,
+missing-value meaning, precision, and aggregation assumptions. Where correctness
+depends on the method, seek an independent reference, analytic case, or invariant
+rather than reproducing the implementation.
 
 Inspect activated risks: trust and authorization boundaries, shared state,
 resource bounds, recovery, migration, and independently deployed consumers. For
@@ -83,15 +96,17 @@ Recheck mutable candidate and decisive context identity. If it moved, identify
 what was reviewed and what remains unreviewed; do not attach a clean verdict to
 the new state. A later review can reuse unaffected evidence after revalidation.
 
-Report actionable findings in impact order with precise locations, scenario,
-evidence, consequence, and the required correction or proof. When no findings
-remain, say so, and separately state any material coverage or evidence limit.
-Do not equate "no findings" with complete coverage when required evidence is absent.
-For an explicit gate decision, use the decision rules in Finding standards.
-
 On a repair review, track prior findings as resolved, still present, disproved,
 or unresolved. Inspect the repair and its affected consumers for new regressions;
 broaden to the full successor when the change grows beyond the bounded repair.
-Finish with the reviewed identity, findings, decisive checks, and material limits.
+
+Return the reviewed identity, decisive checks, material coverage or evidence limits,
+and actionable findings in impact order. Each finding names precise locations,
+scenario, evidence, consequence, and the required correction or proof. When no
+findings remain, say so without implying complete coverage if required evidence
+is absent. For an explicit gate decision, use Finding standards; distinguish
+required corrections, nonblocking findings, and any residual-risk acceptance
+still needed from its owner.
+
 Return control to the caller; publication, repair, or delivery follows existing
 authorization rather than being started by the review itself.

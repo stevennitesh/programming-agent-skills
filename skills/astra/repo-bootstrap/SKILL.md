@@ -38,8 +38,9 @@ files. Do not infer currency from the file's existence, a version marker, or
 passing validation. For an approved update, reconcile missing practices and
 outdated pack wording using [Existing repositories](references/setup-defaults.md#existing-repositories).
 Prefer an existing authoritative location; otherwise use
-`docs/agents/engineering-contract.md` and add a pointer for nontrivial coding
-to the repository's instruction file. The resulting contract is repository-owned,
+`docs/agents/engineering-contract.md` and add a pointer for substantive code design,
+implementation, debugging, refactoring, or review to the repository's instruction
+file. The resulting contract is repository-owned,
 not a frozen copy of an older pack or a mirror to overwrite mechanically.
 
 For initial repository setup or work on tracker, label, or domain configuration,

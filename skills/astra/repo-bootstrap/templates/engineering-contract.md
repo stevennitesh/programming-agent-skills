@@ -27,11 +27,15 @@ keep together decisions that must change together. Separate independent policies
 when sharing an owner creates demonstrated coupling; small duplication is
 preferable to coupling different domain meanings. If deleting a layer removes
 complexity, collapse it. If complexity spreads to callers, the layer earns its place.
+Keep a value's source, governing policy, and possible mutations easy to locate
+without tracing unnecessary layers or hidden state.
 
 Model valid states and domain distinctions in data. Use the type system and
 existing schemas to prevent meaningful mistakes without adding precision no
 caller needs. Keep one source for derived state. Avoid casts or assertions that
-conceal a missing validity check.
+conceal a missing validity check. When an authoritative schema defines a boundary,
+use existing tooling to derive or check its types rather than maintaining a parallel
+definition. Preserve domain distinctions where the boundary representation differs.
 
 Validate untrusted input where it enters a trusted representation. Rely on an
 invariant only while its guarantees hold; mutation, persisted data, or concurrent
@@ -44,7 +48,13 @@ them; do not add adapters solely to make a small design look layered.
 
 ## Complete the change
 
-Fix the cause across affected callers within scope. Preserve meaningful failure
+Fix the cause across affected callers within scope. When a change repeatedly needs
+special cases, duplicated policy, or escape hatches, reconsider the underlying
+representation or ownership before adding another workaround. Revise the affected
+design within scope when that resolves a demonstrated problem; isolated exceptions
+do not justify a broad rewrite.
+
+Preserve meaningful failure
 behavior; a fallback must not turn an error or incomplete result into apparent
 success. Make partial outcomes explicit when callers need to handle them.
 
@@ -68,6 +78,11 @@ observable behavior rather than implementation wording or private structure.
 For a fix, distinguish the reported defect. When a plausible wrong rule also
 passes the ordinary case, choose an input or state where the outcomes differ.
 Derive expected results independently of the implementation under test.
+
+For numerical and data transformations, preserve material units, identity, time
+and availability semantics, missing-value meaning, and precision. Validate
+consequential method assumptions with an independent reference, analytic case,
+or invariant; internally consistent calculations can still answer the wrong question.
 
 For a changed integration, prove that the ordinary caller reaches the new
 behavior. Pass actual produced output through the affected handoff and check

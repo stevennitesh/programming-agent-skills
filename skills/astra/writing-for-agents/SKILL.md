@@ -42,9 +42,19 @@ Give each rule one authoritative home and link to procedures owned elsewhere.
 Prefer current configuration, command help, and code over copied facts unless
 the document adds a convention, reason, or costly-to-discover detail.
 
+When changing an authoritative instruction, inspect directly affected callers and
+competing current guidance. Reconcile useful material and retire obsolete pointers
+within scope; distinguish historical evidence from instructions still in force.
+For replacing specs or plans, follow
+[Document reconciliation](../shape-work/references/durable-decisions.md#reconcile-competing-documents).
+Keep this check bounded to the affected guidance.
+
 ## 3. Write concrete instructions, then prune
 
-Name the action, its condition, and the observable outcome. Keep terminology
+Put conditions and prerequisites before the actions they govern. Name the actor
+when ownership could be confused, and make "only," "unless," and "after" attach
+to one clear obligation. Prefer direct positive actions; retain prohibitions for
+concrete boundaries. Name the observable outcome. Keep terminology
 consistent and define local terms where they affect a decision. Match the form
 to the ambiguity:
 
@@ -70,6 +80,12 @@ Read the result as a future agent with only the expected context. Check whether
 it introduces an unnecessary stop, question, delegation, artifact, or test.
 Resolve conflicting rules and missing prerequisites. Confirm that the intended
 outcome and the user's choices survived the edit.
+
+For changed triggers or conditional guidance, trace a representative applicable
+case and a nearby excluded case through the entry pointer and relevant branches.
+Confirm required guidance is encountered before the decision it governs without
+activating unrelated procedures. This is an editorial walkthrough, not a required
+agent run or behavioral test.
 
 Check affected links and machine-read structure. For executable recipes, run
 the changed path when authorized and practical, checking its observable result.
