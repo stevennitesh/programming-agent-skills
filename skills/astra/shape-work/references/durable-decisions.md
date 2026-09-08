@@ -50,9 +50,8 @@ Read the relevant source in full, including decision-changing comments or linked
 decisions. For conflicting or multi-owner inputs, a small source-to-decision map
 can prevent lost commitments; it is not mandatory for a single clear conversation.
 
-Describe the problem, outcome, boundaries, settled behavior, meaningful acceptance,
-and open risks or deferrals. Include public/data contracts, trust, privacy, and
-operational constraints when they affect this work. A small schema or prototype
+Preserve public/data contracts, trust, privacy, and operational constraints when
+they affect this work. A small schema or prototype
 fragment may express a settled rule better than prose; label its evidence limits.
 Use stable code pointers where helpful, without freezing a speculative file list,
 implementation sequence, or test ownership into the specification.
