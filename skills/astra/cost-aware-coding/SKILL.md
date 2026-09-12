@@ -65,8 +65,9 @@ additional monitoring or analysis.
 Use `followup_task` for blocking-question answers, custody-release requests, and
 repair assignments: it handles both running and idle agents. Reserve `send_message` for necessary nonblocking
 coordination, not routine progress requests. For a question, answer without repository access.
-If you need inspection, request release and wait for confirmation that writers
-and subprocesses stopped, then inspect, answer, and explicitly grant custody back.
+If resolving a consequential question or actual error requires repository
+inspection, request custody release and wait for confirmation that writers and
+subprocesses stopped, then inspect, answer, and explicitly grant custody back.
 Idle or interrupted status alone does not release custody. Follow runtime cleanup
 requirements after a child finishes, retaining its ID for supported follow-ups;
 cleanup is not a custody grant. Read [Continuation](references/continuation.md)
