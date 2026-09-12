@@ -1,199 +1,102 @@
 ---
 name: cost-aware-coding
-description: Propose a cost-aware coordination plan or execute an accepted one. Use only when requested for coding work; exclude ordinary implementation and standalone model comparisons.
+description: Run an Astra-led, Sol-implemented coding route. Use only when explicitly requested.
 ---
 
 # Cost-aware coding
 
-Complete authorized work with justified model allocation and evidence that the
-result is acceptable. Model choices here are experimental starting policies,
-not demonstrated savings or capability guarantees. The engineering contract
-owns coding quality; this skill owns routing, execution custody, and escalation.
+Use GPT-6 Astra Medium to lead and review while one persistent GPT-5.6 Sol
+Medium task implements. The engineering contract owns coding quality; this skill
+owns routing and exclusive repository custody.
 
-## 1. Establish the outcome and cost constraint
+## 1. Select the route
 
-Use two modes:
+Before requesting a model switch or creating a task, check whether the remaining
+implementation, test, or debug loop is large enough to repay the handoff and
+review. For a trivial change or serial investigation where accumulated context is
+the work, execute directly unless the user explicitly requires the pair.
 
-- **Coordination plan:** analyze the work, propose ownership and routing, and obtain
-  acceptance before product implementation. This is the default for a new task.
-- **Execution:** carry out the accepted coordination plan. An explicit execution
-  request with a settled route counts as acceptance; do not ask again. If the
-  route is unsettled, present it for acceptance first.
+Otherwise, a concrete implementation request that invokes this skill selects the
+standard route without a separate proposal. If no reusable Sol task exists and
+the user did not authorize creating one, ask only for that authorization. Propose
+first when the user requests a proposal, substantial shaping remains unresolved,
+you determine that a different lead model or effort is needed, or a requested constraint
+requires another route.
 
-A route is settled by a previously accepted proposal or explicit user-selected
-ownership and model routing, with no material routing decision outstanding. An
-accepted feature spec, a model name alone, or the agent's inference does not
-establish route acceptance.
+Reuse accepted requirements, decisions, plans, and tickets. If substantial
+feature behavior or approach remains unresolved, use
+[shape-work](../shape-work/SKILL.md). Sol owns routine implementation choices.
 
-A bare invocation without an identifiable task needs the task first. Resume is
-execution after state reconciliation, not a third mode.
+The standard route is:
 
-Establish the task from current repository guidance, requirements, code and checks.
-Resolve consequential missing product decisions with the user.
+- **Astra Medium lead:** requirements, consequential decisions, assignment,
+  escalation, review, and acceptance.
+- **One persistent Sol Medium app task:** repository investigation,
+  implementation, checks, debugging, and corrections.
+- **One shared checkout with alternating custody:** only the current owner may
+  access it.
 
-Reuse existing discovery, decisions, and any plan or ticket. Use
-[shape-work](../shape-work/SKILL.md) for unresolved substantial decisions about
-feature behavior or approach, without requiring a new spec artifact. An Astra
-Medium root shapes directly; other roots delegate that pass to Astra Medium with
-the shape-work reference and relevant discovery context. Routine sequencing and
-implementation choices within settled requirements stay with the implementer.
-Include the [feature review gate](#4-accept-the-actual-result) when selecting the
-route. Discussion-only requests stop at their requested outcome.
+Read [Model policy](references/model-policy.md) only for a different model,
+escalation, or policy comparison. If the user requests concurrent implementation,
+use [parallel-implement](../parallel-implement/SKILL.md), which owns isolation,
+integration, and concurrent recovery.
 
-Identify any user-selected model, spending limit, latency requirement, or minimum
-assurance. Distinguish API spend, subscription allowance, and elapsed time; infer
-the priority from the request and clarify only when a material tradeoff remains
-unresolved. Choose a sufficient route considering total work through acceptance:
-context transfer, execution, repairs, verification, and integration. Without reliable
-accounting, use qualitative judgment; do not invent a budget or promise savings.
-Read [Model policy](references/model-policy.md) when selecting a route.
-Enforce a hard budget only with reliable accounting and bounded dispatch;
-otherwise present a coordination proposal without executing, or obtain agreement
-to an observable proxy. These limits also apply to planning work.
+If the user requests usage measurement or sets a hard budget, read
+[Telemetry](references/telemetry.md) before dispatch. Capture any required start
+observation then, and resolve an unenforceable hard-budget constraint before
+execution. Ordinary runs do not load telemetry.
 
-## 2. Propose and accept the coordination plan
+## 2. Give Sol custody
 
-The root owns coordination planning: who works, with which model, and in what
-order. Choose implementation ownership:
+If your current setting does not match the accepted route or appears insufficient,
+suggest the exact model and effort with the reason. The user applies that change;
+you cannot change your own setting. Resume execution after the user switches.
+Create or reuse one user-visible Sol Medium app task in the
+same local project and checkout. Use a new task for an independent plan; reuse the
+existing task for the same candidate, including corrections and recovery.
 
-- **Root implements:** coherent work fits the root's model/effort and benefits from
-  shared context. Specialist assistance and independent review do not change this
-  ownership. The accepted plan may assign a bounded sequential implementation unit
-  to a specialist while the root remains primary implementer. Transfer exclusive
-  writer custody and return unit-local corrections to its current implementer under
-  [Repair allowances](references/repairs.md). Schema, API, UI, and tests can be one assignment.
-- **Root coordinates:** managing dependencies, integration, or competing work units
-  warrants dedicated coordination. Size, step count, or specialist assistance alone
-  does not establish this need. The root plans, coordinates, integrates,
-  and accepts; delegate product implementation and repairs. One reusable worker
-  may execute several sequential units. Keep root integration to landing and
-  verification; return product-code corrections to their implementer.
+Read only what you need to settle intent and write the brief; leave implementation
+exploration to Sol. Before dispatch, identify the checkout, baseline, and relevant
+dirty state. Before the first dispatch to a new Sol task, read
+[Sol assignment contract](references/sol-assignment.md) and send its required
+receiver instructions in the actual task prompt. Reuse that contract for the same
+candidate; later messages carry only changed assignment details. Do not merely
+point Sol to this skill or reference.
 
-Coordination protects the root's attention; it is not automatically cheaper.
-For root implementation, retain sufficient permitted work at the root unless a cheaper
-actor is likely to repay transfer and coordination costs over the remaining work.
-Reuse a suitable actor before spawning. Record each delegation's benefit in the
-proposal, or its assignment if not previously planned; reassess only when
-circumstances change. Capability, independence, useful concurrency, sufficient
-savings, or dedicated coordination can justify delegation when direct work or
-an existing actor cannot supply the benefit. Phases, role labels, file count,
-and repository boundaries alone cannot. No separate ledger or table is required.
+For the shared-checkout pair, transfer repository custody with the brief. While
+Sol holds custody, do not read repository files or diffs, search the codebase, run
+shell, Git, build, or test commands, or edit product code. You may answer
+consequential questions or wait. Use completion waits rather than routine
+status reads. Concurrent execution follows `parallel-implement` custody instead.
 
-Planning permits justified read-only specialists and isolated scratch checks,
-but no product implementation or execution-worker pre-spawning before acceptance.
-Only the root delegates; workers must not delegate. During execution, default to one write-capable
-actor at a time, including the parent. Up to two independent read-only children
-may run when useful. They may use isolated scratch checks, but must not mutate
-the reviewed candidate or shared product state.
+Handle Sol questions and returns through the assignment contract. Answer
+consequential questions without investigating the assigned implementation. Treat
+custody as released only when Sol's return confirms that its writers and
+subprocesses stopped. Keep cross-task messages to the brief, consequential
+questions, candidate return, and review findings.
 
-Read [Runtime selection](references/runtime.md) once when establishing the route;
-reuse it until the runtime, route, or relevant configuration changes. Retain a
-sufficient root; include any justified model/effort switch in the proposal.
+For a cross-turn run or uncertain custody, read
+[Continuation](references/continuation.md).
 
-For explicitly requested concurrent implementation, use
-[parallel implement](../parallel-implement/SKILL.md). Supply model choices to its
-scheduler. It owns admission, custody, integration, and safe recovery mechanics;
-this skill retains accepted implementation ownership, model and budget restrictions, repair allowances,
-and the feature-delivery review gate.
+## 3. Review and repair
 
-Present a compact proposal: reference the accepted feature approach, name the
-root model/effort and implementation ownership, assign coherent work and reusable
-actors with dependencies, and include acceptance checks, review, and permitted
-recovery from [Repair allowances](references/repairs.md). Identify unresolved
-constraints. A small task may need only two sentences;
-no separate artifact or roster of pre-spawned workers is required.
+A completed task status and the implementer's return normally establish that the
+current implementer is idle and released custody. Check status separately only
+when that evidence is missing or inconsistent. Classify the return before review:
+if it is blocked or required acceptance checks failed, follow
+[Repair allowances](references/repairs.md). Review only a candidate returned ready
+with its required checks satisfied. Then take custody and use
+[change-review](../change-review/SKILL.md) without repeating routine exploration.
+Add independent reviewers only when the accepted route or requested assurance
+requires them; `change-review` owns their dispatch and convergence.
 
-End with one acceptance request and, if needed, ask the user to switch this
-conversation's root model/effort before execution. Reuse existing acceptance; it
-covers the proposed route and recovery allowances, not unrelated effects.
+Return required corrections to the current accepted implementer and transfer
+custody before it edits. Read [Repair allowances](references/repairs.md). A
+stronger recovery follows its user-action and acceptance rules; do not silently
+implement the correction.
 
-## 3. Execute the accepted plan
+## 4. Finish
 
-Verify root settings against the accepted route using runtime guidance; resolve
-a missing required switch rather than silently substituting a route.
-
-- **Changes requiring acceptance:** changes to scope, approach, root settings,
-  root implementation versus coordination-only ownership, accepted implementation
-  responsibility boundaries, model/effort allocations, concurrency, budget,
-  review requirements, repair allowances, or explicitly required actors outside
-  accepted alternatives. Obtain acceptance before dependent work. Available policy
-  models are not blanket role permissions: an Astra reviewer allocation does not
-  authorize Astra implementation.
-- **Root discretion:** adapt scheduling, coherent subdivisions, actor reuse,
-  equivalent replacements, cross-unit repair ownership, and approved recovery within
-  those boundaries without renewed acceptance. Subdivisions and actor IDs need not
-  be prelisted. Apply the benefit, reuse, and custody rules to new or replacement
-  actors; preserve unaffected work and counters. Record material adaptations briefly
-  in existing run context, without a new plan artifact.
-
-Use [Telemetry](references/telemetry.md) for cheap best-effort start/end capture
-when available. Missing telemetry does not delay work unless required accounting
-makes it necessary.
-
-Use the runtime guidance for worker packets, context selection, actor reuse,
-and waits. Workers implement directly under the engineering contract.
-
-After dispatch, work only on useful independent responsibilities or wait for the
-return. Do not duplicate its assigned investigation while it runs. If a concrete
-gap requires intervention, coordinate with the worker rather than silently doing
-the same work again.
-
-For ownership transfer, interruption, replacement, or a run that must be resumed
-after the current context ends, read
-[Continuation and evidence](references/continuation.md). Preserve partial work
-and confirm prior writers and subprocesses have stopped before reassignment.
-Unknown writer state blocks reassignment, not evidence preservation.
-
-If execution or candidate acceptance fails, or evidence invalidates the approach,
-read [Repair allowances](references/repairs.md) before retrying or escalating.
-It owns separate implementation and review limits and their persistence.
-
-If a supplied budget is exhausted or cannot be enforced as required, stop before
-further discretionary work, preserve state and report the remaining outcome.
-Safe cancellation and custody reconciliation still take precedence over saving
-an extra turn. Do not silently exceed a model restriction or premium-use cap.
-
-## 4. Accept the actual result
-
-Cost optimization operates within the required independent Astra review gate;
-Medium is the default.
-
-A feature-delivery run means this workflow owns a feature from its idea or
-accepted requirements through completion. Whether the root implements or only
-coordinates, once the requirements and any existing plan are implemented and
-required checks pass, delegate
-[change review](../change-review/SKILL.md) before declaring
-completion. Use an independent Astra Medium child even when the root is Astra
-Medium and did not implement. Astra XHigh requires explicit selection; it does
-not activate high-assurance review, which remains a separate user choice.
-Supply the accepted requirements/plan, candidate and proof; request a gate decision
-that challenges plan assumptions as well as code. Change-review owns inspection,
-finding standards, and rules for residual-risk acceptance. Hold the candidate
-stable under its custody rules until review returns. Resolve required corrections
-and any residual-risk acceptance with its authorized owner before completion;
-a review verdict does not grant that authority.
-
-If review requires corrections, read [Repair allowances](references/repairs.md)
-before dispatching repairs. If independent review cannot run, report the unmet gate
-rather than substitute self-review or claim completion. Bounded fixes and edits
-do not acquire this gate merely by being routed; their review remains conditional
-on the user's request or a concrete correctness concern.
-
-The root verifies decisive evidence for the final candidate, including additions,
-deletions, untracked changes, material interactions, and requirements omitted from
-worker packets. A worker's PASS is a claim to verify. Reuse valid evidence under
-the engineering contract and repository checks; investigate concrete gaps,
-contradictions, drift, or required assurance without repeating the worker's
-investigation or the delegated diff review. Independent review supplements
-executable proof.
-
-## 5. Finish with evidence and limits
-
-Report the outcome, decisive checks, material limits, and a brief actor/repair
-summary. Include measured usage with its scope and cutoff; mention missing usage
-only when measurement was requested or its absence affected a decision. Follow
-the telemetry reference for interpretation. Omit empty fields and routine narration.
-
-Authorization carries across phases, actors, and continuation of the same scoped
-objective; pass its boundaries to the receiver. It does not cover unrelated future
-work. Commit, publish, install, or create a new app task only when authorized.
+Complete when the accepted outcome, required checks, and review gate pass. Report
+the candidate, decisive evidence, and any material limitation. If telemetry was
+requested, include its measured coverage and limits.

@@ -1,6 +1,6 @@
 ---
 name: writing-for-agents
-description: Write or audit agent-facing skills, AGENTS.md, guides, specs, prompts, and continuation handoffs. Exclude product discovery, ordinary prose, minor wording edits, and app task transfers.
+description: Write or audit agent instructions in skills, AGENTS.md, guides, prompts, and handoffs. Exclude product shaping, minor copy edits, and task transfers.
 ---
 
 # Writing for agents
@@ -11,13 +11,15 @@ document's authority. For an audit, return findings without editing.
 
 ## 1. Identify the reader and the decision
 
-Establish what the receiving agent must accomplish, what it will already know,
-and how this document enters its context. Read the relevant caller or pointer
+Establish the receiving agent's task, baseline capabilities, available context,
+and how this document reaches it. Read the relevant caller or pointer
 and the source that owns the rules. Resolve consequential gaps from those
 sources; surface any remaining product or policy decision to its owner.
 
-For a worker assignment, include the bounded task, necessary context, and
-expected return. Keep orchestration decisions with the caller.
+For a worker assignment, deliver the bounded task, essential role boundaries,
+necessary context, and expected return in its prompt or an explicitly loaded
+source. Do not assume it inherits the caller's context. Keep orchestration
+decisions with the caller.
 
 When preparing a continuation handoff for another agent or fresh context, read
 [Continuation handoffs](references/continuation-handoffs.md). That reference owns
@@ -33,6 +35,8 @@ packaging, read
 Keep common instructions together. Put substantial conditional detail behind
 a link that says when to read it and where it lives. If agents miss a reference,
 clarify its trigger before copying the material into the main document.
+In always-loaded guidance, keep constraints that apply across tasks and useful
+conditional pointers; load task-specific methods when relevant.
 
 Use ordered steps for a procedure, lookup structure for reference, and reasons
 and tradeoffs for explanation. A guide need not become a workflow. Split material
@@ -51,8 +55,9 @@ Keep this check bounded to the affected guidance.
 
 ## 3. Write concrete instructions, then prune
 
-Put conditions and prerequisites before the actions they govern. Name the actor
-when ownership could be confused, and make "only," "unless," and "after" attach
+Put conditions and prerequisites before the actions they govern. Address the
+executing reader as "you" and name other actors explicitly; make the recipient's
+role clear in copied prompts. Make "only," "unless," and "after" attach
 to one clear obligation. Prefer direct positive actions; retain prohibitions for
 concrete boundaries. Name the observable outcome. Keep terminology
 consistent and define local terms where they affect a decision. Match the form
@@ -69,10 +74,10 @@ Read each obligation as something the agent may enforce literally. Preserve
 the distinction between requirements, recommendations, and examples. Avoid
 turning a past incident or a local preference into a universal rule.
 
-Delete repeated defaults, stale facts, and instructions with no identifiable
-decision or failure to address. Retain non-obvious constraints and useful reasons.
-Aim for sufficient guidance, without prescribing ordinary mechanics the agent
-can choose from its tools and repository.
+Delete repeated defaults, stale facts, and scaffolding retained only because
+earlier models needed it. Keep guidance that improves a likely decision or
+prevents a credible failure for the intended readers, including repository-specific
+checks and evidence standards. Leave ordinary mechanics to the agent.
 
 ## 4. Check the behavior the document asks for
 
@@ -80,6 +85,9 @@ Read the result as a future agent with only the expected context. Check whether
 it introduces an unnecessary stop, question, delegation, artifact, or test.
 Resolve conflicting rules and missing prerequisites. Confirm that the intended
 outcome and the user's choices survived the edit.
+Make the authorized outcome and stopping condition clear, including when work
+continues after an intermediate question, check, or review. Preserve deliberate
+approval and custody boundaries; reuse existing authorization within its scope.
 
 For changed triggers or conditional guidance, trace a representative applicable
 case and a nearby excluded case through the entry pointer and relevant branches.

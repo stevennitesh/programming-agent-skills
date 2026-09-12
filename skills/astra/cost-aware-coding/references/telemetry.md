@@ -1,7 +1,8 @@
 # Telemetry
 
-For explicit cost-aware execution, capture inexpensive start/end observations
-when exposed by the host or the helper below. Capture new actors when admitted
+Use this reference only when the user requests usage measurement or a hard budget
+depends on it. Capture inexpensive start/end observations when exposed by the
+host or helper below. Capture new actors when admitted
 and refresh after model changes or resume. Use exposed metadata or one bounded
 helper attempt per actor at each capture point; reuse known paths. After a failed
 lookup, do not search further or repeat it at later captures without new location

@@ -67,23 +67,34 @@ Skills remain usable individually; cost-aware coding is not an umbrella requirem
 
 ## Why cost-aware coding has stronger gates
 
-Cost-aware coding is an explicit experimental workflow, compatible with a Sol
-Medium or Astra Medium root. It separates an accepted coordination plan from
-execution. Feature shaping and implementation planning remain with shape-work;
-the coordination proposal selects actors, responsibilities, dependencies, checks,
-and permitted recovery. Reuse accepted decisions instead of creating competing plans.
+Cost-aware coding is an explicit experimental workflow. Its default feature route
+uses an Astra Medium lead and one persistent Sol Medium implementation task. It
+first checks that the remaining implementation or verification can repay the
+handoff; trivial changes and serial judgment-heavy investigations stay direct
+unless the user requires the pair. Otherwise, it runs the standard pair from a
+concrete invocation. A separate coordination proposal is reserved for plan-only
+requests, unresolved shaping, a root-model change, or a nonstandard route.
+Feature shaping remains with shape-work. Reuse accepted decisions instead of
+creating competing plans.
 
-The root may implement with bounded sequential specialist help or concentrate on
-coordination. It can adapt assignments and scheduling within accepted boundaries;
-changes outside those boundaries need acceptance. Root model changes are presented
-to the user, not accomplished by instructions declaring a different model.
+The pair uses the same checkout by default with exclusive alternating custody.
+While Sol implements, Astra stays out of the repository and handles only user
+communication or consequential decisions. Sol returns a stable candidate and
+releases custody before Astra reviews. Worktrees remain conditional on a concrete
+isolation or concurrency need. Root model changes are presented to the user, not
+accomplished by instructions declaring a different model. The workflow gives the
+reason and exact setting; the user decides and applies the change.
 
-Feature delivery in this workflow requires delegated independent Astra review,
-even when the root is Astra and did not implement. This is a chosen assurance
-requirement within which cost is optimized, not a rule for all ordinary coding.
+The Astra lead reviews with change-review after Sol releases custody. A fresh
+independent Astra reviewer is conditional on an accepted high-assurance or
+independence requirement, not required for every run.
 Repair accounting distinguishes work-unit implementation recovery from shared
 integrated-candidate review rounds. The skill and its references own exact limits,
 role permissions, custody, and acceptance semantics; do not duplicate them here.
+When a focused Sol Medium repair fails for implementation reasons, the default
+stronger attempt raises that same task to Sol High; XHigh requires demonstrated
+need. The workflow recommends the setting and the user applies it, preserving the
+task conversation without claiming prompt-cache preservation.
 
 When combined, parallel-implement owns concurrency mechanics while cost-aware
 coding retains routing authority, accepted responsibility boundaries, and repair

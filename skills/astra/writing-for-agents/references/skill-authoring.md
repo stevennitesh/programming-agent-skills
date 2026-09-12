@@ -2,8 +2,8 @@
 
 ## Make discovery precise
 
-Describe the task the skill serves and the observable requests that should
-activate it. Add an exclusion only for a likely competing interpretation.
+Keep the description short and specific to the task and observable requests that
+should activate it. Add an exclusion only for a likely competing interpretation.
 Keep detailed procedure in the body so the description remains a useful
 selection cue.
 

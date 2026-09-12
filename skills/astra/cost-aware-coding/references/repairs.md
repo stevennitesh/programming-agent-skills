@@ -1,63 +1,38 @@
 # Repair allowances
 
-Read when an implementation candidate fails acceptance, execution fails, new
-evidence invalidates the approach, or review requires corrections. These rules
-apply to direct and delegated work. Use [Model policy](model-policy.md) for
-permitted recovery routes.
-
-## Implementation recovery
-
-Classify failures before spending another attempt. Resolve missing context,
-environment faults, or invalid acceptance at their source. Track implementation
-recovery per coherent work unit and final review repairs against the integrated
-candidate, for both sequential and concurrent implementation.
-An attempt is a candidate submitted for acceptance, whether returned by a worker
-or implemented by the parent, followed by its acceptance checks. Local edits and
-test commands are not separate attempts; failed acceptance cannot be relabeled
-as internal work to evade the limit. If evidence invalidates the approach or acceptance
-criteria, pause dependent work and resolve the affected decision with the planner
-or user as appropriate. Reuse unaffected work.
-
-## Allowed transitions
+Read when a returned candidate fails acceptance or review requires corrections.
+Resolve missing requirements, invalid acceptance criteria, and environment faults
+at their source instead of spending a model escalation.
 
 | State | Next action |
 | --- | --- |
-| Initial implementation fails acceptance | One focused repair by the same implementer, then affected checks |
-| That repair fails acceptance | One stronger permitted recovery attempt suited to the demonstrated weakness |
-| Recovery fails or no stronger permitted route exists | Preserve work and ask for a revised route |
-| Review requires corrections | Affected units' current implementers repair the batch, followed by acceptance checks on the integrated candidate and the same reviewer's follow-up review when checks pass; two rounds total across all implementers |
-| Required corrections or checks remain after two review-repair rounds | Ask for more rounds; for recurring bugs also propose and request a stronger implementer and further work |
+| Before review, with the stronger attempt unused, the implementer returns blocked with concrete evidence that its current reasoning effort is insufficient | Skip the focused repair. Recommend a user-applied effort increase on the same Sol task: High by default, or XHigh when justified; then allow one stronger attempt. |
+| First implementation return fails acceptance | The same implementer gets one focused repair. |
+| Focused repair return fails because implementation reasoning is insufficient | Recommend a user-applied effort increase on the same Sol task: High by default, or XHigh when justified; then allow one stronger attempt. |
+| Failure comes from requirements, design, or environment | Resolve it at its source, then continue within the remaining allowance for the current stage; suggest raising your effort only if that decision needs more reasoning. |
+| Stronger return fails or recovery is unavailable | Preserve the candidate and request a revised route. |
+| Review returns required corrections | The current implementer repairs one batch and returns it to the same Astra reviewer; two repair rounds total. |
+| Required corrections remain after two returned repair batches | Preserve the candidate and request more rounds or a revised route. |
 
-Increasing effort counts as implementation escalation. The successful recovery
-actor becomes the current implementer. When the accepted plan assigns root coordination only, the root retains
-coordination and acceptance; product repairs stay delegated. Follow provider retry and repository
-recovery rules; outages do not establish model incapability. Report repeated
-environment failures without new evidence instead of looping indefinitely.
+An implementation attempt or review-repair round is consumed when the implementer
+returns its candidate as ready or blocked. Editing, debugging, and test runs before
+that return belong to the same attempt. A review-repair round begins with one batch
+of required findings and includes the implementer's checks and the same reviewer's
+follow-up when a candidate is ready. The initial review and optional suggestions
+do not consume a round.
 
-Before review, attribute an integration failure to an existing coherent work unit
-and use its remaining implementation-recovery allowance. Create an integration
-unit only when the failure cannot be attributed to an existing coherent work unit;
-never rename or split failed work to obtain fresh attempts. During review, corrections use the integrated
-candidate's shared review allowance.
+Once review begins, returned corrections use only the shared review-repair
+allowance. Failed correction checks do not open implementation recovery. If a
+review repair needs higher Sol effort, the user-applied change uses the next
+remaining review-repair round rather than creating another allowance.
 
-Before dispatching a cross-unit correction, assign one accountable implementer
-and explicit write scope under accepted ownership and custody rules. Preserve
-affected units' counters; reassignment or reslicing does not reset them.
+The user changes an existing task's effort; that action accepts the escalation.
+Reuse the same Sol task and its context without claiming that cached computation
+is preserved. Changing models or creating another implementer requires an accepted
+revised route. For later routine corrections, suggest returning Sol to Medium.
 
-The initial independent review does not consume a repair round. The same reviewer uses
-change-review for follow-up reviews after implementers run acceptance checks.
-
-Each review-repair round covers one submitted batch of required corrections, repairs by
-the affected units' current implementers, acceptance checks on the integrated candidate, and the same reviewer's
-follow-up review when checks pass. Localized findings return to their unit's current
-implementer but consume this shared allowance; neither each finding nor each
-implementer receives separate rounds.
-Failed acceptance consumes that repair round; individual test runs are not separate rounds. Review repairs do not reopen
-implementation recovery or allow automatic escalation. Optional suggestions alone
-do not block completion or consume rounds; use change-review's acceptance rules
-without relabeling required corrections as optional. Preserve both counters across
-changed symptoms, replanning, and replacement; further rounds require authorization.
-
-For concurrent implementation, also read
-[Parallel recovery](../../parallel-implement/references/recovery.md) for
-lane-specific recovery and safe custody.
+Track implementation recovery per coherent work unit and share the two
+review-repair rounds across the integrated candidate. Replacement, repartitioning,
+or a new lane does not reset either allowance. For concurrent implementation,
+[Parallel recovery](../../parallel-implement/references/recovery.md) owns the
+mechanics.

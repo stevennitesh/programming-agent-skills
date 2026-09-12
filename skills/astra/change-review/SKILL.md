@@ -1,6 +1,6 @@
 ---
 name: change-review
-description: Review a diff, branch, PR, or uncommitted changes for correctness and maintainability problems. Exclude whole-codebase audits and implementation without a review request.
+description: Review a diff, branch, PR, or uncommitted changes for correctness and maintainability. Exclude whole-codebase audits.
 ---
 
 # Change review

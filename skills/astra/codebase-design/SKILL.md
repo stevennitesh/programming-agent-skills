@@ -1,6 +1,6 @@
 ---
 name: codebase-design
-description: Resolve unsettled architecture or feature-integration decisions about ownership, interfaces, state, dependencies, or migration. Exclude routine implementation and broad codebase audits.
+description: Resolve unsettled architecture or integration decisions about ownership, interfaces, state, or migration. Exclude routine implementation and whole-codebase audits.
 ---
 
 # Codebase design

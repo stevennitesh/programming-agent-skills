@@ -1,6 +1,6 @@
 ---
 name: research
-description: Research questions or compare options requiring source evaluation, synthesis, or reconciliation of conflicting evidence. Exclude quick factual lookups and runnable experiments.
+description: Investigate questions or compare options requiring synthesis and evaluation of sources. Exclude quick factual lookups and runnable experiments.
 ---
 
 # Research

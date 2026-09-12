@@ -1,6 +1,6 @@
 ---
 name: prototype
-description: Build a runnable experiment to test design feasibility, behavior, interaction, or performance before committing to an approach. Exclude production implementation and existing-bug diagnosis.
+description: Build a runnable experiment to resolve a design, interaction, or performance uncertainty before production implementation. Exclude existing-bug diagnosis.
 ---
 
 # Prototype

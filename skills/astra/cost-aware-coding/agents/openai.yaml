@@ -1,6 +1,6 @@
 interface:
   display_name: "Cost-aware coding"
-  short_description: "Plan model allocation, then execute the accepted coordination plan"
-  default_prompt: "Use $cost-aware-coding to propose a coordination plan for acceptance, or execute the existing accepted plan for this coding task."
+  short_description: "Route substantial coding through an Astra-Sol pair"
+  default_prompt: "Use $cost-aware-coding for this coding task. If the implementation or verification is likely to repay coordination overhead, create or reuse one persistent Sol Medium task while Astra leads and reviews."
 policy:
   allow_implicit_invocation: false

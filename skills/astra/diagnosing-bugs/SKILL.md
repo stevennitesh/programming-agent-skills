@@ -1,6 +1,6 @@
 ---
 name: diagnosing-bugs
-description: Root-cause difficult bugs, intermittent failures, or environment and cross-system faults when the cause is unclear. Exclude obvious fixes and optimization without a defect.
+description: Investigate difficult or intermittent failures whose root cause is unclear, including environment and cross-system faults. Exclude obvious fixes.
 ---
 
 # Diagnosing bugs

@@ -31,9 +31,10 @@ applicability notice controls which parts remain in force.
   Domain Modeling, or High-Assurance Review route is restored by an old ADR.
 - **Review and delegation:** change-review owns review judgment and optional
   high-assurance detail. Explicitly selected cost-aware-coding owns routing
-  acceptance, model allocation, and its independent review floor. Parallel-implement
-  owns concurrent execution mechanics. Historical profiles and review flags do
-  not add requirements to these owners or to ordinary coding.
+  acceptance, model allocation, alternating custody, and its Astra-lead review
+  gate. Parallel-implement owns concurrent execution mechanics. Historical
+  profiles and review flags do not add requirements to these owners or to
+  ordinary coding.
 - **Decision custody:** record or reconcile ADRs within the user's authorization.
   Existing authorization does not require a second approval merely to record it;
   an agent inference does not establish an accepted decision.

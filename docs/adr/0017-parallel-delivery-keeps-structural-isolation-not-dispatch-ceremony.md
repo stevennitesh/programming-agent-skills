@@ -1,6 +1,6 @@
 # Parallel Delivery Keeps Structural Isolation, Not Dispatch Ceremony
 
-> **Current applicability — [ADR-0018](0018-astra-composition-and-decision-applicability.md):** Partially superseded: retain dependency-aware isolation, exclusive writer custody, serial integration, and conservative cleanup. Current parallel-implement owns mechanics; cost-aware-coding may explicitly select model routing and independent review. Historical Implement references and dispatch prescriptions are not additional Astra requirements.
+> **Current applicability — [ADR-0018](0018-astra-composition-and-decision-applicability.md):** Partially superseded: retain dependency-aware isolation, exclusive writer custody, serial integration, and conservative cleanup. Current parallel-implement owns mechanics; cost-aware-coding may explicitly select model routing and review requirements. Historical Implement references and dispatch prescriptions are not additional Astra requirements.
 > Status and decisions below preserve the original record; this notice controls present applicability.
 
 **Status**: accepted

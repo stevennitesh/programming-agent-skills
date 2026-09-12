@@ -1,55 +1,27 @@
 # Model policy
 
-Most runs begin on Sol Medium or Astra Medium; Sol Medium is the everyday default.
-Use the table below subject to explicit user model, effort, provider, and budget
-constraints. The main skill owns coordination-plan acceptance, implementation ownership,
-dispatch, planning, and review gates.
+The standard route uses only this pair:
 
-| Model | Effort | Choose it for |
+| Role | Model and effort | Owns |
 | --- | --- | --- |
-| GPT-5.6 Luna | Max | Easy retrieval, sorting, repetitive or extensive file work, mechanically checked bulk processing, and easy independent swarm assignments when parallel work is justified |
-| GPT-5.6 Sol | Medium | Everyday use, small fixes, and normal bounded implementation and verification of an agreed approach |
-| GPT-6 Astra | Medium | Brainstorming, planning, normal independent change review, difficult implementation/debugging, and unresolved design or methodology questions |
-| GPT-6 Astra | XHigh, explicitly selected | Intensive review or particularly difficult design problems; not automatic escalation beyond Medium |
+| Lead | GPT-6 Astra Medium | Shaping, consequential decisions, review, and acceptance |
+| Implementer | GPT-5.6 Sol Medium | Repository investigation, implementation, checks, debugging, and corrections |
 
-## Decide using the actual uncertainty
+Suggest that the user change your setting to Astra XHigh only for a particularly
+difficult design decision or intensive review, with the reason it is needed. The
+user decides and applies any change to your setting; you cannot change it yourself.
+A changed lead effort does not change implementation ownership.
 
-- Consider consequence, reversibility, and verification strength, not file count.
-  A broad rename can be mechanical; one timestamp join can introduce look-ahead bias.
-- Separate implementing a known method from deciding whether it is valid. Use Sol
-  Medium for a bounded implementation of an agreed method; Astra Medium for difficulty or uncertainty in
-  assumptions, leakage, numerical stability, or system interactions. Require an
-  independent numerical check such as an analytic case or trusted implementation;
-  a stronger model cannot substitute for evidence.
-- Luna's low price can come with longer execution and more repairs. Give it bounded
-  work with decisive checks. Let Python, SQL, or another engine do heavy computation.
-  Use direct search for simple lookups. Large scope alone does not make work easy
-  enough for Luna. Its swarm role does not authorize fanout; concurrent implementation
-  follows the main skill's parallel-implement route when requested.
-- Change route for a named capability gap, demonstrated failure, or material change
-  in uncertainty. Missing requirements or broken environments need resolution,
-  not a more expensive model. Before retrying or escalating, follow
-  [Repair allowances](repairs.md).
-  For implementation recovery, use Sol Medium -> Astra Medium; from Luna Max,
-  choose Sol Medium or Astra Medium for the demonstrated weakness. If Astra Medium
-  is insufficient, ask for a revised route rather than automatically selecting XHigh.
+Change the implementation route only for a demonstrated capability gap or failed
+recovery under [Repair allowances](repairs.md). Missing requirements, invalid
+acceptance criteria, and broken environments need resolution at their source.
+For an implementation-reasoning failure, prefer a user-applied change on the
+existing Sol task: Medium to High by default, or XHigh when deeply coupled logic
+or difficult debugging justifies its cost. This preserves the task conversation,
+not a guaranteed prompt cache. A different implementer requires an accepted
+revised route and does not authorize you to take over implementation silently.
 
-Keep unresolved design questions with the agent resolving them rather than handing
-an untested assumption to an implementer as settled.
-
-## Limits and conditional detail
-
-Select from this table unless the user explicitly chooses otherwise. Astra XHigh
-requires explicit selection; task difficulty alone does not authorize it. Ultra is
-an orchestration choice outside this policy. If no permitted route is sufficient, preserve the
-work and report the limitation.
-
-When dispatching, changing models, or deciding whether a current root outside the
-default table can continue directly, read [Runtime selection](runtime.md) for
-controls, context inheritance, and active-parent exceptions. The main skill owns
-budgets and custody; [Repair allowances](repairs.md) owns failure handling and
-repair limits.
-
-These task assignments are benchmark-informed judgments, not proven specializations.
-Read [Evidence and limits](model-policy-evidence.md) when comparing or revising
-choices, interpreting cost/time frontiers, or conducting requested calibration.
+These assignments are benchmark-informed judgments and an experimental starting
+policy, not proven specializations or savings guarantees. Read
+[Evidence and limits](model-policy-evidence.md) only when comparing or revising
+the policy.
