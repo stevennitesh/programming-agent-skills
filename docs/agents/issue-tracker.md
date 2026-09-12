@@ -18,32 +18,22 @@ an issue; the consuming workflow owns readiness and completion evidence.
 
 ## Operations
 
-Use the GitHub connector when it exposes the required operation. Otherwise use
-`gh` after resolving the repository from `git remote -v`.
+Resolve the exact project and target type before acting. Prefer an available
+GitHub connector; otherwise use the installed CLI or documented API. Check
+current operation support and an independent read-back method before mutation.
 
-- **Publish:** create an issue.
-- **Fetch:** read the issue body, comments, labels, state, assignee, and
-  relationships.
-- **Comment:** add an issue comment. When PR intake is enabled, use the matching
-  PR operation instead.
-- **Label:** add or remove a configured label.
-- **Close:** add any skill-owned closing comment, then close when configured or
-  explicitly directed.
-- **Relationships:** use configured native sub-issue and dependency operations,
-  or their verified REST endpoints when the connector lacks them. Resolve current
-  operation support and read-back without routing through a retired skill package.
-
-Resolve the operation and its independent read-back route before the first
-external mutation. GitHub issues and PRs share one number space, so resolve an
-ambiguous `#<n>` as a PR first and then as an issue.
+Read the issue body, comments, labels, state, assignee, and relevant relationships.
+Publish, comment, label, claim, or close only within the authorized task. The
+configured closure policy applies when the consuming workflow has established
+completion. It does not start work or authorize closure by itself.
 
 ## Representation
 
 - Content lives in the issue body and comments.
-- Category and state use values from `docs/agents/triage-labels.md`.
+- Category and state use [the label mapping](triage-labels.md).
 - Parent and child links use the configured parent / child mode.
 - Blocking links use the configured dependency mode.
-- An active claim uses the assignee.
+- An active claim uses the assignee when the workflow requires claiming.
 
 Do not switch relationship representations during one publication. Closing or
 superseding a blocker must not expose a dependent as ready while it remains
@@ -51,7 +41,7 @@ blocked.
 
 ## Mutation read-back
 
-After a mutation, refetch the target and affected relationships. Verify the
-intended body, labels, state, assignee, comments, and open or closed state. After
-a failed or indeterminate command, refetch before deciding whether to retry.
-Report any observed partial result and the safest recovery.
+Refetch the target and affected relationships after a mutation and verify the
+fields that changed. After a failed or uncertain result, inspect actual state
+before retrying to avoid duplicate issues, comments, or other effects. Report
+any partial result and remaining gap.
