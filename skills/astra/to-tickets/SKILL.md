@@ -95,6 +95,7 @@ subset; preserve the exact published identities and unresolved decision or
 permission gates. Readiness means prerequisites are resolved, not that an item
 is safe to run beside every other ready item. Parallel-implement owns that live
 independence check and turns acceptance into worker assignments.
-Already-authorized implementation can continue; a planning
-or ticket-publication request alone does not authorize implementing the graph,
+After delivering the draft or verifying publication, continue already-authorized
+implementation within the active workflow's ownership and approval boundaries.
+A planning or ticket-publication request alone does not authorize implementing the graph,
 spawning workers, or closing a parent.

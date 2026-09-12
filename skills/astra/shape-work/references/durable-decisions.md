@@ -46,8 +46,9 @@ retires the external source. Report unresolved ownership or unapplied consequenc
 ## Preserve the contract
 
 Use the project's vocabulary and identify the source of material commitments.
-Read the relevant source in full, including decision-changing comments or linked
-decisions. For conflicting or multi-owner inputs, a small source-to-decision map
+Inspect the source sections and linked decisions needed to preserve material
+commitments, including decision-changing comments. Read the full source when their
+scope or context is unclear. For conflicting or multi-owner inputs, a small source-to-decision map
 can prevent lost commitments; it is not mandatory for a single clear conversation.
 
 Preserve public/data contracts, trust, privacy, and operational constraints when

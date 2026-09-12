@@ -34,8 +34,10 @@ run proves all future behavior.
 
 ## Avoid selecting a lucky or overfit winner
 
-Repeated attempts on the same benchmark create selection bias. Confirm the final
-choice with fresh runs not used to select it. When tuning for generalization across
+Repeated attempts on the same benchmark can create selection bias. For variable
+measurements, confirm the final choice with fresh runs not used to select it.
+For deterministic results, verify the final candidate; repetition alone does not
+provide independent evidence. When tuning for generalization across
 inputs, reserve representative evaluation cases or a held-out workload and keep
 its results out of iterative selection. If you tune after seeing that evaluation,
 it becomes development evidence; obtain new independent confirmation or narrow

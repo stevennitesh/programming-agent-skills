@@ -34,8 +34,8 @@ Read the applicable operation row and any present special conflict types in
 [Operation details](references/operations.md). Map objects to their actual roles
 before using side-selection commands. Stages or marker labels are not intent.
 
-Compare the base and both changes, then trace the commits' purpose through the
-affected callers, contracts, tests, and available issue or PR context. Retrieve
+Compare the base and both changes. Trace affected callers, contracts, tests, or
+decision context as needed to resolve intent and integration consequences. Retrieve
 only missing decision context; do not make remote research a prerequisite when
 local evidence is sufficient. Preserve compatible intent from both changes. If
 they conflict semantically, use the governing requirement; ask its owner only
@@ -50,9 +50,9 @@ Inspect the final path topology, content, and modes, not just marker locations.
 
 ## Prove the combined result
 
-Review the resolved delta and run repository-required checks plus the nearest
-useful behavior check. For a changed seam, exercise the actual caller with the
-combined producer and consumer. Existing branch tests may each pass while the
+Review the resolved delta and run repository-required checks and any additional
+focused check needed to establish the combined behavior. For a changed seam,
+exercise the actual caller with the combined producer and consumer. Existing branch tests may each pass while the
 combination breaks. Fix in-scope integration defects; distinguish unavailable
 checks and unrelated failures from evidence that the resolution works.
 

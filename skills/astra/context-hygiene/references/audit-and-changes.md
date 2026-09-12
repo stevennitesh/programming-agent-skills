@@ -4,6 +4,18 @@ Read for audits or before applying authorized context cleanup.
 
 ## Account for the selected set
 
+For a repository-wide audit, discover candidate context beyond existing links:
+agent instructions, documentation indexes, plans/specs, context records, ADRs,
+and relevant guides. Include unlinked documents and search for obsolete paths,
+commands, skill names, or workflow conventions. For a narrower audit, keep
+discovery within the requested boundary and its affected routes.
+
+Check candidates against current code, configuration, accepted decisions, and
+delivery state. Distinguish incorrect current guidance, completed or superseded
+plans still presented as active, historical evidence worth retaining, and
+unverified material needing investigation. Age or a missing inbound link alone
+does not establish obsolescence.
+
 For repository audits, identify assessed surfaces and affected routes, findings or
 no-change outcomes, current owners or proposed actions, verification, and coverage
 gaps. Give exact proposed wording when changing meaning. Group equivalent outcomes;
@@ -41,8 +53,9 @@ justify creating them, and a proposal does not authorize creation.
 
 ## Apply a bounded authorized update
 
-Prepare a concrete change set: file or entry identities, current text or hashes,
-replacement/removal intent, preserved content, and exclusions. Avoid repeating
+Prepare a concrete change set: file or entry identities, replacement/removal
+intent, preserved content, and exclusions. Capture hashes or snapshots when needed
+for concurrency, recovery, or the storage mechanism. Avoid repeating
 sensitive contents in the report. For destructive or materially partial effects,
 establish a recovery method; do not promise an archive or version history without
 checking it exists. Preserve historical evidence unless its exact deletion is
@@ -52,6 +65,11 @@ For repository instruction edits, verify current ownership through affected
 pointers and when superseded documents are opened directly, using the authoring
 guidance selected by the main skill. Archiving alone does not retire competing
 instructions.
+
+When reconciling or retiring repository documents, follow
+[Document reconciliation](../../shape-work/references/durable-decisions.md#reconcile-competing-documents).
+It owns in-place reconciliation, archival of wholly superseded documents under
+repository-root `.archive/`, preservation, and affected-pointer verification.
 
 For memory changes, use the store/runtime's supported update mechanism.
 Refresh targets immediately before the effect; relevant drift stops the affected

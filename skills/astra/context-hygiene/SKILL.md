@@ -16,6 +16,8 @@ the exact store, namespace, project, files, or entries and exclusions. Do not
 expand a project review into global memory or unrelated conversations. Verify
 session identity before reading archived transcripts; use a clearly labeled
 digest if primary evidence is unavailable and retain that limitation.
+For a repository audit, read [Audit and change records](references/audit-and-changes.md)
+before discovery so unlinked or stale documents are included within scope.
 
 An audit or reflection alone authorizes recommendations. Apply cleanup already
 explicitly requested within its established scope; do not require a second

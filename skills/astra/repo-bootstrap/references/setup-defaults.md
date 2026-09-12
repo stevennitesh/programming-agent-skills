@@ -1,6 +1,7 @@
 # Setup defaults
 
-Preserve established repository choices. Where a setting is absent, apply the
+Preserve established repository choices unless the user selects their replacement.
+Where a setting is absent, apply the
 defaults below within the requested setup scope. Ask only when evidence conflicts
 or no default resolves a consequential choice. Continue independent setup while
 that choice is unresolved.
@@ -95,9 +96,15 @@ Distinguish deliberate repository policy from inherited pack boilerplate. Use
 local decisions, comments, history, and actual consumers when that distinction
 matters. A rule is not a deliberate local choice merely because an earlier
 bootstrap copied it into a repository-owned file. Preserve repository facts,
-domain meaning, and intentional overrides; reconcile inherited pack guidance
+domain meaning, and intentional overrides unless their replacement is selected;
+reconcile inherited pack guidance
 with the current skill and seeds. Ask about a consequential unresolved conflict
 instead of silently retaining the old default or erasing a local decision.
+Classify differences as outdated inherited guidance, verified repository facts,
+intentional policy/customization, or unresolved provenance. Compare each applicable
+current seed: engineering contract, domain route, selected tracker guide, and label
+mapping, plus the agent-instruction structure. Judge meaning and behavior rather
+than exact wording. A difference alone does not establish a defect.
 
 Compare the engineering contract section by section for meaning and coverage:
 understanding behavior, design, completing changes, proof, and effects. During
@@ -123,12 +130,19 @@ convention, include its narrow migration in the same proposal while preserving
 the underlying protection under the current Astra contract. Do not bypass a
 failing check or claim compatibility from prose alone.
 
-Offer the user a single choice to apply this compatibility update or keep the
-existing setup. Applying it covers the approved document and enforcement changes
+Where intentional local policy differs, present concrete alternatives in one
+proposal: reconcile current defaults with useful repository choices, or adopt the
+identified template defaults and explain which local policies that replaces.
+Both options retain verified commands, paths, provider configuration, and real
+operating constraints; template adoption is not placeholder copying. Keep the
+existing setup available when the update is optional. Applying the selected option
+covers the approved document and enforcement changes
 together. A decline preserves the current conventions; continue any separate
 requested repair within its original scope. Do not repeat a declined offer for
 the same differences in the same task. Prior explicit approval of the update
-remains sufficient. A repeat run with no relevant changes should produce no edits.
+remains sufficient for settled changes; ask only about consequential policy choices
+it does not resolve, while continuing independent reconciliation. A repeat run
+with no relevant changes should produce no edits.
 
 Projects using this pack target the latest Astra version. Inspect retired routes
 to recover their still-valid meaning, then migrate the affected guidance,

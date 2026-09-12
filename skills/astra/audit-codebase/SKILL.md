@@ -101,3 +101,7 @@ a finding. Preserve unrelated records and mark unresolved evidence honestly.
 Finish with ranked opportunities, what was examined, important limits, and the
 recommended next decision. An audit establishes where improvement is justified;
 it does not claim the proposed design or implementation has already succeeded.
+
+Audit-only requests end with findings and requested artifacts. When auditing is
+part of broader authorized work, continue within its ownership and approval
+boundaries; the audit itself does not grant that authority.

@@ -15,26 +15,29 @@ do not introduce another approval gate. Prototype remains a separate skill.
 
 ## 1. Locate the decision
 
-State what must be decided and why the current shape or obvious extension is
-insufficient. Trace a representative request through its real callers, owning
-state, dependencies, and observable result. Read relevant accepted decisions
-and contracts, distinguishing intended guarantees from accidental dependence.
+Identify the unsettled decision and the requirement or uncertainty driving it.
+Determine whether the current design or its smallest extension already satisfies
+it. Inspect the callers, state, dependencies, and accepted guarantees needed to
+resolve this decision. Trace a representative path when interactions or ownership
+are uncertain. Distinguish intended guarantees from accidental dependence.
 
-For an existing design, identify a demonstrated cost: callers coordinating an
-invariant, one policy changing in several places, leaked representation, or
-repeated workarounds. Check sibling callers or relevant history when they could
+Before recommending a redesign, identify a demonstrated cost or an unmet new
+requirement. Costs include callers coordinating an invariant, one policy changing
+in several places, leaked representation, or repeated workarounds. Check sibling
+callers or relevant history when they could
 confirm or disprove the pattern. One awkward case does not establish a systemic
 problem. For new behavior, identify the new constraint that makes the choice
 consequential. Retaining the current design is a valid answer.
 
-Use audit findings as leads and recheck their decisive evidence. Repository-wide
-discovery belongs to a separate audit; do not turn this decision into a full map
+Use audit findings as leads. Reuse attributable evidence while its relevant code,
+inputs, and environment remain valid; recheck gaps, contradictions, or relevant
+drift. Repository-wide discovery belongs to a separate audit; do not turn this decision into a full map
 or require an audit report before beginning.
 
 ## 2. Design from usage and ownership
 
-Sketch the ordinary caller's usage and the consequential failure or state
-transition. Derive the interface and data shape from what that caller needs to
+Evaluate the ordinary caller's usage and relevant failure or state transitions.
+Derive the interface and data shape from what that caller needs to
 know. An interface includes ordering, errors, effects, and guarantees, not just
 its function signature.
 
@@ -60,14 +63,14 @@ invent alternatives just to reach a quota. Give options the same required
 behavior and constraints. Different names or extra layers are not different
 designs.
 
-Walk concrete usage through each option, including the case driving the design
-question. Compare caller burden, enforceable guarantees, concentration of policy,
+Evaluate credible options through the usage or change scenario that distinguishes
+them. Compare caller burden, enforceable guarantees, concentration of policy,
 operational consequences, and migration cost. A smaller diagram or more hidden
 implementation is not enough to outweigh harder failure handling or deployment.
 Treat a design from scratch as a useful comparison, not permission to rewrite.
 
-Walk a plausible change to a governing rule through each credible design. Which
-owners must change together? Group shared knowledge where it can remain consistent,
+Consider which owners must change together when a governing rule changes.
+Group shared knowledge where it can remain consistent,
 while preserving independent policies even when their code looks similar. Use
 current requirements or known variation, not hypothetical future extensibility.
 
@@ -97,9 +100,9 @@ integration.
 
 Return one recommendation, a supported retain decision, or a precise unresolved
 choice. Where a credible alternative was compared, explain why it loses. State
-what evidence could change the recommendation. Include ownership, a usage example,
-affected interfaces and guarantees, and the migration and verification
-implications that matter for this decision. Scale the form to the problem;
+what evidence could change the recommendation. Include a usage example when it
+clarifies the choice, and the ownership, affected interfaces and guarantees,
+migration and verification implications that matter for this decision. Scale the form to the problem;
 reuse the caller's artifact rather than creating a mandatory design document.
 
 Finish when the next implementer can locate the affected owners, understand the

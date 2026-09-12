@@ -104,3 +104,7 @@ retained changes, correctness/quality evidence, and either target attainment or
 the bounded stopping reason. An applied candidate with unavailable required
 verification is incomplete. A valid no-improvement result is better than retaining
 unsupported changes. Do not claim a global optimum or extrapolate beyond the evidence.
+
+A standalone optimization request ends with the verified result or bounded stopping
+reason. In a larger authorized task, continue within its ownership and approval
+boundaries.

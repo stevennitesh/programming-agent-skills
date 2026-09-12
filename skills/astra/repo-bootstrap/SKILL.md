@@ -66,18 +66,24 @@ Otherwise report any relevant global conflict without editing the global file.
 ## 3. Offer a compatibility update
 
 For an existing setup, compare its agent docs with this version of bootstrap,
-including the engineering-contract comparison above.
+including the engineering contract and each applicable current seed or instruction
+structure. Compare meaning and behavior, not literal wording.
 When a material difference warrants reconciliation, follow
 [Existing repositories](references/setup-defaults.md#existing-repositories)
 to prepare one proposal covering all affected docs and compatibility checks.
-Show the concrete edits, preserved choices, and any validation changes before
-asking whether to apply the compatibility update or keep the current conventions.
+Show concrete edits, local policy differences, and validation changes. Where local
+policy differs, offer reconciliation that preserves useful local choices or adoption
+of the identified template defaults, explaining the consequences. Keep verified
+repository facts and operating constraints in either option. Keeping the existing
+setup remains an option for an optional update.
 Explain that the choice is needed because this updates established setup policy.
 
 Wait for the user's choice before applying that optional update. A decline keeps
 the existing conventions and does not block independently authorized work. If
 the user already requested the compatibility update, proceed within that scope
-without asking again. With no material difference, report that the setup is
+without asking again; ask only about consequential local choices that authorization
+has not settled. Bundle those choices in the proposal and continue independent
+reconciliation. With no material difference, report that the setup is
 current; do not ask merely because wording or a template version differs.
 
 ## 4. Apply the requested changes
@@ -97,7 +103,8 @@ tracker changes, or global file edits.
 ## 5. Verify the guidance
 
 Read the resulting files as a future agent. Check that pointers resolve, commands
-match their source, and local requirements remain intact. Run relevant existing
+match their source, and local requirements retained under the selected option
+remain intact. Run relevant existing
 documentation checks. Execute a documented command when practical and necessary
 to substantiate a setup claim; report unexecuted commands as such. Inspect the
 diff for duplicate rules and unintended changes to policy or unrelated work.

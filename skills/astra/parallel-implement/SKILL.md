@@ -21,8 +21,8 @@ Establish the accepted outcome, fixed delivery scope, dependencies, and proof.
 Derive bounded items from that scope when needed; tickets and a formal spec are
 optional. Resolve material product uncertainty with its owner before dispatching
 affected work. Do not invent architecture boundaries to occupy workers. If only
-one useful item exists, implement directly within authority. If all items are
-coupled, execute serially and explain why parallelism would not help.
+one useful item exists or all items are coupled, execute serially with the
+permitted implementer and explain why parallelism would not help.
 
 Admit concurrent items only when behavior ownership, proof, and write effects
 are independent. Check shared schemas, callers, fixtures, generated files,
@@ -65,11 +65,19 @@ Bound concurrency by available resources and the root's ability to inspect and
 land returns. Reuse a suitable worker for related items when its context helps;
 use fresh context for unrelated work or misleading accumulated context. Each
 assignment still requires verified checkout custody and a bounded packet.
+When cost-aware-coding governs the run, establish the accepted worker transport,
+model settings, and supported recovery path before dispatch. Its shared-checkout
+single-task arrangement does not apply to concurrent lanes. Do not assume that
+an app task's user-applied effort change is available for a subagent; if unavailable,
+recovery needs an accepted route revision rather than an invented model switch.
 Send the goal, acceptance,
 exact checkout and base, allowed writes, exclusive resources, applicable guidance,
 predecessor outcomes, proof obligations, prohibited effects, and stopping condition.
 Point to accessible source context; supply essential facts the worker cannot read.
 For helper lanes, pass the complete returned packet, including runtime paths.
+For a reused worker, retain standing instructions already delivered and send
+changed requirements plus the current scope, acceptance, checkout, base, and custody.
+Always send a new lane's complete packet; do not assume unseen context is inherited.
 Tell workers they are not alone and must preserve others' changes. Workers do
 not delegate, change tracker state, land changes, or dispatch successors.
 
@@ -135,11 +143,12 @@ Reuse worker evidence only while its relevant inputs, code, path, environment,
 and observations remain valid. Missing required proof is incomplete delivery.
 Use change review when requested, required by the repository, or needed for a
 concrete unresolved shared-contract or migration judgment; worker count alone
-does not trigger extra reviewers. When cost-aware-coding requires independent
-review, delegate change-review on the stable integrated candidate after these
-checks pass. Lane reviews do not replace that gate. The reviewer owns the
-independent diff review; the root verifies integration and decisive evidence
-without repeating a full review. Fixes invalidate affected evidence and any
+does not trigger extra reviewers. When cost-aware-coding governs the run, its
+Astra lead reviews the stable integrated candidate with change-review after
+these checks pass. Add independent reviewers when the accepted route requires
+them. Lane reviews do not replace the integrated review gate. If an independent
+reviewer owns the diff review, the root verifies integration and decisive evidence
+without repeating that full review. Fixes invalidate affected evidence and any
 review tied to the previous candidate.
 
 ## 5. Finish or preserve a recoverable handoff

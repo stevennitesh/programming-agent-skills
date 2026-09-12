@@ -14,9 +14,12 @@ Keep procedure details at their existing owners.
 
 During a compatibility update, reconcile the root and affected nested instructions
 with the other agent docs in the same proposal. Update moved pointers, remove
-stale instructions, and consolidate duplication without discarding local rules.
+stale instructions, and consolidate duplication. Preserve local rules unless the
+user selects their replacement with identified defaults; retain verified repository
+facts and operating constraints in either case.
 Include engineering guidance copied into these files: reconcile it with the
-current contract and retain local exceptions at their appropriate scope. Use
+current contract and keep exceptions retained under the selected option at their
+appropriate scope. Use
 the distinction between inherited defaults and deliberate policy in
 [Existing repositories](setup-defaults.md#existing-repositories).
 Check that the resulting reading path reaches the right guidance for each scope.

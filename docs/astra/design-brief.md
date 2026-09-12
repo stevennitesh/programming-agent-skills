@@ -110,8 +110,11 @@ the current installer. Smaller models may need those additional instructions;
 compatibility is not evidence of equivalent behavior across models.
 
 Repo bootstrap adapts the engineering contract and offers reconciliation of
-existing agent guidance, preserving local meaning while replacing obsolete pack
-routes. New repositories receive tracker, label, and domain defaults without
+existing agent guidance. Where local policy differs, it offers reconciliation
+that preserves useful local choices or adoption of identified template defaults,
+with their consequences made explicit. Both retain verified repository facts and
+operating constraints while replacing obsolete pack routes within the approved
+scope. New repositories receive tracker, label, and domain defaults without
 forcing ticketed work. The resulting contract is repository-owned, not a mirror
 that must match its seed forever.
 

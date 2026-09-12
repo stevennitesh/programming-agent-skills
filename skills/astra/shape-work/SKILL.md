@@ -49,10 +49,12 @@ participant-held facts neutrally. Technical decisions within settled requirement
 are yours to recommend and resolve within authorization; product priorities and
 accepted meaning belong to their decision owner. Do not invent their answer.
 
-When a term, invariant, or relationship changes or conflicts with current domain
-meaning, read [Domain modeling](references/domain-modeling.md) and resolve the
-collision before building dependent decisions. Clarifying meaning does not require
-writing a record after every answer.
+When shaping establishes, changes, or exposes a conflict in domain terms,
+invariants, responsibilities, or relationships, read
+[Domain modeling](references/domain-modeling.md) and
+reconcile relevant current meaning before building dependent decisions. Resolve
+collisions in the conversation; accumulate useful record changes rather than
+interrupting to write or seek approval after every answer.
 
 For an unresolved architecture choice, use `$codebase-design` when available and
 useful. For an empirical question, use `$prototype` or available evidence-gathering
@@ -82,6 +84,15 @@ do not fill gaps with plausible prose merely to make a specification look comple
 
 ## 4. Capture only what future work needs
 
+Assess whether settled decisions warrant a context update or ADR, using
+[Domain modeling](references/domain-modeling.md) when they do. Context records
+preserve durable meaning and invariants; ADRs preserve useful decision rationale;
+specifications define what this work must deliver. Update the existing owner
+rather than duplicating it. Apply changes within existing authority; otherwise
+recommend the destination, concrete proposed change, and why future work needs it,
+bundling any missing approval into one question. Do not create records merely to
+complete a set, or block independent authorized work on optional documentation.
+
 Keep a small outcome in the conversation when that is sufficient. Produce or
 update a durable specification when requested or needed for multiple sessions,
 delivery slices, or owners. Read [Durable decisions](references/durable-decisions.md)
@@ -101,8 +112,9 @@ of a decision rather than creating competing current documents.
 Do not label work ready when implementation would need to invent consequential
 policy. If blocked, return the exact decisions or evidence still needed.
 
-Once shaping is settled, continue already-authorized work. For one coherent
-outcome, implementation can proceed directly. Use
+Once behavior is sufficiently settled, continue authorized implementation within
+the active workflow's ownership and approval boundaries. Tickets are optional
+unless requested or required by that workflow. Use
 `$to-tickets` when the user requests ticketing, including a single ticket.
 When durable delivery boundaries or coordination would benefit from tickets,
 suggest that explicit next step; do not start it merely because it could help.

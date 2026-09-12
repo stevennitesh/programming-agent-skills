@@ -8,9 +8,10 @@ Pin the exact revision or captured working state. Trace the complete local chain
 needed for the claim: inputs, formulas/code, configuration and precedence,
 transformations, outputs, tests, and observed behavior. Include generators,
 overrides, policies, decisions, or rendered artifacts where they affect that
-chain. Record inspected identities and missing links; reread mutable decisive
-surfaces before concluding. On drift, preserve unaffected findings and reconcile
-the affected mapping rather than constructing a hybrid state.
+chain. Record inspected identities and missing links. Recheck decisive surfaces
+when concurrent edits or other evidence indicate possible drift. On drift, preserve
+unaffected findings and reconcile the affected mapping rather than constructing a
+hybrid state.
 
 Distinguish static alignment, material difference, and unresolved mapping from
 observed runtime behavior and empirical effectiveness. Static correspondence

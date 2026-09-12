@@ -36,8 +36,10 @@ adjustment or an unchanged graph already authorized for publication.
 
 ## Apply and verify
 
-Refetch affected state immediately before mutation. Reconcile relevant drift
-before proceeding; do not overwrite an intervening edit. Reuse unchanged matching
+Reuse fresh verified state where it establishes the required content and
+relationships. Before mutation, refresh affected state when intervening activity
+is possible, or use supported conditional writes against the inspected version.
+Reconcile relevant drift before proceeding; do not overwrite an intervening edit. Reuse unchanged matching
 items and create verified missing items in dependency order. Record each returned
 identity and read it back before using it in later relationships.
 
@@ -56,8 +58,9 @@ Use mapped agent-readiness only for executable agent work; preserve human-only
 readiness for human handoffs. Neither a resolved blocker nor a ready-for-human
 label authorizes an agent to take over the human decision or action.
 
-After publication, read back bodies, relationships, readiness, and affected
-ownership. Derive the actual starting set from the verified graph rather than
+After publication, verify bodies, relationships, readiness, and affected ownership
+through independent read-back. Reuse read-backs that still establish the final
+state; verify newly written relationships and final readiness. Derive the actual starting set from the verified graph rather than
 assuming the planned writes succeeded. Keep the source-to-published identity
 mapping so a resumed run can inspect the same items.
 

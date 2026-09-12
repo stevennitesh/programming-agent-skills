@@ -19,14 +19,15 @@ input, sequence, version, and environment facts. A characterization test records
 what happens; it does not establish what should happen. If intended behavior is
 unsettled, isolate that decision instead of treating current output as the oracle.
 
-Build the cheapest faithful feedback loop: an existing check, ordinary caller,
-captured replay, differential comparison, or small harness. It must distinguish
-this failure from a nearby crash or setup problem. Inspect code and form provisional
+Use or establish the cheapest faithful feedback loop that distinguishes the
+reported failure from a nearby crash or setup problem. Reuse existing checks or
+attributable incident evidence where sufficient. Inspect code and form provisional
 hypotheses when needed to construct that loop; a local reproducer is not a
 prerequisite for reasoning from attributable incident evidence.
 
-Read [Investigation methods](references/investigation-methods.md) for intermittent,
-cross-system, environment, history, or performance-dependent failures. Improve the
+Read the relevant section of [Investigation methods](references/investigation-methods.md)
+when intermittency, cross-system behavior, environment differences, history, or
+performance affects the diagnosis. Improve the
 loop's speed and signal where useful, but preserve the mechanism causing the bug.
 Do not simulate away the concurrency, persistence, or protocol under investigation.
 
@@ -37,10 +38,10 @@ expected state, then forward to explain the original symptom. Examine the actual
 owner, inputs, transitions, and relevant callers. Compare working and failing
 conditions; recent edits or a suspicious component are leads, not proof of cause.
 
-State a falsifiable explanation, its predicted observation, and the strongest
-credible alternative. Keep multiple explanations only while they remain useful;
-no hypothesis quota is required. Choose the cheapest observation or controlled
-intervention whose outcomes distinguish them. Prefer targeted state inspection
+Form a falsifiable explanation and its predicted observation. When credible
+alternatives remain, choose the cheapest observation or controlled intervention
+that distinguishes them. Keep multiple explanations only while they remain useful.
+Prefer targeted state inspection
 over broad logging. A coherent intervention may change several lines, but avoid
 bundling independent guesses so the result remains interpretable.
 
@@ -81,8 +82,10 @@ one that simply mirrors the repaired implementation.
 
 ## 4. Verify and return
 
-Rerun the original feedback loop under relevant conditions and verify the requested
-behavior, not just absence of the error message. For intermittent or performance
+For an applied fix, rerun the original feedback loop when available and verify
+the requested behavior, not just absence of the error message. Report unavailable
+required verification as incomplete. Diagnosis alone may conclude from sufficient
+attributable evidence without replay. For intermittent or performance
 failures, compare observations under equivalent conditions and report exposure,
 variation, and remaining uncertainty. A passing local substitute cannot certify
 an unavailable production environment.

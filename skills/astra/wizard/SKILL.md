@@ -33,10 +33,11 @@ choices when needed; do not ask again about decisions the user already made.
 
 Use an available repository runtime or the operator's native shell. Prefer one
 script with only the helpers it needs; do not install dependencies to run it.
-Use the requested destination, otherwise a unique path under the repository's
-ignored scratch convention. A repeatable repository workflow belongs in its
-normal scripts location when requested. If no suitable scratch path exists,
-return the script content and intended path without changing ignore policy.
+Use the requested destination or a suitable repository location. Prefer a unique
+path under the repository's ignored scratch convention for disposable scripts;
+its absence does not block creating a secret-free artifact or require changing
+ignore policy. A repeatable repository workflow belongs in its normal scripts
+location when requested. Secret outputs follow the reference's storage rules.
 
 Before effects, preflight required tools and non-secret configuration. Show the
 procedure's targets and effects, then guide one focused stage at a time with
@@ -50,6 +51,9 @@ procedure captures values, writes files, calls external tools, or changes state.
 Keep harmless navigation free of repeated confirmation. Before a destructive
 action or durable external mutation, show the exact target and active identity
 where applicable, and require the operator's informed confirmation. Existing
+confirmation may cover a clearly displayed, bounded group of effects against the
+same identified target. Require renewed confirmation if identity, target, or scope
+changes; separate destructive effects that need their own decision. Existing
 task authority lets the agent author the stage; the runtime gate confirms the
 actual target the human is about to affect.
 

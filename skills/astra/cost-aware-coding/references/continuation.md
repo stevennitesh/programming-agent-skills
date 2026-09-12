@@ -1,5 +1,13 @@
 # Continuation
 
+For concurrent execution, resume from
+[parallel-implement's run record](../../parallel-implement/SKILL.md#2-isolate-and-dispatch)
+and follow [Parallel recovery](../../parallel-implement/references/recovery.md).
+Preserve the accepted worker transport, model allocations, ownership restrictions,
+budget constraints, integrated review state, and consumed repair allowances with
+that record. Reconcile actual actors and lane custody before dispatch or mutation;
+the single-implementer instructions below apply only to serial execution.
+
 Preserve only:
 
 - the current implementer task, host, model, and effort;

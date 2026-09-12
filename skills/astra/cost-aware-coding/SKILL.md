@@ -39,7 +39,9 @@ The standard route is:
 Read [Model policy](references/model-policy.md) only for a different model,
 escalation, or policy comparison. If the user requests concurrent implementation,
 use [parallel-implement](../parallel-implement/SKILL.md), which owns isolation,
-integration, and concurrent recovery.
+integration, and concurrent recovery. Agree the concurrent worker transport and
+recovery route before dispatch; the single-task arrangement below is for serial
+execution. Retain your integrated change-review gate and the shared repair limits.
 
 If the user requests usage measurement or sets a hard budget, read
 [Telemetry](references/telemetry.md) before dispatch. Capture any required start

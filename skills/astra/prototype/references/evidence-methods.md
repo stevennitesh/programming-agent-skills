@@ -38,8 +38,9 @@ evaluation pending until the feedback arrives.
 
 ## Performance or other variable measurements
 
-Name the metric and unit, workload, baseline or alternatives, comparison rule,
-and environment factors that could change the result. Ensure alternatives
+Name the metric and unit, workload, decision criterion, and environment factors
+that could change the result. For a comparative claim, identify the baseline or
+alternatives. Ensure alternatives
 perform equivalent work and verify their outputs; faster incomplete work is
 not a successful comparison.
 

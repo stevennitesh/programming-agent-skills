@@ -63,8 +63,8 @@ relationships. Omit empty sections and create files lazily.
 
 ## Record rationale when it earns an ADR
 
-An ADR earns its place when a settled choice involves meaningful reversal cost,
-is surprising without context, and reflects a real tradeoff. Ordinary terminology,
+Record an ADR when the rationale behind a settled decision would materially help
+future work, such as a consequential tradeoff or a choice costly to reverse. Ordinary terminology,
 obvious choices, unresolved proposals, and reversible implementation details do
 not automatically need one. Follow existing approval rules and the user's actual
 authority; permission to edit context is not automatically permission for an

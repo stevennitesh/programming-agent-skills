@@ -26,6 +26,9 @@ and integration authors and from each other. Use host-supported tools and models
 do not prescribe provider names. Give necessary factual context explicitly and
 record the actual independence achieved. Do not claim memory-free or isolated
 execution merely because the conversation was not inherited.
+Include each reviewer's scope, read-only boundaries, finding standards, and
+expected return in its assignment or an explicitly loaded reference. Do not
+assume it inherits your skill context.
 
 Both inspect the whole selected change, with different primary emphasis:
 
@@ -65,6 +68,8 @@ independence actually established. If the coordinator authored the implementatio
 disclose that distinction rather than claiming the final synthesis is independent.
 The two independent reviewer contributions remain separately attributable.
 
-For a repaired successor, use fresh reviews of the repair and affected acceptance,
-carrying prior finding IDs. Broaden when the repair changes scope materially.
+For a repaired successor, reuse the same independent reviewers when their
+independence remains intact. Give them the prior findings and changed candidate;
+inspect the repairs and affected behavior. Use fresh contexts when needed to
+restore independence. Broaden when the repair changes scope materially.
 Preserve earlier evidence only where it remains applicable to the new candidate.

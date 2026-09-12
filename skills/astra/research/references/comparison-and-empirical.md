@@ -19,8 +19,8 @@ priority with whichever criterion is easiest to measure.
 
 ## Judge observed evidence
 
-Specify the population, intervention/exposure, comparison, outcome, setting, and
-time horizon the claim requires. Examine sampling, measurement, missing data,
+Identify the population, outcome, setting, and any intervention or exposure,
+comparison, or time horizon material to the claim. Examine sampling, measurement, missing data,
 confounding, and analysis choices that could explain the result. Association
 alone is insufficient for causation. Distinguish the measured outcome from a
 proxy, and applicability to the user's conditions from success in a study setting.

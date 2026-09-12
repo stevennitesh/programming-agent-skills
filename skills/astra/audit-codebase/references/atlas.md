@@ -94,7 +94,11 @@ Exit 2 reports a rejected or failed operation. Inspect state after an uncertain
 publication; never bypass the helper or remove a writer lock without establishing
 that its writer is no longer active.
 
-Legacy custom reports use a different schema and remain unchanged. This helper
-does not silently migrate them. Start an Astra atlas and revalidate selected
-legacy evidence if migrating is requested. Retain an atlas outside scratch only
-through an explicitly chosen archival workflow; this skill does not commit it.
+Retain an atlas outside scratch only through an explicitly chosen archival
+workflow; this skill does not commit it.
+
+## If asked to continue or migrate a legacy report
+
+Legacy custom reports use a different schema; this helper cannot continue them
+in place. Preserve the original report. For authorized migration, start an Astra
+atlas and revalidate selected legacy evidence before recording current judgments.

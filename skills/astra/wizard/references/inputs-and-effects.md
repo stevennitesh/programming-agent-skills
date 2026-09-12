@@ -47,8 +47,10 @@ If safe persistence is unavailable, stop that stage rather than improvise storag
 Bind each mutation to the explicit account, project/repository, environment,
 resource, and scope it actually affects. Do not rely silently on a CLI's current
 directory or default account. Recheck identity/target if either changes after the
-operator confirms. A confirmation covers the displayed operation, not later
-different targets. Do not collect values for environments outside the request.
+operator confirms. A confirmation covers only the displayed operation or bounded
+group of effects, not later different targets or expanded scope. Separate
+destructive effects that require their own decision. Do not collect values for
+environments outside the request.
 
 Check command exit status and read back an observable postcondition. For secrets
 that cannot be retrieved, verify their exact scope/name and available fresh

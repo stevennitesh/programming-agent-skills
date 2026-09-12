@@ -36,3 +36,6 @@ review-repair rounds across the integrated candidate. Replacement, repartitionin
 or a new lane does not reset either allowance. For concurrent implementation,
 [Parallel recovery](../../parallel-implement/references/recovery.md) owns the
 mechanics.
+Its agreed worker transport determines how an effort increase can be applied.
+The same-app-task instructions above apply only where that mechanism is available;
+otherwise request a revised recovery route without resetting the allowance.

@@ -8,8 +8,8 @@ description: Build a runnable experiment to resolve a design, interaction, or pe
 Produce evidence that can change a design decision. Codebase-design owns the
 broader architecture choice; this skill owns the experiment. A direct prototype
 request ends with findings and any requested demo. When embedded in authorized
-implementation, return the evidence so that work can continue without another
-approval gate. A successful probe does not establish production readiness.
+implementation, use the findings to continue that work, following its ownership
+and approval boundaries. A successful probe does not establish production readiness.
 
 ## 1. Frame an answerable question
 
@@ -18,7 +18,7 @@ support or reject the proposed direction. Reuse a question supplied by the calle
 do not reopen settled requirements. If source or an existing result already
 settles it, return that evidence without building a ceremonial prototype.
 
-Choose representative conditions and the comparison rule before the decisive
+Choose representative conditions and the decision criterion before the decisive
 run. Include a case that could expose the approach's limitation, not just its
 best demonstration. For subjective choices, distinguish your recommendation
 from the intended user's judgment. An experiment cannot choose an unresolved
@@ -31,7 +31,8 @@ silently changing the success rule to fit a result.
 
 ## 2. Choose the necessary fidelity
 
-Build the smallest artifact that can distinguish the relevant outcomes. Keep
+Reuse or extend a suitable test, harness, or demo before creating another artifact.
+Use the smallest probe that can answer the question or distinguish the options. Keep
 the mechanism under investigation real: an in-memory simulation cannot establish
 database isolation, and a static screen cannot establish an interaction. Simplify
 incidental infrastructure, state, and polish. Name substitutions that limit the
@@ -64,9 +65,9 @@ a successful start is insufficient. Add assertions or harness checks when they
 prevent misleading evidence, without turning disposable code into a production
 test project.
 
-Stop when the evidence distinguishes the options, exposes a blocking limitation,
-or further runs would not resolve the remaining uncertainty. Improve a failed
-harness when practical; distinguish a broken instrument from a failed design.
+Stop when the evidence answers the question or distinguishes the options, exposes
+a blocking limitation, or further runs would not resolve the remaining uncertainty.
+Improve a failed harness when practical; distinguish a broken instrument from a failed design.
 Do not expand the experiment into implementation to obtain a positive verdict.
 
 ## 4. Return evidence and settle the artifacts

@@ -110,6 +110,7 @@ Research evaluates existing evidence. If a decisive question needs a new experim
 return the missing observation and use prototype when that work is authorized.
 Shape-work owns unsettled product meaning; codebase-design owns the broader
 architecture choice. These are boundaries, not mandatory routing steps. In a
-larger authorized task, return findings so that work can continue; a standalone
-research request ends with its answer and requested artifacts, without downstream
+larger authorized task, use the findings to continue that work within its ownership
+and approval boundaries; a standalone research request ends with its answer and
+requested artifacts, without downstream
 implementation, publication, or tracker changes.

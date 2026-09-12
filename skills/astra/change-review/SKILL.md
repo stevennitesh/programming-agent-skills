@@ -108,5 +108,7 @@ is absent. For an explicit gate decision, use Finding standards; distinguish
 required corrections, nonblocking findings, and any residual-risk acceptance
 still needed from its owner.
 
-Return control to the caller; publication, repair, or delivery follows existing
-authorization rather than being started by the review itself.
+For review-only work, return the findings. For authorized review-and-fix work,
+continue into repairs after completing the review, following the active workflow's
+ownership and custody rules. Publication and delivery require existing authorization;
+a review conclusion does not grant it.
