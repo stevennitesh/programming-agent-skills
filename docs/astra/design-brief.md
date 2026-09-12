@@ -68,7 +68,7 @@ Skills remain usable individually; cost-aware coding is not an umbrella requirem
 ## Why cost-aware coding has stronger gates
 
 Cost-aware coding is an explicit experimental workflow. Its default feature route
-uses an Astra Medium lead and one persistent Sol Medium implementation task. It
+uses an Astra Medium lead and one reusable native Sol Medium subagent per coherent plan. It
 first checks that the remaining implementation or verification can repay the
 handoff; trivial changes and serial judgment-heavy investigations stay direct
 unless the user requires the pair. Otherwise, it runs the standard pair from a
@@ -79,10 +79,10 @@ creating competing plans.
 
 The pair uses the same checkout by default with exclusive alternating custody.
 While Sol implements, Astra stays out of the repository and handles only user
-communication or consequential decisions. Task messages resume the counterpart:
-the lead ends its turn after dispatch, and Sol sends consequential questions or
-a stable candidate with custody released before Astra reviews. Interrupted runs
-recover from current task state and custody without resetting repair allowances.
+communication or consequential decisions. The lead waits on native agent events;
+Sol sends consequential questions and returns a stable candidate with custody
+released before Astra reviews. The same agent handles corrections. Interrupted
+runs recover from agent state and custody without resetting repair allowances.
 Worktrees remain conditional on a concrete
 isolation or concurrency need. Root model changes are presented to the user, not
 accomplished by instructions declaring a different model. The workflow gives the
@@ -95,9 +95,9 @@ Repair accounting distinguishes work-unit implementation recovery from shared
 integrated-candidate review rounds. The skill and its references own exact limits,
 role permissions, custody, and acceptance semantics; do not duplicate them here.
 When a focused Sol Medium repair fails for implementation reasons, the default
-stronger attempt raises that same task to Sol High; XHigh requires demonstrated
-need. The workflow recommends the setting and the user applies it, preserving the
-task conversation without claiming prompt-cache preservation.
+stronger attempt uses an accepted Sol High replacement; XHigh requires demonstrated
+need. Native follow-ups cannot change effort, so the replacement receives a compact
+handoff after custody release, retaining the remaining allowance.
 
 When combined, parallel-implement owns concurrency mechanics while cost-aware
 coding retains routing authority, accepted responsibility boundaries, and repair

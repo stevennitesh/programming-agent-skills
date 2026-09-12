@@ -67,9 +67,9 @@ use fresh context for unrelated work or misleading accumulated context. Each
 assignment still requires verified checkout custody and a bounded packet.
 When cost-aware-coding governs the run, establish the accepted worker transport,
 model settings, and supported recovery path before dispatch. Its shared-checkout
-single-task arrangement does not apply to concurrent lanes. Do not assume that
-an app task's user-applied effort change is available for a subagent; if unavailable,
-recovery needs an accepted route revision rather than an invented model switch.
+single-worker arrangement does not apply to concurrent lanes. Native follow-ups
+do not change worker effort; use its accepted replacement procedure when needed,
+retaining lane custody and remaining allowances.
 Send the goal, acceptance,
 exact checkout and base, allowed writes, exclusive resources, applicable guidance,
 predecessor outcomes, proof obligations, prohibited effects, and stopping condition.

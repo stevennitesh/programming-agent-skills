@@ -1,59 +1,32 @@
 # Continuation
 
-For concurrent execution, resume from
-[parallel-implement's run record](../../parallel-implement/SKILL.md#2-isolate-and-dispatch)
-and follow [Parallel recovery](../../parallel-implement/references/recovery.md).
-Preserve the accepted worker transport, model allocations, ownership restrictions,
-budget constraints, integrated review state, and consumed repair allowances with
-that record. Reconcile actual actors and lane custody before dispatch or mutation;
-the single-implementer instructions below apply only to serial execution.
+Preserve in existing task context: agent ID, requested/observed settings,
+assignment and stage, checkout/base and candidate, custody/writer state,
+unresolved questions or proof, last processed return, and consumed allowances.
+No separate registry is required. Concurrent work follows
+[Parallel recovery](../../parallel-implement/references/recovery.md).
 
-Preserve only:
+On interruption or uncertain state, check native agent status and relevant
+messages once. Reuse known context and evidence; do not reload the repository
+while Sol owns it.
 
-- lead and implementer task IDs/hosts, accepted model and effort;
-- authorized communication scope and any unresolved approval rejection;
-- checkout, baseline, candidate, custody owner, and writer state;
-- current assignment ID and stage, accepted outcome, last processed return, unresolved findings,
-  and consumed repair allowances.
-
-Use existing task context; do not reload skills, plans, or repository files merely
-because a new turn began. Normal matching callbacks follow the main workflow.
-
-## When the user resumes you after interruption
-
-Check the known Sol task's current status and latest relevant message/return once.
-App closure or idle status alone does not establish stopped processes or release.
-
-| Observed state | Your next action |
+| Observed state | Action |
 | --- | --- |
-| Sol is running with custody | Leave it working and end your turn; await its message. |
-| Sol is interrupted or idle with custody, without a candidate return | Resume the same assignment by message, preserving its allowance. |
-| Sol has an unanswered question | Answer it; obtain release first if repository inspection is necessary. |
-| Sol returned a candidate and released custody | Process an unhandled return through acceptance classification and review or recovery. |
-| You already hold custody for review | Reconcile the candidate and continue the unfinished review. |
-| Custody or assignment is uncertain | Reconcile by message before repository access or reassignment. |
+| Running with custody | Wait; answer consequential questions from supplied context. |
+| Idle with an unanswered question | Answer using followup_task; explicitly grant custody if previously released. |
+| Idle/interrupted with custody and no candidate return | Resume the same assignment with followup_task after resolving the interruption. |
+| Candidate returned with release | Classify evidence and review or repair; process the return once. |
+| You hold custody for unfinished review | Reconcile candidate identity and continue review. |
+| Agent unavailable, errored, or custody uncertain | Establish writer/process state and reconcile custody before repository access or replacement. |
 
-Sol's initial assignment carries its receiver-side recovery rules. A user can
-resume Sol directly while it retains custody without involving you. If it has
-released custody, it requests a new grant; do not grant while your repository
-activity or other writers remain active.
+Follow runtime cleanup instructions for finished/idle/errored children, retaining
+their IDs for supported follow-ups. An interrupt request or idle status does not
+prove subprocesses stopped. If that cannot be established, report the blocker;
+do not create a competing writer. When an agent cannot be resumed, transfer a
+compact handoff to a replacement only after custody is safe; preserve allowances.
 
-## Delayed or duplicate messages
-
-Use sender task, assignment ID, and recorded stage to identify the expected
-return. A question is not a candidate return. Record receipt before review and
-completion of processing afterward so interruption resumes unfinished review
-rather than skipping it. A repeated return must not start a second review,
-repair dispatch, or allowance charge. No acknowledgement message is required.
-
-A stale assignment cannot override newer custody. Reconcile a mismatched return
-with the known task's latest state before acting; preserve new evidence without
-treating it as permission. For uncertain delivery, inspect the latest task return
-instead of blindly redispatching implementation. No background recovery is implied
-after a turn ends; unavailable callbacks require completion waits or a user resume.
-If message approval was rejected, inspect the saved question or handoff and the
-exact rejection. Explain the destination and information involved, then request
-informed approval in the sending task when the runtime requires direct user input;
-do not relay an approval claim as a substitute or retry around the rejection.
-A failed question delivery is not an implementation failure and does not change
-custody. Until the channel is restored, treat automatic resumption as unavailable.
+A stale assignment cannot override newer custody. Record a return as received
+before review and processed afterward, so interruption resumes unfinished review.
+Repeated messages must not duplicate review, repair, or attempt charges.
+Ending your turn does not schedule a wakeup; resume from these states when the
+user continues you. Native communication does not override action permissions.

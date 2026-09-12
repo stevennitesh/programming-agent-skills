@@ -17,10 +17,10 @@
 </p>
 
 <p align="center">
-  <a href="#find-the-right-skill">Find a skill</a> ·
-  <a href="#in-practice-clearer-project-guidance">Real example</a> ·
-  <a href="#cost-aware-coding">Cost-aware coding</a> ·
-  <a href="#getting-started">Get started</a> ·
+  <a href="#find-the-right-skill">Find a skill</a> Â·
+  <a href="#in-practice-clearer-project-guidance">Real example</a> Â·
+  <a href="#cost-aware-coding">Cost-aware coding</a> Â·
+  <a href="#getting-started">Get started</a> Â·
   <a href="docs/astra/design-brief.md">Read the design brief</a>
 </p>
 
@@ -41,7 +41,7 @@ assumptions, and removing instructions that add work without improving decisions
 
 The pack is tuned primarily for **GPT 6 Astra**, with **GPT 5.6 Sol compatibility**.
 Its optional cost-aware workflow uses Astra Medium to lead and review while one
-persistent Sol Medium task implements and verifies the accepted plan.
+reusable Sol Medium subagent implements and verifies the accepted plan.
 
 Smaller models may benefit from the [custom skill pack](skills/custom/), which
 contains more detailed instructions. The managed installer deploys only the Astra
@@ -77,8 +77,8 @@ These are alternative starting points, not a required pipeline.
 
 | Your task | Skill | Use |
 | --- | --- | --- |
-| Implement a clear, bounded change | **No skill needed**—ask Codex to implement and verify using repository guidance | Direct |
-| Clarify a feature’s behavior and acceptance criteria | [$shape-work](skills/astra/shape-work/SKILL.md) | Request explicitly |
+| Implement a clear, bounded change | **No skill needed**â€”ask Codex to implement and verify using repository guidance | Direct |
+| Clarify a featureâ€™s behavior and acceptance criteria | [$shape-work](skills/astra/shape-work/SKILL.md) | Request explicitly |
 | Decide how a feature fits the existing system | [$codebase-design](skills/astra/codebase-design/SKILL.md) | Automatic when relevant |
 | Test an uncertain approach with a runnable experiment | [$prototype](skills/astra/prototype/SKILL.md) | Automatic when relevant |
 | Research a question or compare options using sources | [$research](skills/astra/research/SKILL.md) | Automatic when relevant |
@@ -88,7 +88,7 @@ These are alternative starting points, not a required pipeline.
 | Review a code change for correctness and maintainability | [$change-review](skills/astra/change-review/SKILL.md) | Automatic when relevant |
 | Turn an accepted plan or spec into tracked work units | [$to-tickets](skills/astra/to-tickets/SKILL.md) | Request explicitly |
 | Implement concurrently with separate ownership and clear dependencies | [$parallel-implement](skills/astra/parallel-implement/SKILL.md) | Request explicitly |
-| Have Astra lead and review while a persistent Sol task implements | [$cost-aware-coding](skills/astra/cost-aware-coding/SKILL.md) | Request explicitly |
+| Have Astra lead and review while a reusable Sol subagent implements | [$cost-aware-coding](skills/astra/cost-aware-coding/SKILL.md) | Request explicitly |
 | Resolve an active Git merge or rebase conflict | [$resolving-merge-conflicts](skills/astra/resolving-merge-conflicts/SKILL.md) | Automatic when relevant |
 | Set up or reconcile repository agent guidance | [$repo-bootstrap](skills/astra/repo-bootstrap/SKILL.md) | Request explicitly |
 | Write agent instructions, guides, or continuation handoffs | [$writing-for-agents](skills/astra/writing-for-agents/SKILL.md) | Automatic when relevant |
@@ -119,8 +119,8 @@ against an agent without the skill.
 ## Cost-aware coding
 
 The optional [$cost-aware-coding](skills/astra/cost-aware-coding/SKILL.md)
-workflow pairs Astra's planning and review with a persistent Sol implementation
-task when the implementation and verification are substantial enough to repay
+workflow pairs Astra's planning and review with a reusable native Sol implementation
+subagent when the implementation and verification are substantial enough to repay
 the handoff. They use separate model contexts and share the checkout one at a time.
 
 This workflow is inspired by Cognition's
@@ -132,17 +132,17 @@ establish savings for the Astra-Sol pairing.
 1. **Check that delegation has leverage.** Use direct execution for a trivial
    change or serial investigation whose accumulated context is the work.
 2. **Invoke the standard pair.** Astra Medium owns intent, consequential
-   decisions, review, and acceptance. One persistent Sol Medium task owns
+   decisions, review, and acceptance. One reusable Sol Medium subagent owns
    implementation, tests, debugging, and corrections.
 3. **Alternate repository custody.** Astra sends a self-contained assignment and
-   ends its turn while Sol works. Sol messages questions or returns the candidate,
-   evidence, and released custody to resume Astra. Astra stays out of the repository
-   while Sol owns it; interrupted work resumes from task state and custody.
+   waits on native agent events while Sol works. Sol raises consequential questions
+   and returns the candidate, evidence, and released custody for Astra to review.
+   Astra stays out of the repository while Sol owns it.
 
 ```text
 $cost-aware-coding implement the accepted import-retry plan. If the handoff has
 enough implementation or verification work to save cost, create or reuse the Sol
-Medium task and use the standard route.
+Medium subagent and use the standard route.
 ```
 
 Use the same checkout by default. Worktrees and an additional independent reviewer
@@ -172,7 +172,7 @@ flowchart TB
 <summary><strong>Recovery and escalation</strong></summary>
 
 Corrections return to the current accepted implementer, normally the same Sol
-task. Exact limits live in
+subagent. Exact limits live in
 [repair allowances](skills/astra/cost-aware-coding/references/repairs.md).
 
 ```mermaid
@@ -195,14 +195,14 @@ flowchart TB
 
 Use `shape-work` for substantial unresolved feature decisions before accepting
 the route. The workflow suggests a lead-model or effort change when needed, and
-the user applies it before execution. Reuse the Sol task for the same plan and its
-repairs; start a new task for an independent plan.
+the user applies it before execution. Reuse the Sol subagent for the same plan and its
+repairs; start a new subagent for an independent plan.
 Concurrent writing uses `parallel-implement` when requested.
 
 After the focused Sol repair fails for implementation reasons, the workflow
-recommends that the user raise the same task from Medium to High, or to XHigh when
-the demonstrated difficulty justifies it. This keeps the implementation context;
-it does not guarantee that cached computation is preserved.
+proposes a stronger Sol replacement at High, or XHigh when demonstrated difficulty
+justifies it. After acceptance and custody release, the replacement receives a
+compact handoff and retains the remaining repair allowance.
 
 An allowance is consumed when the implementer returns a candidate as ready or
 blocked; its internal edit, debug, and test loop stays within that attempt. Once

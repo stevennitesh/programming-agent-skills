@@ -15,11 +15,10 @@ A changed lead effort does not change implementation ownership.
 Change the implementation route only for a demonstrated capability gap or failed
 recovery under [Repair allowances](repairs.md). Missing requirements, invalid
 acceptance criteria, and broken environments need resolution at their source.
-For an implementation-reasoning failure, prefer a user-applied change on the
-existing Sol task: Medium to High by default, or XHigh when deeply coupled logic
-or difficult debugging justifies its cost. This preserves the task conversation,
-not a guaranteed prompt cache. A different implementer requires an accepted
-revised route and does not authorize you to take over implementation silently.
+For an implementation-reasoning failure, propose a Sol High replacement by default,
+or XHigh when deeply coupled logic or difficult debugging justifies its cost.
+Native follow-ups do not change effort; follow Repair allowances for accepted
+replacement, custody, and context transfer. Do not silently take over implementation.
 
 These assignments are benchmark-informed judgments and an experimental starting
 policy, not proven specializations or savings guarantees. Read

@@ -2,13 +2,15 @@
 
 Read when a returned candidate fails acceptance or review requires corrections.
 Resolve missing requirements, invalid acceptance criteria, and environment faults
-at their source instead of spending a model escalation.
+at their source instead of spending a model escalation. Resolving an external
+fault does not renew exhausted allowances: another repair requires an accepted
+revised route. Rechecking an unchanged candidate need not create a repair attempt.
 
 | State | Next action |
 | --- | --- |
-| Before review, with the stronger attempt unused, the implementer returns blocked with concrete evidence that its current reasoning effort is insufficient | Skip the focused repair. Recommend a user-applied effort increase on the same Sol task: High by default, or XHigh when justified; then allow one stronger attempt. |
+| Before review, with the stronger attempt unused, the implementer returns blocked with concrete evidence that its current reasoning effort is insufficient | Skip the focused repair. Propose a stronger Sol replacement: High by default, or XHigh when justified; after acceptance, allow one stronger attempt. |
 | First implementation return fails acceptance | The same implementer gets one focused repair. |
-| Focused repair return fails because implementation reasoning is insufficient | Recommend a user-applied effort increase on the same Sol task: High by default, or XHigh when justified; then allow one stronger attempt. |
+| Focused repair return fails because implementation reasoning is insufficient | Propose a stronger Sol replacement: High by default, or XHigh when justified; after acceptance, allow one stronger attempt. |
 | Failure comes from requirements, design, or environment | Resolve it at its source, then continue within the remaining allowance for the current stage; suggest raising your effort only if that decision needs more reasoning. |
 | Stronger return fails or recovery is unavailable | Preserve the candidate and request a revised route. |
 | Review returns required corrections | The current implementer repairs one batch and returns it to the same Astra reviewer; two repair rounds total. |
@@ -25,19 +27,19 @@ consume another attempt; preserve the original accounting.
 
 Once review begins, returned corrections use only the shared review-repair
 allowance. Failed correction checks do not open implementation recovery. If a
-review repair needs higher Sol effort, the user-applied change uses the next
+review repair needs higher Sol effort, the accepted replacement uses the next
 remaining review-repair round rather than creating another allowance.
 
-The user changes an existing task's effort; that action accepts the escalation.
-Reuse the same Sol task and its context without claiming that cached computation
-is preserved. Changing models or creating another implementer requires an accepted
-revised route. For later routine corrections, suggest returning Sol to Medium.
+Native followup_task cannot change an existing agent's model or effort. Obtain
+acceptance for the stronger setting/replacement unless already authorized. After
+the old agent releases custody and its writers stop, spawn the replacement with
+explicit settings and a compact candidate/failure handoff. Do not imply its
+context or prompt cache transfers automatically. Retire the old writer and reuse
+the replacement for subsequent corrections. Your own model/effort changes remain
+user actions. If the runtime cannot provide the accepted route, report the limit.
 
 Track implementation recovery per coherent work unit and share the two
 review-repair rounds across the integrated candidate. Replacement, repartitioning,
 or a new lane does not reset either allowance. For concurrent implementation,
-[Parallel recovery](../../parallel-implement/references/recovery.md) owns the
-mechanics.
-Its agreed worker transport determines how an effort increase can be applied.
-The same-app-task instructions above apply only where that mechanism is available;
-otherwise request a revised recovery route without resetting the allowance.
+[Parallel recovery](../../parallel-implement/references/recovery.md) owns mechanics;
+verify its worker transport supports the accepted recovery route.
