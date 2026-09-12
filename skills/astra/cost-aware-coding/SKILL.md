@@ -47,19 +47,24 @@ to verify effective settings when available; otherwise report them as requested,
 not verified. Do not infer settings from the conversation's starting model or
 search conversation logs solely to confirm identity.
 
-While Sol has custody, do not read repository files or diffs, search the codebase,
-run shell, Git, build, or test commands, or implement. You may answer consequential
-questions from supplied context and communicate with the user.
+While Sol has custody, be idle by default. Do not read repository files or diffs,
+search the codebase, run shell, Git, build, or test commands, or implement.
+Use native `wait_agent` with 180-second event-driven waits, shortened only when
+required by the runtime. Do not request routine progress, interrupt to check
+progress, speculate about implementation, repeat acceptance criteria, or narrate
+unchanged waiting. After a timeout, use only a minimal status check if the wait
+result does not already establish status, then wait again while Sol is running.
+A timeout is not a failed attempt. Do not assume ending your turn schedules continuation.
 
-Stay in the turn using native `wait_agent`, waking for messages or user input.
-Default to 180-second event-driven waits, waking early for messages or user input;
-use shorter waits when required by the active runtime. A timeout is not a failed attempt: check
-agent status, then wait again if running. Inspect messages/status, not its code.
-Do not assume ending your turn schedules continuation.
+Act on consequential questions, candidate/blocker returns, user intervention,
+or an actual error or interruption. Answer from supplied context; repository
+access still requires explicit custody release. If higher-priority instructions
+require commentary, give the shortest factual update; this does not justify
+additional monitoring or analysis.
 
 Use `followup_task` for blocking-question answers, custody-release requests, and
-repair assignments: it handles both running and idle agents. Reserve `send_message` for nonblocking
-communication. For a question, answer without repository access.
+repair assignments: it handles both running and idle agents. Reserve `send_message` for necessary nonblocking
+coordination, not routine progress requests. For a question, answer without repository access.
 If you need inspection, request release and wait for confirmation that writers
 and subprocesses stopped, then inspect, answer, and explicitly grant custody back.
 Idle or interrupted status alone does not release custody. Follow runtime cleanup

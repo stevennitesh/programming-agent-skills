@@ -12,7 +12,7 @@ while Sol owns it.
 
 | Observed state | Action |
 | --- | --- |
-| Running with custody | Wait; answer consequential questions from supplied context. |
+| Running with custody | Resume [waiting](../SKILL.md#2-assign-sol-and-wait); do not request routine progress. |
 | Idle with an unanswered question | Answer using followup_task; explicitly grant custody if previously released. |
 | Idle/interrupted with custody and no candidate return | Resume the same assignment with followup_task after resolving the interruption. |
 | Candidate returned with release | Classify evidence and review or repair; process the return once. |
