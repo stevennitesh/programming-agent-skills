@@ -19,7 +19,9 @@ returns its candidate as ready or blocked. Editing, debugging, and test runs bef
 that return belong to the same attempt. A review-repair round begins with one batch
 of required findings and includes the implementer's checks and the same reviewer's
 follow-up when a candidate is ready. The initial review and optional suggestions
-do not consume a round.
+do not consume a round. A clarification question, interruption, or resume is not
+a candidate return and consumes no attempt. Retransmitting a return does not
+consume another attempt; preserve the original accounting.
 
 Once review begins, returned corrections use only the shared review-repair
 allowance. Failed correction checks do not open implementation recovery. If a

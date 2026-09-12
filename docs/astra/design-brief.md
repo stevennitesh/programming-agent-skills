@@ -79,8 +79,11 @@ creating competing plans.
 
 The pair uses the same checkout by default with exclusive alternating custody.
 While Sol implements, Astra stays out of the repository and handles only user
-communication or consequential decisions. Sol returns a stable candidate and
-releases custody before Astra reviews. Worktrees remain conditional on a concrete
+communication or consequential decisions. Task messages resume the counterpart:
+the lead ends its turn after dispatch, and Sol sends consequential questions or
+a stable candidate with custody released before Astra reviews. Interrupted runs
+recover from current task state and custody without resetting repair allowances.
+Worktrees remain conditional on a concrete
 isolation or concurrency need. Root model changes are presented to the user, not
 accomplished by instructions declaring a different model. The workflow gives the
 reason and exact setting; the user decides and applies the change.

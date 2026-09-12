@@ -134,9 +134,10 @@ establish savings for the Astra-Sol pairing.
 2. **Invoke the standard pair.** Astra Medium owns intent, consequential
    decisions, review, and acceptance. One persistent Sol Medium task owns
    implementation, tests, debugging, and corrections.
-3. **Alternate repository custody.** While Sol works, Astra communicates or waits
-   without reading or changing the repository. Astra sends a self-contained
-   assignment; Sol returns the candidate, evidence, and custody for review.
+3. **Alternate repository custody.** Astra sends a self-contained assignment and
+   ends its turn while Sol works. Sol messages questions or returns the candidate,
+   evidence, and released custody to resume Astra. Astra stays out of the repository
+   while Sol owns it; interrupted work resumes from task state and custody.
 
 ```text
 $cost-aware-coding implement the accepted import-retry plan. If the handoff has
