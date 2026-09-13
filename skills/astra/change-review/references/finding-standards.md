@@ -10,6 +10,11 @@ Apply before admitting a review observation. A finding needs:
 - A consequential failure or avoidable maintenance cost, not a style preference.
 - A correction or proof request proportionate to that consequence.
 
+An agent-written plan alone does not establish that an added capability or gate is
+binding. Trace a disputed obligation to the user's accepted outcome, repository
+policy, or a necessary supported behavior. Distinguish an unnecessary mechanism
+from an accepted guarantee whose revision requires its owner's decision.
+
 A smell is a hypothesis. Check whether domain distinctions, independent lifetimes,
 external contracts, or migration needs explain it. Reject disproved claims,
 speculative hardening, and unrelated cleanup. An unfamiliar design is not faulty

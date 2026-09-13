@@ -49,8 +49,12 @@ maintainability, and proof. Working happy-path behavior does not excuse a concre
 design cost; attractive structure does not excuse an incomplete outcome.
 
 If the implementation follows a plan whose technical assumptions fail the accepted
-outcome, identify the plan-level problem and affected decision. Do not demand
-faithful implementation of a flawed mechanism or silently redefine the user's goal.
+outcome or whose extra guarantees impose unjustified cost for supported workflows,
+identify the plan-level problem and affected decision. Recommend removing or
+revising unnecessary obligations rather than demanding more machinery to meet
+them. Preserve binding requirements until their owner authorizes a change; do not
+demand faithful implementation of a flawed mechanism or silently redefine the
+user's goal.
 
 Trace meaningful changes through real callers, owners, and effects. When a result
 crosses stages or tickets, check that its actual produced or persisted form reaches

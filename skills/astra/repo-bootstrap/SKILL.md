@@ -18,6 +18,12 @@ instructions, the current engineering guidance, and the scripts or configuration
 that own build and verification commands. Follow existing pointers to domain
 decisions only far enough to identify their owners and relevant constraints.
 
+Establish the operating assumptions that affect engineering choices from those
+sources: intended users, execution and deployment model, persistence, and material
+scale. Preserve their existing owner or capture a compact statement where local
+scope belongs. Ask only when an unresolved assumption changes a consequential
+choice; do not introduce a questionnaire or separate required document.
+
 Distinguish verified commands, commands found in source but not executed, and
 missing prerequisites. An absent preferred document is not evidence that coding
 must stop. Identify the actual missing information before proposing setup.
@@ -42,6 +48,9 @@ Prefer an existing authoritative location; otherwise use
 implementation, debugging, refactoring, or review to the repository's instruction
 file. The resulting contract is repository-owned,
 not a frozen copy of an older pack or a mirror to overwrite mechanically.
+Adapt conditional practices to the supported operating model. Broader template
+coverage is not inherently a better local contract; preserve necessary correctness
+and safety while excluding obligations for unsupported capabilities.
 
 For initial repository setup or work on tracker, label, or domain configuration,
 read [Setup defaults](references/setup-defaults.md). Preserve established choices

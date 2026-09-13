@@ -4,6 +4,13 @@ Use this guidance to make engineering decisions within the requested change.
 Repository-specific requirements and accepted domain decisions supply the local
 meaning. Apply a conditional practice only when its condition is present.
 
+Choose guarantees for supported workflows, actual consumers, and consequential
+failure modes. Add infrastructure and proof to protect those requirements;
+hypothetical future use or inclusion in an agent-written plan does not by itself
+establish a requirement. Preserve explicit user commitments and accepted domain
+decisions. Revise unnecessary implementation choices within scope; surface a
+proposed change to an accepted guarantee to its owner.
+
 ## Understand the behavior
 
 Trace enough of the owning code and affected callers to establish the changed
@@ -42,7 +49,9 @@ definition. Preserve domain distinctions where the boundary representation diffe
 Validate untrusted input where it enters a trusted representation. Rely on an
 invariant only while its guarantees hold; mutation, persisted data, or concurrent
 writes can invalidate it. Put any necessary recheck at the boundary that owns
-that change rather than scattering defensive checks through ordinary code.
+that change. On load, recheck guarantees that persistence or another writer could
+have invalidated. Reuse established guarantees within one owned pipeline while
+they remain valid instead of repeating full validation at every helper.
 
 Keep calculations separate from effects where that makes behavior clearer and
 easier to test. Hide framework and storage details when callers do not need
@@ -69,7 +78,10 @@ existing-data conversion, and rollback limitations.
 
 Update documentation when behavior, operations, or a non-obvious decision
 changes. Prefer an existing type, constraint, or check to repeated prose when
-it can enforce a recurring rule within the task's scope.
+it can enforce a recurring machine-relevant rule within the task's scope. Preserve
+explanatory prose, research evidence, and code identity as context or provenance;
+make them runtime rejection or compatibility rules only when required semantics
+depend on them.
 
 ## Match proof to the claim
 
