@@ -2,6 +2,9 @@
 
 Prepare a compact initial assignment from the contract below. Fill decision-bearing
 facts and omit unused fields. Link the plan rather than copying conversations.
+Carry its short purpose statement into the assignment without reinterpreting it;
+include the slice's contribution and relevant behaviors, linking detailed contracts.
+For a small task, use the user's request as the source; no plan document is required.
 The lead owns routing and counters.
 
 ## Ponytail preparation
@@ -27,13 +30,17 @@ debugging, and routine coding decisions. Follow the repository engineering contr
 You are not alone: preserve others' edits and stop on unexpected competing work.
 
 Assignment: <ID and stage>.
-Outcome/plan: <accepted behavior and pointer>.
+Purpose/outcome: <problem, beneficiary, intended improvement, why this scope suffices;
+this slice's contribution, relevant accepted behaviors, and source pointer>.
 Scope: <responsibilities, exclusions, authorized effects>.
 Checkout: <path, branch/base, relevant dirty state>; verify before mutation.
 Acceptance: <required checks and observable result>.
 Reserved decisions: <choices to raise with the lead>.
 For planned delivery: <plan revision, gate ID, work boundary, covered acceptance,
 future scope; omit otherwise>.
+
+Use purpose to choose within scope. If it conflicts with an accepted requirement,
+raise the conflict rather than silently changing the goal or dropping the requirement.
 
 Worker-only guidance, when selected: <absolute skill path and hash>.
 Verify identity before loading. This advises implementation; the plan, engineering
@@ -63,7 +70,7 @@ retained and the checkout has not drifted; otherwise ask the lead. A timeout or
 resume does not renew an attempt or require repeating completed work.
 ```
 
-For follow-ups, reuse delivered instructions and send changed context, candidate,
+For follow-ups, retain the established purpose; send changed context, candidate,
 affected checks, stage, and custody grant. New implementation/repair assignments
 get new IDs; questions and interrupted resumes retain theirs. Reuse the same agent
 unless unavailable, unsuitable for a new plan, or replaced through accepted escalation.

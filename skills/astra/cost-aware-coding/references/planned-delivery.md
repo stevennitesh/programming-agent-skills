@@ -7,8 +7,9 @@ progression; shaping and review retain their specialist methods.
 
 Reuse the authoritative plan or use [shape-work](../../shape-work/SKILL.md).
 Follow its [delivery-plan guidance](../../shape-work/references/durable-decisions.md#plans-for-coordinated-delivery)
-to distinguish accepted commitments from an adaptable delivery approach. Resolve
-consequential design questions there; leave routine implementation decisions to Sol.
+to preserve purpose and distinguish accepted commitments from an adaptable
+delivery approach. Resolve consequential design questions there; leave routine
+implementation decisions to Sol.
 
 Plan-first stops after planning. Shape-and-execute continues within authorization
 without another planning approval; unresolved user-owned decisions pause dependent
@@ -31,9 +32,10 @@ gate ID, coverage, and expected evidence. Sol may complete adjacent steps within
 that boundary without another handoff.
 
 After a stable candidate returns with custody released, give change-review the
-gate comparison, covered commitments, and future scope. Review affected integration
-and earlier work; absent future work is not a checkpoint defect. A checkpoint pass
-establishes only its stated coverage.
+gate comparison, plan purpose, covered commitments, and future scope; do not assume
+the reviewer inherits shaping context. Review affected integration and earlier work
+against that purpose and the accepted behaviors. Absent future work is not a
+checkpoint defect. A checkpoint pass establishes only its stated coverage.
 
 Send required corrections through [Repair allowances](repairs.md). On a pass,
 record concise evidence and the next action in the existing plan, then grant the
@@ -43,6 +45,8 @@ Adjust delivery order within scope. Changes to accepted meaning follow shape-wor
 [revision rules](../../shape-work/references/durable-decisions.md#revisions-during-delivery):
 quiesce affected writers, resolve authority, reconcile the plan and assignment,
 and invalidate affected proof before resuming.
+Carry an authorized purpose change into affected assignments and review briefs;
+do not let successive handoffs create competing interpretations.
 
 ## Review the whole outcome
 

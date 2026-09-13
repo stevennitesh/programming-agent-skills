@@ -11,7 +11,7 @@ own format; an ordinary draft is not automatically a published tracker graph.
 Resolve the target project, parent if any, existing items, relationships, status,
 and active ownership. Read decision-changing comments. Inspect before creating
 so equivalent existing work can be reused. Similar titles alone do not establish
-equivalence; compare scope, acceptance, dependencies, and current state.
+equivalence; compare purpose, scope, acceptance, dependencies, and current state.
 
 For repair, bound which bodies, edges, and readiness states may change. Preserve
 unrelated content and active claims. Do not rewrite or release work another agent
@@ -20,8 +20,9 @@ Duplicate, ambiguous, or divergent items require reconciliation within authority
 not silently creating a second graph.
 
 When shaping revises an accepted source, identify the accepted revision and changed
-commitments. Coordinate affected active work with its execution owner before
-repairing tickets; keep affected pending work non-ready until acceptance, source
+commitments, including purpose or scope rationale that changes delivery decisions.
+Coordinate affected active work with its execution owner before repairing tickets;
+keep affected pending work non-ready until purpose, acceptance, source
 pointers, gates and assignments agree. Preserve unaffected tickets and claims.
 
 Prepare the exact titles, bodies, parent/child and blocking relationships, and

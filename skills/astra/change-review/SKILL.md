@@ -30,8 +30,8 @@ or hold exclusive custody while reviewing. A diff alone is insufficient when
 callers, configuration, or stored representations determine behavior. Bind the
 context and supplied proof to the version actually examined.
 
-Read the request and governing requirements, repository guidance, and relevant
-accepted decisions. Use a spec when one governs the work; do not require a tracker
+Read the request's purpose and governing requirements, repository guidance, and
+relevant accepted decisions. Use a spec when one governs the work; do not require a tracker
 or fabricate intent from tests or implementation. Missing intent may limit
 conformance review while independently evidenced correctness checks can continue.
 State that limit rather than implying all accepted behavior was verified.
@@ -44,6 +44,10 @@ an independent-review requirement; report an unmet requirement to the caller.
 
 Check the outcome and scope first: does the ordinary caller receive the requested
 meaning, including relevant rejection, partial-success, and completion behavior?
+Does that behavior address the stated problem for its beneficiary within the
+intended scope? Use attributable purpose and scope rationale to assess unnecessary
+machinery; do not substitute inferred intent for explicit requirements. Surface a
+conflict at its decision owner rather than silently waiving acceptance.
 Then independently assess correctness, ownership, representation, simplicity,
 maintainability, and proof. Working happy-path behavior does not excuse a concrete
 design cost; attractive structure does not excuse an incomplete outcome.

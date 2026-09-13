@@ -45,6 +45,13 @@ retires the external source. Report unresolved ownership or unapplied consequenc
 
 ## Preserve the contract
 
+Keep a short purpose statement at the existing spec or plan owner: the problem,
+who benefits, the desired improvement, and why the scoped capability is sufficient.
+Preserve consequential exclusions and their reasons. Distinguish user intent from
+inferred rationale; do not invent a purpose to justify a proposed mechanism.
+Pair it with concrete behaviors that distinguish success from consequential failure
+and evidence for those behaviors, rather than an exhaustive behavior catalog.
+
 Use the project's vocabulary and identify the source of material commitments.
 Inspect the source sections and linked decisions needed to preserve material
 commitments, including decision-changing comments. Read the full source when their
@@ -57,16 +64,18 @@ fragment may express a settled rule better than prose; label its evidence limits
 Use stable code pointers where helpful, without freezing a speculative file list,
 implementation sequence, or test ownership into the specification.
 
-Re-read the result as a fresh implementer. Can they recover the same outcome and
-recognize success without guessing a consequential decision? Keep proposed changes
+Re-read the result as a fresh implementer. Can they recover why the work matters,
+the intended outcome, and sufficient evidence without guessing a consequential
+decision? Purpose guides implementation choices, not exceptions to accepted
+requirements; surface conflicts with their owner. Keep proposed changes
 distinct from accepted requirements. Updating a spec should reconcile affected
 acceptance and references rather than append contradictory current truth.
 
 ## Plans for coordinated delivery
 
 When coordinated implementation is requested, keep one authoritative plan with
-two distinguishable parts. The accepted contract holds outcome, scope, operating
-assumptions, consequential design decisions, and acceptance. The delivery approach
+two distinguishable parts. The accepted contract holds purpose, outcome, scope,
+operating assumptions, consequential design decisions, and acceptance. The delivery approach
 holds coherent slices, dependencies, justified checkpoint coverage, and concise
 progress. Link existing owners instead of copying their contracts.
 

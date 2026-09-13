@@ -3,6 +3,8 @@
 Preserve in existing task context: agent ID, requested/observed settings,
 assignment and stage, checkout/base and candidate, custody/writer state,
 unresolved questions or proof, last processed return, and consumed allowances.
+Carry the purpose statement, its source, and any unsettled interpretation forward;
+checkpoint status alone does not preserve intent.
 For planned delivery, also preserve the plan revision, whole-plan starting
 comparison, completed checkpoint coverage/evidence, next boundary, and any selected
 worker-guidance identity. Preserve correction counts per checkpoint and final-review

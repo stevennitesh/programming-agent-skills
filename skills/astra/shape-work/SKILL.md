@@ -109,8 +109,9 @@ Follow the repository's configured destination; a spec need not be a tracker
 parent. External publication requires authority for that effect; a local draft
 can still make progress.
 
-A useful result contains the problem and outcome, scope and consequential
-exclusions, settled behavior and constraints, acceptance, and material uncertainty.
+A useful result contains the problem, beneficiary, intended improvement, scope,
+consequential exclusions and their reasons, settled behavior and constraints,
+acceptance, and material uncertainty.
 Add source pointers and rationale that help a fresh agent preserve the decisions.
 Omit empty sections and exhaustive user-story catalogs. Reuse the existing owner
 of a decision rather than creating competing current documents.

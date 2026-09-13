@@ -12,8 +12,10 @@ conditional, and implementation follows the user's original authorization.
 ## 1. Establish the source and need for decomposition
 
 Read the supplied spec, conversation, or audit direction and its decision-bearing
-references. Identify accepted behavior, constraints, acceptance, and remaining
-uncertainty. A parent spec is useful but not required. Inspect relevant current
+references. Identify the problem, beneficiary, intended improvement, scope rationale,
+accepted behavior, constraints, acceptance, and remaining uncertainty. Preserve
+source intent rather than inferring it from proposed mechanisms. A parent spec
+is useful but not required. Inspect relevant current
 owners, callers, and proof to find practical boundaries; do not survey unrelated
 code or re-open settled requirements.
 
@@ -47,9 +49,12 @@ context-window estimates do not replace meaningful boundaries.
 
 ## 3. Preserve acceptance and real dependencies
 
-Each ticket needs its outcome, source pointer, settled decisions and scope,
-observable acceptance, consequential constraints, and actual blockers. A source
-link does not replace the acceptance that this ticket must satisfy. Preserve the
+Each ticket needs a short statement of the source purpose and how its outcome
+contributes, plus a source pointer, settled scope, observable acceptance,
+consequential constraints, and actual blockers. Carry relevant scope rationale
+without rewriting the overall goal for each ticket. Purpose guides choices within
+accepted requirements; it does not authorize expanding or weakening them. A source
+link does not replace the purpose and acceptance this implementer needs. Preserve the
 source's distinguishing input, state, result, and evidence class rather than
 replacing them with generic instructions to handle edge cases or add tests.
 When a plausible wrong implementation could satisfy the ordinary happy case,
@@ -73,7 +78,8 @@ when every item is blocked.
 
 Read each ticket as an implementer receiving it alone. Ensure it identifies the
 governing shared constraints, required predecessor result, and acceptance needed
-to avoid guessing. Include compact local details or accessible canonical pointers;
+to avoid guessing, as well as why this work belongs in the intended outcome.
+Include compact local details or accessible canonical pointers;
 do not copy the entire specification. For measured acceptance, preserve the
 source's workload, metric, threshold or baseline, and operating conditions rather
 than redefining them during decomposition.
