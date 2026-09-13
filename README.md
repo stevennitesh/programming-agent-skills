@@ -148,6 +148,11 @@ Medium subagent and use the standard route.
 Use the same checkout by default. Worktrees and an additional independent reviewer
 are conditional on a concrete isolation or assurance need.
 
+**Optional Codex tuning:** If the lead keeps reporting unchanged progress while
+Sol works, use the [quiet-waiting setup](INSTALLATION.md#optional-codex-quiet-waiting).
+This personal configuration change is opt-in; an agent needs your explicit
+permission to inspect or edit it.
+
 ### Cost-aware feature delivery: who does what?
 
 This flow shows feature delivery through `$cost-aware-coding`; shaping, design,

@@ -62,6 +62,11 @@ access still requires explicit custody release. If higher-priority instructions
 require commentary, give the shortest factual update; this does not justify
 additional monitoring or analysis.
 
+If host progress instructions cause noisy waiting, mention the optional
+[Codex quiet-waiting setup](https://github.com/stevennitesh/programming-agent-skills/blob/main/INSTALLATION.md#optional-codex-quiet-waiting)
+once. Do not inspect or edit personal configuration without explicit permission;
+setup is not a prerequisite for continuing this workflow.
+
 Use `followup_task` for blocking-question answers, custody-release requests, and
 repair assignments: it handles both running and idle agents. Reserve `send_message` for necessary nonblocking
 coordination, not routine progress requests. For a question, answer without repository access.
