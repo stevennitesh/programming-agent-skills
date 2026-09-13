@@ -53,11 +53,13 @@ An explicitly selected workflow can impose stronger requirements within its scop
 | Evidence gathering, context upkeep, and guided procedures | [Research](../../skills/astra/research/SKILL.md), [context hygiene](../../skills/astra/context-hygiene/SKILL.md), and [wizard](../../skills/astra/wizard/SKILL.md) |
 | Active Git conflicts | [Resolving merge conflicts](../../skills/astra/resolving-merge-conflicts/SKILL.md) |
 
-The managed pack currently contains 16 skills. Their metadata owns invocation
+The managed pack currently contains 17 skills. Their metadata owns invocation
 behavior; the README lists explicit-only workflows. Continuation handoffs belong
 to writing-for-agents, with execution-specific state added by the relevant workflow.
-There is no standalone implement skill. Implementers use repository guidance and
-the engineering contract directly.
+Ordinary implementation uses repository guidance and the engineering contract
+directly. The explicit worker-only `ponytail-implementer` is a standalone adaptation
+for the requested delivery mode; it does not own orchestration or replace that
+shared quality bar. Its body stays out of the lead's context.
 
 A feature can be shaped and implemented without tickets. Tickets become useful
 when delivery needs tracked units; they do not authorize concurrent writers.
@@ -77,6 +79,15 @@ requests, unresolved shaping, a root-model change, or a nonstandard route.
 Feature shaping remains with shape-work. Reuse accepted decisions instead of
 creating competing plans.
 
+For requested coordinated plan delivery, cost-aware-coding owns progression through
+justified review checkpoints and a final integrated review. Shape-work distinguishes
+accepted commitments from an adaptable delivery approach at one plan owner;
+codebase-design remains conditional and change-review retains judgment. Selected
+worker-only guidance may advise implementation without entering the lead's context
+or overriding the plan, engineering contract, or execution authority. The
+[planned-delivery reference](../../skills/astra/cost-aware-coding/references/planned-delivery.md)
+owns this optional composition; it is not a new skill or the ordinary coding default.
+
 The pair uses the same checkout by default with exclusive alternating custody.
 While Sol implements, Astra stays out of the repository and handles only user
 communication or consequential decisions. The lead waits on native agent events;
@@ -91,8 +102,9 @@ reason and exact setting; the user decides and applies the change.
 The Astra lead reviews with change-review after Sol releases custody. A fresh
 independent Astra reviewer is conditional on an accepted high-assurance or
 independence requirement, not required for every run.
-Repair accounting distinguishes work-unit implementation recovery from shared
-integrated-candidate review rounds. The skill and its references own exact limits,
+Repair accounting distinguishes work-unit implementation recovery from review
+gates. Planned checkpoints and the final integrated review have separate bounded
+correction allowances. The skill and its references own exact limits,
 role permissions, custody, and acceptance semantics; do not duplicate them here.
 When a focused Sol Medium repair fails for implementation reasons, the default
 stronger attempt uses an accepted Sol High replacement; XHigh requires demonstrated

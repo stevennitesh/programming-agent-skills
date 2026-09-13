@@ -103,7 +103,8 @@ complete a set, or block independent authorized work on optional documentation.
 Keep a small outcome in the conversation when that is sufficient. Produce or
 update a durable specification when requested or needed for multiple sessions,
 delivery slices, or owners. Read [Durable decisions](references/durable-decisions.md)
-when writing a spec or updating domain records.
+when writing a spec or updating domain records, including the distinction between
+accepted commitments and delivery approach for requested coordinated implementation.
 Follow the repository's configured destination; a spec need not be a tracker
 parent. External publication requires authority for that effect; a local draft
 can still make progress.

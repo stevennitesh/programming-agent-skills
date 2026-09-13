@@ -3,7 +3,7 @@
 <p align="center"><strong>Give your coding agent the context and methods the work needs.</strong></p>
 
 <p align="center">
-  16 focused skills, built primarily for GPT 6 Astra in Codex.<br>
+  17 focused skills, built primarily for GPT 6 Astra in Codex.<br>
   Compatible with GPT 5.6 Sol. Ordinary coding stays direct.
 </p>
 
@@ -89,6 +89,7 @@ These are alternative starting points, not a required pipeline.
 | Turn an accepted plan or spec into tracked work units | [$to-tickets](skills/astra/to-tickets/SKILL.md) | Request explicitly |
 | Implement concurrently with separate ownership and clear dependencies | [$parallel-implement](skills/astra/parallel-implement/SKILL.md) | Request explicitly |
 | Have Astra lead and review while a reusable Sol subagent implements | [$cost-aware-coding](skills/astra/cost-aware-coding/SKILL.md) | Request explicitly |
+| Give an assigned implementer the pack's distilled Ponytail method | [$ponytail-implementer](skills/astra/ponytail-implementer/SKILL.md) | Request explicitly; worker only |
 | Resolve an active Git merge or rebase conflict | [$resolving-merge-conflicts](skills/astra/resolving-merge-conflicts/SKILL.md) | Automatic when relevant |
 | Set up or reconcile repository agent guidance | [$repo-bootstrap](skills/astra/repo-bootstrap/SKILL.md) | Request explicitly |
 | Write agent instructions, guides, or continuation handoffs | [$writing-for-agents](skills/astra/writing-for-agents/SKILL.md) | Automatic when relevant |
@@ -147,6 +148,25 @@ Medium subagent and use the standard route.
 
 Use the same checkout by default. Worktrees and an additional independent reviewer
 are conditional on a concrete isolation or assurance need.
+
+For a bounded feature spanning several steps, request
+[planned delivery](skills/astra/cost-aware-coding/references/planned-delivery.md).
+The lead shapes or reuses one plan, coordinates useful review checkpoints, and
+reviews the complete integrated change before completion. Ask for plan-first work
+to stop after planning, or explicitly authorize shaping and execution together:
+
+```text
+$cost-aware-coding shape and implement this feature through justified review
+checkpoints and a final integrated review. Keep one bounded plan and reuse the
+implementer. Bring unresolved user-owned decisions to me; continue technical
+decisions and implementation within scope.
+```
+
+Add "use a Ponytail implementer" to select the managed `ponytail-implementer`
+skill. This standalone adaptation ships with this pack and requires no upstream
+Ponytail installation. Only the worker loads its instructions; the lead sets
+acceptance and reviews results using the engineering contract. Each planned
+checkpoint allows two correction rounds, with two separate rounds for final review.
 
 **Optional Codex tuning:** If the lead keeps reporting unchanged progress while
 Sol works, use the [quiet-waiting setup](INSTALLATION.md#optional-codex-quiet-waiting).
@@ -211,8 +231,10 @@ compact handoff and retains the remaining repair allowance.
 
 An allowance is consumed when the implementer returns a candidate as ready or
 blocked; its internal edit, debug, and test loop stays within that attempt. Once
-review begins, corrections use only the integrated candidate's two review-repair
-rounds and do not reopen implementation recovery.
+review begins for a scope, corrections use that gate's review-repair rounds and do
+not reopen implementation recovery. Ordinary delivery has two rounds for the
+integrated candidate. Planned delivery has two per checkpoint plus two for final
+review; moving unresolved findings to a new gate does not renew their allowance.
 The Astra lead uses `change-review` for the initial review and follow-up review.
 An independent Astra reviewer is added only when the accepted route requires it.
 Sol runs acceptance checks before returning custody. See the

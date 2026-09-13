@@ -11,92 +11,81 @@ coding quality; this skill owns routing and exclusive repository custody.
 
 ## 1. Select the route
 
-Delegate when the remaining implementation and verification can repay the handoff.
-For trivial changes or serial investigations where accumulated context is the work,
-execute directly unless the user requires the pair. A concrete invocation selects
-the standard pair; it needs no separate coordination proposal or messaging approval.
-Ordinary action permissions still apply.
+Delegate when remaining implementation and verification can repay the handoff.
+Keep trivial changes and serial investigations where accumulated context is the
+work direct unless the user requires the pair. An explicit invocation selects
+the standard pair without another
+coordination approval; ordinary action permissions still apply.
 
-Reuse accepted requirements and plans. Use [shape-work](../shape-work/SKILL.md)
-when substantial feature behavior or approach remains unresolved. You own shaping,
-research decisions, consequential choices, and acceptance; Sol owns implementation
-investigation and routine coding decisions.
+Reuse accepted plans. Use [shape-work](../shape-work/SKILL.md) when substantial
+behavior or approach remains unresolved. You own shaping, consequential decisions,
+review, and acceptance; Sol owns implementation investigation and routine coding.
+For requested delivery with checkpoints, read
+[Planned delivery](references/planned-delivery.md).
 
-If your setting needs changing, suggest the exact model and effort with the reason;
-the user changes your setting. Read [Model policy](references/model-policy.md)
-for escalation or a different route. Use a separate app task only when the user
-requests its independent lifecycle; agree its transport and recovery then.
-For requested concurrent implementation, [parallel-implement](../parallel-implement/SKILL.md)
-owns isolation, scheduling, and integration; retain this skill's review and repair limits.
-Read [Telemetry](references/telemetry.md) only for requested measurement or a hard
-budget, capturing required starting observations before dispatch.
+For a different route or escalation, read [Model policy](references/model-policy.md).
+The user applies any change to your own model/effort. Separate app tasks require
+an explicit request for that lifecycle. For requested concurrent implementation,
+[parallel-implement](../parallel-implement/SKILL.md) owns isolation and integration;
+retain this skill's repair limits. Read [Telemetry](references/telemetry.md) before
+dispatch only for requested measurement or a hard budget.
 
 ## 2. Assign Sol and wait
 
-Read only enough to settle scope and prepare the brief. Use
-[Sol assignment](references/sol-assignment.md) for the initial receiver instructions.
-Give Sol exclusive checkout custody, leaving implementation exploration to it.
-Reuse the same agent for the plan, questions, and corrections; phases alone do
-not justify new agents. Start a fresh agent for an independent plan.
+Prepare the brief using [Sol assignment](references/sol-assignment.md), including
+its worker-only method section when the user requests a Ponytail implementer.
+Give Sol exclusive checkout custody and leave implementation exploration to it.
+Reuse that agent for the plan, questions, and corrections; use a fresh agent for
+an independent plan.
 
-Use native `spawn_agent` with explicit `model="gpt-5.6-sol"` and
+Use native `spawn_agent` with `model="gpt-5.6-sol"` and
 `reasoning_effort="medium"`. Prefer `fork_turns="none"` with a compact assignment;
 use a bounded recent-turn fork only when it replaces useful context transfer.
-Check the current tool schema for supported settings. Use exposed runtime metadata
-to verify effective settings when available; otherwise report them as requested,
-not verified. Do not infer settings from the conversation's starting model or
-search conversation logs solely to confirm identity.
+Check tool support. Verify effective settings from exposed runtime metadata when
+available; otherwise report them as requested. Do not infer them from the starting
+model or search conversation logs solely to confirm identity.
 
-While Sol has custody, be idle by default. Do not read repository files or diffs,
-search the codebase, run shell, Git, build, or test commands, or implement.
-Use native `wait_agent` with 180-second event-driven waits, shortened only when
-required by the runtime. Do not request routine progress, interrupt to check
-progress, speculate about implementation, repeat acceptance criteria, or narrate
-unchanged waiting. After a timeout, use only a minimal status check if the wait
-result does not already establish status, then wait again while Sol is running.
-A timeout is not a failed attempt. Do not assume ending your turn schedules continuation.
+While Sol has custody, do not access the repository, run commands, or implement.
+Wait on native `wait_agent` events for 180 seconds, shortened when the runtime
+requires it. Do not poll routine progress, interrupt to check progress, or repeat
+instructions while waiting. After a timeout, check status only if the wait result
+omits it, then wait again. A timeout consumes no attempt; ending your turn does
+not schedule continuation.
 
-Act on consequential questions, candidate/blocker returns, user intervention,
-or an actual error or interruption. Answer from supplied context; repository
-access still requires explicit custody release. If higher-priority instructions
-require commentary, give the shortest factual update; this does not justify
-additional monitoring or analysis.
+Respond to consequential questions, candidate/blocker returns, user intervention,
+and actual errors or interruption. Use `followup_task` for blocking answers,
+release requests, and assignments; reserve `send_message` for necessary nonblocking
+coordination. Answer from supplied context. If inspection is needed, request
+release and wait for confirmation that writers/subprocesses stopped before access;
+explicitly grant custody back afterward. Idle or interrupted status is not release.
 
-If host progress instructions cause noisy waiting, mention the optional
-[Codex quiet-waiting setup](https://github.com/stevennitesh/programming-agent-skills/blob/main/INSTALLATION.md#optional-codex-quiet-waiting)
-once. Do not inspect or edit personal configuration without explicit permission;
-setup is not a prerequisite for continuing this workflow.
-
-Use `followup_task` for blocking-question answers, custody-release requests, and
-repair assignments: it handles both running and idle agents. Reserve `send_message` for necessary nonblocking
-coordination, not routine progress requests. For a question, answer without repository access.
-If resolving a consequential question or actual error requires repository
-inspection, request custody release and wait for confirmation that writers and
-subprocesses stopped, then inspect, answer, and explicitly grant custody back.
-Idle or interrupted status alone does not release custody. Follow runtime cleanup
-requirements after a child finishes, retaining its ID for supported follow-ups;
-cleanup is not a custody grant. Read [Continuation](references/continuation.md)
-for interruption, errors, stale returns, or unavailable agents.
+If host rules require commentary, give a short factual update without extra
+monitoring. For noisy waiting, mention the optional
+[quiet-waiting setup](https://github.com/stevennitesh/programming-agent-skills/blob/main/INSTALLATION.md#optional-codex-quiet-waiting)
+once; it is not a prerequisite or permission to edit personal configuration.
+Follow runtime child cleanup rules, retaining IDs for follow-ups; cleanup does
+not grant custody. Read [Continuation](references/continuation.md) for interrupted,
+stale, errored, or unavailable-agent states.
 
 ## 3. Review and repair
 
-A matching return with stopped writers and explicit custody release permits you
-to inspect the candidate without a redundant status check. Classify its evidence:
-blocked or failed required checks follow [Repair allowances](references/repairs.md).
-For a reviewable candidate, take custody and use [change-review](../change-review/SKILL.md),
-reusing valid checks rather than repeating exploration. A required manual/platform
-check may remain pending: review what is provable, but do not declare overall
-completion until that gate passes or its owner explicitly revises it.
+For a prerequisite-only return, resolve the gap and grant custody to resume the
+same assignment without charging an attempt. For a candidate, require a matching
+return with stopped writers and explicit release; no redundant status check is
+needed. Classify blocked or failed required checks under
+[Repair allowances](references/repairs.md).
+
+For a reviewable candidate, use [change-review](../change-review/SKILL.md), reusing
+valid evidence. Review available proof when a required manual/platform check is
+pending, but do not declare completion until it passes or its owner revises it.
 Add independent reviewers only when requested assurance requires them.
 
-Send required corrections to the same Sol agent with changed context, the current
-candidate, attempt stage, and explicit custody grant; resume waiting. Read
-[Repair allowances](references/repairs.md) before repair or escalation. Do not
-silently take over implementation. Replacement agents inherit remaining allowances.
+Send required corrections to the same Sol with the findings, candidate, stage,
+and custody grant. Follow [Repair allowances](references/repairs.md) before repair
+or escalation; do not take over implementation. Resume waiting.
 
 ## 4. Finish
 
-Complete when the accepted outcome, required checks, and review gate pass.
-Report the candidate, decisive evidence, and material limits. Distinguish
-implementation ready for review from overall completion or pending manual proof.
-Include bounded telemetry only when requested.
+Complete when the accepted outcome, required checks, and review gate pass. Report
+the candidate, decisive evidence, and material limits. A reviewable implementation
+or pending required proof is not completion. Include telemetry only when requested.

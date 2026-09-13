@@ -1,45 +1,59 @@
 # Repair allowances
 
-Read when a returned candidate fails acceptance or review requires corrections.
-Resolve missing requirements, invalid acceptance criteria, and environment faults
-at their source instead of spending a model escalation. Resolving an external
-fault does not renew exhausted allowances: another repair requires an accepted
-revised route. Rechecking an unchanged candidate need not create a repair attempt.
+Classify a failed return before spending an allowance. Requirements, acceptance,
+and environment faults need resolution at their source, not model escalation.
+That resolution does not renew consumed allowances.
 
-| State | Next action |
+## Choose the next action
+
+| Return or finding | Action |
 | --- | --- |
-| Before review, with the stronger attempt unused, the implementer returns blocked with concrete evidence that its current reasoning effort is insufficient | Skip the focused repair. Propose a stronger Sol replacement: High by default, or XHigh when justified; after acceptance, allow one stronger attempt. |
-| First implementation return fails acceptance | The same implementer gets one focused repair. |
-| Focused repair return fails because implementation reasoning is insufficient | Propose a stronger Sol replacement: High by default, or XHigh when justified; after acceptance, allow one stronger attempt. |
-| Failure comes from requirements, design, or environment | Resolve it at its source, then continue within the remaining allowance for the current stage; suggest raising your effort only if that decision needs more reasoning. |
-| Stronger return fails or recovery is unavailable | Preserve the candidate and request a revised route. |
-| Review returns required corrections | The current implementer repairs one batch and returns it to the same Astra reviewer; two repair rounds total. |
-| Required corrections remain after two returned repair batches | Preserve the candidate and request more rounds or a revised route. |
+| Before review, blocked with evidence that current reasoning effort is insufficient and stronger attempt unused | Skip focused repair; propose one stronger attempt. |
+| First implementation candidate fails acceptance | Give the same implementer one focused repair. |
+| Focused repair fails because reasoning effort is insufficient | Propose one stronger attempt. |
+| Requirements, design, or environment fault | Resolve at its owner and continue within the current stage's remaining allowance. |
+| Stronger attempt fails or recovery unavailable | Preserve the candidate and request a revised route. |
+| Review requires corrections and its gate has rounds left | Send one correction batch to the current implementer, then review its return. |
+| Required corrections remain at an exhausted gate | Preserve the candidate and request more rounds or a revised route. |
 
-An implementation attempt or review-repair round is consumed when the implementer
-returns its candidate as ready or blocked. Editing, debugging, and test runs before
-that return belong to the same attempt. A review-repair round begins with one batch
-of required findings and includes the implementer's checks and the same reviewer's
-follow-up when a candidate is ready. The initial review and optional suggestions
-do not consume a round. A clarification question, interruption, or resume is not
-a candidate return and consumes no attempt. Retransmitting a return does not
-consume another attempt; preserve the original accounting.
+A stronger attempt uses an accepted Sol High replacement, or XHigh when justified.
+Obtain acceptance unless already authorized. Native follow-ups cannot change
+model/effort: after explicit release and stopped writers, spawn the replacement
+with the agreed settings and compact candidate/failure context. Preserve remaining
+allowances; prompt cache and context do not automatically transfer. If the runtime
+cannot provide that route, report the limit. Your own model changes remain user actions.
 
-Once review begins, returned corrections use only the shared review-repair
-allowance. Failed correction checks do not open implementation recovery. If a
-review repair needs higher Sol effort, the accepted replacement uses the next
-remaining review-repair round rather than creating another allowance.
+## Count returns, not internal work
 
-Native followup_task cannot change an existing agent's model or effort. Obtain
-acceptance for the stronger setting/replacement unless already authorized. After
-the old agent releases custody and its writers stop, spawn the replacement with
-explicit settings and a compact candidate/failure handoff. Do not imply its
-context or prompt cache transfers automatically. Retire the old writer and reuse
-the replacement for subsequent corrections. Your own model/effort changes remain
-user actions. If the runtime cannot provide the accepted route, report the limit.
+An implementation attempt is consumed when its candidate returns ready or blocked.
+Editing, debugging, and checks before that return belong to the same attempt.
+A review-repair round covers one required correction batch, its implementer checks,
+and the same reviewer's follow-up. Charge it when that candidate returns, including
+failed checks. Initial reviews, optional suggestions, and unchanged-candidate
+rechecks consume no correction round.
 
-Track implementation recovery per coherent work unit and share the two
-review-repair rounds across the integrated candidate. Replacement, repartitioning,
-or a new lane does not reset either allowance. For concurrent implementation,
-[Parallel recovery](../../parallel-implement/references/recovery.md) owns mechanics;
-verify its worker transport supports the accepted recovery route.
+Questions, prerequisite-only returns before implementation, interruptions, and
+resumes are not candidate attempts. Resolve prerequisites and custody before
+resuming. Retransmitted returns are processed once.
+
+Once review begins for a scope, corrections use its review-repair allowance and
+cannot reopen implementation recovery. Higher-effort repair uses the next remaining
+round rather than a new allowance. Later coherent forward work retains its own
+implementation recovery; relabeling a correction as forward work does not.
+
+## Keep allowances at their gate
+
+Ordinary delivery has two review-repair rounds for the integrated candidate.
+Planned delivery has two per checkpoint and two separately for final review.
+Concurrent lanes share their integrated gate's allowance.
+
+Give checkpoints stable identities and coverage before assignment. Future work
+outside that coverage is not failed acceptance. Known unresolved findings retain
+their gate and counts through renaming, splitting, reopening, or moving work.
+A later regression or newly discovered defect uses the gate discovering it,
+including final review, even if the affected code passed an earlier checkpoint.
+
+Track implementation recovery per coherent work unit and corrections per gate.
+Replacement, repartitioning, or new lanes do not reset either. For concurrent work,
+[Parallel recovery](../../parallel-implement/references/recovery.md) owns recovery
+mechanics; verify its transport supports the accepted route.

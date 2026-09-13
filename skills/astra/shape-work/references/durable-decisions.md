@@ -62,6 +62,22 @@ recognize success without guessing a consequential decision? Keep proposed chang
 distinct from accepted requirements. Updating a spec should reconcile affected
 acceptance and references rather than append contradictory current truth.
 
+## Plans for coordinated delivery
+
+When coordinated implementation is requested, keep one authoritative plan with
+two distinguishable parts. The accepted contract holds outcome, scope, operating
+assumptions, consequential design decisions, and acceptance. The delivery approach
+holds coherent slices, dependencies, justified checkpoint coverage, and concise
+progress. Link existing owners instead of copying their contracts.
+
+Detail approaching work while resolving dependencies that could invalidate the
+overall approach. Leave routine internal design to the implementer. Delivery order
+can change within scope; accepted commitments change only through their decision
+owner. Writing a mechanism into the approach does not make it binding acceptance.
+The selected execution workflow owns checkpoint scheduling, custody, correction
+allowances, and final review. This plan shape does not authorize execution or
+require a separate plan document when an existing owner is sufficient.
+
 ## Revisions during delivery
 
 Before changing accepted meaning already used by tickets or workers, identify the
