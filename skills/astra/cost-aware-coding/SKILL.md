@@ -25,14 +25,16 @@ For requested delivery with checkpoints, read
 
 For a different route or escalation, read [Model policy](references/model-policy.md).
 The user applies any change to your own model/effort. Separate app tasks require
-an explicit request for that lifecycle. For requested concurrent implementation,
+an explicit request for that lifecycle; agree their transport and recovery before
+dispatch. For requested concurrent implementation,
 [parallel-implement](../parallel-implement/SKILL.md) owns isolation and integration;
 retain this skill's repair limits. Read [Telemetry](references/telemetry.md) before
 dispatch only for requested measurement or a hard budget.
 
 ## 2. Assign Sol and wait
 
-Prepare the brief using [Sol assignment](references/sol-assignment.md), including
+Read only enough to settle scope and prepare the brief. Use
+[Sol assignment](references/sol-assignment.md), including
 its worker-only method section when the user requests a Ponytail implementer.
 Give Sol exclusive checkout custody and leave implementation exploration to it.
 Reuse that agent for the plan, questions, and corrections; use a fresh agent for
@@ -45,22 +47,26 @@ Check tool support. Verify effective settings from exposed runtime metadata when
 available; otherwise report them as requested. Do not infer them from the starting
 model or search conversation logs solely to confirm identity.
 
-While Sol has custody, do not access the repository, run commands, or implement.
-Wait on native `wait_agent` events for 180 seconds, shortened when the runtime
-requires it. Do not poll routine progress, interrupt to check progress, or repeat
-instructions while waiting. After a timeout, check status only if the wait result
-omits it, then wait again. A timeout consumes no attempt; ending your turn does
-not schedule continuation.
+While Sol has custody, stay idle and silent until a substantive event below.
+Do not access the repository, run commands, or implement. Use native `wait_agent`
+with `timeout_ms=180000` for 180-second event-driven waits, shortened only when
+required by the runtime. Do not request routine progress, interrupt to check
+progress, speculate about implementation, repeat acceptance criteria, or narrate
+unchanged waiting. After a timeout, use only a minimal status check if the wait
+result does not already establish status, then wait again while Sol is running.
+A timeout consumes no attempt; ending your turn does not schedule continuation.
 
 Respond to consequential questions, candidate/blocker returns, user intervention,
 and actual errors or interruption. Use `followup_task` for blocking answers,
 release requests, and assignments; reserve `send_message` for necessary nonblocking
-coordination. Answer from supplied context. If inspection is needed, request
-release and wait for confirmation that writers/subprocesses stopped before access;
+coordination. Answer from supplied context. If resolving a consequential question
+or actual error requires repository inspection, request release and wait for
+confirmation that writers/subprocesses stopped before access;
 explicitly grant custody back afterward. Idle or interrupted status is not release.
 
-If host rules require commentary, give a short factual update without extra
-monitoring. For noisy waiting, mention the optional
+Only if higher-priority instructions require commentary, give the shortest factual
+update; this does not justify additional monitoring or analysis. Otherwise remain
+silent while waiting. For noisy waiting, mention the optional
 [quiet-waiting setup](https://github.com/stevennitesh/programming-agent-skills/blob/main/INSTALLATION.md#optional-codex-quiet-waiting)
 once; it is not a prerequisite or permission to edit personal configuration.
 Follow runtime child cleanup rules, retaining IDs for follow-ups; cleanup does
