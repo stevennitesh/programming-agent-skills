@@ -56,10 +56,12 @@ A reversible intervention or negative control is especially useful when the
 observations also fit a different cause. Investigate multiple contributing causes
 when the evidence requires them; do not force every incident into one faulty line.
 
-If attempts stop teaching anything, reconsider the hypothesis, instrument, scope,
-or missing evidence before trying another patch. Repeated failures do not by
-themselves prove an architectural defect. Return a precise unresolved cause or
-next discriminating observation when progress needs unavailable evidence.
+When several failed attempts share an assumption, identify it and choose an
+observation that could disprove it before trying another variation. If attempts
+stop teaching anything, reconsider the instrument, scope, or missing evidence.
+Repeated failures do not by themselves prove an architectural defect. Return a
+precise unresolved cause or next discriminating observation when progress needs
+unavailable evidence.
 
 ## 3. Repair within the requested scope
 
