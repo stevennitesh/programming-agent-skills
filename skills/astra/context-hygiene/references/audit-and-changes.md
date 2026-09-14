@@ -68,8 +68,8 @@ instructions.
 
 When reconciling or retiring repository documents, follow
 [Document reconciliation](../../shape-work/references/durable-decisions.md#reconcile-competing-documents).
-It owns in-place reconciliation, archival of wholly superseded documents under
-repository-root `.archive/`, preservation, and affected-pointer verification.
+It owns reconciliation, retirement, evidence preservation, and affected-pointer
+verification.
 
 For memory changes, use the store/runtime's supported update mechanism.
 Refresh targets immediately before the effect; relevant drift stops the affected

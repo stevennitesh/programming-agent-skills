@@ -74,11 +74,13 @@ distinguish success from a plausible wrong result. Avoid implementation recipes
 unless a particular mechanism is itself a settled constraint.
 
 Choose acceptance obligations that distinguish the requested outcome from a
-consequential wrong result in the supported workflow. Keep suggested mechanisms
-and optional hardening distinct from required behavior; writing them into a plan
-does not by itself make them accepted requirements. Detail approaching work and defer
-decisions that do not affect it, while resolving dependencies that could invalidate
-the overall approach.
+consequential wrong result in the supported workflow. Before adopting a proposed
+safeguard, identify the realistic wrong result or broken workflow it prevents;
+without one, omit it from acceptance. Preserve explicit commitments, but keep
+suggested mechanisms and optional hardening distinct from required behavior.
+Writing them into a plan does not make them accepted requirements. Detail
+approaching work and defer decisions that do not affect it, while resolving
+dependencies that could invalidate the overall approach.
 
 Could two reasonable implementations satisfy the wording but produce materially
 different outcomes? Resolve unintended ambiguity or identify the remaining

@@ -37,10 +37,13 @@ Checkout: <path, branch/base, relevant dirty state>; verify before mutation.
 Acceptance: <required checks and observable result>.
 Reserved decisions: <choices to raise with the lead>.
 For planned delivery: <plan revision, gate ID, work boundary, covered acceptance,
-future scope; omit otherwise>.
+deferred work and exclusions, not for implementation; omit otherwise>.
 
 Use purpose to choose within scope. If it conflicts with an accepted requirement,
 raise the conflict rather than silently changing the goal or dropping the requirement.
+Suggested mechanisms are optional unless identified as accepted constraints.
+Choose routine implementation within scope; raise changes to accepted guarantees
+with the lead.
 
 Worker-only guidance, when selected: <absolute skill path and hash>.
 Verify identity before loading. This advises implementation; the plan, engineering

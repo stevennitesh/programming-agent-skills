@@ -74,7 +74,8 @@ rather than reproducing the implementation.
 Inspect activated risks: trust and authorization boundaries, shared state,
 resource bounds, recovery, migration, and independently deployed consumers. For
 removed or replaced behavior, check affected registrations, configuration, callers,
-tests, and public guidance. Preserve necessary compatibility rather than demanding
+tests, and public guidance. Follow removed consumers upstream for producers and
+helpers left without a supported use. Preserve necessary compatibility rather than demanding
 deletion merely because two paths temporarily coexist.
 
 Challenge duplicated decisions, exposed internals, unnecessary state, and layers

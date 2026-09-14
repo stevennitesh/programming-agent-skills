@@ -43,19 +43,18 @@ it with the repository's actual contract, including guidance embedded in agent
 files. Do not infer currency from the file's existence, a version marker, or
 passing validation. For an approved update, reconcile missing practices and
 outdated pack wording using [Existing repositories](references/setup-defaults.md#existing-repositories).
-Prefer an existing authoritative location; otherwise use
-`docs/agents/engineering-contract.md` and add a pointer for substantive code design,
-implementation, debugging, refactoring, or review to the repository's instruction
-file. The resulting contract is repository-owned,
-not a frozen copy of an older pack or a mirror to overwrite mechanically.
+Keep brief engineering guidance in the repository's instruction file. Use a
+separate guide when substantial content or distinct reading conditions justify it,
+prefer an existing owner, and add a conditional pointer when split. The guidance
+is repository-owned, not a template to copy in full or overwrite mechanically.
 Adapt conditional practices to the supported operating model. Broader template
 coverage is not inherently a better local contract; preserve necessary correctness
 and safety while excluding obligations for unsupported capabilities.
 
 For initial repository setup or work on tracker, label, or domain configuration,
-read [Setup defaults](references/setup-defaults.md). Preserve established choices
-and fill absent settings from those defaults. A focused repair changes only its
-requested scope. Configuring a tracker does not require direct coding tasks to
+read [Setup defaults](references/setup-defaults.md). Start compact and configure
+only applicable concerns; preserve established choices. A focused repair changes
+only its requested scope. Configuring a tracker does not require direct coding tasks to
 become tickets.
 
 When parallel execution setup is requested or execution reports a concrete

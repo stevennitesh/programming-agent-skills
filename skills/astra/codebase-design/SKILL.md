@@ -39,7 +39,10 @@ or require an audit report before beginning.
 Evaluate the ordinary caller's usage and relevant failure or state transitions.
 Derive the interface and data shape from what that caller needs to
 know. An interface includes ordering, errors, effects, and guarantees, not just
-its function signature.
+its function signature. Establish actual operating conditions before choosing
+stronger guarantees. Compare extra recovery, isolation, or publication machinery
+against detecting failure and safely regenerating the result; choose the simpler
+complete workflow when it meets the required guarantees.
 
 When data access drives the choice, compare representative reads, writes, updates,
 and expected volume. Choose representation and ownership around those patterns;

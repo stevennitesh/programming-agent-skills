@@ -8,9 +8,9 @@ target agent reads; do not create parallel instruction files just to match a see
 
 Keep local commands, non-obvious repository constraints, and conditional pointers
 in the root file. Verify commands against their scripts or configuration. Point
-to the engineering contract for substantive code design, implementation, debugging,
-refactoring, or review, and to domain or tracker guidance when those concerns apply.
-Keep procedure details at their existing owners.
+to separate engineering, domain, or tracker guidance only when it exists and the
+concern applies. Keep brief guidance inline and procedure details at useful
+existing owners.
 
 During a compatibility update, reconcile the root and affected nested instructions
 with the other agent docs in the same proposal. Update moved pointers, remove

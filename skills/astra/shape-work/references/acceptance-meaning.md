@@ -18,6 +18,12 @@ could otherwise remain ambiguous.
 
 ## State and representation carry meaning
 
+Derive operational guarantees from the requested workflow and actual consumers.
+Reproducibility, provenance, persistence, and reuse do not by themselves require
+crash-safe publication, isolation, future compatibility, or exhaustive runtime
+metadata. Preserve the scientific and source meaning needed for the result;
+add operational capabilities only when the supported workflow requires them.
+
 Identify authoritative data and writers, what persists, and how ordinary readers
 use it. Preserve source-defined identity, units, calendar-date versus instant
 meaning, derivation, and schema compatibility across materially different states.

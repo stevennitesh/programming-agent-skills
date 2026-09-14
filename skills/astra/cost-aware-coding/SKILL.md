@@ -12,9 +12,11 @@ coding quality; this skill owns routing and exclusive repository custody.
 ## 1. Select the route
 
 Delegate when remaining implementation and verification can repay the handoff.
-Keep trivial changes and serial investigations where accumulated context is the
-work direct unless the user requires the pair. An explicit invocation selects
-the standard pair without another
+Keep work direct when briefing, handoffs, and review would cost more than useful
+delegated implementation and verification, including small coherent changes and
+serial investigations where accumulated context is the work. An explicit invocation
+uses this routing judgment; an explicit requirement for the pair overrides the
+direct-work exception. When delegating, use the standard pair without another
 coordination approval; ordinary action permissions still apply.
 
 Reuse accepted plans. Use [shape-work](../shape-work/SKILL.md) when substantial

@@ -15,7 +15,9 @@ Plan-first stops after planning. Shape-and-execute continues within authorizatio
 without another planning approval; unresolved user-owned decisions pause dependent
 work. Recording a proposed mechanism does not make it binding acceptance.
 
-Choose checkpoints where a wrong interface, persisted representation, or integration
+Use final-only review for small coherent changes unless a concrete rework risk
+justifies an intermediate checkpoint. Choose checkpoints where a wrong interface,
+persisted representation, or integration
 would make dependent work costly to redo. Give each a stable ID, covered behavior,
 and reason before assignment; tasks do not each require a gate. Final integrated
 review is required even when no intermediate checkpoint is useful. Read

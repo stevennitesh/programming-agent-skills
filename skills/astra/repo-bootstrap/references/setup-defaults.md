@@ -1,48 +1,40 @@
 # Setup defaults
 
 Preserve established repository choices unless the user selects their replacement.
-Where a setting is absent, apply the
-defaults below within the requested setup scope. Ask only when evidence conflicts
+Apply defaults only for applicable concerns within the requested setup scope;
+an absent optional setting is not a setup gap. Ask only when evidence conflicts
 or no default resolves a consequential choice. Continue independent setup while
 that choice is unresolved.
 
 ## Initial setup
 
-For a new Codex repository, create `AGENTS.md` with commands grounded in source,
-local constraints, and these conditional pointers:
+For a new Codex repository, start with one compact `AGENTS.md`: commands grounded
+in source, non-obvious local constraints, and applicable engineering guidance.
+Preserve useful existing instruction files and document owners. Split guidance
+only when its content or distinct reading conditions warrant a separate guide;
+do not create files or pointers merely to complete a template set.
 
-- For substantive code design, implementation, debugging, refactoring, or review,
-  read the engineering contract.
-- When domain meaning or an accepted design decision matters, follow the domain
-  route.
-- For tracker-backed work, read the tracker guide and label mapping.
-
-Use the repository's existing instruction file and document locations when
-established. Otherwise write these files under `docs/agents/`:
-
-| Output | Seed |
-| --- | --- |
-| `engineering-contract.md` | [Engineering contract](../templates/engineering-contract.md) |
-| `domain.md` | [Domain routing](../templates/domain.md) |
-| `issue-tracker.md` | One provider template selected below |
-| `triage-labels.md` | [Label mapping](../templates/triage-labels.md) |
-
-Adapt the seeds to the repository and update relative links if their locations
-change. These are repository-owned documents, not managed mirrors. Record an
-unresolved tracker selection as a setup gap rather than inventing its configuration.
+Use these seeds only for applicable content, adapting rather than copying them
+wholesale: [Engineering contract](../templates/engineering-contract.md),
+[Domain routing](../templates/domain.md), and
+[Label mapping](../templates/triage-labels.md). When separate guides are useful and
+no location is established, use `docs/agents/`. Repair relative links when adapting
+locations. These are repository-owned documents, not managed mirrors.
 
 ## Select the tracker
 
-Use the established tracker even if it differs from the Git hosting provider.
-Otherwise resolve the intended project from the configured remote and choose
-[GitHub](../templates/issue-tracker-github.md) or
-[GitLab](../templates/issue-tracker-gitlab.md). Record the resolved project URL
-in the resulting guide. Multiple remotes or an unfamiliar host may need further
-inspection before that choice is clear.
+Configure tracking only when requested or established by repository practice.
+A Git remote alone does not establish that issues are used. Otherwise omit
+tracker and label setup without treating their absence as a gap.
 
-With no established tracker or identifiable provider, ask which tracker to use.
-Use [Local Markdown](../templates/issue-tracker-local.md) when selected; do not
-silently treat the absence of a remote as that selection.
+For applicable tracker setup, preserve the established provider even when it
+differs from Git hosting. Use [GitHub](../templates/issue-tracker-github.md),
+[GitLab](../templates/issue-tracker-gitlab.md), or
+[Local Markdown](../templates/issue-tracker-local.md) for the selected provider.
+Use remotes to resolve a selected hosted project, not to select tracking itself.
+Ask only when an unresolved provider or project prevents requested tracker setup;
+do not silently choose Local Markdown because no remote exists. Record the
+resolved project URL for hosted tracking.
 
 Keep the provider defaults unless the repository or user chooses otherwise:
 
@@ -67,17 +59,17 @@ For requested parallel setup or a concrete execution gap, use
 [Parallel support](parallel-support.md). This remains conditional; ordinary
 repository setup does not create lanes or enable broader permissions.
 
-Map existing equivalent labels before using the seed's default names. Writing
-the mapping does not create remote labels. Provision missing labels only when
+For applicable tracker setup, map existing equivalent labels before using the
+seed's default names. Writing the mapping does not create remote labels. Provision missing labels only when
 the user's authorization covers that operation, then read them back. Otherwise
 state that the local mapping is configured and remote provisioning is unverified
 or still needed.
 
-Default domain routing to a single root `CONTEXT.md` and `docs/adr/`. Preserve
-an existing multi-context route. Create a new multi-context layout only when
-distinct domain meanings justify it; multiple packages alone are not enough.
-Configure the route without inventing domain records or empty ADRs. Missing
-records can remain absent until authorized work supplies their content.
+Preserve existing domain owners. Keep brief local meaning inline; introduce a
+domain guide or route only when actual content needs it. A root `CONTEXT.md` and
+`docs/adr/` are available conventions, not required outputs. Use multiple contexts
+only when distinct domain meanings justify them; multiple packages alone are not
+enough. Do not create empty records or routes to nonexistent content.
 
 For Local Markdown, ensure the selected durable tracker path can be version
 controlled. Correct a conflicting ignore rule only within authorized setup

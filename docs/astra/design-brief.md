@@ -30,7 +30,8 @@ mechanical work. Put substantial conditional detail behind a clear trigger and
 pointer. A few natural actions and a recognizable outcome are useful shapes,
 not a word-count or step-count target.
 
-Shared coding judgment belongs in the engineering contract. Do not duplicate it
+Shared coding judgment belongs at one repository owner: inline for brief guidance,
+or in a separate engineering contract when useful. Do not duplicate it
 across skills or make ordinary coding require tickets, TDD, full suites, reviewers,
 subagents, or process artifacts. Preserve concrete protections for authority,
 concurrent writers, partial effects, recovery, fixed review candidates, and evidence.
@@ -129,9 +130,10 @@ existing agent guidance. Where local policy differs, it offers reconciliation
 that preserves useful local choices or adoption of identified template defaults,
 with their consequences made explicit. Both retain verified repository facts and
 operating constraints while replacing obsolete pack routes within the approved
-scope. New repositories receive tracker, label, and domain defaults without
-forcing ticketed work. The resulting contract is repository-owned, not a mirror
-that must match its seed forever.
+scope. New repositories start with compact agent instructions; separate guides
+need useful content, and tracker setup requires requested or established tracking.
+The resulting contract is repository-owned, not a mirror that must match its seed
+forever.
 
 Follow [installation and recovery](../../INSTALLATION.md) for managed-copy ownership
 and updates. Editing source does not install it. Global preferences and external

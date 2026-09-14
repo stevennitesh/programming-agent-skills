@@ -53,7 +53,9 @@ Each ticket needs a short statement of the source purpose and how its outcome
 contributes, plus a source pointer, settled scope, observable acceptance,
 consequential constraints, and actual blockers. Carry relevant scope rationale
 without rewriting the overall goal for each ticket. Purpose guides choices within
-accepted requirements; it does not authorize expanding or weakening them. A source
+accepted requirements; it does not authorize expanding or weakening them.
+Preserve whether a source mechanism is required or suggested; do not promote
+suggested implementation into ticket acceptance. A source
 link does not replace the purpose and acceptance this implementer needs. Preserve the
 source's distinguishing input, state, result, and evidence class rather than
 replacing them with generic instructions to handle edge cases or add tests.
