@@ -5,7 +5,10 @@ facts and omit unused fields. Link the plan rather than copying conversations.
 Carry its short purpose statement into the assignment without reinterpreting it;
 include the slice's contribution and relevant behaviors, linking detailed contracts.
 For a small task, use the user's request as the source; no plan document is required.
-The lead owns routing and counters.
+The lead owns routing and counters. Before dispatch, check that the assignment
+and its explicit references provide the purpose, scope, constraints, and acceptance
+needed for the assigned work. Remove duplicated workflow instructions; do not make
+the receiver reconstruct requirements from unrelated roadmap sections.
 
 ## Ponytail preparation
 

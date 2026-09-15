@@ -78,7 +78,10 @@ When coordinated implementation is requested, keep one authoritative plan with
 two distinguishable parts. The accepted contract holds purpose, outcome, scope,
 operating assumptions, consequential design decisions, and acceptance. The delivery approach
 holds coherent slices, dependencies, justified checkpoint coverage, and concise
-progress. Link existing owners instead of copying their contracts.
+progress. Link existing owners instead of copying their contracts. Keep model
+settings, worker-guidance paths and hashes, checkout state, custody, and repair
+accounting in assignments, continuation handoffs, or the existing execution-state
+owner.
 
 Detail approaching work while resolving dependencies that could invalidate the
 overall approach. Leave routine internal design to the implementer. Delivery order
@@ -90,10 +93,8 @@ require a separate plan document when an existing owner is sufficient.
 
 ## Completed milestone records
 
-Keep temporary agent coordination in assignments or continuation handoffs, using
-the execution workflow's existing state owner. Completed milestone records retain
-project decisions, delivered behavior, evidence, limitations, and relevant next
-steps. Retain execution details only when needed to explain provenance or unresolved
+Completed milestone records retain project decisions, delivered behavior, evidence,
+limitations, and relevant next steps. Retain execution details only when needed to explain provenance or unresolved
 work. Preserve custody, authorization, and repair accounting while work remains
 active or resumable; do not discard recovery state to tidy a document. Apply this
 when completing or revising current records, not as a rewrite of historical evidence.
