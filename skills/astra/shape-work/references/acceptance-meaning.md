@@ -42,6 +42,11 @@ conditions. For numerical claims, include material tolerance and data assumption
 Keep unknown targets explicit and resolve decision-bearing gaps with their owner;
 do not invent numbers or treat an unmeasured aspiration as proved acceptance.
 
+For empirical evaluation, state the claim and the population or conditions it
+concerns. Check whether selection and evaluation support that claim; explain
+consequential differences. Distinguish evidence used for exploration, selection,
+and final evaluation, including prior exposure that limits the claim.
+
 For retries, escalation, or multiple stopping conditions, distinguish success
 from exhaustion, cancellation, and unresolved work. Include the case where two
 criteria disagree if their precedence changes the result.

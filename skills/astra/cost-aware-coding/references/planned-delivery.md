@@ -57,6 +57,10 @@ change against the original comparison, including untracked content and the
 integrated caller workflow. Reuse checkpoint evidence only where later changes
 leave it valid; earlier passes do not exempt code from regression review.
 
+When completing the current milestone record, follow shape-work's
+[completed milestone guidance](../../shape-work/references/durable-decisions.md#completed-milestone-records)
+to retain project results and limitations without temporary agent ceremony.
+
 Complete only when whole-plan acceptance, required checks, and final review pass.
 A comprehensive final review does not itself request high-assurance fanout or
 authorize publication.

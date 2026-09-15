@@ -52,6 +52,10 @@ Then independently assess correctness, ownership, representation, simplicity,
 maintainability, and proof. Working happy-path behavior does not excuse a concrete
 design cost; attractive structure does not excuse an incomplete outcome.
 
+Challenge the decision-bearing assumptions connecting the approach to the intended
+outcome, including choices you authored. Agreement among the plan, implementation,
+and tests is not independent support for those assumptions.
+
 If the implementation follows a plan whose technical assumptions fail the accepted
 outcome or whose extra guarantees impose unjustified cost for supported workflows,
 identify the plan-level problem and affected decision. Recommend removing or
@@ -64,12 +68,16 @@ Trace meaningful changes through real callers, owners, and effects. When a resul
 crosses stages or tickets, check that its actual produced or persisted form reaches
 the consumer and preserves accepted values, issues, identity, and terminal behavior.
 Follow serialization, configuration, dependency versions, lifecycle, and cross-language
-consumers when they matter even if absent from the visible call graph.
+consumers when they matter even if absent from the visible call graph. Check
+returned data against the intended consumer's semantic input contract, not just
+its shape.
 
 For numerical or data transformations, check material units, time alignment,
 missing-value meaning, precision, and aggregation assumptions. Where correctness
 depends on the method, seek an independent reference, analytic case, or invariant
-rather than reproducing the implementation.
+rather than reproducing the implementation. Where behavior promises independence
+from incidental representation, vary that representation when it can expose a
+plausible defect—for example, valid row order in an identity-aligned transformation.
 
 Inspect activated risks: trust and authorization boundaries, shared state,
 resource bounds, recovery, migration, and independently deployed consumers. For

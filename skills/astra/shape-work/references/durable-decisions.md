@@ -88,6 +88,16 @@ The selected execution workflow owns checkpoint scheduling, custody, correction
 allowances, and final review. This plan shape does not authorize execution or
 require a separate plan document when an existing owner is sufficient.
 
+## Completed milestone records
+
+Keep temporary agent coordination in assignments or continuation handoffs, using
+the execution workflow's existing state owner. Completed milestone records retain
+project decisions, delivered behavior, evidence, limitations, and relevant next
+steps. Retain execution details only when needed to explain provenance or unresolved
+work. Preserve custody, authorization, and repair accounting while work remains
+active or resumable; do not discard recovery state to tidy a document. Apply this
+when completing or revising current records, not as a rewrite of historical evidence.
+
 ## Revisions during delivery
 
 Before changing accepted meaning already used by tickets or workers, identify the
