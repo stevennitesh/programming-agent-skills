@@ -67,7 +67,7 @@ material and retire obsolete current pointers within scope. Keep historical
 evidence distinguishable from instructions still in force.
 
 For replacing specs or plans, follow
-[Document reconciliation](../shape-work/references/durable-decisions.md#reconcile-competing-documents).
+[Document reconciliation](../shape-work/references/document-reconciliation.md).
 
 ## 3. Write literal, decision-changing guidance
 
