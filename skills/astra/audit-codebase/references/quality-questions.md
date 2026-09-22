@@ -1,82 +1,85 @@
 # Quality questions
 
-Use only dimensions relevant to the audit. Architecture findings need observable
-costs; broad audit requests also warrant the applicable correctness and operational
-questions below. Existing repository contracts supply the expected behavior.
+Use only questions that could expose a meaningful defect, avoidable cost, justified
+complexity, or evidence gap in the selected scope. These are discovery prompts,
+not a checklist or finding quota.
 
 ## Ownership and change
 
-Which knowledge must a caller learn despite the interface? Does one policy change
-in several places, or do independent policies have to change together? Would
-removing a layer eliminate complexity or push its necessary decisions into callers?
-Check both excessive fragmentation and excessive concentration. Cycles and long
-call chains are leads; show the concrete coordination or discovery burden.
+Does a caller need knowledge the interface should own? Does one policy require
+coordinated edits in several places, or are independent policies forced to change
+together? Would removing a layer eliminate complexity or merely push necessary
+decisions into callers?
 
-Does domain policy depend on transport, storage, or framework details in ways
-that force unrelated policy edits when those details change? Trace the dependency
-direction and a concrete consequence before recommending inversion or an adapter.
-
-Look at real change history when it can test this explanation. Similar syntax
-does not establish shared domain meaning. Multiple independent releases, resource
-lifetimes, or authoritative models may warrant separate boundaries.
+Do transport, storage, framework, or vendor details force unrelated domain-policy
+changes? Use real change history when it can test that explanation. Cycles, long
+call chains, and similar syntax are leads only; show the actual coordination or
+change burden before reporting a problem.
 
 ## Domain and valid state
 
-Do names, units, representations, and relationships preserve accepted meaning?
-Where is authoritative state, who can write it, and can that owner enforce its
-invariants through all supported entry paths? Can ordinary data shapes represent
-invalid combinations that callers must repeatedly repair? Distinguish accepted
-contracts from accidental current behavior and identify consequential ADR conflicts.
+Do names, units, representations, states, and relationships preserve accepted
+meaning? Where is authoritative state, who can write it, and can that owner enforce
+its invariants through supported entry paths?
 
-## Failure, trust, and lifecycle
+Can ordinary representations express invalid combinations that callers must
+repeatedly repair? Distinguish accepted meaning from accidental current behavior.
 
-Trace relevant rejection, partial success, cancellation, retry, restart, and
-concurrency paths. Can a caller distinguish accepted from completed work? Do shared
-state and remote effects have real enforcement and recovery mechanisms? Check
-reachable trust boundaries, authorization, sensitive output, and resource cleanup.
-Use the supported environment and compatibility obligations, not a Cartesian
-product of hypothetical failures. Preserve mechanisms needed for durability,
-security, accessibility, or data-loss prevention even when they look cumbersome.
+## Failure, trust, lifecycle, and resources
 
-When components deploy independently or data outlives a release, check supported
-combinations of clients, workers, and stored records. Can conversion race with
-old writers, or can rollback leave new data unreadable? Audit the existing
-transition guarantees; leave designing a replacement migration to codebase-design.
+Inspect only conditions activated by the supported workflow or observed evidence.
+When relevant, ask whether callers can distinguish rejection, partial success,
+completion, cancellation, retry, restart, or uncertain effects and whether the
+real owner can enforce recovery.
 
-For shared resources, can one slow dependency, tenant, or request exhaust capacity
-needed by others? Check queue growth, retry amplification, timeouts, cancellation,
-and concurrency limits against supported workloads. Require a concrete exhaustion
-path or evidence of cost rather than prescribing limits to every local operation.
+For reachable trust boundaries, check where authorization or sensitive handling
+is actually enforced. Preserve mechanisms required for durability, security,
+accessibility, or data-loss prevention even when they look cumbersome.
+
+When components deploy independently or data outlives a release, inspect real
+compatibility combinations, migration races, and rollback limitations. Designing a
+replacement migration belongs to [codebase-design](../../codebase-design/SKILL.md).
+
+For shared resources, require a concrete exhaustion or interference path before
+recommending limits, queues, timeouts, or concurrency controls.
 
 ## Simplification and dependencies
 
-Could existing repository, standard-library, or platform behavior remove a custom
-mechanism while preserving semantics? Is configuration or compatibility still
-used? Check registration, dynamic imports, serialization, generated ownership,
-external consumers, and relevant history before calling code dead. Fewer files,
-one implementation, or a shorter diff does not independently justify removal.
-Include lifecycle and migration costs when comparing alternatives.
+Could repository, standard-library, platform, or existing dependency behavior
+replace custom machinery while preserving semantics? Before calling code or
+configuration dead, check dynamic registration, generated ownership, persisted
+formats, external consumers, and relevant history.
+
+Fewer files, one implementation, or shorter code does not establish that removal
+is safe. Include real migration and lifecycle costs in the judgment.
 
 ## Proof and maintainability
 
-Can ordinary callers exercise the contract without depending on internal layout?
-Do substitutes hide the integration property that matters? Do tests have independent
-expectations and distinct regression responsibilities? For test consolidation,
-identify the overlap and the risk the surviving checks preserve; different layers
-may deliberately establish different properties. Name concrete ambiguity or change
-burden before suggesting naming, control-flow, type, or comment changes.
+Does current proof establish the property that matters to an ordinary caller?
+Could substitutes bypass the integration, persistence, concurrency, or rendering
+mechanism under review?
 
-Would the checks reject a plausible wrong implementation of the claimed behavior?
-Look for a discriminating input, transition, or negative control when ordinary
-success also fits the wrong rule. Passing tests or a high coverage percentage do
-not establish that distinction; do not require mutation testing for every audit.
+Do tests have independent expectations and distinct regression responsibilities?
+Different test layers may deliberately establish different properties.
+
+Would the current checks reject a plausible wrong implementation? Seek a
+discriminating input, transition, invariant, or negative control when ordinary
+success also fits the wrong rule. Passing tests or high coverage alone do not
+establish this distinction.
+
+Require concrete ambiguity, coordination, or change burden before suggesting
+naming, type, control-flow, comment, or test-structure cleanup.
 
 ## Performance and operation
 
-Use an attributable trace, representative measurement, or deterministic resource
-count to support cost claims. Bind comparisons to equivalent work, environment,
-scale, and relevant variability. A suspected bottleneck is a lead, not measured
-benefit. An observed cost can be an opportunity without a formal budget; a defect
-claim needs a violated expectation. Check whether important failures can be
-detected and attributed when operation depends on those signals. State missing
-evidence rather than claiming a local check proves production behavior.
+Support performance or resource-cost claims with an attributable trace,
+representative measurement, or deterministic work count. Compare equivalent work
+under relevant scale, environment, and variability.
+
+A suspected bottleneck is a lead, not a measured benefit. A demonstrated cost can
+be an opportunity without a formal budget; a defect claim requires a violated
+expectation.
+
+When operational correctness depends on detection or attribution, check whether
+the necessary signals exist. State missing production evidence rather than
+presenting a local observation as proof of production behavior.
