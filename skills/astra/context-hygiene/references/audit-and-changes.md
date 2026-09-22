@@ -38,6 +38,11 @@ belongs.
 For agent-instruction wording, triggers, pointers, and reconciliation, use
 [writing-for-agents](../../writing-for-agents/SKILL.md).
 
+When cleanup replaces, relocates, or retires a current plan, specification, guide,
+or decision record, use
+[Document reconciliation](../../shape-work/references/document-reconciliation.md)
+for current-versus-historical ownership and affected pointers.
+
 When useful project meaning or decision rationale lacks a durable owner, follow
 the repository's domain guidance. Use
 [Domain modeling](../../shape-work/references/domain-modeling.md) when deciding how
