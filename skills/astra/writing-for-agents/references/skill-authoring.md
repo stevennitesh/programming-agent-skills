@@ -1,36 +1,61 @@
 # Skill authoring
 
+Use this reference when creating a skill or changing its discovery, invocation,
+package structure, or host-specific behavior.
+
 ## Make discovery precise
 
-Keep the description short and specific to the task and observable requests that
-should activate it. Add an exclusion only for a likely competing interpretation.
-Keep detailed procedure in the body so the description remains a useful
-selection cue.
+Write the description for selection, not explanation. Name the task or observable
+request that should activate the skill and add exclusions only for realistic
+neighboring intents that could select it incorrectly. Keep the procedure in the
+body.
 
-Keep the folder name, frontmatter name, and any invocation metadata consistent.
+Prefer a narrow reliable trigger over a broad description that loads the method
+for work the base agent can handle directly. When changing discovery, consider
+both representative positive requests and realistic near-misses.
+
+Keep the folder name, frontmatter name, and invocation metadata consistent.
 Preserve the intended invocation policy. For a new skill, use the target host's
-default unless the user requests another policy.
+current default unless another policy is required.
 
-Discovery and context loading depend on the host. Do not assume that making
-a skill explicit-only removes all metadata from context or prevents other
-instructions from referencing its files. Check current host documentation when
-changing that behavior.
+Discovery and context loading are host behavior. Do not assume that explicit-only
+invocation hides all metadata, that every host interprets the same metadata, or
+that a listed skill was actually loaded. Check current host documentation when
+that behavior matters.
 
-## Keep the package small
+## Keep the package proportional
 
-Put the shared method and completion condition in `SKILL.md`. Add supporting
-references only for detail a particular branch needs, with a conditional link
-at the point of use. Add scripts or templates when they remove repeated work
-or protect a concrete contract.
+Put the shared method, key boundaries, and completion condition in `SKILL.md`.
+Keep information every applicable invocation needs there.
 
-For host-specific schema, metadata, or installation mechanics, use the current
-bundled `skill-creator` guidance when available; otherwise consult the target
-host's official documentation. Keep those changing mechanics out of this method.
-Edit the source package and preserve unrelated metadata and installation state.
+Move substantial detail into a reference when it supports a recognizable branch.
+Place the pointer at the decision that triggers that branch and state when the
+reader should follow it. Do not move required guidance behind an ambiguous pointer
+merely to shorten the root file.
 
-## Check the package
+Add scripts, templates, or deterministic helpers when they remove repeated work,
+enforce a mechanical contract, or make a fragile procedure safer. Do not add
+machinery merely to make the skill package look complete.
 
-Use the available package validator to check frontmatter and naming. Resolve
-local links from their containing files and inspect changed discovery metadata.
-Confirm that required tools and references exist in the intended environment.
-Report package checks separately from any evidence about agent behavior.
+Keep model- and host-specific mechanics out of the universal method when they can
+change independently. Use current host documentation or the bundled skill-creation
+guidance for schemas, metadata, installation, and packaging details.
+
+Edit the source package rather than an installed copy unless the installation
+mechanism explicitly owns direct edits. Preserve unrelated metadata and
+installation state.
+
+## Check the package and its claim
+
+Use the available package validator for frontmatter, naming, and supported
+structure. Resolve local links from their containing files. Confirm that referenced
+tools, files, scripts, and templates exist in the intended environment.
+
+For a discovery change, inspect representative positive and near-negative
+requests. For a material method change, model migration, keep-or-retire decision,
+or claim that the skill improves behavior, read
+[Behavior evaluation](behavior-evaluation.md).
+
+Report packaging and link checks separately from behavioral evidence. A valid
+package establishes that the skill can be consumed; it does not establish that
+the skill is useful or that the host selected it correctly.
