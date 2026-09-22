@@ -9,9 +9,9 @@ The root owns decomposition, scheduling, integration, and the final outcome.
 Workers implement directly using repository guidance and the engineering
 contract; no implement skill is required. Keep fanout at the root. Use the
 available agent tools, not a new orchestration service or a fixed model roster.
-When cost-aware-coding governs the run, retain its accepted implementation ownership, model and budget restrictions,
-repair allowances, and review gate. This skill owns scheduling, custody,
-integration, and safe recovery mechanics. Root product-write permissions below
+When cost-aware-coding governs the run, retain its accepted worker-route and
+budget restrictions, lead decision ownership, and final review requirement. This
+skill owns scheduling, lane custody, integration, and safe recovery mechanics. Root product-write permissions below
 apply only when the accepted ownership allows them; otherwise return
 implementation and product corrections to a suitable worker.
 
@@ -65,11 +65,11 @@ Bound concurrency by available resources and the root's ability to inspect and
 land returns. Reuse a suitable worker for related items when its context helps;
 use fresh context for unrelated work or misleading accumulated context. Each
 assignment still requires verified checkout custody and a bounded packet.
-When cost-aware-coding governs the run, establish the accepted worker transport,
-model settings, and supported recovery path before dispatch. Its shared-checkout
-single-worker arrangement does not apply to concurrent lanes. Native follow-ups
-do not change worker effort; use its accepted replacement procedure when needed,
-retaining lane custody and remaining allowances.
+When cost-aware-coding governs the run, establish the accepted worker route,
+budget constraints, and recovery path before dispatch. Its serial shared-checkout
+custody does not apply across concurrent lanes; each lane still needs independent
+write ownership. Worker replacement follows the cost-aware recovery contract
+without bypassing lane custody or integration state.
 Send the goal, acceptance,
 exact checkout and base, allowed writes, exclusive resources, applicable guidance,
 predecessor outcomes, proof obligations, prohibited effects, and stopping condition.
@@ -143,9 +143,8 @@ Reuse worker evidence only while its relevant inputs, code, path, environment,
 and observations remain valid. Missing required proof is incomplete delivery.
 Use change review when requested, required by the repository, or needed for a
 concrete unresolved shared-contract or migration judgment; worker count alone
-does not trigger extra reviewers. When cost-aware-coding governs the run, its
-Astra lead reviews the stable integrated candidate with change-review after
-these checks pass. Add independent reviewers when the accepted route requires
+does not trigger extra reviewers. When cost-aware-coding governs the run, its lead reviews the stable integrated
+candidate with change-review after these checks pass. Add independent reviewers when the accepted route requires
 them. Lane reviews do not replace the integrated review gate. If an independent
 reviewer owns the diff review, the root verifies integration and decisive evidence
 without repeating that full review. Fixes invalidate affected evidence and any
