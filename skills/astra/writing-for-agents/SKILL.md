@@ -1,106 +1,145 @@
 ---
 name: writing-for-agents
-description: Write or audit agent instructions in skills, AGENTS.md, guides, prompts, and handoffs. Exclude product shaping, minor copy edits, and task transfers.
+description: Write or audit instructions another agent will execute, including skills, AGENTS.md, agent-facing guides or prompts, and continuation handoffs. Exclude product shaping and ordinary prose editing.
 ---
 
 # Writing for agents
 
-Write guidance that helps a capable agent make the intended decisions with the
-context it will actually receive. Preserve the user's settled choices and the
-document's authority. For an audit, return findings without editing.
+Write the minimum guidance that helps a capable agent make the intended decisions
+with the context it will actually receive. Preserve the user's settled choices,
+the document's authority, and any constraints the receiver cannot infer. For an
+audit, return findings without editing.
 
-## 1. Identify the reader and the decision
+## 1. Identify the receiver, authority, and outcome
 
 Establish the receiving agent's task, baseline capabilities, available context,
-and how this document reaches it. Read the relevant caller or pointer
-and the source that owns the rules. Resolve consequential gaps from those
-sources; surface any remaining product or policy decision to its owner.
+and how this document reaches it. Read the relevant caller or pointer and the
+source that owns the rules. Distinguish settled requirements and project facts
+from recommendations, examples, and historical evidence.
 
-For a worker assignment, deliver the bounded task, essential role boundaries,
-necessary context, and expected return in its prompt or an explicitly loaded
-source. Do not assume it inherits the caller's context. Keep orchestration
-decisions with the caller.
+Make the intended outcome, authorized effects, material constraints, and
+completion condition clear. Prescribe a method or sequence when dependencies,
+fragile operations, or an accepted workflow make that method consequential.
+Otherwise leave valid implementation and reasoning strategies open.
+
+Do not ask for narrated reasoning merely to make the instruction look rigorous.
+Ask for observable evidence, a concise decision rationale, or an explicit
+uncertainty when one is useful to judge the result.
+
+For a worker assignment, deliver the bounded task, essential role and authority
+boundaries, necessary context, acceptance, and expected return in its prompt or
+an explicitly loaded source. Do not assume the worker inherits the caller's
+context. Keep orchestration decisions with the caller.
 
 When preparing a continuation handoff for another agent or fresh context, read
 [Continuation handoffs](references/continuation-handoffs.md). That reference owns
-the packet and its checks; do not turn a request to write a handoff into executing
-the next step or transferring a task. Ordinary progress reports do not require it.
+the packet and its checks; writing a handoff does not execute the next step or
+transfer authority.
 
-When creating a skill or assessing or changing its discovery, structure, or
-packaging, read
-[Skill authoring](references/skill-authoring.md) for discovery and packaging.
+When creating a skill or changing its discovery, packaging, or invocation
+behavior, read [Skill authoring](references/skill-authoring.md).
 
-## 2. Put information where it belongs
+When migrating instructions to another model or host, deciding whether a method
+still earns its place, materially changing a skill's behavior, or claiming that
+wording improves agent performance, read
+[Behavior evaluation](references/behavior-evaluation.md).
 
-Keep common instructions together. Put substantial conditional detail behind
-a link that says when to read it and where it lives. If agents miss a reference,
-clarify its trigger before copying the material into the main document.
-In always-loaded guidance, keep constraints that apply across tasks and useful
-conditional pointers; load task-specific methods when relevant.
+## 2. Put information where the decision needs it
 
-Use ordered steps for a procedure, lookup structure for reference, and reasons
-and tradeoffs for explanation. A guide need not become a workflow. Split material
-when readers need it at different times, rather than to satisfy a file-size rule.
+Keep information every applicable run needs in the main instruction. Put
+substantial branch-specific detail behind a pointer that states when to read it.
+If agents miss a reference, improve its trigger before copying the whole reference
+into the always-loaded document.
 
-Give each rule one authoritative home and link to procedures owned elsewhere.
-Prefer current configuration, command help, and code over copied facts unless
-the document adds a convention, reason, or costly-to-discover detail.
+Organize material for how it will be used: procedure when order is consequential,
+reference when facts need lookup, and explanation when reasons or tradeoffs affect
+judgment. Split content when different readers or branches need it at different
+times, not to satisfy an arbitrary file-size target.
 
-When changing an authoritative instruction, inspect directly affected callers and
-competing current guidance. Reconcile useful material and retire obsolete pointers
-within scope; distinguish historical evidence from instructions still in force.
+Give each rule one authoritative home and point to procedures owned elsewhere.
+Prefer current code, configuration, command help, schemas, and maintained
+documentation over copied mechanical facts unless the instruction adds a
+convention, reason, expensive-to-discover fact, or required interpretation.
+
+When changing an instruction's meaning, trigger, ownership, or authority, inspect
+directly affected callers and competing current guidance. Reconcile useful
+material and retire obsolete current pointers within scope. Keep historical
+evidence distinguishable from instructions still in force.
+
 For replacing specs or plans, follow
 [Document reconciliation](../shape-work/references/durable-decisions.md#reconcile-competing-documents).
-Keep this check bounded to the affected guidance.
 
-## 3. Write concrete instructions, then prune
+## 3. Write literal, decision-changing guidance
 
 Put conditions and prerequisites before the actions they govern. Address the
-executing reader as "you" and name other actors explicitly; make the recipient's
-role clear in copied prompts. Make "only," "unless," and "after" attach
-to one clear obligation. Prefer direct positive actions; retain prohibitions for
-concrete boundaries. Name the observable outcome. Keep terminology
-consistent and define local terms where they affect a decision. Match the form
-to the ambiguity:
+executing reader directly and name other actors explicitly. Attach words such as
+"only," "unless," and "after" to one clear obligation. Prefer positive target
+behavior; use prohibitions for concrete boundaries or likely harmful
+misinterpretations.
 
-- For a required output shape, show its parts or one useful example.
-- For an easily omitted requirement, put it in the relevant step or template.
-- For conditional behavior, name an observable trigger, such as "If the task
-  supplies a brief, read it." Preserve the owning policy when clarifying its
-  conditions.
-- For a hard boundary, state the prohibited action and the permitted next step.
+State what must be true when the work is complete. Prefer a precise completion
+condition over extra intermediate steps that merely encourage diligence.
 
-Read each obligation as something the agent may enforce literally. Preserve
-the distinction between requirements, recommendations, and examples. Avoid
-turning a past incident or a local preference into a universal rule.
+Use examples, templates, and exact output shapes when they remove meaningful
+ambiguity or protect an easily omitted requirement. For conditional behavior,
+name an observable trigger. For a hard boundary, state both the prohibited effect
+and the permitted next action.
 
-Delete repeated defaults, stale facts, and scaffolding retained only because
-earlier models needed it. Keep guidance that improves a likely decision or
-prevents a credible failure for the intended readers, including repository-specific
-checks and evidence standards. Leave ordinary mechanics to the agent.
+Preserve the distinction between requirements, recommendations, defaults, and
+examples. Read each obligation as something a capable agent may enforce literally.
+Do not turn a past incident, preferred technique, or plausible future concern into
+a universal requirement.
 
-## 4. Check the behavior the document asks for
+Make every instruction earn its context:
 
-Read the result as a future agent with only the expected context. Check whether
-it introduces an unnecessary stop, question, delegation, artifact, or test.
-Resolve conflicting rules and missing prerequisites. Confirm that the intended
-outcome and the user's choices survived the edit.
-Make the authorized outcome and stopping condition clear, including when work
-continues after an intermediate question, check, or review. Preserve deliberate
-approval and custody boundaries; reuse existing authorization within its scope.
+- Does it change a likely decision for the intended receiver?
+- Does it provide information or authority the receiver cannot otherwise obtain?
+- Does it prevent a credible failure or preserve a required contract?
+- Would removing it leave the intended behavior materially less reliable?
 
-For changed triggers or conditional guidance, trace a representative applicable
-case and a nearby excluded case through the entry pointer and relevant branches.
+Correct advice that the intended receiver already follows reliably can still be
+a no-op. Delete repeated defaults, generic exhortations, stale facts, defensive
+scaffolding retained for earlier models, and procedural ceremony that does not
+change the accepted outcome.
+
+Do not prune project meaning, user-settled decisions, repository-specific
+conventions, authorization, custody, effect boundaries, required acceptance
+semantics, recovery contracts, or fragile ordering merely because they seem
+obvious. Model capability cannot recover information or authority the receiver
+was never given.
+
+## 4. Check the receiving behavior
+
+Read the result as a future agent with only the context it is expected to receive.
+Check whether it can identify:
+
+- when the guidance applies;
+- what outcome and boundaries govern the task;
+- what context or conditional reference it needs;
+- what remains its judgment;
+- what evidence matters; and
+- when the requested work is complete.
+
+Look for unintended behavior introduced by the instruction: unnecessary stops,
+questions, delegation, artifacts, reviews, tests, context loading, or scope
+expansion. Confirm that the user's settled choices and existing authorization
+survived the edit.
+
+For changed discovery or conditional guidance, trace at least one representative
+applicable case and one realistic nearby case that should not activate it.
 Confirm required guidance is encountered before the decision it governs without
-activating unrelated procedures. This is an editorial walkthrough, not a required
-agent run or behavioral test.
+loading unrelated procedures.
 
-Check affected links and machine-read structure. For executable recipes, run
-the changed path when authorized and practical, checking its observable result.
-If execution is unavailable, identify the unverified part. Structural checks
-do not establish that wording improves agent behavior; use a scoped behavioral
-comparison when the user requests evidence of that effect.
+Check affected links, frontmatter, and other machine-read structure. For an
+executable recipe, exercise the changed path when authorized and useful. Report
+what was not verified.
 
-Finish when the receiving agent can identify when the guidance applies, follow
-it with the available context, and recognize completion without inventing
-missing policy. Report the change and any material verification gap concisely.
+Structural validity, editorial review, or a successful example does not establish
+that wording improves agent behavior. Use
+[Behavior evaluation](references/behavior-evaluation.md) when the requested claim
+requires that evidence.
+
+Finish when the intended receiver can act within its authority, reach the required
+outcome with the context available to it, and recognize completion without
+inventing missing policy. Report the material change and any consequential
+verification gap concisely.
