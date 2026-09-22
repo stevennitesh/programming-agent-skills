@@ -4,20 +4,21 @@ Read for interrupted, failed, or off-contract work. Reconstruct the run from
 actual Git, helper, process, and applicable tracker state before resuming.
 Retained packets identify the owned set; directory names alone do not.
 
-## Repair accounting for cost-aware runs
+## Cost-aware delegated runs
 
-When cost-aware-coding governs execution, read its
-[Repair allowances](../../cost-aware-coding/references/repairs.md) and apply its
-model restrictions alongside the custody rules below. Record implementation recovery
-per coherent item; replacement, reslicing, or a new lane does not reset it.
-Routine incorporation of an advanced integration base is not itself a failed
-implementation attempt. A submitted candidate that fails required acceptance
-does count under cost-aware-coding's attempt definition.
+When cost-aware-coding governs execution, use its
+[Recovery](../../cost-aware-coding/references/recovery.md) contract for worker
+failure attribution, route replacement, and serial delegation ownership. Apply
+those constraints alongside the lane custody rules below.
 
-Use cost-aware-coding's failure attribution and integrated-review accounting
-across all items; parallel lanes do not create additional repair allowances.
-Cost-aware-coding owns when to escalate or ask for further rounds; neither action
-bypasses lane eligibility or confirmed writer quiescence.
+A requirement, permission, environment, or acceptance failure is not a worker
+capability failure merely because it occurs in a lane. Resolve it at its owner.
+Worker replacement still requires confirmed writer quiescence and transfer of the
+actual preserved lane state; neither reslicing nor a new lane resets that safety
+boundary.
+
+Cost-aware routing does not override helper eligibility, integration provenance,
+or final integrated review.
 
 ## Recover safely
 
