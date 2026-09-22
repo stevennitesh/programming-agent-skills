@@ -1,104 +1,80 @@
 # Optional visual atlas
 
-Use the atlas when the user requests a visual map, maintained audit coverage, or
-continuation of an existing Astra report. Focused findings do not require it.
-The helper is [atlas.py](../scripts/atlas.py); run it with
-Python 3.11 or later. It uses Git inventory and the standard library.
+Use the atlas only when the user requests a visual system map, maintained audit
+coverage, or continuation of an existing managed atlas. Focused findings do not
+require it.
+
+The helper is [atlas.py](../scripts/atlas.py). Use its current `--help` and
+subcommand help for command syntax rather than relying on copied recipes.
 
 ## Ownership
 
-The agent decides system boundaries, evidence, consequences, and recommendations.
-The helper owns IDs, path expansion, overlap checks, source fingerprints, update
-history, coverage counts, escaping, navigation, rendering, and atomic publication.
-Do not author HTML, hashes, or record IDs. Do not copy the full state into context.
+The agent owns semantic judgment:
 
-An atlas is one offline HTML file with embedded canonical data. No server, browser
-script, CDN, or sidecar database is needed. The page groups systems and subsystems,
-links dependencies, and expands findings and coverage records. Its freshness is
-a dated snapshot; `inspect` checks current files and `refresh` republishes those
-observations without changing judgments.
+- system and subsystem boundaries;
+- ownership and dependency meaning;
+- evidence and counterevidence;
+- finding classification, consequence, confidence, and recommendation; and
+- whether audit coverage is focused, comprehensive, or incomplete.
 
-## Commands
+The helper owns mechanical state such as record IDs, path expansion, overlap
+checks, source fingerprints, update history, escaping, rendering, coverage
+bookkeeping, and atomic publication.
 
-Use absolute paths. Every invocation begins with:
+Do not hand-edit generated HTML, record IDs, fingerprints, or canonical helper
+state. Do not copy the entire report state into model context when targeted helper
+inspection is sufficient.
 
-```text
-python <skill>/scripts/atlas.py --repo <repository> --report <repository>/.tmp/audit-codebase/<run>/report.html
-```
+A structural map does not establish audit coverage. The helper can enforce
+bookkeeping; it cannot decide whether the inspected evidence is semantically
+adequate.
 
-Append one command:
+## Use the helper as the state boundary
 
-| Command | Result |
-| --- | --- |
-| `init --title "Architecture atlas"` | Create an empty partial map; refuse an existing report. |
-| `inventory` | List tracked and nonignored untracked paths. |
-| `inspect` | Compact record index and mapping counts with current freshness. |
-| `inspect --id <id>` | One record, its child records, and changed source paths. |
-| `prepare --kind subsystem --path src/orders --out <new-draft.json>` | Generate a subsystem ID, ownership snapshot, and content fields. Repeat `--path` for additional files or directories. |
-| `prepare --kind finding --subsystem <id> --path <additional-evidence> --out <new-draft.json>` | Prepare a finding bound to the subsystem's files and any additional evidence. Extra paths are optional. |
-| `prepare --kind assessment --subsystem <id> --out <new-draft.json>` | Prepare coverage and limits separately from findings. |
-| `prepare --kind assessment --subsystem <id> --coverage comprehensive --out <new-draft.json>` | Generate the six-lens coverage ledger. Also works with `--id` to expand an existing assessment. |
-| `prepare --kind <kind> --id <existing-id> --out <new-draft.json>` | Populate an existing record for revision. |
-| `apply --draft <draft.json>` | Validate and publish that record, preserving all others. |
-| `refresh` | Recompute inventory and freshness and regenerate the HTML. |
+Inspect existing atlas state before changing it. Prepare records through the
+helper, edit only the semantic judgment fields it exposes, and apply changes back
+through the helper.
 
-Drafts belong under repository `.tmp/audit-codebase/`. Preparation refuses to
-overwrite a draft. Edit only `content`, or set `remove` to true for explicit
-deletion. To change source selections, prepare again with the desired `--path`
-arguments. Paths are exact files or directory prefixes, not glob expressions.
+Directory structure or path membership does not establish semantic ownership.
+Shared infrastructure needs an explicit owner and evidenced consumers.
 
-Create subsystem records first, then add evidenced dependencies using returned
-IDs. Dependencies contain `id` and `evidence`. Shared infrastructure has its own
-owner and named consumers; overlapping ownership is rejected. Directory selections
-expand mechanically, but directory structure does not establish semantic ownership.
-Unmapped and untracked paths stay visible; neither counts as audited or excluded.
+Prepare against current source state. If the helper reports source or report
+drift, re-examine the affected evidence and prepare the record again rather than
+carrying old judgments onto new fingerprints.
 
-Prepare immediately before recording evidence and include additional decisive
-files outside the selected owner. Source or report drift rejects publication.
-Inspect the change, re-examine affected evidence, and prepare again; do not paste
-a new hash into an old draft. A refresh does not confirm a finding or clear its
-changed-source flag. When deleting a subsystem, explicitly remove or reassign its
-dependent records and relationships first.
+Refreshing inventory or source fingerprints updates mechanical freshness only. It
+does not revalidate a finding, clear an evidence gap, or prove that a changed
+source still supports the previous judgment.
 
-## Judgment fields
+After an uncertain helper write, inspect actual atlas state before retrying. Do not
+bypass helper validation or remove a writer lock without establishing that no
+writer still owns it.
 
-Subsystems contain name, system, purpose, ownership, and evidenced dependencies.
-Findings contain kind (`defect`, `opportunity`, `retain`, `gap`), scenario, evidence,
-consequence, cause, counterevidence, direction, preservation checks, priority
-(`high`, `medium`, `low`) and its rationale, confidence/limits, and status. A defect
-also requires its accepted expectation. The helper sorts findings by priority.
-Use `resolved`, `disproved`, or `blocked`
-only with current supporting evidence; missing records do not imply resolution.
-Keep cross-system findings at one origin and name other affected owners in the
-evidence and direction, without duplicating the same cause under each subsystem.
+## Findings and coverage
 
-An assessment names examined flows, relevant dimensions, limits, and recommendation.
-Its coverage is `focused`, `comprehensive`, or `incomplete`. These are explicit
-agent judgments; the script cannot infer completeness from path counts or findings.
-For comprehensive coverage, the helper generates Design, Domain, Reliability,
-Simplification, Coding Practice, and Performance entries. Mark each `examined`
-with the flows and evidence inspected, `excluded` with an evidence-based reason,
-or `gap` with the missing evidence and its consequence for the audit. Pending or
-unexplained entries prevent a comprehensive claim. Gaps remain prominently labeled
-in HTML; comprehensive scope does not mean complete evidence. Use `incomplete`
-to save a ledger with pending work. Focused assessments need no ledger.
-The helper enforces accounting, not the truth or adequacy of supplied evidence.
-Reuse the assessment record when updating the same audit scope. To reassign a
-child record, prepare its ID with `--subsystem <new-owner>` and appropriate paths.
-A map without an
-assessment is displayed as not audited. Historical versions remain in the report.
+Use the audit skill's semantic dispositions—`defect`, `opportunity`, `retain`,
+and `gap`—and preserve the scenario, evidence, consequence, counterevidence, and
+direction needed to judge each recorded finding.
 
-Publish after a coherent update, then open the report for the user when useful.
-The helper reads back its output; no manual JSON/HTML synchronization is required.
-Exit 2 reports a rejected or failed operation. Inspect state after an uncertain
-publication; never bypass the helper or remove a writer lock without establishing
-that its writer is no longer active.
+Keep one causal finding rather than duplicating it under every affected subsystem.
+Name additional affected owners in its evidence or direction.
 
-Retain an atlas outside scratch only through an explicitly chosen archival
-workflow; this skill does not commit it.
+A focused assessment needs only the flows, evidence, and limits relevant to its
+scope.
 
-## If asked to continue or migrate a legacy report
+For a claimed comprehensive atlas, account for every configured coverage lens as
+examined, excluded with an evidence-based reason, or a gap. Pending or unexplained
+coverage prevents a comprehensive claim. The helper's completed ledger is
+necessary bookkeeping, not proof that the investigation itself was sufficient.
 
-Legacy custom reports use a different schema; this helper cannot continue them
-in place. Preserve the original report. For authorized migration, start an Astra
-atlas and revalidate selected legacy evidence before recording current judgments.
+A map without an audit assessment remains a map, not an audited codebase.
+
+## Retention and migration
+
+Keep an atlas outside repository scratch only when the user or repository has
+chosen a durable archival destination. Creating or updating an atlas does not
+authorize commits or publication elsewhere.
+
+Do not continue an incompatible legacy report schema in place. Preserve the
+original, start a current atlas, and revalidate legacy evidence before carrying
+forward current judgments.
