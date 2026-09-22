@@ -1,99 +1,91 @@
 ---
 name: cost-aware-coding
-description: Run an Astra-led, Sol-implemented coding route. Use only when explicitly requested.
+description: Delegate a substantial coding task to one implementation worker while the lead retains consequential decisions and final review. Use only when explicitly requested; exclude parallel implementation.
 ---
 
 # Cost-aware coding
 
-Use GPT-6 Astra Medium to lead and review, with one reusable GPT-5.6 Sol Medium
-native subagent per coherent implementation plan. The engineering contract owns
-coding quality; this skill owns routing and exclusive repository custody.
+Delegate substantial implementation to one worker when the lead effort saved is
+likely to exceed assignment, custody, and review overhead.
 
-## 1. Select the route
+The lead owns consequential decisions, routing, and final acceptance. The worker
+owns implementation investigation, coding, debugging, and checks within the
+assignment. This skill defines a serial delegation contract, not a fixed model
+pair.
 
-Delegate when remaining implementation and verification can repay the handoff.
-Keep work direct when briefing, handoffs, and review would cost more than useful
-delegated implementation and verification, including small coherent changes and
-serial investigations where accumulated context is the work. An explicit invocation
-uses this routing judgment; an explicit requirement for the pair overrides the
-direct-work exception. When delegating, use the standard pair without another
-coordination approval; ordinary action permissions still apply.
+## 1. Choose direct or delegated execution
 
-Reuse accepted plans. Use [shape-work](../shape-work/SKILL.md) when substantial
-behavior or approach remains unresolved. You own shaping, consequential decisions,
-review, and acceptance; Sol owns implementation investigation and routine coding.
-For requested delivery with checkpoints, read
+Delegate when enough implementation and verification can proceed independently to
+repay the handoff. Work directly when the task is small, accumulated lead context
+is the work, or consequential decisions remain too entangled with implementation.
+
+Explicit invocation still permits this cost judgment unless the user explicitly
+requires delegation or a particular available worker route.
+
+Reuse accepted requirements and plans. Use [shape-work](../shape-work/SKILL.md)
+when consequential behavior or accepted meaning remains unresolved. Use
+[parallel-implement](../parallel-implement/SKILL.md) when the user requests
+concurrent implementation; this skill owns only one serial implementation worker.
+
+Use a worker route explicitly selected by the user or supported by the current
+host. Do not treat historical benchmark snapshots or model names as durable routing
+authority. When usage measurement or a hard budget materially affects routing,
+read [Telemetry](references/telemetry.md).
+
+For coordinated delivery with meaningful checkpoints, read
 [Planned delivery](references/planned-delivery.md).
 
-For a different route or escalation, read [Model policy](references/model-policy.md).
-The user applies any change to your own model/effort. Separate app tasks require
-an explicit request for that lifecycle; agree their transport and recovery before
-dispatch. For requested concurrent implementation,
-[parallel-implement](../parallel-implement/SKILL.md) owns isolation and integration;
-retain this skill's repair limits. Read [Telemetry](references/telemetry.md) before
-dispatch only for requested measurement or a hard budget.
+## 2. Assign one worker
 
-## 2. Assign Sol and wait
+Read only enough to settle the assignment and its reserved decisions. Use
+[Worker assignment](references/worker-assignment.md) to give the worker the
+outcome, accepted context, scope, authority, checkout, acceptance, and return
+contract it cannot safely infer. Do not assume the worker inherited the lead's
+conversation or skill context.
 
-Read only enough to settle scope and prepare the brief. Use
-[Sol assignment](references/sol-assignment.md), including
-its worker-only method section when the user requests a Ponytail implementer.
-Give Sol exclusive checkout custody and leave implementation exploration to it.
-Reuse that agent for the plan, questions, and corrections; use a fresh agent for
-an independent plan.
+Give one actor write custody of the delegated checkout at a time. While the worker
+holds that custody, the lead must not mutate or perform conflicting inspection on
+the same mutable state. Read-only work on independent immutable context is fine
+when it cannot race with the worker.
 
-Use native `spawn_agent` with `model="gpt-5.6-sol"` and
-`reasoning_effort="medium"`. Prefer `fork_turns="none"` with a compact assignment;
-use a bounded recent-turn fork only when it replaces useful context transfer.
-Check tool support. Verify effective settings from exposed runtime metadata when
-available; otherwise report them as requested. Do not infer them from the starting
-model or search conversation logs solely to confirm identity.
+Use the host's supported delegated-agent and event-driven wait/resume mechanisms.
+Do not spend lead effort duplicating the worker's implementation investigation or
+polling merely for progress. Respond to substantive questions, candidate returns,
+failures, user intervention, or other events that require the lead.
 
-While Sol has custody, stay idle and silent until a substantive event below.
-Do not access the repository, run commands, or implement. Use native `wait_agent`
-with `timeout_ms=180000` for 180-second event-driven waits, shortened only when
-required by the runtime. Do not request routine progress, interrupt to check
-progress, speculate about implementation, repeat acceptance criteria, or narrate
-unchanged waiting. After a timeout, use only a minimal status check if the wait
-result does not already establish status, then wait again while Sol is running.
-A timeout consumes no attempt; ending your turn does not schedule continuation.
+If the lead must inspect or take over the delegated checkout, first obtain explicit
+custody release and establish that worker-owned writers or subprocesses have
+stopped. Idle, interrupted, or timed-out status alone does not establish release.
 
-Respond to consequential questions, candidate/blocker returns, user intervention,
-and actual errors or interruption. Use `followup_task` for blocking answers,
-release requests, and assignments; reserve `send_message` for necessary nonblocking
-coordination. Answer from supplied context. If resolving a consequential question
-or actual error requires repository inspection, request release and wait for
-confirmation that writers/subprocesses stopped before access;
-explicitly grant custody back afterward. Idle or interrupted status is not release.
+## 3. Review and recover
 
-Only if higher-priority instructions require commentary, give the shortest factual
-update; this does not justify additional monitoring or analysis. Otherwise remain
-silent while waiting. For noisy waiting, mention the optional
-[quiet-waiting setup](https://github.com/stevennitesh/programming-agent-skills/blob/main/INSTALLATION.md#optional-codex-quiet-waiting)
-once; it is not a prerequisite or permission to edit personal configuration.
-Follow runtime child cleanup rules, retaining IDs for follow-ups; cleanup does
-not grant custody. Read [Continuation](references/continuation.md) for interrupted,
-stale, errored, or unavailable-agent states.
+A reviewable return identifies the candidate, decisive checks and limits, and
+releases write custody with worker-owned writers stopped.
 
-## 3. Review and repair
+Review the candidate with [change-review](../change-review/SKILL.md), reusing valid
+candidate-bound evidence. Pending required proof remains incomplete until it passes
+or its owner revises the requirement.
 
-For a prerequisite-only return, resolve the gap and grant custody to resume the
-same assignment without charging an attempt. For a candidate, require a matching
-return with stopped writers and explicit release; no redundant status check is
-needed. Classify blocked or failed required checks under
-[Repair allowances](references/repairs.md).
+Return locally correctable implementation findings to the same worker when its
+accumulated context remains useful. Read [Recovery](references/recovery.md) for
+blocking questions, prerequisite failures, interruption, custody uncertainty,
+worker replacement, or route failure.
 
-For a reviewable candidate, use [change-review](../change-review/SKILL.md), reusing
-valid evidence. Review available proof when a required manual/platform check is
-pending, but do not declare completion until it passes or its owner revises it.
-Add independent reviewers only when requested assurance requires them.
+Do not change worker route merely because requirements are incomplete, acceptance
+is contradictory, permissions are missing, or the environment is broken. Resolve
+those causes at their owner. Replace or escalate the worker only for a demonstrated
+capability or recovery problem, subject to the user's route and budget constraints.
 
-Send required corrections to the same Sol with the findings, candidate, stage,
-and custody grant. Follow [Repair allowances](references/repairs.md) before repair
-or escalation; do not take over implementation. Resume waiting.
+Do not silently take implementation ownership while delegation remains the
+accepted route. If ownership changes, make the transfer explicit and reconcile
+custody first.
 
 ## 4. Finish
 
-Complete when the accepted outcome, required checks, and review gate pass. Report
-the candidate, decisive evidence, and material limits. A reviewable implementation
-or pending required proof is not completion. Include telemetry only when requested.
+Complete when the accepted outcome is present in the reviewed candidate, required
+checks pass, and material evidence limits are resolved or explicitly owned.
+
+Report the candidate, decisive evidence, and material remaining limits. Include
+usage or cost telemetry only when requested or needed for a governing budget.
+Review success does not authorize merge, publication, deployment, or other
+external effects.
