@@ -3,43 +3,38 @@
 ## Repository instructions
 
 Inspect the root instruction file and any nested instructions that govern the
-affected work. Preserve narrower rules at their own scope. Use the files the
-target agent reads; do not create parallel instruction files just to match a seed.
+requested scope. Preserve narrower rules at their own scope. Use the files the
+target agent actually reads; do not create parallel instruction files merely to
+match a preferred template.
 
-Keep local commands, non-obvious repository constraints, and conditional pointers
-in the root file. Verify commands against their scripts or configuration. Point
-to separate engineering, domain, or tracker guidance only when it exists and the
-concern applies. Keep brief guidance inline and procedure details at useful
-existing owners.
+Keep working commands, non-obvious repository constraints, and conditional
+pointers in the nearest useful instruction surface. Verify commands against their
+scripts or configuration. Keep brief guidance inline and move substantial
+conditional procedure to an existing maintained owner.
 
-During a compatibility update, reconcile the root and affected nested instructions
-with the other agent docs in the same proposal. Update moved pointers, remove
-stale instructions, and consolidate duplication. Preserve local rules unless the
-user selects their replacement with identified defaults; retain verified repository
-facts and operating constraints in either case.
-Include engineering guidance copied into these files: reconcile it with the
-current contract and keep exceptions retained under the selected option at their
-appropriate scope. Use
-the distinction between inherited defaults and deliberate policy in
-[Existing repositories](setup-defaults.md#existing-repositories).
-Check that the resulting reading path reaches the right guidance for each scope.
+When changing scope, ownership, or reading paths, check that future agents encounter
+the applicable guidance before the decision it governs. Preserve compatible
+instructions for other tools unless the user requested their reconciliation.
+
+Pack migration and compatibility work belongs to
+[Reconcile existing guidance](reconcile-existing.md); ordinary instruction-file
+setup does not compare every local rule against current templates.
 
 ## Global instructions
 
-Global instructions hold durable user preferences across repositories and
-environment-specific pitfalls. Keep project commands, repository facts, and
-coding procedures with their local owners. Reconcile only when global changes
-are explicitly authorized; otherwise report a relevant conflict as a separate
-recommendation. A local compatibility approval does not include global edits.
+Global instructions hold durable cross-repository user preferences and
+environment-specific constraints. Keep project commands, repository facts, and
+project engineering procedures with their local owners.
 
-When global setup is requested, use [the Astra global seed](../templates/global-agents.md)
-as a starting point, preserving the user's actual preferences. Retain personal
-shell guidance only where it fits the host. Bootstrap does not seed delegation
-or context-inheritance policy; those choices belong to the active runtime,
-user instructions, and the workflow performing delegation. Remove obsolete
-bootstrap-owned delegation pointers during an authorized compatibility update.
+Reconcile global guidance only when explicitly authorized. A repository-local
+setup or migration does not include installed global files.
 
-The managed installer updates its own small bootstrap section using the
-repository's `GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md`; this skill's seed supports
-broader, explicitly requested global reconciliation.
-An update to the seed does not authorize updating other users' global files.
+When global setup is requested, use
+[the global seed](../templates/global-agents.md) only as a starting point and
+preserve the user's actual preferences and host-specific constraints. Bootstrap
+does not seed delegation or context-inheritance policy; those belong to the
+active runtime, user instructions, and workflow that performs delegation.
+
+The managed installer may own a separate bootstrap section in the user's global
+instructions. This skill does not overwrite installer-owned or unrelated global
+content merely because its seed changed.
