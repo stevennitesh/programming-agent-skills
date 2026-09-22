@@ -1,133 +1,118 @@
 ---
 name: shape-work
-description: Clarify or stress-test an idea into an implementable outcome, capture a useful specification, or directly reconcile domain meaning, invariants, context relationships, and settled decisions. Use for shaping work or requested domain-record updates; exclude routine vocabulary lookup, straightforward implementation, and delivery-ticket decomposition.
+description: Clarify an underspecified change into settled behavior, constraints, and acceptance, or explicitly reconcile project domain meaning and accepted decisions. Exclude straightforward implementation, routine lookup, and ticket decomposition.
 ---
 
 # Shape work
 
-Make consequential decisions clear enough to build the intended outcome, using
-conversation, evidence, and a specification only when useful. Preserve the
-requested scope; shaping alone does not authorize implementation.
+Resolve consequential ambiguity so implementation does not invent product policy
+or accepted meaning. Use conversation, evidence, and a durable specification only
+when useful. Shaping alone does not authorize implementation.
 
-For direct domain-modeling or settled-decision capture, follow
-[Domain modeling](references/domain-modeling.md) without a feature interview.
+Shaping is complete when implementation can proceed without inventing a
+consequential product, scope, risk, or domain decision.
 
-## 1. Establish the outcome and known decisions
+For a direct request to clarify domain meaning or capture a settled domain
+decision, use [Domain modeling](references/domain-modeling.md) without a feature
+interview.
 
-Identify the problem, intended beneficiary, desired outcome, and decisions already
-made. Use the supplied conversation, brief, issue, or audit findings; inspect
-decision-bearing references and relevant repository contracts. Distinguish settled
-requirements, current implementation facts, recommendations, and assumptions.
-Capture settled input without restarting an interview or seeking approval again.
-Revisit only choices affected by new evidence. Assumptions and deferrals are not
-accepted requirements.
+## 1. Recover settled intent
+
+Establish the requested outcome, relevant purpose, settled decisions, and
+constraints that can change the result. Use the supplied conversation, brief,
+issue, audit finding, repository contract, and other decision-bearing sources.
+
+Distinguish accepted requirements and project meaning from current implementation
+facts, recommendations, assumptions, and deferred choices. Do not reopen a settled
+choice merely to run a complete interview. Revisit it only when new evidence
+creates a material conflict.
 
 Look up accessible facts instead of asking the user to retrieve them. When a
-proposed solution depends on an existing capability, verify enough of its actual
-behavior to avoid promising something it cannot do. Correct incidental factual
-errors; surface contradictions that would change an accepted commitment.
+proposed solution depends on an existing capability, inspect enough of its actual
+behavior to know whether it can satisfy the intended outcome. Surface a
+contradiction when it would change an accepted commitment.
 
-## 2. Resolve the decisions that affect the outcome
+## 2. Resolve only consequential uncertainty
 
-When the mechanism is still open, check whether an existing capability or smaller
-change achieves the intended outcome. Explain any meaningful loss or ceiling;
-do not silently simplify accepted requirements.
-Separate the required outcome from a proposed mechanism. When the choice matters,
-compare genuinely different approaches, including no software change when credible;
-investigate the assumption most likely to invalidate the choice before refining it.
+Separate the required outcome from a proposed mechanism. When the mechanism is
+not settled, check whether an existing capability or materially smaller approach
+satisfies the outcome. Compare alternatives only when a real tradeoff remains;
+do not manufacture options to complete a process.
 
-Ask only about unresolved choices that materially affect behavior, scope,
-constraints, acceptance, or tradeoffs, one question or a small independent group
-at a time. Wait for answers before dependent questions or decisions; continue
-useful independent work when available. Incorporate each answer without asking
-permission to proceed or repeating unchanged questions. Once the necessary
-choices are settled, continue to acceptance and capture within the requested scope.
+Resolve ordinary technical choices within the settled requirements. Ask the user
+or another decision owner only for unresolved choices that materially change
+accepted behavior, product priority, scope, risk tolerance, constraints, or
+domain meaning. Group independent questions when that reduces unnecessary turns;
+do not ask dependent questions before their prerequisites are settled. Continue
+useful independent work while an answer is pending.
 
-Use concrete scenarios to challenge vague agreement. Explain a recommendation
-and its decisive tradeoff when the evidence supports one, while eliciting
-participant-held facts neutrally. Technical decisions within settled requirements
-are yours to recommend and resolve within authorization; product priorities and
-accepted meaning belong to their decision owner. Do not invent their answer.
+Use a distinguishing scenario when abstract wording could conceal materially
+different outcomes. Explain a recommendation and its decisive tradeoff when useful;
+do not invent an owner-held answer.
 
-When shaping establishes, changes, or exposes a conflict in domain terms,
-invariants, responsibilities, or relationships, read
-[Domain modeling](references/domain-modeling.md) and
-reconcile relevant current meaning before building dependent decisions. Resolve
-collisions in the conversation; accumulate useful record changes rather than
-interrupting to write or seek approval after every answer.
+When shaping changes or exposes a conflict in domain terms, invariants,
+responsibilities, or relationships, read
+[Domain modeling](references/domain-modeling.md) before building decisions that
+depend on that meaning.
 
-For an unresolved architecture choice, use `$codebase-design` when available and
-useful. For an empirical question, use `$prototype` or available evidence-gathering
-tools within scope. These are methods, not installation prerequisites. Keep a
-conclusion conditional when the necessary evidence or owner is unavailable.
-Record what remains unknown, its impact, and what would resolve it.
+Use [codebase-design](../codebase-design/SKILL.md) when the unresolved choice is
+primarily architecture, integration, ownership, interface, or migration design.
+Use [prototype](../prototype/SKILL.md) when a new observation is needed to decide.
+Keep a conclusion conditional when decisive evidence or authority is unavailable.
 
-Summarize a complex synthesis for review when it could conceal a material
-misunderstanding; this does not reopen choices already made.
+## 3. Make behavior and acceptance discriminating
 
-## 3. Make behavior and acceptance precise
+Describe representative behavior from input or trigger to observable outcome when
+doing so removes consequential ambiguity. Include materially different rejection,
+partial-success, state, or completion behavior only when it changes the contract.
 
-Describe a representative caller journey from initiating input to observable
-outcome. Specify materially different rejection, partial-success, or state behavior
-when it affects the outcome. State what must remain true and what evidence could
-distinguish success from a plausible wrong result. Avoid implementation recipes
-unless a particular mechanism is itself a settled constraint.
+State what must remain true and what evidence could distinguish the intended
+result from a plausible consequentially wrong result. Avoid implementation
+recipes unless a mechanism is itself an accepted constraint.
 
-Choose acceptance obligations that distinguish the requested outcome from a
-consequential wrong result in the supported workflow. Before adopting a proposed
-safeguard, identify the realistic wrong result or broken workflow it prevents;
-without one, omit it from acceptance. Preserve explicit commitments, but keep
-suggested mechanisms and optional hardening distinct from required behavior.
-Writing them into a plan does not make them accepted requirements. Detail
-approaching work and defer decisions that do not affect it, while resolving
-dependencies that could invalidate the overall approach.
+Before adding a safeguard to acceptance, identify the realistic wrong result or
+broken workflow it prevents. Preserve explicit commitments while keeping proposed
+mechanisms and optional hardening distinct from required behavior. Writing a
+mechanism into a plan or specification does not make it accepted.
 
-Could two reasonable implementations satisfy the wording but produce materially
-different outcomes? Resolve unintended ambiguity or identify the remaining
-decision; preserve deliberate implementation freedom within accepted behavior.
+If two reasonable implementations could satisfy the wording while producing
+materially different outcomes, resolve the unintended ambiguity or keep the
+remaining owner-held decision explicit. Preserve implementation freedom where the
+accepted behavior does not require a specific mechanism.
 
-For composed results, durable state, conflicting rules, or measured claims, read
-[Acceptance meaning](references/acceptance-meaning.md). Preserve consequential
-semantics without enumerating irrelevant cases. Keep unresolved choices visible;
-do not fill gaps with plausible prose merely to make a specification look complete.
+For cross-boundary results, durable state, conflicting rules, measured claims, or
+competing completion criteria, read
+[Acceptance meaning](references/acceptance-meaning.md).
 
 ## 4. Capture only what future work needs
 
-Assess whether settled decisions warrant a context update or ADR, using
-[Domain modeling](references/domain-modeling.md) when they do. Context records
-preserve durable meaning and invariants; ADRs preserve useful decision rationale;
-specifications define what this work must deliver. Update the existing owner
-rather than duplicating it. Apply changes within existing authority; otherwise
-recommend the destination, concrete proposed change, and why future work needs it,
-bundling any missing approval into one question. Do not create records merely to
-complete a set, or block independent authorized work on optional documentation.
+Keep a small settled outcome in the conversation when that is sufficient. Persist
+the result when requested or when future sessions, implementers, or decision
+owners would otherwise need to rediscover consequential decisions.
 
-Keep a small outcome in the conversation when that is sufficient. Produce or
-update a durable specification when requested or needed for multiple sessions,
-delivery slices, or owners. Read [Durable decisions](references/durable-decisions.md)
-when writing a spec or updating domain records, including the distinction between
-accepted commitments and delivery approach for requested coordinated implementation.
-Follow the repository's configured destination; a spec need not be a tracker
-parent. External publication requires authority for that effect; a local draft
-can still make progress.
+When a specification or domain update is useful, read
+[Durable decisions](references/durable-decisions.md). Reuse the existing owner of a
+decision instead of creating competing current documents. Include only what future
+work needs to preserve the contract: intended outcome, relevant scope and
+constraints, settled behavior, acceptance, and material uncertainty. Preserve
+rationale when it can change later decisions.
 
-A useful result contains the problem, beneficiary, intended improvement, scope,
-consequential exclusions and their reasons, settled behavior and constraints,
-acceptance, and material uncertainty.
-Add source pointers and rationale that help a fresh agent preserve the decisions.
-Omit empty sections and exhaustive user-story catalogs. Reuse the existing owner
-of a decision rather than creating competing current documents.
+If the durable update replaces or retires a competing current document, read
+[Document reconciliation](references/document-reconciliation.md). If accepted
+meaning must change while tickets, workers, or delivery proof already depend on
+it, read
+[Active delivery revisions](references/active-delivery-revisions.md).
 
-## 5. Return or continue within scope
+## 5. Finish or continue within existing authority
 
-Do not label work ready when implementation would need to invent consequential
-policy. If blocked, return the exact decisions or evidence still needed.
+Do not call work ready when implementation would still need to invent
+consequential policy or accepted meaning. If shaping is blocked, return the exact
+decision or evidence still needed and its impact.
 
-Once behavior is sufficiently settled, continue authorized implementation within
-the active workflow's ownership and approval boundaries. Tickets are optional
-unless requested or required by that workflow. Use
-`$to-tickets` when the user requests ticketing, including a single ticket.
-When durable delivery boundaries or coordination would benefit from tickets,
-suggest that explicit next step; do not start it merely because it could help.
-Neither a spec nor tickets are a prerequisite for ordinary coding. Creating
-plans does not itself authorize implementation, publication, or delegation.
+Once the behavior is sufficiently settled, continue implementation only when it
+was already authorized and within the active workflow's ownership boundaries.
+Ticketing is separate and optional; use [to-tickets](../to-tickets/SKILL.md) only
+when requested or required by an active workflow.
+
+A specification, plan, or ticket does not itself authorize implementation,
+delegation, publication, or external effects.
