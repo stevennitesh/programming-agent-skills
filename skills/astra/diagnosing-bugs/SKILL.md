@@ -1,110 +1,97 @@
 ---
 name: diagnosing-bugs
-description: Investigate difficult or intermittent failures whose root cause is unclear, including environment and cross-system faults. Exclude obvious fixes.
+description: Investigate a difficult, intermittent, environment-specific, or cross-system failure when the causal mechanism is unclear. Exclude obvious local fixes and open-ended optimization.
 ---
 
 # Diagnosing bugs
 
-Establish a supported causal explanation of the reported failure, then verify a
-causal fix when requested. A diagnosis-only request permits inspection and scoped
-temporary local probes, not a retained product change. A fix request can continue
-through repair without another approval gate. If the cause turns out to be simple,
-finish the requested work rather than returning a routing error.
+Establish a supported causal explanation for an existing failure. When repair is
+requested, verify that the scoped fix addresses that mechanism rather than merely
+suppressing the symptom.
 
-## 1. Establish the failure and evidence
+Diagnosis is complete when the evidence supports a mechanism strongly enough to
+distinguish it from credible alternatives. A fix is complete when the causal
+repair is applied and the relevant failure and required behavior checks pass.
 
-Identify expected behavior from the request or governing contract, actual behavior,
-the precise symptom, and conditions that expose it. Preserve the relevant error,
-input, sequence, version, and environment facts. A characterization test records
-what happens; it does not establish what should happen. If intended behavior is
-unsettled, isolate that decision instead of treating current output as the oracle.
+If the expected behavior itself is consequentially unsettled, use
+[shape-work](../shape-work/SKILL.md) to resolve that meaning rather than treating
+current output as the specification.
 
-Use or establish the cheapest faithful feedback loop that distinguishes the
-reported failure from a nearby crash or setup problem. Reuse existing checks or
-attributable incident evidence where sufficient. Inspect code and form provisional
-hypotheses when needed to construct that loop; a local reproducer is not a
-prerequisite for reasoning from attributable incident evidence.
+## 1. Establish the failure faithfully
 
-Read the relevant section of [Investigation methods](references/investigation-methods.md)
-when intermittency, cross-system behavior, environment differences, history, or
-performance affects the diagnosis. Improve the
-loop's speed and signal where useful, but preserve the mechanism causing the bug.
-Do not simulate away the concurrency, persistence, or protocol under investigation.
+Identify expected and actual behavior, the symptom, and the conditions that expose
+it. Preserve the evidence needed to distinguish the reported failure from a nearby
+setup problem or different crash.
 
-## 2. Locate the causal mechanism
+A characterization test records what happens; it does not establish what should
+happen. Use the cheapest feedback loop that faithfully preserves the reported
+mechanism. Reuse attributable incident evidence when it is sufficient; a local
+reproducer is not required before reasoning from trustworthy production evidence.
 
-Trace backward from the visible failure to the earliest evidenced divergence from
-expected state, then forward to explain the original symptom. Examine the actual
-owner, inputs, transitions, and relevant callers. Compare working and failing
-conditions; recent edits or a suspicious component are leads, not proof of cause.
+Read the relevant section of
+[Investigation methods](references/investigation-methods.md) when intermittency,
+concurrency, cross-system behavior, environment differences, history, test order,
+or performance affects the diagnosis. Do not simulate away the mechanism under
+investigation.
 
-Form a falsifiable explanation and its predicted observation. When credible
-alternatives remain, choose the cheapest observation or controlled intervention
-that distinguishes them. Keep multiple explanations only while they remain useful.
-Prefer targeted state inspection
-over broad logging. A coherent intervention may change several lines, but avoid
-bundling independent guesses so the result remains interpretable.
+## 2. Establish the causal mechanism
 
-Check that the instrument reached the intended path and that its error did not
-replace the original failure. Minimize inputs or steps only while the reduced
-case still represents that failure. Record rejected explanations and decisive
-observations briefly so the investigation does not cycle through old guesses.
+Identify the earliest evidenced divergence from expected behavior and a mechanism
+that explains how it produces the reported symptom.
 
-Support a causal claim with the mechanism and evidence that distinguishes it from
-viable alternatives, not merely a plausible story or one green run after an edit.
-A reversible intervention or negative control is especially useful when the
-observations also fit a different cause. Investigate multiple contributing causes
-when the evidence requires them; do not force every incident into one faulty line.
+Form a falsifiable explanation with a predicted observation. When credible
+alternatives remain, prefer an observation or controlled intervention that
+distinguishes them over another observation that merely agrees with the favored
+explanation. Keep alternative hypotheses only while the evidence does not separate
+them.
 
-When several failed attempts share an assumption, identify it and choose an
-observation that could disprove it before trying another variation. If attempts
-stop teaching anything, reconsider the instrument, scope, or missing evidence.
-Repeated failures do not by themselves prove an architectural defect. Return a
-precise unresolved cause or next discriminating observation when progress needs
-unavailable evidence.
+Confirm that diagnostic instrumentation reaches the intended path and still
+exposes the original failure rather than replacing or suppressing it. A reduced
+case is useful only while it preserves the same mechanism.
 
-## 3. Repair within the requested scope
+Support a causal claim with both the mechanism and evidence that separates it from
+viable alternatives, not a plausible story or one green run after an edit. Use a
+reversible intervention or negative control when observations alone fit multiple
+causal explanations.
 
-For diagnosis alone, recommend a correction and preserve the supporting evidence.
-For an authorized fix, repair the enforcing owner and affected callers within
-scope. A guard is appropriate when that owner must reject invalid input; it is
-not a causal repair when it hides unexplained corruption or incomplete work.
-Check sibling paths before claiming the whole bug pattern is fixed.
+Allow multiple contributing causes when the evidence requires them. When repeated
+attempts stop producing new information, challenge the shared assumption or the
+instrument instead of trying another variation of the same idea. Preserve rejected
+explanations only when a long investigation would otherwise risk repeating them.
 
-Keep mitigation distinct from root-cause repair. An authorized reversible measure
-may reduce active impact before the cause is established; state its limits and
-preserve evidence needed for continued investigation. Do not claim mitigation
-proves the cause or restores behavior it has not demonstrated.
+## 3. Repair the cause when authorized
 
-Remove rejected experimental edits without disturbing unrelated work or accepted
-changes. If removal cannot be isolated safely, preserve the state and report it.
-Add a durable regression check when it protects the real failure or repository
-policy requires one. Prefer a check that fails for the original mechanism over
-one that simply mirrors the repaired implementation.
+For diagnosis alone, return the supported correction direction without retaining a
+product change. For an authorized fix, repair the owner of the violated rule and
+the affected callers within scope.
+
+Do not call a guard, retry, fallback, or suppression a root-cause repair when it
+only masks unexplained upstream corruption or incomplete work. Keep mitigation
+separate from causal repair: a mitigation can reduce active impact without proving
+the cause or restoring the full required behavior.
+
+Before claiming a class of failures is fixed, inspect other callers that share the
+causal owner or mechanism.
+
+Add or update durable regression evidence when it protects the real failure or
+repository policy requires it. Prefer a check that fails for the original mechanism
+over one that mirrors the repaired implementation.
 
 ## 4. Verify and return
 
-For an applied fix, rerun the original feedback loop when available and verify
-the requested behavior, not just absence of the error message. Report unavailable
-required verification as incomplete. Diagnosis alone may conclude from sufficient
-attributable evidence without replay. For intermittent or performance
-failures, compare observations under equivalent conditions and report exposure,
-variation, and remaining uncertainty. A passing local substitute cannot certify
-an unavailable production environment.
+For an applied fix, use the original faithful feedback loop when available and
+verify the required behavior, not merely disappearance of the error message.
+Diagnosis alone may conclude from sufficient attributable evidence without replay.
 
-Use invocation-owned scratch paths under repository conventions, defaulting to
-`.tmp/diagnosing-bugs/<case>/`. Remove temporary instrumentation and release owned
-processes or resources on completion or interruption. Preserve a useful requested
-reproducer or evidence artifact with its rerun conditions; do not erase the only
-record supporting the conclusion. Capture only necessary diagnostic data, redact
-secrets, and keep live instrumentation and external effects within actual authority.
-Repeat decisive verification after removing instrumentation when its removal
-could change the observed outcome.
+For intermittent or variable failures, report evidence strength and remaining
+uncertainty rather than treating a finite clean run as proof of elimination. A
+local substitute cannot certify an unavailable production-specific property it
+does not preserve.
 
-Return the symptom and expected behavior, supported mechanism or unresolved
-hypotheses, decisive evidence, applied or proposed correction, verification, and
-material limits. Diagnosis is complete when the cause is supported; an unresolved
-investigation remains unresolved. A fix is complete when the scoped causal repair
-is applied and relevant checks of the original failure and required behavior pass.
-Report statistical uncertainty explicitly; unavailable required checks leave
-verification incomplete.
+Use repository scratch and isolation conventions for temporary diagnostics.
+Remove or account for instrumentation and resources created by the investigation,
+preserve requested evidence or reproducers, and repeat decisive verification when
+removing instrumentation could change the observed behavior.
+
+Return the supported cause or precise unresolved alternatives, the decisive
+evidence, the requested repair if any, verification, and material limits.
