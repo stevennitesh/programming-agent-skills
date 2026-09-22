@@ -1,67 +1,48 @@
 # Planned delivery
 
-Use for requested coordinated delivery with checkpoints. Cost-aware-coding owns
-progression; shaping and review retain their specialist methods.
+Use when the user requests coordinated serial delivery with checkpoints or when a
+wrong early interface, persisted representation, or integration decision would
+make later delegated work materially expensive to redo.
 
-## Prepare the plan
+The lead owns checkpoint selection and review. The worker owns implementation
+within the current assignment.
 
-Reuse the authoritative plan or use [shape-work](../../shape-work/SKILL.md).
-Follow its [delivery-plan guidance](../../shape-work/references/durable-decisions.md#plans-for-coordinated-delivery)
-to preserve purpose and distinguish accepted commitments from an adaptable
-delivery approach. Resolve consequential design questions there; leave routine
-implementation decisions to Sol.
+## Choose meaningful checkpoints
 
-Plan-first stops after planning. Shape-and-execute continues within authorization
-without another planning approval; unresolved user-owned decisions pause dependent
-work. Recording a proposed mechanism does not make it binding acceptance.
+Reuse the accepted plan or shaping result; do not create a plan merely to use this
+reference. A checkpoint is useful when early evidence can prevent consequential
+downstream rework, not simply because a task has several steps.
 
-Use final-only review for small coherent changes unless a concrete rework risk
-justifies an intermediate checkpoint. Choose checkpoints where a wrong interface,
-persisted representation, or integration would make dependent work costly to redo.
-Define each checkpoint once, with its stable ID, work boundary, covered behavior,
-required evidence, and reason. Reference it from delivery steps rather than
-restating it; multiple steps may share a checkpoint. Final integrated review is
-required even when no intermediate checkpoint is useful. Read
-[Repair allowances](repairs.md) for per-checkpoint and final correction limits.
+Define the checkpoint's work boundary, accepted behavior, and required evidence
+once. Final integrated review remains necessary even when intermediate checkpoints
+pass.
 
-Record the whole-plan starting comparison and relevant pre-existing work, including
-in-scope untracked content. Preserve that boundary through intermediate commits.
+Suggested implementation mechanisms remain adaptable unless they are accepted
+constraints.
 
-## Advance through gates
+## Advance serially
 
-Use the main skill's assignment, waiting, and custody rules. Assign work through
-the next checkpoint, or the final return when none remains, with its plan revision,
-gate ID, coverage, and expected evidence. Sol may complete adjacent steps within
-that boundary without another handoff.
+Assign work through the next meaningful checkpoint using the main skill's worker
+assignment and custody contract.
 
-After a stable candidate returns with custody released, give change-review the
-gate comparison, plan purpose, covered commitments, and future scope; do not assume
-the reviewer inherits shaping context. Review affected integration and earlier work
-against that purpose and the accepted behaviors. Absent future work is not a
-checkpoint defect. A checkpoint pass establishes only its stated coverage.
+When the worker returns a stable candidate and releases custody, review only the
+behavior the checkpoint claims to establish plus affected earlier integration.
+Future work outside that boundary is not a checkpoint defect.
 
-Send required corrections through [Repair allowances](repairs.md). On a pass,
-record concise evidence and the next action in the existing plan, then grant the
-same implementer custody for the next assignment without a new permission question.
+Return required implementation corrections through the main skill's recovery path.
+After a checkpoint is accepted, continue with the next assignment without reopening
+settled decisions.
 
-Adjust delivery order within scope. Changes to accepted meaning follow shape-work's
-[revision rules](../../shape-work/references/durable-decisions.md#revisions-during-delivery):
-quiesce affected writers, resolve authority, reconcile the plan and assignment,
-and invalidate affected proof before resuming.
-Carry an authorized purpose change into affected assignments and review briefs;
-do not let successive handoffs create competing interpretations.
+If accepted meaning must change while assignments or proof already depend on it,
+use
+[Active delivery revisions](../../shape-work/references/active-delivery-revisions.md)
+before resuming affected work.
 
-## Review the whole outcome
+## Confirm the whole outcome
 
-After the final return releases custody, review the entire accumulated in-scope
-change against the original comparison, including untracked content and the
-integrated caller workflow. Reuse checkpoint evidence only where later changes
-leave it valid; earlier passes do not exempt code from regression review.
+After the final worker return, review the complete accumulated in-scope candidate
+against the original accepted outcome. Reuse checkpoint evidence only while later
+changes leave its relevant code, inputs, and assumptions valid.
 
-When completing the current milestone record, follow shape-work's
-[completed milestone guidance](../../shape-work/references/durable-decisions.md#completed-milestone-records)
-to retain project results and limitations without temporary agent ceremony.
-
-Complete only when whole-plan acceptance, required checks, and final review pass.
-A comprehensive final review does not itself request high-assurance fanout or
-authorize publication.
+Completion requires the whole outcome, required proof, and final candidate review;
+checkpoint passes are not substitutes for integrated acceptance.
