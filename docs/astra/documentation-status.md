@@ -6,6 +6,20 @@ referenced research/synthesis; it is not an audit of every historical packet or
 external project. The [design brief](design-brief.md) owns current direction. Do
 not treat this inventory as an execution backlog.
 
+## README and discoverability pass, 2026-09-23
+
+Reorganized the public README around the newcomer path: install first, understand
+the distinction between repository guidance/direct coding/specialist skills, then
+select a skill. The complete 18-skill catalog and invocation labels remain
+unchanged as a machine-validated contract.
+
+The previous README put installation after a long example and embedded detailed
+cost-aware worker policy, effort escalation, recovery, and telemetry guidance.
+Those mechanics now stay with the owning skill. The README retains only the
+stable cost-aware roles and its composition boundary with parallel-implement.
+It also makes explicit that ordinary bounded implementation is the default and
+that examples are not a required pipeline.
+
 ## Astra package consistency audit, 2026-09-23
 
 Audited all 18 managed Astra packages for directory/frontmatter identity,

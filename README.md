@@ -4,11 +4,11 @@
 
 <p align="center">
   18 focused skills, built primarily for GPT 6 Astra in Codex.<br>
-  Optional cost-aware routing uses GPT 6 Sol and Luna. Ordinary coding stays direct.
+  Ordinary coding stays direct; specialist workflows activate only when the task needs them.
 </p>
 
 <p align="center">
-  <img src="docs/astra/assets/skill-pack-overview.png" width="960" alt="The pack brings together relevant project context, focused methods for shaping, design, debugging and review, and evidence from meaningful checks. Use each when the task needs it; there is no required pipeline.">
+  <img src="docs/astra/assets/skill-pack-overview.png" width="960" alt="Repository guidance supplies local context, ordinary coding stays direct, and focused skills handle specialized shaping, design, debugging, review, delivery, and verification work.">
 </p>
 
 <p align="center">
@@ -17,66 +17,110 @@
 </p>
 
 <p align="center">
-  <a href="#find-the-right-skill">Find a skill</a> ·
-  <a href="#in-practice-clearer-project-guidance">Real example</a> ·
-  <a href="#cost-aware-coding">Cost-aware coding</a> ·
   <a href="#getting-started">Get started</a> ·
-  <a href="docs/astra/design-brief.md">Read the design brief</a>
+  <a href="#find-the-right-skill">Find a skill</a> ·
+  <a href="#how-it-fits-together">How it fits together</a> ·
+  <a href="#cost-aware-coding">Cost-aware coding</a> ·
+  <a href="docs/astra/design-brief.md">Design brief</a>
 </p>
 
 ---
 
-A capable coding agent still needs to know what matters in your project: which
-behavior must stay intact, where a decision belongs, and what would prove a change
-works. The **Astra skills pack** combines shared engineering guidance with focused
-methods for planning, design, debugging, review, and delivery. Each skill is a
-small package of instructions and, where useful, executable tools.
+A capable coding agent already knows how to write code. What it often lacks is
+the project-specific context needed to make the right change: which behavior must
+stay intact, where a decision belongs, and what would prove the result works.
 
-I built it around a practical question: **what guidance earns its place beyond
-the model's baseline?** That means keeping useful context and methods, testing
-assumptions, and removing instructions that add work without improving decisions.
+The **Astra skills pack** adds that context plus focused methods for tasks that
+benefit from a distinct workflow. It deliberately does **not** make ordinary
+implementation pass through a skill pipeline.
+
+> Explore imaginatively. Converge under proof. Simplify ruthlessly.
+
+## Getting started
+
+You'll need [Codex](https://github.com/openai/codex), Git, and Python 3.11 or newer.
+The installer itself uses only Python's standard library.
+
+Clone the repository, preview the managed changes, then install:
+
+```sh
+git clone https://github.com/stevennitesh/programming-agent-skills.git
+cd programming-agent-skills
+
+python -m scripts.install_skills --dry-run
+python -m scripts.install_skills
+```
+
+On macOS/Linux, use `python3` if needed.
+
+The installer deploys `skills/astra/` to `$HOME/.agents/skills` and manages a
+small bootstrap section in `$HOME/.codex/AGENTS.md`. It preserves unrelated
+skills and personal instructions and refuses unsafe ownership conflicts. Use
+`--skip-global-agents` if you want the skills without changing global
+instructions.
+
+After installation:
+
+- for a clear bounded code change, **just ask Codex to implement it**;
+- invoke a named skill such as `$shape-work` when you want an explicit workflow;
+- automatic skills can be selected by Codex when the request matches their scope.
+
+To update, pull this repository and repeat the preview/install commands. See
+[installation and recovery](INSTALLATION.md) for migration, custom targets,
+installed-pack validation, and transaction recovery.
+
+If you want only the shared engineering principles without the managed skills,
+adapt [AGENTS_PORTABLE_FALLBACK.md](AGENTS_PORTABLE_FALLBACK.md) into your global
+`AGENTS.md`.
 
 <details>
-<summary><strong>Which models is it for?</strong></summary>
+<summary><strong>Model support</strong></summary>
 
-The pack is tuned primarily for **GPT 6 Astra**. Its optional cost-aware workflow
-uses Astra Medium for consequential reasoning and final review, Sol Medium for
-substantial implementation, and Luna Max for compact bounded work when handoff and
-verification stay cheap.
+The managed pack is tuned primarily for **GPT 6 Astra**. The optional
+cost-aware workflow can route implementation-heavy work to **GPT 6 Sol** and
+compact bounded work to **GPT 6 Luna**.
 
-The historical [custom skill pack](skills/custom/) contains more detailed
-instructions and remains available for comparison or separate evaluation. The
-managed installer deploys only the Astra skills pack, and current model-specific
-comparisons are not sufficient to claim that the historical pack performs better
-for smaller models.
+The historical [custom skill pack](skills/custom/) remains available for
+comparison and separate evaluation, but it is not installed by the current
+installer. Current model-specific comparisons are not sufficient to claim that
+the historical package performs better for smaller models.
 
 </details>
 
-## What using it looks like
+## How it fits together
 
-Suppose an import job sometimes fails halfway through, and you want a safe retry.
-After [installation](#getting-started), give Codex a concrete question:
+The pack separates durable project context from specialized procedures:
 
-```text
-$shape-work Help me design retries for failed imports in this repo.
-Some records may already have been saved. Clarify what can be retried safely,
-what users should see, and how we will know the feature works.
-```
+| Surface | Owns | When to use it |
+| --- | --- | --- |
+| Repository `AGENTS.md` | Verified commands, local constraints, and pointers | Read first in a repository |
+| Repository context and decisions | Project meaning, source boundaries, and durable decisions | When the task depends on project-specific meaning |
+| Engineering contract | Shared coding judgment such as simplicity, ownership, and proportionate proof | During substantive engineering work |
+| Direct coding | Normal implementation under repository guidance | Default for a clear bounded change |
+| Astra skills | A distinct method or effect with its own admission and completion boundary | Only when the task matches that skill |
+| Historical research/synthesis/validation | Evidence and rationale from earlier pack generations | Consult selectively; never treat as current routing by default |
 
-A useful result settles what counts as the same import, how partial progress is
-handled, and which outcomes acceptance checks must distinguish. Those decisions
-give implementation something concrete to follow. The exact decisions depend on
-your repository.
+For this repository specifically, [AGENTS.md](AGENTS.md) gives contributor
+commands and pointers, [CONTEXT.md](CONTEXT.md) owns source boundaries, and the
+[Astra design brief](docs/astra/design-brief.md) owns current composition
+rationale. Each `skills/astra/*/SKILL.md` file owns its execution procedure.
 
-Once the behavior is settled, ask Codex to implement it directly. For other
-starting points, [find the right skill](#find-the-right-skill) below.
+Common paths stay simple:
+
+- **Clear change → direct implementation.**
+- **Unclear product behavior → `$shape-work` → direct implementation.**
+- **Consequential technical design question → `$codebase-design` → implementation.**
+- **Hard causal failure → diagnosing-bugs; repair only when already authorized.**
+- **Fixed code candidate → change-review.**
+- **Tracked decomposition → `$to-tickets`; parallel delivery only when explicitly requested.**
+
+These are examples, not a required lifecycle. Skills remain independently usable.
 
 ## Find the right skill
 
-Each linked skill name is a command you can invoke in Codex. **Request explicitly** means
-Codex waits for a user request; **Automatic when relevant** means it can select
-the skill when the task matches. You can also invoke those skills explicitly.
-These are alternative starting points, not a required pipeline.
+**Request explicitly** means Codex waits for you to invoke or request that
+workflow. **Automatic when relevant** means Codex may select it when your request
+matches. You can also invoke an automatic skill explicitly.
 
 | Your task | Skill | Use |
 | --- | --- | --- |
@@ -100,170 +144,93 @@ These are alternative starting points, not a required pipeline.
 | Audit persistent context and reconcile requested cleanup | [$context-hygiene](skills/astra/context-hygiene/SKILL.md) | Request explicitly |
 | Create an interactive guide for a human-operated procedure | [$wizard](skills/astra/wizard/SKILL.md) | Request explicitly |
 
-A review or audit alone does not authorize its proposed fixes. Repository setup
-can inspect without changing files; request reconciliation when you want edits.
+A review or audit does not authorize its proposed fixes. A specification or
+ticket does not authorize implementation. Each skill keeps its own effect and
+completion boundary.
 
-## In practice: clearer project guidance
+## Example: shape before implementation
 
-We used context-hygiene while maintaining this repository. Older architecture
-decision records (ADRs) still described retired skill routes, and an index notice
-was not enough for someone opening those records directly.
+Suppose an import job can fail after partially saving records. The product
+behavior is not yet settled, so start with shaping:
 
-| Before | What changed |
-| --- | --- |
-| Old ADRs retained historical status and route descriptions without explaining at the top which instructions still apply. | Added scope notices to 17 records and a new decision record explaining what still applies. |
-| Domain guidance pointed readers toward ADR history broadly. | Narrowed the route to relevant decisions when rationale or applicability is needed. |
-| A completed legacy plan remained under active plans. | Moved it to the archive and updated its links. |
+```text
+$shape-work Help me design retries for failed imports in this repo.
+Some records may already have been saved. Clarify what can be retried safely,
+what users should see, and how we will know the feature works.
+```
 
-See the [actual cleanup diff](https://github.com/stevennitesh/programming-agent-skills/commit/3f3df36a6befe6d9c221dbd3f2b9252ae34c3f14)
-and the [follow-up scope notices](https://github.com/stevennitesh/programming-agent-skills/commit/daf9fd95755e653b632043cfbf9a4605bd7f5995).
-The historical ADR bodies were preserved. This demonstrates the resulting
-reconciliation, not a measured reduction in tokens or a controlled comparison
-against an agent without the skill.
+Once those behavioral decisions are settled, ask Codex to implement them
+directly. Ticketing, delegation, parallel work, or another skill is unnecessary
+unless the task actually needs it.
 
 ## Cost-aware coding
 
-The optional [$cost-aware-coding](skills/astra/cost-aware-coding/SKILL.md)
-workflow reduces expensive Astra lead-token and context churn without weakening the
-accepted result. It is explicit-only and uses GPT 6 model roles as part of the
-routing policy:
+[$cost-aware-coding](skills/astra/cost-aware-coding/SKILL.md) is an optional,
+explicit workflow for reducing Astra lead-token/context churn while preserving
+the accepted result:
 
-- **Astra Medium** owns consequential reasoning, ambiguous decisions, orchestration,
-  exception handling, and final review.
-- **Sol Medium** owns substantial repository investigation, implementation,
-  debugging, verification, and repair.
-- **Luna Max** owns compact bounded tasks with a small self-contained brief and
-  cheap verification.
+- **Astra** owns consequential reasoning, exceptions, and final review.
+- **Sol** owns substantial repository investigation, implementation, debugging,
+  verification, and repair.
+- **Luna** is reserved for compact bounded tasks whose briefing and verification
+  stay cheap.
 
-Delegate only when the expected Astra-context savings exceed briefing,
-coordination, verification, and recovery overhead. A cheap worker is not a cheap
-workflow when Astra must continuously supervise or reconstruct its work.
+Delegation is worthwhile only when it saves more Astra context than the handoff,
+coordination, review, and recovery cost. While a worker owns implementation,
+Astra should remain mostly dormant rather than shadowing it.
 
-During delegated implementation, Astra should remain mostly dormant. The worker
-owns the checkout until it returns a stable candidate, decisive evidence, material
-limits, and released custody. Astra does not shadow the implementation, poll for
-routine progress, or consume an implementation transcript. Corrections normally
-return to the same worker while its accumulated context remains useful.
-
-When Codex overrides Astra to Sol or Luna, the worker assignment uses
-`fork_turns="none"` by default or a small bounded fork when recent turns are
-actually cheaper than an explicit brief. Full-history forks inherit the parent
-model and effort, so they are not the cost-aware route.
-
-```text
-$cost-aware-coding implement the accepted import-retry plan. Keep Astra on
-consequential decisions and final review, route coherent implementation to Sol,
-and use Luna Max only for compact bounded work.
-```
-
-For coordinated serial delivery, the
-[planned-delivery reference](skills/astra/cost-aware-coding/references/planned-delivery.md)
-adds checkpoints only when early evidence can prevent consequential downstream
-rework—for example, an interface, persisted representation, or integration
-decision that later work depends on. Checkpoint passes do not replace the final
-integrated review.
-
-Recovery follows the actual cause rather than a fixed repair-round allowance.
-Requirement, permission, environment, and contradictory-acceptance problems return
-to their owner. Local implementation problems normally return to the same worker.
-A Luna task that grows beyond its bounded contract moves to Sol. A demonstrated
-Sol reasoning failure can escalate Sol **Medium → High → Max** before coherent
-implementation is pulled back into Astra. Astra lead reasoning can escalate
-**Medium → High → XHigh → Max** when it can materially change a consequential
-decision; Ultra is excluded from this serial route because it changes Codex
-multi-agent behavior.
-
-When the user explicitly combines cost-aware routing with
+When combined with
 [$parallel-implement](skills/astra/parallel-implement/SKILL.md),
-parallel-implement owns decomposition, concurrency, lane custody, integration, and
-parallel recovery. Cost-aware-coding retains model/effort routing, budget policy,
-and final review.
+parallel-implement owns concurrency, lane custody, integration, and parallel
+recovery; cost-aware-coding retains model/effort routing, budget policy, and its
+final review requirement.
 
-Usage measurement is optional. When it matters, compare equivalent accepted
-outcomes and track Astra lead usage separately from Sol/Luna worker usage, handoff
-size, corrections, total usage, and wall time. The strongest success signal is a
-substantial worker implementation interval with little or no Astra activity,
-followed by Astra reviewing a stable candidate.
+The skill itself owns current model policy, worker assignment, recovery, planned
+serial delivery, and optional telemetry. Keep those changing mechanics there
+rather than copying them into repository guidance.
 
-<a id="install"></a>
+## Engineering philosophy
 
-## Getting started
-
-You'll need [Codex](https://github.com/openai/codex), Git, and Python 3.11 or newer.
-The installer uses only Python's standard library.
-
-Clone the repository, preview the changes, then install:
-
-```sh
-git clone https://github.com/stevennitesh/programming-agent-skills.git
-cd programming-agent-skills
-
-python -m scripts.install_skills --dry-run
-python -m scripts.install_skills
-```
-
-On macOS/Linux, use `python3` if needed.
-
-The installer deploys the Astra skills pack to `$HOME/.agents/skills` and manages a small
-bootstrap section in `$HOME/.codex/AGENTS.md`. It preserves unrelated skills
-and personal instructions, and stops if managed skills contain local edits or
-an unmanaged folder has the same name. Add `--skip-global-agents` to leave
-global instructions untouched.
-
-To update, pull this repository and repeat the preview and install commands.
-See [installation and recovery](INSTALLATION.md) for migration from the older
-pack, custom locations, and verification.
-
-**Prefer to start with just the principles?** Adapt the
-[portable engineering guidance](AGENTS_PORTABLE_FALLBACK.md) into your global
-`AGENTS.md`, preserving your existing preferences. It needs no installer and
-leaves out the specialized skills and managed updates.
-
-## The engineering philosophy
-
-> Explore imaginatively. Converge under proof. Simplify ruthlessly.
-
-- **Understand before changing.** Read the existing code, follow its callers,
-  and identify the behavior people rely on.
-- **Build what the problem needs.** Prefer a clear, small design. Reuse what
-  fits, and add abstractions when they earn their place.
-- **Check the result that matters.** Use tests and experiments that can expose
-  a real failure. More tests do not automatically mean stronger evidence.
+- **Understand before changing.** Read the existing code, real callers, and
+  behavior people rely on.
+- **Build what the problem needs.** Prefer a small clear design; add abstraction
+  only when it earns its place.
+- **Check the result that matters.** Use evidence capable of exposing a real
+  failure, not test count as a proxy for rigor.
 - **Leave useful context.** Preserve decisions, reasons, and local conventions
-  so future contributors can continue the work confidently.
+  where future contributors can actually find them.
 
-These principles live in the
-[engineering contract](skills/astra/repo-bootstrap/templates/engineering-contract.md).
-Repository setup adapts that guidance to a project's own conventions. The skills
-add specialized methods where the task benefits from them.
+The maintained seed lives in the
+[engineering contract template](skills/astra/repo-bootstrap/templates/engineering-contract.md).
+Repository setup adapts it to local conventions rather than maintaining a
+template mirror.
 
-## How the pack is developed
+## Project status and evidence
 
-The Astra skills pack is being refined through source comparisons, critical reviews, and
-focused workflow tests. The repository includes executable helpers and tests
-for installation, architecture reports, parallel worktree management, and bounded
-session-metadata capture.
+The pack is refined through source comparison, critical review, focused workflow
+tests, and real repository use. Package validation and helper tests establish
+specific structural or mechanical behavior; they do **not** by themselves prove
+that the pack produces better code, lower total cost, or equivalent behavior
+across models.
 
-Those checks establish specific behavior. Whether the pack improves coding
-quality over an agent's default capabilities needs broader comparative
-validation; the comparisons so far are limited. The
-[design brief](docs/astra/design-brief.md), shaped by
-[issue #94](https://github.com/stevennitesh/programming-agent-skills/issues/94),
-records the decisions, evidence, and open questions behind the current pack.
+The [Astra design brief](docs/astra/design-brief.md) records current composition,
+ownership, evidence limits, and open questions. Historical research, synthesis,
+validation, and ADRs remain available as evidence but do not override current
+owners.
 
-## Influences and contributions
+## Influences and contributing
 
 This project began with
 [Matt Pocock's skills](https://github.com/mattpocock/skills) and draws on ideas
 from [pstack](https://github.com/cursor/plugins/tree/main/pstack),
 [Ponytail](https://github.com/DietrichGebert/ponytail), and
-[Superpowers](https://github.com/obra/superpowers). Their approaches to focused
-workflows, simple design, and disciplined engineering helped shape this pack.
-See [Acknowledgments](ACKNOWLEDGMENTS.md) for more.
+[Superpowers](https://github.com/obra/superpowers). See
+[Acknowledgments](ACKNOWLEDGMENTS.md) for provenance and influences.
 
-If you're exploring the implementation or contributing a change, start with
-[the Astra skills pack source](skills/astra/), [repository context](CONTEXT.md), and
-[contributor instructions](AGENTS.md). Earlier research remains available as historical evidence.
+If you're contributing to this repository, start with
+[AGENTS.md](AGENTS.md), [CONTEXT.md](CONTEXT.md), and the
+[Astra design brief](docs/astra/design-brief.md). The managed source is
+[skills/astra/](skills/astra/).
 
 ---
 
