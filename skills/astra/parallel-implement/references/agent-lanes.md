@@ -53,12 +53,17 @@ reassess semantic interference before landing even when Git can merge cleanly.
 
 Before cleanup, establish actor quiescence and retain evidence needed for unresolved
 failures. Clean Git status does not make ignored or externally owned artifacts
-disposable.
+disposable. The helper treats ignored entries as cleanup blockers; remove only
+artifacts whose ownership and disposability are already established, then inspect
+again.
 
-Clean only named lanes that are clean and integrated into the current final
-candidate. The helper records exact retry authority before unregistering a lane;
-partial cleanup must preserve that recovery state. Do not replace helper recovery
-with manual recursive deletion.
+Clean only named lanes that are clean, free of ignored artifacts, and integrated
+into the current final candidate. Before unregistering a lane, the helper records
+the lane's filesystem identity in its cleanup receipt when the platform exposes
+one. A residual path is eligible for automatic retry only when it is absent or
+still matches that recorded identity; a new object at the same pathname is
+preserved. Partial cleanup must retain the receipt and helper state needed for
+recovery. Do not replace helper recovery with manual recursive deletion.
 
 After cleanup attempts, run the helper's cleanup verification over the complete
 retained lane set. Finish only when it reports `finish_clean: true` for the
