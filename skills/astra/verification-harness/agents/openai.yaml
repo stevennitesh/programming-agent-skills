@@ -1,0 +1,6 @@
+interface:
+  display_name: "Verification Harness"
+  short_description: "Build repeatable real-product verification"
+  default_prompt: "Use $verification-harness to create or reconcile a repository-owned harness that can safely drive and prove the real user-facing behavior."
+policy:
+  allow_implicit_invocation: false
