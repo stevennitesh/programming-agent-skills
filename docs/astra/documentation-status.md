@@ -1,9 +1,30 @@
 # Documentation reconciliation status
 
-Inspected 2026-09-07. This is a bounded review of the reader-facing entry points,
-agent routes, plans, ADRs, and referenced research/synthesis; it is not an audit
-of every historical packet or external project. The [design brief](design-brief.md)
-owns current direction. Do not treat this inventory as an execution backlog.
+Initial inspection 2026-09-07; public entry-point follow-up 2026-09-23. This is a
+bounded review of the reader-facing entry points, agent routes, plans, ADRs, and
+referenced research/synthesis; it is not an audit of every historical packet or
+external project. The [design brief](design-brief.md) owns current direction. Do
+not treat this inventory as an execution backlog.
+
+## Public entry-point follow-up, 2026-09-23
+
+Rechecked the README, repository instructions, root context, installation guide,
+Astra design brief, plan/domain/tracker routes, ADR index and applicability record,
+and all 18 managed Astra skill entry points against pre-change branch HEAD
+`64c82a96`.
+
+The current navigation model remains intentionally small: `AGENTS.md` supplies
+commands and conditional pointers, `CONTEXT.md` owns repository/source boundaries,
+the Astra design brief owns current composition rationale, and each
+`skills/astra/*/SKILL.md` owns execution. No additional context layer or required
+workflow was introduced.
+
+This pass corrected public README text encoding, made the historical custom pack's
+non-managed status explicit, labeled Deploy Campaign as an explicitly requested
+legacy route in repository instructions, and replaced stale GPT 5.6 Sol wording in
+ADR-0018 with the current optional GPT 6 Sol/Luna cost-aware roles. The README's
+18-skill inventory matches the managed Astra entry points and their invocation
+boundaries.
 
 | Surface | Finding and disposition |
 | --- | --- |
