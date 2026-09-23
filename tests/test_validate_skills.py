@@ -758,7 +758,9 @@ def test_focused_pytest_default_targets_current_contract_suite(monkeypatch) -> N
 
     assert pytest_focused.main(None) == 0
     target = "tests/test_validate_skills.py"
-    selector = "astra or installed or global_bootstrap or git_diff or pytest_runtime"
+    selector = (
+        "astra or current_ or installed or global_bootstrap or git_diff or pytest_runtime"
+    )
     assert (Path(__file__).resolve().parents[1] / target).is_file()
     assert calls == [[
         sys.executable,

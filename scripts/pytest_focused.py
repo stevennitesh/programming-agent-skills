@@ -9,7 +9,7 @@ import sys
 DEFAULT_ARGS = (
     "tests/test_validate_skills.py",
     "-k",
-    "astra or installed or global_bootstrap or git_diff or pytest_runtime",
+    "astra or current_ or installed or global_bootstrap or git_diff or pytest_runtime",
 )
 
 

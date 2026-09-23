@@ -6,6 +6,39 @@ referenced research/synthesis; it is not an audit of every historical packet or
 external project. The [design brief](design-brief.md) owns current direction. Do
 not treat this inventory as an execution backlog.
 
+## Validator and repository-code audit, 2026-09-23
+
+Reviewed the default validator, focused pytest wrapper, current package contracts,
+installed-pack parity checks, and adjacent repository tests for correctness,
+robustness, stale ownership, and avoidable duplication.
+
+The main defect was ownership drift: `python -m scripts.validate_skills` still
+unconditionally imported and executed retained custom/experimental, Fresh
+Composition Epoch, legacy synthesis/integration, legacy repo-bootstrap schema, and
+research-catalog validators even though `skills/astra/` is the only managed pack.
+Those checks now run only with explicit `--legacy`. The default path validates
+current Astra packages, README/example parity, current required guidance, current
+stale-token surfaces, global bootstrap, optional installed parity, repository
+Markdown hygiene, public checks when requested, and Git diff hygiene. Legacy
+modules are imported lazily so a historical helper failure cannot prevent current
+Astra validation from starting.
+
+The validator also now parses SKILL frontmatter and host metadata as YAML rather
+than treating frontmatter and required policy files as line-oriented regex data.
+Non-string names/descriptions fail cleanly instead of risking type errors, folded
+YAML descriptions are accepted, malformed metadata is rejected, and the
+invocation key is still required exactly once when policy is required.
+
+The focused pytest wrapper now targets current validator/Astra tests instead of
+the historical custom-pack contract suite. `AGENTS.md` documents the default
+Astra validator and the explicit `--legacy` extension.
+
+A duplicate parametrized installer test with the same Python function name and
+body was also removed. The second definition had replaced the first at import
+time, so the duplicate source added no test coverage. A repository-wide scan of
+top-level Python function names found no other duplicate definitions in
+`scripts/` or `tests/`.
+
 ## Canonical skill-selection examples, 2026-09-23
 
 Added [selection-examples.md](selection-examples.md) as one compact discovery
