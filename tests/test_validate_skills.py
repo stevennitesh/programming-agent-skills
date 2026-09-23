@@ -199,6 +199,69 @@ def test_astra_selection_examples_match_managed_inventory(tmp_path: Path) -> Non
     assert any("link disagrees with skill name: explicit" in item for item in failures)
 
 
+def test_astra_frontmatter_uses_yaml_and_rejects_nonstring_identity(
+    tmp_path: Path,
+) -> None:
+    skill = tmp_path / "skills/astra/example"
+    skill.mkdir(parents=True)
+    entry = skill / "SKILL.md"
+    entry.write_text(
+        "---\n"
+        "name: example\n"
+        "description: >-\n"
+        "  Multi-line discovery description\n"
+        "  remains valid YAML.\n"
+        "---\n",
+        encoding="utf-8",
+    )
+
+    assert validate_skills.validate_astra(tmp_path) == (["example"], [])
+
+    entry.write_text(
+        "---\nname: [example]\ndescription: 123\n---\n",
+        encoding="utf-8",
+    )
+    _, failures = validate_skills.validate_astra(tmp_path)
+
+    assert any("Skill name must match its directory" in item for item in failures)
+    assert any("Skill name is invalid" in item for item in failures)
+    assert any("Skill description is missing" in item for item in failures)
+
+
+def test_current_required_docs_do_not_depend_on_legacy_custom_pack(
+    tmp_path: Path,
+) -> None:
+    for relative in validate_skills.CURRENT_REQUIRED_FILES:
+        path = tmp_path / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("current\n", encoding="utf-8")
+
+    assert validate_skills.validate_required_docs(tmp_path) == []
+
+    failures = validate_skills.validate_required_docs(tmp_path, include_legacy=True)
+    assert failures == [
+        "Missing required repository file: "
+        "skills/custom/repo-bootstrap/engineering-contract.md"
+    ]
+
+
+def test_current_active_surface_scan_excludes_legacy_custom_pack(
+    tmp_path: Path,
+) -> None:
+    (tmp_path / "README.md").write_text("Current guidance.\n", encoding="utf-8")
+    legacy = tmp_path / "skills/custom/example/SKILL.md"
+    legacy.parent.mkdir(parents=True)
+    legacy.write_text("Use $improve-codebase.\n", encoding="utf-8")
+
+    assert validate_skills.validate_active_surfaces(tmp_path) == []
+    assert validate_skills.validate_active_surfaces(
+        tmp_path, include_legacy=True
+    ) == [
+        "Active surface contains stale token: "
+        "skills/custom/example/SKILL.md -> $improve-codebase"
+    ]
+
+
 def test_manifest_rejects_nonscalar_source_without_crashing() -> None:
     _, _, failures = skill_pack_contract.parse_managed_manifest_payload({
         "format": 1, "source": [], "skills": [], "hashes": {},
@@ -667,9 +730,19 @@ def test_focused_pytest_default_targets_current_contract_suite(monkeypatch) -> N
     monkeypatch.setattr(pytest_focused.subprocess, "run", fake_run)
 
     assert pytest_focused.main(None) == 0
-    target = "tests/test_skill_pack_contracts.py"
+    target = "tests/test_validate_skills.py"
+    selector = "astra or installed or global_bootstrap or git_diff or pytest_runtime"
     assert (Path(__file__).resolve().parents[1] / target).is_file()
-    assert calls == [[sys.executable, "-m", "pytest", "-n", "0", target]]
+    assert calls == [[
+        sys.executable,
+        "-m",
+        "pytest",
+        "-n",
+        "0",
+        target,
+        "-k",
+        selector,
+    ]]
 
 
 def test_default_pytest_parallelism_is_capped_at_ten() -> None:

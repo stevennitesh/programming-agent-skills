@@ -5,13 +5,16 @@
 - Create the repo environment if needed: `python -m venv .venv`
 - Activate `.venv` for your shell before running Python commands.
 - Install dev/test dependencies: `python -m pip install -r requirements-dev.txt`
-- Focused pytest run: `python -m scripts.pytest_focused`
+- Focused pytest run for current Astra/validator contracts:
+  `python -m scripts.pytest_focused`
 - Full pytest suite when repository policy or broad shared impact requires it:
   `python -m pytest`
 - Pytest config: `pyproject.toml`
 - Put disposable test, review, and scratch output under `.tmp/<purpose>`; do
   not create cache or `.tmp-*` directories at the repository root.
-- Validate skill-pack integrity: `python -m scripts.validate_skills`
+- Validate the current managed Astra pack: `python -m scripts.validate_skills`
+- When intentionally maintaining retained custom/experimental or legacy epoch
+  machinery, add `--legacy` to validate those historical contracts too.
 - Preview managed install/update: `python -m scripts.install_skills --dry-run`
 - Sync the installed Astra skills pack: `python -m scripts.install_skills`.
   This deploys `skills/astra/`; installation ownership is described in `CONTEXT.md`.
