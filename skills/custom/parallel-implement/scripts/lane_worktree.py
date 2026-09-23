@@ -264,7 +264,7 @@ def write_cleanup_receipt(
     root: Path,
     worktree: Path,
     lane_head: str,
-    integration_head: str,
+    authorized_at_head: str,
 ) -> Path:
     state = lane_state(root, worktree.name)
     if not state.is_dir():
@@ -278,7 +278,7 @@ def write_cleanup_receipt(
         "worktree": str(worktree),
         "lane": worktree.name,
         "lane_head": lane_head,
-        "authorized_at_head": integration_head,
+        "authorized_at_head": authorized_at_head,
         "worktree_identity": path_identity(worktree),
         "clean": True,
         "integrated": True,
@@ -693,26 +693,23 @@ def residual_identity_check(
 def recover_unregistered_lane(
     repo: Path, root: Path, worktree: Path, repo_head: str
 ) -> tuple[bool, str | None]:
-    receipt, reason = read_cleanup_receipt(repo, root, worktree)
-    if receipt is None:
-        return False, reason
-    integrated = git(
+    snapshot = observe_lane(
         repo,
-        "merge-base",
-        "--is-ancestor",
-        receipt["lane_head"],
+        root,
+        worktree,
         repo_head,
-        check=False,
+        registered=False,
     )
-    if integrated.returncode == 1:
+    if snapshot["receipt"] is None:
+        return False, snapshot["receipt_error"]
+    if snapshot["integrated"] is False:
         return False, "cleanup receipt commit is no longer integrated"
-    if integrated.returncode != 0:
+    if snapshot["integrated"] is not True:
         return False, "cleanup receipt integration is uncertain"
+    if not snapshot["residual_identity_ok"]:
+        return False, snapshot["residual_identity_error"]
 
-    identity_ok, identity_reason = residual_identity_check(worktree, receipt)
-    if not identity_ok:
-        return False, identity_reason
-    if path_present(worktree):
+    if snapshot["present"] is True:
         failure = remove_tree(
             worktree,
             phase="unregistered residual path cleanup",
@@ -720,6 +717,7 @@ def recover_unregistered_lane(
         )
         if failure:
             return False, json.dumps(failure, sort_keys=True)
+
     failure = finish_lane_cleanup(root, worktree)
     if failure:
         return False, json.dumps(failure, sort_keys=True)
