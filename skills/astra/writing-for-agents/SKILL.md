@@ -61,6 +61,13 @@ Prefer current code, configuration, command help, schemas, and maintained
 documentation over copied mechanical facts unless the instruction adds a
 convention, reason, expensive-to-discover fact, or required interpretation.
 
+Before adding prose for a recurring mechanical invariant, ask whether a type,
+schema, configuration constraint, lint rule, canonical helper, runtime check, or
+small deterministic script can enforce it more reliably. Put the enforcement at
+that owner and keep agent-facing prose only when it still carries decision
+context, authority, rationale, recovery semantics, or a conditional pointer the
+mechanism cannot express.
+
 When changing an instruction's meaning, trigger, ownership, or authority, inspect
 directly affected callers and competing current guidance. Reconcile useful
 material and retire obsolete current pointers within scope. Keep historical
