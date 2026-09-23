@@ -8,7 +8,7 @@ description: Reduce GPT-6 lead-token churn by routing consequential reasoning an
 Minimize expensive lead-model token use without weakening the accepted result.
 Keep Astra focused on consequential reasoning, exception handling, and final
 review; move implementation-heavy exploration, coding, debugging, and verification
-to Sol; use Luna for compact bounded tasks when briefing and verification stay
+to Sol; use Luna Max for compact bounded tasks when briefing and verification stay
 cheaper than using a stronger tier.
 
 The routing objective is lead-token efficiency, not delegation for its own sake.
@@ -25,12 +25,12 @@ lead-owned context dominates the task.
 Use Sol for substantial repository implementation whose investigation, coding,
 debugging, and checks would otherwise consume significant Astra context.
 
-Use Luna for a tightly bounded task with a compact self-contained assignment,
+Use Luna Max for a tightly bounded task with a compact self-contained assignment,
 clear acceptance, and cheap verification. Do not fragment one coherent Sol task
 into Luna microtasks when repeated briefing, synthesis, or verification would cost
 more lead tokens than it saves.
 
-This skill has one delegated writer at a time. A Luna task may replace Sol for a
+This skill has one delegated writer at a time. A Luna Max task may replace Sol for a
 bounded assignment or perform read-only bounded support, but it does not create a
 second writer for the delegated checkout.
 
