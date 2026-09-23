@@ -37,9 +37,13 @@ a bounded assignment or perform read-only bounded support, but it does not creat
 a second writer for the delegated checkout.
 
 Reuse accepted requirements and plans. Use [shape-work](../shape-work/SKILL.md)
-when consequential behavior or accepted meaning remains unresolved. Use
-[parallel-implement](../parallel-implement/SKILL.md) when the user requests
-concurrent implementation.
+when consequential behavior or accepted meaning remains unresolved.
+
+This skill does not coordinate parallel fanout. When the user explicitly combines
+it with [parallel-implement](../parallel-implement/SKILL.md), retain this skill's
+GPT-6 model and effort routing, budget policy, and final review requirement while
+parallel-implement owns decomposition, lane custody, concurrency, integration,
+and parallel recovery.
 
 For coordinated serial delivery with meaningful checkpoints, read
 [Planned delivery](references/planned-delivery.md). When usage measurement or a
