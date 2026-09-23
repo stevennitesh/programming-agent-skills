@@ -1,5 +1,13 @@
 # Pack Composition Contract
 
+> **Historical custom-pack composition.** This file is preserved at its stable path
+> for legacy helpers, tests, and evidence. Its skill counts, names, routes, and
+> "active" terminology describe the recorded composition epoch, not the current
+> managed Astra pack. Derive the current managed set from `skills/astra/*/SKILL.md`
+> and use the [Astra design brief](../astra/design-brief.md) for current composition
+> and ownership. Do not migrate the legacy counts or retired skill names below into
+> current guidance.
+
 This is the sole composition-decision owner for Fresh Composition Epoch
 `FCE-20260727-01`. The epoch initially selected 25 skills because the sequestered,
 skill-name-free M0 discovery decomposed the intended engineering outcome into

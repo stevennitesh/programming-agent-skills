@@ -9,17 +9,18 @@ created.
 | Work | Route |
 | --- | --- |
 | Astra skill design and migration | [Astra design brief](../astra/design-brief.md), based on [issue #94](https://github.com/stevennitesh/programming-agent-skills/issues/94) and subsequent decisions |
-| Legacy whole-skill synthesis deployment | [`docs/synthesis/methods/deploy-prompts.md`](../synthesis/methods/deploy-prompts.md) |
 | Optional source distillation | [`docs/synthesis/methods/source-distillation-flow.md`](../synthesis/methods/source-distillation-flow.md) |
 | Optional source-distillation prompts | [`docs/synthesis/methods/prompts/`](../synthesis/methods/prompts/) |
 
-Deploy Prompts govern selected legacy synthesis deployments. They are not an
-automatic prerequisite for Astra work; follow its design brief instead.
 Source distillation is optional evidence work for primary and outside sources,
 upstream skills, books, and engineering practice; it stops at important
 concepts and usable techniques rather than drafting or deploying a skill.
 
-## Historical plans
+## Legacy methods and historical plans
+
+The [Deploy Campaign method](../synthesis/methods/deploy-prompts.md) is retained
+for explicitly requested legacy custom-pack synthesis work. It is not a current
+Astra runbook or prerequisite.
 
 [Engineering vocabulary reconciliation](../../.archive/docs/plans/engineering-vocabulary-reconciliation.md)
 is archived completed legacy work. Its old baseline and delivery deferrals are
