@@ -169,10 +169,15 @@ def test_prepare_rolls_back_when_a_runtime_probe_fails(
     assert not (lane_root / ".state" / "probe").exists()
 
 
-def test_inspect_reports_lane_runtime_and_checkout_cache_violations(
+def test_inspect_and_cleanup_block_ignored_artifacts(
     tmp_path: Path,
 ) -> None:
     repo, base = repository(tmp_path)
+    (repo / ".gitignore").write_text("*.cache\n.pytest_cache/\n", encoding="utf-8")
+    git(repo, "add", ".gitignore")
+    git(repo, "commit", "-m", "ignore runtime artifacts")
+    base = git(repo, "rev-parse", "HEAD")
+
     lane_root = tmp_path / "lanes"
     result, prepared = prepare(repo, lane_root, base, "inspectable")
     assert result.returncode == 0, prepared
@@ -196,24 +201,17 @@ def test_inspect_reports_lane_runtime_and_checkout_cache_violations(
     assert inspected["registered"] is True
     assert inspected["clean"] is True
     assert inspected["integrated"] is True
-    assert inspected["checkout_cache_violations"] == []
+    assert inspected["ignored_entries"] == []
     assert inspected["mechanical"] == {
         "resume_or_land_eligible": True,
         "cleanup_eligible": True,
         "actor_quiescence_unverified": True,
     }
-    assert set(inspected["runtime"]) == {
-        "runtime_root",
-        "temp_root",
-        "cache_root",
-        "pytest_basetemp",
-        "pytest_cache",
-    }
 
-    (worktree / ".tmp" / "uv-cache").mkdir(parents=True)
+    (worktree / "worker.cache").write_text("preserve me\n", encoding="utf-8")
     (worktree / ".pytest_cache").mkdir()
-    (worktree / ".tmp" / "uv-cache" / "entry").write_text("cache", encoding="utf-8")
-    (worktree / ".pytest_cache" / "entry").write_text("cache", encoding="utf-8")
+    (worktree / ".pytest_cache" / "entry").write_text("cache\n", encoding="utf-8")
+
     result, inspected = helper(
         "inspect",
         "--repo",
@@ -224,13 +222,27 @@ def test_inspect_reports_lane_runtime_and_checkout_cache_violations(
         str(worktree),
     )
     assert result.returncode == 0, inspected
-    assert inspected["clean"] is False
+    assert inspected["clean"] is True
+    assert set(inspected["ignored_entries"]) == {"worker.cache", ".pytest_cache/"}
     assert inspected["mechanical"]["resume_or_land_eligible"] is False
-    assert inspected["checkout_cache_violations"] == [
-        str(worktree / ".tmp" / "uv-cache"),
-        str(worktree / ".pytest_cache"),
-    ]
+    assert inspected["mechanical"]["cleanup_eligible"] is False
 
+    result, blocked = helper(
+        "cleanup",
+        "--repo",
+        str(repo),
+        "--root",
+        str(lane_root),
+        "--completed",
+        str(worktree),
+    )
+    assert result.returncode == 1
+    assert blocked["preserved"][0]["reason"] == "ignored artifacts present"
+    assert set(blocked["preserved"][0]["ignored_entries"]) == {
+        "worker.cache",
+        ".pytest_cache/",
+    }
+    assert (worktree / "worker.cache").read_text(encoding="utf-8") == "preserve me\n"
 
 def test_inspect_never_marks_uncertain_residual_ancestry_cleanup_eligible(
     tmp_path: Path, monkeypatch,
@@ -832,12 +844,14 @@ def test_cleanup_reports_unregistered_residual_path_after_remove_error(
     monkeypatch.setitem(
         cleanup.__globals__, "tree_has_reparse_point", lambda _path: False
     )
-    code, retried = cleanup(arguments)
-    assert code == 0
-    assert retried == {"ok": True, "removed": [str(worktree)], "preserved": []}
-    assert not worktree.exists()
-    assert not state.exists()
-    assert not receipt.exists()
+    code, blocked = cleanup(arguments)
+    assert code == 1
+    assert blocked["preserved"][0]["reason"] == (
+        "cleanup receipt worktree identity does not match residual path"
+    )
+    assert (worktree / "residual.txt").read_text(encoding="utf-8") == "retry me\n"
+    assert state.exists()
+    assert receipt.exists()
 
 
 def test_cleanup_preserves_failed_lane_state_and_continues_named_lanes(
@@ -1261,6 +1275,39 @@ def test_verify_cleanup_requires_lane_inventory_and_exact_commit_id(
     assert blocked["head_matches"] is False
 
 
+def test_git_does_not_override_safe_directory_failures(
+    monkeypatch,
+) -> None:
+    namespace = runpy.run_path(str(HELPER))
+    git_call = namespace["git"]
+    calls: list[list[str]] = []
+
+    def reject(command, *, cwd=None):
+        calls.append(command)
+        return subprocess.CompletedProcess(
+            command,
+            128,
+            "",
+            "fatal: detected dubious ownership in repository",
+        )
+
+    monkeypatch.setitem(git_call.__globals__, "run", reject)
+    with pytest.raises(namespace["LaneError"], match="dubious ownership"):
+        git_call(Path("/untrusted"), "status")
+
+    assert calls == [["git", "-C", str(Path("/untrusted")), "status"]]
+
+
+def test_parallel_lane_helper_packages_remain_identical() -> None:
+    astra = (
+        ROOT / "skills/astra/parallel-implement/scripts/lane_worktree.py"
+    ).read_bytes()
+    custom = (
+        ROOT / "skills/custom/parallel-implement/scripts/lane_worktree.py"
+    ).read_bytes()
+    assert astra == custom
+
+
 def test_path_presence_does_not_hide_access_failure(
     tmp_path: Path, monkeypatch,
 ) -> None:
@@ -1311,6 +1358,8 @@ def test_verify_cleanup_clears_actions_when_repository_head_changes(
     )
     assert code == 1
     assert blocked["head_matches"] is False
+    assert blocked["repository_head_initial"] == base
+    assert blocked["repository_head"] == "0" * 40
     assert blocked["cleanup"] == []
     assert blocked["retry_cleanup"] == []
     assert blocked["lanes"][0]["required_action"] == "preserve-and-report"
