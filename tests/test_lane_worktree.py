@@ -1219,7 +1219,7 @@ def test_cleanup_rejects_legacy_receipt_format(
         Namespace(repo=str(repo), root=str(lane_root), completed=[str(worktree)])
     )
     assert code == 1
-    assert blocked["preserved"][0]["reason"] == "cleanup receipt failed"
+    assert blocked["preserved"][0]["reason"] == "cleanup receipt invalid"
     assert "cleanup receipt format is invalid" in blocked["preserved"][0]["error"]
     assert worktree.exists()
     assert receipt.exists()
