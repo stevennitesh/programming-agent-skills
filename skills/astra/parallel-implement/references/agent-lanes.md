@@ -62,8 +62,11 @@ into the current final candidate. Before unregistering a lane, the helper record
 the lane's filesystem identity in its cleanup receipt when the platform exposes
 one. A residual path is eligible for automatic retry only when it is absent or
 still matches that recorded identity; a new object at the same pathname is
-preserved. Partial cleanup must retain the receipt and helper state needed for
-recovery. Do not replace helper recovery with manual recursive deletion.
+preserved. Only the current receipt schema is accepted. Older or malformed
+receipts are preserved as unsupported recovery state rather than migrated or
+overwritten automatically. Partial cleanup must retain the receipt and helper
+state needed for recovery. Do not replace helper recovery with manual recursive
+deletion.
 
 After cleanup attempts, run the helper's cleanup verification over the complete
 retained lane set. Finish only when it reports `finish_clean: true` for the
