@@ -736,7 +736,17 @@ def _architecture_svg(state: dict[str, Any]) -> str:
             x = 175 + col * 230
             positions[sub["id"]] = (x, y)
             audit = sub.get("audit")
-            meta = f'audited · {len(audit["findings"])} findings · {len(audit["candidates"])} candidates' if audit else "mapped · not audited"
+            systemic_count = sum(
+                1 for finding in state["systemic_findings"]
+                if sub["id"] in finding["affected_scope"]
+            )
+            local_count = len(audit["findings"]) if audit else 0
+            candidate_count = len(audit["candidates"]) if audit else 0
+            meta = (
+                f'audited · {local_count + systemic_count} findings · {candidate_count} candidates'
+                if audit else
+                (f'mapped · {systemic_count} systemic findings' if systemic_count else "mapped · not audited")
+            )
             fresh = state["freshness"].get(sub["id"], "fresh")
             cls = "changed" if fresh == "changed" else sub["state"]
             parts.append(f'<a href="#subsystem-{escape(sub["id"])}"><g class="node {escape(cls)}"><rect x="{x}" y="{y}" width="195" height="82"></rect><text class="name" x="{x+14}" y="{y+28}">{escape(sub["name"])}</text><text class="meta" x="{x+14}" y="{y+50}">{escape(meta)}</text><text class="meta" x="{x+14}" y="{y+67}">{escape(fresh)}</text></g></a>')
@@ -773,7 +783,22 @@ def _candidate_html(x: dict[str, Any], run_id: str) -> str:
         options = "".join(f'<article class="option"><h5>{escape(o["name"])}</h5><p>{escape(o["description"])}</p><strong>Trade-offs</strong>{_list(o["tradeoffs"])}</article>' for o in analysis["options"])
         analysis_html = f'''<div class="panel" style="margin-top:12px"><h4>Analysis</h4><p>{escape(analysis["summary"])}</p><dl class="kv"><dt>Cause</dt><dd>{escape(analysis["cause"])}</dd><dt>Recommendation</dt><dd>{escape(analysis["recommendation"]) or '<span class="muted">None</span>'}</dd><dt>Trade-offs</dt><dd>{_list(analysis["tradeoffs"])}</dd><dt>Proof</dt><dd>{_list(analysis["proof"])}</dd><dt>Evidence limits</dt><dd>{escape(analysis["evidence_limits"]) or '<span class="muted">None</span>'}</dd><dt>Blocking question</dt><dd>{escape(analysis["question"]) or '<span class="muted">None</span>'}</dd></dl><div class="option-grid">{options}</div></div>'''
     command = f"$audit-codebase analyze candidate {x['id']} in atlas run {run_id}"
-    return f'''<article class="card candidate" data-filter-card data-state="{escape(x["state"])}" data-search="{escape(search,quote=True)}" id="candidate-{escape(x["id"])}"><div class="strength">{_badge(x["strength"],x["strength"].title())}</div><h3>{escape(x["title"])}</h3><div class="badges">{_badge(x["state"])}{_badge(x["primary_class"])}</div><div class="compare"><div><h4>Current problem</h4><p>{escape(x["problem"])}</p></div><div><h4>Direction</h4><p>{escape(x["direction"])}</p><p class="muted">{escape(x["benefit"])}</p></div></div><dl class="kv"><dt>Affects</dt><dd>{escape(", ".join(x["affected_scope"]))}</dd><dt>Findings</dt><dd>{escape(", ".join(x["finding_ids"]))}</dd><dt>Risks</dt><dd>{_list(x["risks"])}</dd><dt>Required proof</dt><dd>{_list(x["required_proof"])}</dd></dl><details class="evidence"><summary>Evidence</summary>{_list(x["evidence"])}</details>{analysis_html}<div class="command"><button class="copy" data-copy="{escape(command,quote=True)}">Copy analyze command</button></div></article>'''
+    next_action = (
+        f"Use analyzed audit candidate {x['id']} from atlas run {run_id}. "
+        "Help me choose the appropriate next owner among direct implementation, "
+        "$codebase-design, $prototype, or $to-tickets. Do not start the next workflow yet."
+        if x["state"] == "analyzed"
+        else (
+            f"Use blocked audit candidate {x['id']} from atlas run {run_id}. "
+            "Help me resolve the exact blocker without starting implementation."
+            if x["state"] == "blocked" else ""
+        )
+    )
+    next_button = (
+        f'<button class="copy" data-copy="{escape(next_action,quote=True)}">Copy next-action handoff</button>'
+        if next_action else ""
+    )
+    return f'''<article class="card candidate" data-filter-card data-state="{escape(x["state"])}" data-search="{escape(search,quote=True)}" id="candidate-{escape(x["id"])}"><div class="strength">{_badge(x["strength"],x["strength"].title())}</div><h3>{escape(x["title"])}</h3><div class="badges">{_badge(x["state"])}{_badge(x["primary_class"])}</div><div class="compare"><div><h4>Current problem</h4><p>{escape(x["problem"])}</p></div><div><h4>Direction</h4><p>{escape(x["direction"])}</p><p class="muted">{escape(x["benefit"])}</p></div></div><dl class="kv"><dt>Affects</dt><dd>{escape(", ".join(x["affected_scope"]))}</dd><dt>Findings</dt><dd>{escape(", ".join(x["finding_ids"]))}</dd><dt>Risks</dt><dd>{_list(x["risks"])}</dd><dt>Required proof</dt><dd>{_list(x["required_proof"])}</dd></dl><details class="evidence"><summary>Evidence</summary>{_list(x["evidence"])}</details>{analysis_html}<div class="command"><button class="copy" data-copy="{escape(command,quote=True)}">Copy analyze command</button>{next_button}</div></article>'''
 
 
 def _render(state: dict[str, Any]) -> bytes:
@@ -793,7 +818,10 @@ def _render(state: dict[str, Any]) -> bytes:
     cards={}
     audits=[]
     for sub in subsystems:
-        audit=sub.get("audit"); fc=len(audit["findings"]) if audit else 0; cc=len(audit["candidates"]) if audit else 0
+        audit=sub.get("audit")
+        systemic_count=sum(1 for finding in state["systemic_findings"] if sub["id"] in finding["affected_scope"])
+        fc=(len(audit["findings"]) if audit else 0)+systemic_count
+        cc=len(audit["candidates"]) if audit else 0
         fresh=state["freshness"].get(sub["id"],"fresh"); deps=[d["id"] for d in sub["dependencies"]]
         search=" ".join([sub["name"],sub["purpose"],sub["ownership"],sub["system_id"],*deps])
         command=f"$audit-codebase audit subsystem {sub['id']} in atlas run {state['run_id']}"
