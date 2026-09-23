@@ -297,43 +297,54 @@ def validate_skill_policy(skill_dir: Path, *, optional: bool = False) -> list[st
             return []  # Codex permits metadata omission for implicit skills.
         return [f"Skill missing invocation policy: {skill_dir.name}/agents/openai.yaml"]
 
+    try:
+        raw = policy_file.read_text(encoding="utf-8")
+        data = yaml.safe_load(raw)
+    except (OSError, yaml.YAMLError) as error:
+        return [f"Invalid skill metadata: {policy_file}: {error}"]
+    if not isinstance(data, dict):
+        return [f"Skill metadata must be a mapping: {policy_file}"]
+
     failures: list[str] = []
-    if optional:
-        try:
-            data = yaml.safe_load(policy_file.read_text(encoding="utf-8"))
-        except yaml.YAMLError as error:
-            return [f"Invalid skill metadata: {policy_file}: {error}"]
-        if not isinstance(data, dict):
-            return [f"Skill metadata must be a mapping: {policy_file}"]
+    interface = data.get("interface")
+    if interface is not None:
+        if not isinstance(interface, dict):
+            failures.append(f"Skill interface metadata must be a mapping: {policy_file}")
+        else:
+            for field in ASTRA_INTERFACE_FIELDS:
+                if field in interface and (
+                    not isinstance(interface[field], str) or not interface[field].strip()
+                ):
+                    failures.append(
+                        f"Skill interface {field} must be a non-empty string: {policy_file}"
+                    )
 
-        interface = data.get("interface")
-        if interface is not None:
-            if not isinstance(interface, dict):
-                failures.append(f"Skill interface metadata must be a mapping: {policy_file}")
-            else:
-                for field in ASTRA_INTERFACE_FIELDS:
-                    if field in interface and (
-                        not isinstance(interface[field], str) or not interface[field].strip()
-                    ):
-                        failures.append(
-                            f"Skill interface {field} must be a non-empty string: {policy_file}"
-                        )
-
-        policy = data.get("policy", {})
-        if not isinstance(policy, dict):
+    policy = data.get("policy")
+    if policy is None:
+        if not optional:
             failures.append(f"Skill policy must be a mapping: {policy_file}")
-            return failures
-        if "allow_implicit_invocation" not in policy:
-            return failures
-        if type(policy["allow_implicit_invocation"]) is not bool:
-            failures.append(f"Skill invocation policy must be boolean: {policy_file}")
-            return failures
+        return failures
+    if not isinstance(policy, dict):
+        failures.append(f"Skill policy must be a mapping: {policy_file}")
+        return failures
 
-    values = re.findall(
-        r"(?m)^\s*allow_implicit_invocation:\s*(true|false)\s*$",
-        policy_file.read_text(encoding="utf-8"),
+    if "allow_implicit_invocation" not in policy:
+        if not optional:
+            failures.append(
+                "Skill invocation policy must set allow_implicit_invocation: "
+                f"{policy_file.as_posix()}"
+            )
+        return failures
+
+    if type(policy["allow_implicit_invocation"]) is not bool:
+        failures.append(f"Skill invocation policy must be boolean: {policy_file}")
+        return failures
+
+    occurrences = re.findall(
+        r"(?m)^\s*allow_implicit_invocation\s*:",
+        raw,
     )
-    if len(values) != 1:
+    if len(occurrences) != 1:
         failures.append(
             "Skill invocation policy must set allow_implicit_invocation exactly once: "
             f"{policy_file.as_posix()}"

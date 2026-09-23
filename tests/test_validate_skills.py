@@ -64,10 +64,18 @@ def test_astra_validates_implicit_metadata_resources_and_own_routes(tmp_path: Pa
     assert validate_skills.validate_astra(tmp_path) == (["example"], [])
     (skill / "agents").mkdir()
     policy = skill / "agents/openai.yaml"
-    policy.write_text("policy:\n  allow_implicit_invocation: false\n", encoding="utf-8")
+    policy.write_text("policy:\n  allow_implicit_invocation: False\n", encoding="utf-8")
     assert validate_skills.validate_astra(tmp_path)[1] == []
     policy.write_text("policy:\n  allow_implicit_invocation: 'false'\n", encoding="utf-8")
     assert any("boolean" in item for item in validate_skills.validate_astra(tmp_path)[1])
+    policy.write_text(
+        "policy:\n  allow_implicit_invocation: false\n  broken: [\n",
+        encoding="utf-8",
+    )
+    assert any(
+        "Invalid skill metadata" in item
+        for item in validate_skills.validate_astra(tmp_path)[1]
+    )
     policy.unlink()
     entry.write_text(entry.read_text() + (
         "Read [guide](references/missing.md). Use $retired.\n"

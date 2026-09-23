@@ -86,44 +86,6 @@ def test_custom_manifest_migrates_ownership_to_astra_without_losing_edits(
     assert (installed / "personal/SKILL.md").read_text() == "old"
 
 
-@pytest.mark.parametrize("modified", [None, "alpha", "retired"])
-def test_custom_manifest_migrates_ownership_to_astra_without_losing_edits(
-    tmp_path: Path, modified: str | None,
-) -> None:
-    root = tmp_path / "repo"
-    installed = tmp_path / "installed"
-    write_source_skill(root, "alpha", "Astra")
-    hashes = {}
-    for name in ("alpha", "retired", "personal"):
-        folder = installed / name
-        folder.mkdir(parents=True)
-        (folder / "SKILL.md").write_text("old", encoding="utf-8")
-        if name != "personal":
-            hashes[name] = install_skills.skill_tree_hash(folder)
-    manifest = installed / install_skills.MANIFEST_NAME
-    manifest.write_text(json.dumps({
-        "format": 1, "source": "skills/custom", "skills": sorted(hashes), "hashes": hashes,
-    }), encoding="utf-8")
-    before = manifest.read_bytes()
-    if modified:
-        (installed / modified / "SKILL.md").write_text("local edit", encoding="utf-8")
-        with pytest.raises(ValueError, match="modified managed skill"):
-            install_skills.install(root, installed, None)
-        assert manifest.read_bytes() == before
-        assert (installed / modified / "SKILL.md").read_text() == "local edit"
-        assert (installed / "retired").is_dir()
-        return
-    preview = install_skills.install(root, installed, None, dry_run=True)
-    assert preview["updated"] == ["alpha"]
-    assert preview["retired"] == ["retired"]
-    assert manifest.read_bytes() == before
-    install_skills.install(root, installed, None)
-    assert json.loads(manifest.read_text())["source"] == "skills/astra"
-    assert (installed / "alpha/SKILL.md").read_text() == "Astra"
-    assert not (installed / "retired").exists()
-    assert (installed / "personal/SKILL.md").read_text() == "old"
-
-
 def test_dry_run_returns_stable_structured_cohort_and_identities(
     tmp_path: Path,
 ) -> None:
