@@ -3,7 +3,7 @@
 <p align="center"><strong>Give your coding agent the context and methods the work needs.</strong></p>
 
 <p align="center">
-  17 focused skills, built primarily for GPT 6 Astra in Codex.<br>
+  18 focused skills, built primarily for GPT 6 Astra in Codex.<br>
   Optional cost-aware routing uses GPT 6 Sol and Luna. Ordinary coding stays direct.
 </p>
 
@@ -82,6 +82,7 @@ These are alternative starting points, not a required pipeline.
 | Clarify a featureâ€™s behavior and acceptance criteria | [$shape-work](skills/astra/shape-work/SKILL.md) | Request explicitly |
 | Decide how a feature fits the existing system | [$codebase-design](skills/astra/codebase-design/SKILL.md) | Automatic when relevant |
 | Test an uncertain approach with a runnable experiment | [$prototype](skills/astra/prototype/SKILL.md) | Automatic when relevant |
+| Create durable tooling that drives and proves real user-facing behavior | [$verification-harness](skills/astra/verification-harness/SKILL.md) | Request explicitly |
 | Research a question or compare options using sources | [$research](skills/astra/research/SKILL.md) | Automatic when relevant |
 | Find the root cause of a difficult bug | [$diagnosing-bugs](skills/astra/diagnosing-bugs/SKILL.md) | Automatic when relevant |
 | Assess architecture and select worthwhile improvements | [$audit-codebase](skills/astra/audit-codebase/SKILL.md) | Request explicitly |
