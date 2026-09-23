@@ -1,6 +1,6 @@
 interface:
   display_name: "Cost-aware coding"
-  short_description: "Delegate substantial coding when handoff cost is justified"
-  default_prompt: "Use $cost-aware-coding for this coding task. Delegate to one suitable implementation worker only when the implementation and verification are likely to repay assignment, custody, and review overhead; keep consequential decisions and final review with the lead."
+  short_description: "Route GPT-6 work to reduce Astra token churn"
+  default_prompt: "Use $cost-aware-coding for this coding task. Keep consequential reasoning and final review with GPT-6 Astra, route substantial implementation to GPT-6 Sol, and use GPT-6 Luna only for compact bounded tasks when briefing and verification remain cheaper than a stronger tier. Optimize for reduced Astra lead-token churn without weakening acceptance."
 policy:
   allow_implicit_invocation: false
