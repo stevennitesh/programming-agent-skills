@@ -1,53 +1,57 @@
 # Worker assignment
 
-Use this reference to prepare a bounded assignment for one serial implementation
-worker. The worker must receive the facts and authority it needs explicitly; do
-not assume it inherits the lead's conversation.
+Prepare the smallest self-contained assignment that lets the selected worker act
+without importing the lead's conversation. The packet should transfer necessary
+context once, not make Astra follow implementation continuously.
 
 ## Assignment contract
 
 Include only decision-bearing fields that apply:
 
-- **Outcome:** the behavior or result this assignment must deliver and why it
-  matters.
+- **Outcome:** the behavior or result the assignment must deliver.
 - **Accepted source:** the request, plan, specification, or repository guidance
   that governs the work.
 - **Scope:** responsibilities, exclusions, and authorized effects.
 - **Checkout:** repository path, base or candidate identity, relevant existing
-  work, and the worker's write-custody boundary.
+  work, and write-custody boundary.
 - **Acceptance:** observable behavior and required checks.
-- **Reserved decisions:** consequential choices the lead or another owner must
-  settle rather than the worker inventing.
-- **Return:** candidate identity, changed scope, decisive checks, material limits
-  or pending proof, consequential deviations, and custody state.
+- **Reserved decisions:** consequential choices Astra or another owner must settle.
+- **Return:** candidate identity, material changed scope, decisive checks, material
+  limits or pending proof, consequential deviations, and custody state.
 
-Point to accessible detailed sources rather than copying conversations. For a
-small task, the user's request plus relevant repository guidance can be sufficient;
-a plan document is not required.
+Point to accessible detailed sources instead of copying conversations. Do not
+front-load repository facts the worker can cheaply discover itself.
 
-Suggested implementation mechanisms remain suggestions unless the accepted source
-makes them binding. The worker resolves routine technical choices within scope and
-raises a conflict when satisfying the assignment would change accepted behavior,
+For Luna, keep the packet especially compact and fully bounded. If the task needs a
+large repository brief, open-ended exploration, or substantial implementation
+judgment, route it to Sol rather than spending Astra tokens manufacturing a
+pseudo-bounded assignment.
+
+Suggested mechanisms remain suggestions unless an accepted source makes them
+binding. The worker resolves routine technical choices within scope and raises a
+conflict only when satisfying the assignment would change accepted behavior,
 scope, risk, or another reserved commitment.
 
 ## Custody and communication
 
-Tell the worker that it owns writes to the assigned checkout until it explicitly
-releases custody. It must preserve unrelated work and must not assume other actors
-are absent.
+The worker owns writes to the assigned checkout until it explicitly releases
+custody. It preserves unrelated work and must not assume other actors are absent.
 
-A blocking question should identify the assignment, the unresolved decision, its
-consequence, and current custody state. A nonblocking question should not stop
-independent work.
+A blocking question identifies the unresolved decision, why it matters, and
+current custody state. A nonblocking question does not stop independent work.
 
-If the lead requests checkout access, the worker stops its writers and relevant
-subprocesses, reports their state, and explicitly releases custody before the lead
-accesses that mutable checkout.
+If Astra requests checkout access, the worker stops its writers and relevant
+subprocesses, reports their state, and releases custody before Astra accesses that
+mutable checkout.
 
-A candidate return is reviewable only when it identifies the candidate and
-material proof, reports unresolved limitations, and releases custody with
-worker-owned writers stopped.
+A candidate return is reviewable only when it identifies the candidate and material
+proof, reports unresolved limitations, and releases custody with worker-owned
+writers stopped.
 
-For a follow-up, preserve the established outcome and send only changed context,
-findings, acceptance, candidate identity, and the renewed custody grant. Reuse the
-same worker while its accumulated context is useful and safe.
+Return decision-relevant evidence, not a narrated implementation journey. Do not
+send every file inspected, rejected idea, debugging step, or routine test iteration
+unless it changes review or recovery.
+
+For follow-ups, preserve the established outcome and send only changed context,
+findings, acceptance, candidate identity, and renewed custody grant. Reuse the same
+worker while its accumulated context remains useful and safe.
