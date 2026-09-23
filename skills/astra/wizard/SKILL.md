@@ -5,89 +5,76 @@ description: Create a guided local script for a settled procedure that needs hum
 
 # Wizard
 
-Turn a bounded human-operated procedure into a checked interactive script. Keep
-the operator informed about progress, destinations, and remaining work. The
-authoring agent does not receive real secrets or supervise the private session.
+Create a checked script for a settled procedure whose required private or
+human-only steps should not be performed or observed by the authoring agent. Real
+secrets and private-session input/output remain with the human operator.
 
-## 1. Establish the procedure
+## 1. Admit the human-operated boundary
 
-Inspect the requested outcome, repository conventions, available runtime, and
-existing automation. Separate authorized agent-executable preparation from steps
-that need the human. Use a wizard when coordinating those steps earns its cost;
-return one simple manual instruction directly when a script adds no value.
-Do not replace ordinary implementation with a human-operated script.
+Use a wizard when part of the procedure genuinely requires private input, the
+human's active identity/account, dashboard interaction, physical action, or
+another step the agent should not execute or observe. If one manual instruction
+is sufficient, return it directly. Do not replace ordinary agent-executable work
+with a wizard.
 
-Recover settled decisions from current sources. If a consequential target or
-choice remains open, resolve it with its owner rather than encoding a guess.
-Continue independent authoring where that gap does not affect correctness.
-For third-party commands or dashboard steps, verify current official instructions;
-do not invent navigation or silently expand the procedure to every CI variable.
+Recover the settled outcome, target, and consequential choices from current
+sources. Do not encode an unresolved product or effect decision as an interactive
+prompt merely to keep the procedure moving.
 
-Map each stage to its prerequisite, human action, captured values and their
-sensitivity, exact destination/effect, and evidence of success. Inspect schemas,
-examples, and consumers without reading existing secret values. Never ask the
-user to paste credentials into chat. Summarize consequential scope or effect
-choices when needed; do not ask again about decisions the user already made.
+For each stage establish the prerequisite, human action or input, target/effect,
+success evidence, and failure or retry behavior. Inspect schemas, commands, and
+consumers without reading existing secret values or asking the user to paste
+credentials into chat.
 
-## 2. Build the smallest useful guide
+## 2. Build the checked procedure
 
-Use an available repository runtime or the operator's native shell. Prefer one
-script with only the helpers it needs; do not install dependencies to run it.
-Use the requested destination or a suitable repository location. Prefer a unique
-path under the repository's ignored scratch convention for disposable scripts;
-its absence does not block creating a secret-free artifact or require changing
-ignore policy. A repeatable repository workflow belongs in its normal scripts
-location when requested. Secret outputs follow the reference's storage rules.
-
-Before effects, preflight required tools and non-secret configuration. Show the
-procedure's targets and effects, then guide one focused stage at a time with
-stage progress and clear instructions before requesting input. Open a verified
-URL when useful and print a manual fallback if opening fails. Do not clear away
-instructions or identifiers the operator still needs. Support cancellation and
-distinguish it from successful completion; EOF is not approval or a default value.
+Use the requested or established repository/runtime location. Put disposable
+one-off artifacts under an existing scratch convention when one exists; do not
+create new installation, persistence, dependency, or ignore policy merely for the
+wizard.
 
 Read [Inputs, effects, and recovery](references/inputs-and-effects.md) when the
-procedure captures values, writes files, calls external tools, or changes state.
-Keep harmless navigation free of repeated confirmation. Before a destructive
-action or durable external mutation, show the exact target and active identity
-where applicable, and require the operator's informed confirmation. Existing
-confirmation may cover a clearly displayed, bounded group of effects against the
-same identified target. Require renewed confirmation if identity, target, or scope
-changes; separate destructive effects that need their own decision. Existing
-task authority lets the agent author the stage; the runtime gate confirms the
-actual target the human is about to affect.
+procedure captures values, persists data, invokes external tools, or mutates
+state.
 
-Stop dependent stages on failure, cancellation, or uncertain effects. Preserve
-completed progress without recording secrets. A rerun must inspect actual state
-before replaying a possibly completed mutation. Finish with completed, skipped,
-blocked, and unverified outcomes as applicable, not an unconditional success banner.
+Before a consequential effect, display the actual target, active identity when
+relevant, and effect. One confirmation may cover a clearly displayed bounded
+group against the same target; require a new confirmation when identity, target,
+or scope materially changes. Existing task authorization permits authoring the
+effect; the runtime gate verifies that the human session is about to apply it to
+the intended target.
 
-## 3. Check without running the human procedure
+Distinguish success, failure, cancellation, EOF, blocked prerequisites, and
+unverified effects. Stop dependent stages when their prerequisites are not known
+to hold.
 
-Run the available syntax/parser or lint check. Trace inputs to their destinations
-and effects to their targets, confirmation, success evidence, and recovery path.
-Test meaningful supported branches using dummy inputs and isolated local targets:
-creation/update, escaping, cancellation/EOF, failed commands, and partial recovery
-where applicable. Do not mirror script wording in tests or require a framework.
+## 3. Validate without real private input or effects
 
-During validation, do not request real credentials, open dashboards, change real
-configuration, or perform durable external mutations. Use stubs or a no-effects
-test path when needed. Check that test output and error handling do not expose
-dummy secret markers, while recognizing that this does not prove every external
-tool is safe with real credentials. State what remains for the operator to verify.
+Check syntax and the branches that can materially change operator safety or
+completion, including cancellation/EOF, failed commands, persistence failure,
+target confirmation, and uncertain-effect recovery when applicable.
 
-## 4. Deliver or launch within scope
+Use dummy values, stubs, or isolated local targets. Do not request real
+credentials, open private dashboards, mutate real external state, or treat a
+dummy-secret test as proof that every external tool handles real secrets safely.
 
-A request to create a wizard authorizes its local artifact, not installation,
-commits, publication, or running credentialed stages in the agent's tools. If the
-user also asks to run it or be walked through the procedure, launch the checked
-script in a separate visible terminal whose input and output are not attached
-to the agent. Pass no secret through arguments or launch environment. Do not
-read, poll, record, or capture that session. If that separation is unavailable,
-return the exact run command and explain the gap instead of using an attached
-terminal. An explicit launch request needs no extra confirmation just to open it.
+Complete authoring only when the script can guide the admitted procedure without
+exposing private input to the agent and its material failure paths have a defined
+operator-visible outcome.
 
-Return the script path or content, one run command, effects, checks, launch status,
-and unresolved manual details. Complete when the checked, secret-free script
-covers the admitted procedure and can be run in the intended environment. Script
-delivery or launch does not establish that the human procedure succeeded.
+## 4. Deliver or privately launch
+
+Creating the wizard authorizes its local artifact, not installation, commit,
+publication, or execution of credentialed stages through agent-visible tools.
+
+If the user explicitly asks to launch it and the host provides a human-visible
+session whose input and output are not exposed to the agent, launch the checked
+script there. Pass no secret through command arguments or the launch environment,
+and do not read, poll, record, or capture that private session.
+
+If such separation is unavailable, return the exact run command instead of using
+an agent-attached terminal.
+
+Return the script path or content, one run command, material effects, checks,
+launch status when applicable, and unresolved manual details. Delivery or launch
+does not establish that the human procedure itself succeeded.
