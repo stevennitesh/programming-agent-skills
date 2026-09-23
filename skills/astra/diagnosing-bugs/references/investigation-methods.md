@@ -59,6 +59,22 @@ when executing historical states.
 Reduce failing input or sequence only while the reduced case continues to expose
 the reported mechanism.
 
+## Challenge a shared premise after repeated failed fixes
+
+When two or more attempted fixes fail the same gate while assuming the same
+mechanism, write that shared premise explicitly before trying another variant.
+
+Build the smallest rerunnable census that can show where the relevant imbalance or
+failure is concentrated: by actor, partition, input class, state, worker, queue,
+resource, or other causal unit. A census establishes distribution, not cause.
+
+If the same subset repeatedly carries the skew, investigate what assigns or
+preserves that role and test that assignment as the next causal hypothesis. Prefer
+removing a demonstrated asymmetry over adding another compensating path around it.
+
+If the census does not show the predicted skew, reject or weaken the shared premise
+and look elsewhere. Keep the census only when it remains useful evidence.
+
 ## Performance regressions
 
 Establish equivalent useful work, input scale, measured boundary, and relevant
