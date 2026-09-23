@@ -50,6 +50,11 @@ Use a distinguishing scenario when abstract wording could conceal materially
 different outcomes. Explain a recommendation and its decisive tradeoff when useful;
 do not invent an owner-held answer.
 
+When the destination is known but the unresolved decision space is too large or
+dependent to settle reliably in one pass, read
+[Long-horizon shaping](references/long-horizon-shaping.md). Do not pre-slice
+uncertainty whose actual question still depends on earlier decisions.
+
 When shaping changes or exposes a conflict in domain terms, invariants,
 responsibilities, or relationships, read
 [Domain modeling](references/domain-modeling.md) before building decisions that
