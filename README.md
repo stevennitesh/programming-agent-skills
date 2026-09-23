@@ -3,7 +3,7 @@
 <p align="center"><strong>Give your coding agent the context and methods the work needs.</strong></p>
 
 <p align="center">
-  16 focused skills, built primarily for GPT 6 Astra in Codex.<br>
+  17 focused skills, built primarily for GPT 6 Astra in Codex.<br>
   Optional cost-aware routing uses GPT 6 Sol and Luna. Ordinary coding stays direct.
 </p>
 
@@ -87,6 +87,7 @@ These are alternative starting points, not a required pipeline.
 | Assess architecture and select worthwhile improvements | [$audit-codebase](skills/astra/audit-codebase/SKILL.md) | Request explicitly |
 | Optimize a measurable outcome through experiments | [$hillclimb](skills/astra/hillclimb/SKILL.md) | Request explicitly |
 | Review a code change for correctness and maintainability | [$change-review](skills/astra/change-review/SKILL.md) | Automatic when relevant |
+| Classify raw incoming tracker issues into an honest next state | [$triage](skills/astra/triage/SKILL.md) | Request explicitly |
 | Turn an accepted plan or spec into tracked work units | [$to-tickets](skills/astra/to-tickets/SKILL.md) | Request explicitly |
 | Implement concurrently with separate ownership and clear dependencies | [$parallel-implement](skills/astra/parallel-implement/SKILL.md) | Request explicitly |
 | Route GPT 6 work to reduce Astra lead-token churn while preserving acceptance | [$cost-aware-coding](skills/astra/cost-aware-coding/SKILL.md) | Request explicitly |
