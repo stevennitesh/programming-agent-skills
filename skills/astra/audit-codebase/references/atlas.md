@@ -1,80 +1,141 @@
-# Optional visual atlas
+# Visual atlas
 
-Use the atlas only when the user requests a visual system map, maintained audit
-coverage, or continuation of an existing managed atlas. Focused findings do not
-require it.
+Use for whole-codebase exploration, maintained architecture mapping, or continuing
+an existing current-format audit workbench.
 
 The helper is [atlas.py](../scripts/atlas.py). Use its current `--help` and
-subcommand help for command syntax rather than relying on copied recipes.
+subcommand help for exact CLI syntax. The current format is authoritative; do not
+migrate or continue older report schemas.
+
+## Purpose
+
+The HTML is a human decision surface, not a serialized debug dump. It should let
+the user answer, in order:
+
+1. What systems and subsystems exist?
+2. How do they depend on each other?
+3. What has been audited and what source has changed since?
+4. What did an audit find?
+5. Which improvement candidates are selectable?
+6. What did deeper analysis conclude?
+
+Forensic evidence remains available behind drill-downs rather than dominating the
+first view.
 
 ## Ownership
 
 The agent owns semantic judgment:
 
-- system and subsystem boundaries;
-- ownership and dependency meaning;
+- system and subsystem boundaries and purpose;
+- ownership, callers, interfaces, dependencies, and proof seams;
 - evidence and counterevidence;
-- finding classification, consequence, confidence, and recommendation; and
-- whether audit coverage is focused, comprehensive, or incomplete.
+- six-lens audit dispositions;
+- finding classification and affected scope;
+- candidate grouping, qualitative strength, benefit, risk, and required proof;
+- candidate analysis and recommendation.
 
-The helper owns mechanical state such as record IDs, path expansion, overlap
-checks, source fingerprints, update history, escaping, rendering, coverage
-bookkeeping, and atomic publication.
+The helper owns:
 
-Do not hand-edit generated HTML, record IDs, fingerprints, or canonical helper
-state. Do not copy the entire report state into model context when targeted helper
-inspection is sufficient.
+- repository and source identities;
+- complete tracked-path ownership or explicit exclusions for Map;
+- schema validation and relationship integrity;
+- candidate and finding IDs supplied by the manifest;
+- source freshness calculation;
+- canonical JSON embedding;
+- HTML escaping and deterministic rendering;
+- writer exclusion, atomic publication, and read-back.
 
-A structural map does not establish audit coverage. The helper can enforce
-bookkeeping; it cannot decide whether the inspected evidence is semantically
-adequate.
+Do not hand-edit the generated HTML or embedded state.
 
-## Use the helper as the state boundary
+## Map
 
-Inspect existing atlas state before changing it. Prepare records through the
-helper, edit only the semantic judgment fields it exposes, and apply changes back
-through the helper.
+Map records structure, not quality judgment.
 
-Directory structure or path membership does not establish semantic ownership.
-Shared infrastructure needs an explicit owner and evidenced consumers.
+Group current tracked source into meaningful systems and subsystems based on
+runtime or domain ownership, not directory shape alone. Each subsystem records
+its purpose, owned behavior, authority, callers, dependency evidence, interfaces,
+proof seams, and owned paths.
 
-Prepare against current source state. If the helper reports source or report
-drift, re-examine the affected evidence and prepare the record again rather than
-carrying old judgments onto new fingerprints.
+Every tracked path belongs to one subsystem or one evidenced exclusion. Shared
+infrastructure still needs one structural owner and named consumers.
 
-Refreshing inventory or source fingerprints updates mechanical freshness only. It
-does not revalidate a finding, clear an evidence gap, or prove that a changed
-source still supports the previous judgment.
+Publish the map and stop for user selection. A mapped subsystem is not audited.
 
-After an uncertain helper write, inspect actual atlas state before retrying. Do not
-bypass helper validation or remove a writer lock without establishing that no
-writer still owns it.
+## Audit one selected subsystem
 
-## Findings and coverage
+Rebuild the selected subsystem's current source trace and inspect the materially
+distinct entry paths, callers, dependencies, interfaces, proof seams, and relevant
+history.
 
-Use the audit skill's semantic dispositions—`defect`, `opportunity`, `retain`,
-and `gap`—and preserve the scenario, evidence, consequence, counterevidence, and
-direction needed to judge each recorded finding.
+Account for these six lenses:
 
-Keep one causal finding rather than duplicating it under every affected subsystem.
-Name additional affected owners in its evidence or direction.
+- reliability;
+- domain;
+- design;
+- simplification;
+- coding practice; and
+- performance.
 
-A focused assessment needs only the flows, evidence, and limits relevant to its
-scope.
+Each lens ends as `complete`, `evidence gap`, or `not applicable`, with
+evidence or a reason. This ledger is coverage bookkeeping, not a finding quota.
 
-For a claimed comprehensive atlas, account for every configured coverage lens as
-examined, excluded with an evidence-based reason, or a gap. Pending or unexplained
-coverage prevents a comprehensive claim. The helper's completed ledger is
-necessary bookkeeping, not proof that the investigation itself was sufficient.
+Record findings, systemic findings, and coherent improvement candidates. A
+candidate must point to at least one admitted defect or opportunity. Give each
+candidate one qualitative strength: `strong`, `worth exploring`, or
+`speculative`.
 
-A map without an audit assessment remains a map, not an audited codebase.
+Publish the updated report and stop for user selection.
 
-## Retention and migration
+## Analyze one selected candidate
 
-Keep an atlas outside repository scratch only when the user or repository has
-chosen a durable archival destination. Creating or updating an atlas does not
-authorize commits or publication elsewhere.
+Revalidate current source across every mapped subsystem in the candidate's
+affected scope.
 
-Do not continue an incompatible legacy report schema in place. Preserve the
-original, start a current atlas, and revalidate legacy evidence before carrying
-forward current judgments.
+Analysis may end as:
+
+- `analyzed`: current evidence supports a recommendation;
+- `disproved`: the candidate no longer survives current evidence; or
+- `blocked`: one exact decision or missing evidence prevents a responsible
+  conclusion.
+
+For an analyzed candidate, compare the materially relevant alternatives and record
+their tradeoffs, recommendation, proof, and evidence limits.
+
+Publish and stop. Analysis never creates tickets or starts implementation.
+
+## Visual contract
+
+Keep the report self-contained and offline. Inline CSS, SVG, and deterministic
+local JavaScript are allowed; remote assets and network requests are not.
+
+The rendered workbench should provide:
+
+- a top-level coverage/status summary;
+- a visual system/subsystem dependency map;
+- mapped/audited/source-changed state badges;
+- searchable subsystem/finding/candidate cards;
+- six-lens coverage visualization;
+- findings with expandable evidence;
+- candidates with current problem, direction, affected scope, qualitative
+  strength, risk, required proof, and any completed analysis;
+- copyable explicit commands to Audit a subsystem or Analyze a candidate;
+- provenance, exclusions, and history in lower-priority sections.
+
+Local JavaScript may only navigate, filter, or copy text. It does not invoke
+commands or mutate state.
+
+## Freshness and publication
+
+Map binds the current tracked repository identity. Audit and Analyze bind the
+current source packets needed for their selected scope.
+
+The report may refresh freshness markers without revalidating semantic judgment.
+A changed source badge means the prior judgment may be stale; it does not erase or
+silently renew that judgment.
+
+After a failed or uncertain write, inspect the current report before retrying.
+Never bypass source identity, report-digest, writer-lock, or read-back checks.
+
+The report lives under `.tmp/audit-codebase/<run-id>/report.html` unless the user
+or repository separately chooses a durable archival destination. Atlas creation
+does not authorize a commit or publication elsewhere.
