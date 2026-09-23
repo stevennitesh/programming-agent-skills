@@ -62,8 +62,11 @@ edited. Shape-work owns product and domain meaning; codebase-design owns technic
 architecture and integration decisions. Research evaluates existing evidence;
 prototype creates one bounded new observation. Audit-codebase judges baseline
 code; change-review judges a fixed change candidate. Verification-harness creates
-durable agent-operated product proof; wizard creates a human-private procedure.
-Triage classifies raw intake; to-tickets decomposes settled work. Repo-bootstrap
+durable agent-operated product proof and must distinguish a harness defect from a
+product defect before interpreting a failed run; wizard creates a human-private
+procedure. Triage classifies raw intake and owns safe tracker-state transition,
+but it does not diagnose, review, decompose, or implement the downstream work;
+to-tickets decomposes settled work. Repo-bootstrap
 owns the repository guidance surface; writing-for-agents owns an already-scoped
 instruction artifact. Cost-aware-coding may be combined with parallel-implement:
 the former owns model and budget routing, while the latter owns concurrency,

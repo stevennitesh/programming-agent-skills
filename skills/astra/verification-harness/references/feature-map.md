@@ -28,8 +28,11 @@ a better anchor.
 ## Keep coverage claims honest
 
 A feature map can contain unexercised entries. Mark an entry's recipe as known,
-verified, blocked, or stale only from evidence that supports that state. One
-representative harness proof does not certify every mapped feature.
+verified, blocked, or stale only from evidence that supports that state.
+`verified` requires an actual harness run bound to the intended candidate or
+environment with a decisive observation that was shown capable of failing; a
+documented recipe alone is only `known`. One representative harness proof does
+not certify every mapped feature.
 
 When source changes make a mapped route, selector, command, prerequisite, or
 expected result doubtful, reconcile the affected entry rather than silently

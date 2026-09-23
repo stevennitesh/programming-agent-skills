@@ -21,5 +21,7 @@ For an attached PR or MR, describe only the work remaining on that candidate. Fo
 human-ready work, name the human action and the evidence that completes it.
 
 The brief is ready only when its recipient can act on one bounded outcome without
-inventing a consequential product decision. Otherwise keep the item out of a ready
-state and return the missing decision or evidence.
+inventing a consequential product decision. Confirm that configured blocking
+relationships do not still make the item non-actionable; a brief can describe
+dependencies, but it cannot make a blocked item ready. Otherwise keep the item out
+of a ready state and return the missing decision, blocker, or evidence.

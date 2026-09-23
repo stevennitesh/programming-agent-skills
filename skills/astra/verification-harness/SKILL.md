@@ -54,6 +54,11 @@ The harness must make these decisions explicit:
 - **Evidence:** the action performed, resulting user-visible state, and material
   side effects needed for the claim. A final screenshot or exit code alone is
   insufficient when the transition or effect is what matters.
+- **Failure sensitivity:** one safe negative control or equivalent check showing
+  that the doctor or evidence assertion rejects a wrong target or wrong result.
+  Prefer a mismatched build identity, absent isolated target, deliberately wrong
+  expected marker, or disposable fixture; do not damage real product state just
+  to prove the harness can fail.
 - **Cleanup:** remove only resources created or explicitly owned by this run.
   Never kill by broad process name or delete shared state merely to restore a
   clean-looking environment.
@@ -92,21 +97,46 @@ When the intended environment is available and safe to exercise, run the
 generated or reconciled instructions end to end:
 
 1. launch or attach to the intended isolated target;
-2. run the doctor check;
-3. drive at least one representative supported user path;
-4. capture the promised visible result and material side effects;
-5. clean up only harness-owned resources; and
-6. confirm required evidence still exists after cleanup.
+2. run the doctor check and bind the run to the observed candidate identity;
+3. exercise one safe negative control that proves the doctor or evidence check
+   can fail for the wrong target or result;
+4. drive at least one representative supported user path;
+5. capture the promised visible result and material side effects;
+6. clean up only harness-owned resources; and
+7. confirm required evidence still exists and owned resources are gone after
+   cleanup.
+
+If the target is rebuilt, restarted into a different candidate, or otherwise
+changes identity after doctoring, run the doctor again before attaching evidence
+to it.
+
+Classify a failed run before changing the expected result:
+
+- **Harness defect:** launch, doctor, drive, observation, or cleanup is broken, or
+  the intended product seam was never reached. Repair only the harness, account
+  for owned resources, and rerun from a known state.
+- **Product defect:** harness validity and failure sensitivity are established,
+  the supported product path was reached, and observed behavior diverges from the
+  accepted result. Preserve that evidence and do not weaken the assertion or add a
+  shortcut around the defect. If causal diagnosis or repair is requested, hand
+  that work to [diagnosing-bugs](../diagnosing-bugs/SKILL.md).
+- **Environment blocker:** a required dependency, identity, service, permission,
+  or safe isolation boundary is unavailable. Report the exact boundary instead of
+  presenting it as a product or harness result.
 
 After a failed iteration, account for processes, ports, profiles, files, and
 other resources before retrying. Do not assume cleanup succeeded because a
-command returned.
+command returned. If cleanup leaves owned resources behind, report them precisely;
+the harness is not verified operational tooling until that recovery path is
+understood and safe.
 
-A harness that has not been exercised is a structurally reviewed draft, not
-verified operational tooling. If execution is unavailable, return the strongest
-static evidence and the exact unproved step.
+A harness that has not been exercised, or whose decisive observation has not been
+shown capable of failing, is a structurally reviewed draft rather than verified
+operational tooling. If execution or a safe negative control is unavailable,
+return the strongest static evidence and the exact unproved step.
 
 Complete when future agents can identify the target, run the harness without
-guessing its ownership boundaries, obtain evidence for the supported claim, and
-clean up safely. Report the created or reconciled paths, proof performed, known
-coverage, and any product or environment blocker.
+guessing its ownership boundaries, obtain failure-sensitive evidence for the
+supported claim, distinguish harness/product/environment failures, and clean up
+safely. Report the created or reconciled paths, candidate identity, proof
+performed, known coverage, and any product or environment blocker.

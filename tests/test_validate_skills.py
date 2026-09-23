@@ -769,6 +769,32 @@ def test_public_mode_scans_only_current_public_paths(
     assert "." not in grep_call[grep_call.index("--") + 1 :]
 
 
+def test_current_triage_and_verification_harness_keep_safety_boundaries() -> None:
+    root = Path(__file__).resolve().parents[1]
+    triage = (root / "skills/astra/triage/SKILL.md").read_text(encoding="utf-8")
+    harness = (root / "skills/astra/verification-harness/SKILL.md").read_text(
+        encoding="utf-8"
+    )
+
+    for marker in (
+        "exactly one configured category role",
+        "exactly one configured state role",
+        "active configured blocker",
+        "do not replay a comment, brief, or role",
+        "Do not claim rollback",
+    ):
+        assert marker in triage
+
+    for marker in (
+        "**Failure sensitivity:**",
+        "**Harness defect:**",
+        "**Product defect:**",
+        "**Environment blocker:**",
+        "shown capable of failing",
+    ):
+        assert marker in harness
+
+
 def test_git_diff_validation_checks_worktree_and_index(monkeypatch, tmp_path: Path) -> None:
     calls: list[list[str]] = []
 

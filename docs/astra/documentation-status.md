@@ -6,6 +6,39 @@ referenced research/synthesis; it is not an audit of every historical packet or
 external project. The [design brief](design-brief.md) owns current direction. Do
 not treat this inventory as an execution backlog.
 
+## Triage and verification-harness boundary review, 2026-09-23
+
+Reviewed the two explicit-only workflows against tracker configuration,
+ready-handoff semantics, diagnosis/review/ticket boundaries, real-product proof,
+retry/recovery behavior, and their nearest Astra neighbors.
+
+Triage now makes its state invariant explicit: a mutated item must end with one
+configured category role and one configured state role; ready states require one
+bounded actionable outcome and no configured blocker that makes the item
+non-actionable. If the configured state model cannot truthfully represent a
+blocked item, that is a Repo Bootstrap setup gap rather than permission to misuse
+`needs-info`, `wontfix`, or a ready state. Exact-state requests still cannot
+manufacture evidence or waive those invariants.
+
+Tracker mutation is now defined as one precomputed effect set, refreshed
+immediately before the first write. Required notes/briefs precede role changes,
+category is reconciled before state, conflicting state roles are removed before
+the target state, and closure remains last. Partial or uncertain retries must
+read back actual state and avoid replaying already-successful comments or role
+changes; rollback is never claimed without read-back evidence.
+
+Verification Harness now requires failure-sensitive proof of its own doctor or
+evidence assertion, binds evidence to the observed candidate identity, and
+classifies failed runs as harness defect, product defect, or environment blocker
+before changing expectations. Product defects are preserved as product evidence
+rather than taught around; causal diagnosis belongs to Diagnosing Bugs. Failed
+cleanup leaves the harness unverified until residual owned resources and recovery
+are understood.
+
+The canonical selection examples and design brief were reconciled with those
+boundaries. A focused current-contract test protects the critical safety markers
+without introducing a second runtime router.
+
 ## CI fixture reconciliation, 2026-09-23
 
 After collection succeeded, the full Linux suite reached 392 tests and exposed
