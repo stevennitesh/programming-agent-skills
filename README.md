@@ -3,8 +3,8 @@
 <p align="center"><strong>Give your coding agent the context and methods the work needs.</strong></p>
 
 <p align="center">
-  17 focused skills, built primarily for GPT 6 Astra in Codex.<br>
-  Compatible with GPT 5.6 Sol. Ordinary coding stays direct.
+  16 focused skills, built primarily for GPT 6 Astra in Codex.<br>
+  Optional cost-aware routing uses GPT 6 Sol and Luna. Ordinary coding stays direct.
 </p>
 
 <p align="center">
@@ -39,9 +39,10 @@ assumptions, and removing instructions that add work without improving decisions
 <details>
 <summary><strong>Which models is it for?</strong></summary>
 
-The pack is tuned primarily for **GPT 6 Astra**, with **GPT 5.6 Sol compatibility**.
-Its optional cost-aware workflow uses Astra Medium to lead and review while one
-reusable Sol Medium subagent implements and verifies the accepted plan.
+The pack is tuned primarily for **GPT 6 Astra**. Its optional cost-aware workflow
+uses Astra Medium for consequential reasoning and final review, Sol Medium for
+substantial implementation, and Luna Max for compact bounded work when handoff and
+verification stay cheap.
 
 Smaller models may benefit from the [custom skill pack](skills/custom/), which
 contains more detailed instructions. The managed installer deploys only the Astra
@@ -88,8 +89,7 @@ These are alternative starting points, not a required pipeline.
 | Review a code change for correctness and maintainability | [$change-review](skills/astra/change-review/SKILL.md) | Automatic when relevant |
 | Turn an accepted plan or spec into tracked work units | [$to-tickets](skills/astra/to-tickets/SKILL.md) | Request explicitly |
 | Implement concurrently with separate ownership and clear dependencies | [$parallel-implement](skills/astra/parallel-implement/SKILL.md) | Request explicitly |
-| Have Astra lead and review while a reusable Sol subagent implements | [$cost-aware-coding](skills/astra/cost-aware-coding/SKILL.md) | Request explicitly |
-| Give an assigned implementer the pack's distilled Ponytail method | [$ponytail-implementer](skills/astra/ponytail-implementer/SKILL.md) | Request explicitly; worker only |
+| Route GPT 6 work to reduce Astra lead-token churn while preserving acceptance | [$cost-aware-coding](skills/astra/cost-aware-coding/SKILL.md) | Request explicitly |
 | Resolve an active Git merge or rebase conflict | [$resolving-merge-conflicts](skills/astra/resolving-merge-conflicts/SKILL.md) | Automatic when relevant |
 | Set up or reconcile repository agent guidance | [$repo-bootstrap](skills/astra/repo-bootstrap/SKILL.md) | Request explicitly |
 | Write agent instructions, guides, or continuation handoffs | [$writing-for-agents](skills/astra/writing-for-agents/SKILL.md) | Automatic when relevant |
@@ -120,145 +120,66 @@ against an agent without the skill.
 ## Cost-aware coding
 
 The optional [$cost-aware-coding](skills/astra/cost-aware-coding/SKILL.md)
-workflow pairs Astra's planning and review with a reusable native Sol implementation
-subagent when the implementation and verification are substantial enough to repay
-the handoff. They use separate model contexts and share the checkout one at a time.
+workflow reduces expensive Astra lead-token and context churn without weakening the
+accepted result. It is explicit-only and uses GPT 6 model roles as part of the
+routing policy:
 
-This workflow is inspired by Cognition's
-[Devin Fusion](https://cognition.com/blog/devin-fusion) lead-and-sidekick
-architecture. This project is an independent Codex implementation and is not
-affiliated with or endorsed by Cognition; Devin Fusion benchmark results do not
-establish savings for the Astra-Sol pairing.
+- **Astra Medium** owns consequential reasoning, ambiguous decisions, orchestration,
+  exception handling, and final review.
+- **Sol Medium** owns substantial repository investigation, implementation,
+  debugging, verification, and repair.
+- **Luna Max** owns compact bounded tasks with a small self-contained brief and
+  cheap verification.
 
-1. **Check that delegation has leverage.** Use direct execution for a trivial
-   change or serial investigation whose accumulated context is the work.
-2. **Invoke the standard pair.** Astra Medium owns intent, consequential
-   decisions, review, and acceptance. One reusable Sol Medium subagent owns
-   implementation, tests, debugging, and corrections.
-3. **Alternate repository custody.** Astra sends a self-contained assignment and
-   waits on native agent events while Sol works. Sol raises consequential questions
-   and returns the candidate, evidence, and released custody for Astra to review.
-   Astra stays out of the repository while Sol owns it.
+Delegate only when the expected Astra-context savings exceed briefing,
+coordination, verification, and recovery overhead. A cheap worker is not a cheap
+workflow when Astra must continuously supervise or reconstruct its work.
 
-```text
-$cost-aware-coding implement the accepted import-retry plan. If the handoff has
-enough implementation or verification work to save cost, create or reuse the Sol
-Medium subagent and use the standard route.
-```
+During delegated implementation, Astra should remain mostly dormant. The worker
+owns the checkout until it returns a stable candidate, decisive evidence, material
+limits, and released custody. Astra does not shadow the implementation, poll for
+routine progress, or consume an implementation transcript. Corrections normally
+return to the same worker while its accumulated context remains useful.
 
-Use the same checkout by default. Worktrees and an additional independent reviewer
-are conditional on a concrete isolation or assurance need.
-
-For a bounded feature spanning several steps, request
-[planned delivery](skills/astra/cost-aware-coding/references/planned-delivery.md).
-The lead shapes or reuses one plan, coordinates useful review checkpoints, and
-reviews the complete integrated change before completion. Ask for plan-first work
-to stop after planning, or explicitly authorize shaping and execution together:
+When Codex overrides Astra to Sol or Luna, the worker assignment uses
+`fork_turns="none"` by default or a small bounded fork when recent turns are
+actually cheaper than an explicit brief. Full-history forks inherit the parent
+model and effort, so they are not the cost-aware route.
 
 ```text
-$cost-aware-coding shape and implement this feature through justified review
-checkpoints and a final integrated review. Keep one bounded plan and reuse the
-implementer. Bring unresolved user-owned decisions to me; continue technical
-decisions and implementation within scope.
+$cost-aware-coding implement the accepted import-retry plan. Keep Astra on
+consequential decisions and final review, route coherent implementation to Sol,
+and use Luna Max only for compact bounded work.
 ```
 
-Add "use a Ponytail implementer" to select the managed `ponytail-implementer`
-skill. This standalone adaptation ships with this pack and requires no upstream
-Ponytail installation. Only the worker loads its instructions; the lead sets
-acceptance and reviews results using the engineering contract. Each planned
-checkpoint allows two correction rounds, with two separate rounds for final review.
+For coordinated serial delivery, the
+[planned-delivery reference](skills/astra/cost-aware-coding/references/planned-delivery.md)
+adds checkpoints only when early evidence can prevent consequential downstream
+rework—for example, an interface, persisted representation, or integration
+decision that later work depends on. Checkpoint passes do not replace the final
+integrated review.
 
-**Optional Codex tuning:** If the lead keeps reporting unchanged progress while
-Sol works, use the [quiet-waiting setup](INSTALLATION.md#optional-codex-quiet-waiting).
-This personal configuration change is opt-in; an agent needs your explicit
-permission to inspect or edit it.
+Recovery follows the actual cause rather than a fixed repair-round allowance.
+Requirement, permission, environment, and contradictory-acceptance problems return
+to their owner. Local implementation problems normally return to the same worker.
+A Luna task that grows beyond its bounded contract moves to Sol. A demonstrated
+Sol reasoning failure can escalate Sol **Medium → High → Max** before coherent
+implementation is pulled back into Astra. Astra lead reasoning can escalate
+**Medium → High → XHigh → Max** when it can materially change a consequential
+decision; Ultra is excluded from this serial route because it changes Codex
+multi-agent behavior.
 
-### Cost-aware feature delivery: who does what?
+When the user explicitly combines cost-aware routing with
+[$parallel-implement](skills/astra/parallel-implement/SKILL.md),
+parallel-implement owns decomposition, concurrency, lane custody, integration, and
+parallel recovery. Cost-aware-coding retains model/effort routing, budget policy,
+and final review.
 
-This flow shows feature delivery through `$cost-aware-coding`; shaping, design,
-and review retain their own methods.
-
-```mermaid
-flowchart TB
-    Plan["ASTRA LEADS<br/>Understand, decide<br/>Assign"] --> Work["SOL IMPLEMENTS<br/>Inspect, change, test<br/>Release custody"]
-    Work -->|Stable candidate|Review["ASTRA REVIEWS<br/>Inspect candidate<br/>Accept or correct"]
-    Work -->|Returned candidate fails|Recover["Follow recovery decisions below"]
-    Review -->|Gate satisfied|Done["Complete"]
-    Review -->|Required corrections|Recover
-    classDef plan fill:#e9eef9,stroke:#657ca6,color:#243758
-    classDef work fill:#e6f3ef,stroke:#377d70,color:#163e36
-    classDef recovery fill:#fff1dc,stroke:#b77a28,color:#53370f
-    class Plan plan
-    class Work,Review,Done work
-    class Recover recovery
-```
-
-<details>
-<summary><strong>Recovery and escalation</strong></summary>
-
-Corrections return to the current accepted implementer, normally the same Sol
-subagent. Exact limits live in
-[repair allowances](skills/astra/cost-aware-coding/references/repairs.md).
-
-```mermaid
-flowchart TB
-    Cause["IDENTIFY CAUSE<br/>Implementation, review,<br/>or source fault"]
-    Cause -->|Requirements, design,<br/>or environment|Source["Resolve at source"]
-    Cause -->|Implementation or<br/>review correction|Allowance["Check applicable allowance"]
-    Source --> Allowance
-    Allowance -->|Remains|Attempt["Implementer attempts repair<br/>and returns ready or blocked"]
-    Allowance -->|Implementation<br/>recovery exhausted|Reroute["Preserve work<br/>Request revised route"]
-    Allowance -->|Review repairs<br/>exhausted|Pause["Preserve work<br/>Request more rounds or revised route"]
-    Attempt --> Resume["Return to main flow"]
-    classDef work fill:#e6f3ef,stroke:#377d70,color:#163e36
-    classDef recovery fill:#fff1dc,stroke:#b77a28,color:#53370f
-    class Attempt,Resume work
-    classDef pause fill:#f8e6e6,stroke:#ad6262,color:#592d2d
-    class Cause,Source,Allowance recovery
-    class Reroute,Pause pause
-```
-
-Use `shape-work` for substantial unresolved feature decisions before accepting
-the route. The workflow suggests a lead-model or effort change when needed, and
-the user applies it before execution. Reuse the Sol subagent for the same plan and its
-repairs; start a new subagent for an independent plan.
-Concurrent writing uses `parallel-implement` when requested.
-
-After the focused Sol repair fails for implementation reasons, the workflow
-proposes a stronger Sol replacement at High, or XHigh when demonstrated difficulty
-justifies it. After acceptance and custody release, the replacement receives a
-compact handoff and retains the remaining repair allowance.
-
-An allowance is consumed when the implementer returns a candidate as ready or
-blocked; its internal edit, debug, and test loop stays within that attempt. Once
-review begins for a scope, corrections use that gate's review-repair rounds and do
-not reopen implementation recovery. Ordinary delivery has two rounds for the
-integrated candidate. Planned delivery has two per checkpoint plus two for final
-review; moving unresolved findings to a new gate does not renew their allowance.
-The Astra lead uses `change-review` for the initial review and follow-up review.
-An independent Astra reviewer is added only when the accepted route requires it.
-Sol runs acceptance checks before returning custody. See the
-[cost-aware skill](skills/astra/cost-aware-coding/SKILL.md) for exact rules.
-Completion does not itself authorize committing, pushing, or deployment.
-
-</details>
-
-<details>
-<summary><strong>Model policy and evidence limits</strong></summary>
-
-The current [model policy](skills/astra/cost-aware-coding/references/model-policy.md)
-uses Astra Medium as lead and reviewer and Sol Medium as implementer. Astra XHigh
-is suggested only for particularly difficult design or intensive review; the user
-decides and applies the change. Sol High is the default stronger implementation
-attempt after a failed Medium repair; Sol XHigh requires a demonstrated need.
-These are experimental starting points, not proven task-by-task winners.
-
-A bounded, read-only helper can capture logged model settings and usage counters.
-It reuses available evidence and reports missing coverage; it does not establish
-billing totals or prove savings. The aim is lower execution cost **within the
-chosen review and quality requirements**, with comparative savings still to be measured.
-
-</details>
+Usage measurement is optional. When it matters, compare equivalent accepted
+outcomes and track Astra lead usage separately from Sol/Luna worker usage, handoff
+size, corrections, total usage, and wall time. The strongest success signal is a
+substantial worker implementation interval with little or no Astra activity,
+followed by Astra reviewing a stable candidate.
 
 <a id="install"></a>
 
