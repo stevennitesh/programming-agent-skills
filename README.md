@@ -17,10 +17,10 @@
 </p>
 
 <p align="center">
-  <a href="#find-the-right-skill">Find a skill</a> Â·
-  <a href="#in-practice-clearer-project-guidance">Real example</a> Â·
-  <a href="#cost-aware-coding">Cost-aware coding</a> Â·
-  <a href="#getting-started">Get started</a> Â·
+  <a href="#find-the-right-skill">Find a skill</a> ·
+  <a href="#in-practice-clearer-project-guidance">Real example</a> ·
+  <a href="#cost-aware-coding">Cost-aware coding</a> ·
+  <a href="#getting-started">Get started</a> ·
   <a href="docs/astra/design-brief.md">Read the design brief</a>
 </p>
 
@@ -44,9 +44,11 @@ uses Astra Medium for consequential reasoning and final review, Sol Medium for
 substantial implementation, and Luna Max for compact bounded work when handoff and
 verification stay cheap.
 
-Smaller models may benefit from the [custom skill pack](skills/custom/), which
-contains more detailed instructions. The managed installer deploys only the Astra
-skills pack. Model-specific comparisons remain limited.
+The historical [custom skill pack](skills/custom/) contains more detailed
+instructions and remains available for comparison or separate evaluation. The
+managed installer deploys only the Astra skills pack, and current model-specific
+comparisons are not sufficient to claim that the historical pack performs better
+for smaller models.
 
 </details>
 
@@ -78,8 +80,8 @@ These are alternative starting points, not a required pipeline.
 
 | Your task | Skill | Use |
 | --- | --- | --- |
-| Implement a clear, bounded change | **No skill needed**â€”ask Codex to implement and verify using repository guidance | Direct |
-| Clarify a featureâ€™s behavior and acceptance criteria | [$shape-work](skills/astra/shape-work/SKILL.md) | Request explicitly |
+| Implement a clear, bounded change | **No skill needed**—ask Codex to implement and verify using repository guidance | Direct |
+| Clarify a feature’s behavior and acceptance criteria | [$shape-work](skills/astra/shape-work/SKILL.md) | Request explicitly |
 | Decide how a feature fits the existing system | [$codebase-design](skills/astra/codebase-design/SKILL.md) | Automatic when relevant |
 | Test an uncertain approach with a runnable experiment | [$prototype](skills/astra/prototype/SKILL.md) | Automatic when relevant |
 | Create durable tooling that drives and proves real user-facing behavior | [$verification-harness](skills/astra/verification-harness/SKILL.md) | Request explicitly |
