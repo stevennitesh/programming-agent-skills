@@ -244,6 +244,8 @@ def test_analyze_updates_only_selected_candidate(tmp_path: Path) -> None:
     text = report(tmp_path).read_text(encoding="utf-8")
     assert "Leave coordination in callers." in text
     assert "Move policy to write seam." in text
+    assert "Copy next-action handoff" in text
+    assert "Help me choose the appropriate next owner" in text
 
 
 def test_refresh_marks_changed_source_without_revalidating(tmp_path: Path) -> None:
@@ -286,6 +288,8 @@ def test_current_format_only_and_tamper_detection(tmp_path: Path) -> None:
     rpt = report(tmp_path)
     raw = rpt.read_text(encoding="utf-8")
     assert 'audit-codebase-report-version" content="1"' in raw
+    assert "https://" not in raw and "http://" not in raw
+    assert "cdn" not in raw.lower() and "mermaid" not in raw.lower()
     rpt.write_text(raw.replace("Architecture map", "Changed architecture", 1), encoding="utf-8")
     with pytest.raises(atlas.ReportError, match="canonical"):
         atlas.inspect_report(repo_root=tmp_path, report=rpt)
