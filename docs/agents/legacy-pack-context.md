@@ -21,7 +21,7 @@ _Avoid_: prompt collection, script bundle
 
 A pack-wide epistemic reset in which prior research, synthesis, validation, and
 change conclusions are historical intake until independently rediscovered or
-explicitly revalidated. The active method lives in
+explicitly revalidated. The preserved legacy method lives in
 [`fresh-composition-epoch.md`](../../docs/synthesis/methods/fresh-composition-epoch.md).
 _Avoid_: clean slate, destructive reset, pack-wide change-control method
 
@@ -158,8 +158,8 @@ _Avoid_: pack manual, copied route map
   [ADR-0014](../../docs/adr/0014-source-native-vocabulary-names-active-pack-concepts.md).
   [ADR-0009](../../docs/adr/0009-fresh-composition-epochs-revalidate-skill-pack-knowledge.md)
   remains the Fresh Composition Epoch decision. The accepted
-  `docs/synthesis/skill-pack.md` payload is the current Pack Composition
-  Baseline owner.
+  `docs/synthesis/skill-pack.md` payload is the legacy Pack Composition
+  Baseline owner for that recorded workflow.
 - Skill Change-Control Method proof-obligation vocabulary belongs to
   [`deploy-prompts.md`](../../docs/synthesis/methods/deploy-prompts.md) and
   [ADR-0014](../../docs/adr/0014-source-native-vocabulary-names-active-pack-concepts.md).

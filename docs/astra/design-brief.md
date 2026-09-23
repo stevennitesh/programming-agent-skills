@@ -120,9 +120,10 @@ proven savings.
 ## Installation and migration
 
 `skills/astra/` is the managed source. `skills/custom/` is historical source retained
-for comparison and users evaluating the more detailed pack; it is not deployed by
-the current installer. Smaller models may need those additional instructions;
-compatibility is not evidence of equivalent behavior across models.
+for comparison and separate evaluation; it is not deployed by the current installer.
+The custom pack contains more detailed instructions, but current model-specific
+comparisons are not sufficient to claim that smaller models perform better with
+that historical package.
 
 Repo bootstrap adapts the engineering contract and offers reconciliation of
 existing agent guidance. Where local policy differs, it offers reconciliation

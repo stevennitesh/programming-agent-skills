@@ -6,6 +6,37 @@ referenced research/synthesis; it is not an audit of every historical packet or
 external project. The [design brief](design-brief.md) owns current direction. Do
 not treat this inventory as an execution backlog.
 
+## Current-vs-historical cleanup, 2026-09-23
+
+Audited current routers and owners for stale counts, retired skill names,
+superseded workflows, installation directions, and abandoned design proposals.
+The current managed set is defined mechanically by immediate
+`skills/astra/*/SKILL.md` entries; this branch has **18**. Historical counts and
+retired names remain evidence and must not be used as current inventory.
+
+Changes from this pass:
+
+- moved the explicitly requested legacy Deploy Campaign route out of **Current
+  Runbooks**;
+- added a direct historical-scope notice to `docs/synthesis/skill-pack.md`, whose
+  recorded 24/25-skill composition and "active" terminology are legacy;
+- relabeled synthesis/method index sections so their Deploy Campaign instructions
+  cannot read like current Astra routing;
+- changed residual "active/current" wording inside the legacy-pack vocabulary to
+  legacy-scoped wording;
+- made `CONTEXT.md` state how to derive the managed inventory instead of trusting
+  counts in historical artifacts; and
+- aligned the design brief with the README: the historical custom pack is more
+  detailed, but there is not current comparative evidence that smaller models
+  perform better with it.
+
+The installer source and `INSTALLATION.md` remain consistent: `skills/astra/`
+is the only managed skill source, old custom manifests are migration evidence,
+and the documented preview/install/recovery route still matches the installer.
+No installation rewrite was warranted. Dated research proposals, numbered ADR
+bodies, validation results, and archived records keep their original counts,
+names, and conclusions when their historical scope is already explicit.
+
 ## Public entry-point follow-up, 2026-09-23
 
 Rechecked the README, repository instructions, root context, installation guide,
