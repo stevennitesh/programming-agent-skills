@@ -908,6 +908,11 @@ def observe_lane(
 
 
 def cleanup_blocker(snapshot: dict[str, Any]) -> dict[str, Any] | None:
+    if snapshot["receipt_state"] == "invalid":
+        return {
+            "reason": "cleanup receipt invalid",
+            "error": snapshot["receipt_error"],
+        }
     if (
         snapshot["present"] is not True
         or snapshot["path_error"]
