@@ -547,7 +547,10 @@ def validate_active_surfaces(root: Path, *, include_legacy: bool = False) -> lis
 def validate_skill_handle_references(root: Path, skill_names: list[str]) -> list[str]:
     failures: list[str] = []
     names = set(skill_names)
-    paths = {root / relative for relative in ACTIVE_SURFACE_FILES}
+    paths = {
+        root / relative
+        for relative in (*CURRENT_ACTIVE_SURFACE_FILES, *LEGACY_ACTIVE_SURFACE_FILES)
+    }
     astra_names = {p.parent.name for p in (root / "skills/astra").glob("*/SKILL.md")}
     custom_root = root / CUSTOM_SKILL_ROOT
     if custom_root.is_dir():

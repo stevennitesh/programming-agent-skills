@@ -262,6 +262,25 @@ def test_current_active_surface_scan_excludes_legacy_custom_pack(
     ]
 
 
+def test_legacy_handle_validation_uses_current_and_legacy_surfaces(
+    tmp_path: Path,
+) -> None:
+    current = tmp_path / "README.md"
+    current.write_text("Use $current.\n", encoding="utf-8")
+    legacy = tmp_path / "docs/synthesis/skill-context-relationships.md"
+    legacy.parent.mkdir(parents=True)
+    legacy.write_text("Use $legacy.\n", encoding="utf-8")
+
+    current_skill = tmp_path / "skills/astra/current"
+    current_skill.mkdir(parents=True)
+    legacy_skill = tmp_path / "skills/custom/legacy"
+    legacy_skill.mkdir(parents=True)
+
+    assert validate_skills.validate_skill_handle_references(
+        tmp_path, ["legacy"]
+    ) == []
+
+
 def test_manifest_rejects_nonscalar_source_without_crashing() -> None:
     _, _, failures = skill_pack_contract.parse_managed_manifest_payload({
         "format": 1, "source": [], "skills": [], "hashes": {},
