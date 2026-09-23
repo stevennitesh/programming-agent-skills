@@ -1718,19 +1718,23 @@ def preview_global_bootstrap(template: Path, target: Path) -> str:
     return status
 
 
+def write_global_agents(target: Path, updated: str) -> None:
+    target.parent.mkdir(parents=True, exist_ok=True)
+    temporary = global_agents_temporary_path(target)
+    reject_unsafe_redirect(temporary, "global AGENTS temporary path")
+    if temporary.exists() or temporary.is_symlink():
+        raise RuntimeError(
+            f"Refusing to overwrite global AGENTS temporary path: {temporary}"
+        )
+    with temporary.open("xb") as handle:
+        handle.write(native_text_bytes(updated))
+    temporary.replace(target)
+
+
 def install_global_bootstrap(template: Path, target: Path) -> str:
     status, updated = render_global_bootstrap(template, target)
-    target.parent.mkdir(parents=True, exist_ok=True)
     if status != "present":
-        temporary = global_agents_temporary_path(target)
-        reject_unsafe_redirect(temporary, "global AGENTS temporary path")
-        if temporary.exists() or temporary.is_symlink():
-            raise RuntimeError(
-                f"Refusing to overwrite global AGENTS temporary path: {temporary}"
-            )
-        with temporary.open("xb") as handle:
-            handle.write(native_text_bytes(updated))
-        temporary.replace(target)
+        write_global_agents(target, updated)
     return status
 
 
@@ -2118,10 +2122,10 @@ def _install_locked(
 
         if global_agents is not None:
             verify_file_identity(global_agents, global_sha256, "global AGENTS")
-            bootstrap_status = install_global_bootstrap(
-                root / GLOBAL_TEMPLATE_NAME,
-                global_agents,
-            )
+            if bootstrap_status != "present":
+                if global_target_text is None:
+                    raise RuntimeError("Global bootstrap plan is missing target content")
+                write_global_agents(global_agents, global_target_text)
 
         try:
             committed_names, committed_hashes = read_managed_manifest(skills_dir)
@@ -2144,11 +2148,6 @@ def _install_locked(
         for name in retired_names:
             if managed_skill_path(skills_dir, name).exists():
                 raise RuntimeError(f"Retired managed skill still exists: {name}")
-        if global_agents is not None and preview_global_bootstrap(
-            root / "GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md",
-            global_agents,
-        ) != "present":
-            raise RuntimeError("Global bootstrap failed post-install verification")
         if (
             global_agents is not None
             and file_hash(global_agents) != global_target_sha256
@@ -2281,6 +2280,19 @@ def main() -> int:
         except (OSError, ValueError, RuntimeError) as error:
             print(f"Recovery failed: {error}", file=sys.stderr)
             return 1
+        if args.json:
+            print(
+                json.dumps(
+                    {
+                        "schema_version": INSTALL_EVIDENCE_SCHEMA_VERSION,
+                        "operation": "recovery",
+                        "status": result["status"],
+                        "skills_dir": str(result["skills_dir"]),
+                    },
+                    sort_keys=True,
+                )
+            )
+            return 0
         if result["status"] == "cleared-preparation":
             print(
                 "Cleared a verified pre-mutation transaction in "

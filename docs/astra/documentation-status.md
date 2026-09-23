@@ -6,6 +6,38 @@ referenced research/synthesis; it is not an audit of every historical packet or
 external project. The [design brief](design-brief.md) owns current direction. Do
 not treat this inventory as an execution backlog.
 
+## Installer architecture audit, 2026-09-23
+
+Reviewed `scripts/install_skills.py` and its installer tests for source
+selection, ownership, idempotence, migration, target topology, transaction
+preparation, atomic displacement, rollback, crash recovery, and global-bootstrap
+updates.
+
+The transaction/recovery machinery is large but materially justified: it protects
+modified managed copies, unrelated skills, multi-target locking, partial swaps,
+retirements, manifest/global updates, interrupted state writes, rollback
+quarantines, and recovery identity. No broad rewrite was made.
+
+The changes instead harden boundaries the transaction previously trusted too
+long. The installer now rejects missing/empty Astra source packs and source skill
+directories without `SKILL.md`, rejects link/reparse redirects in the managed
+source, global template, and installed manifest before reading them, and refuses
+to interpret an incomplete checkout as a request to retire every managed skill.
+
+Live managed-skill, manifest, and global-AGENTS identities are rechecked after
+snapshots and again immediately before their corresponding mutations. Skill
+replacement and retirement also verify the displaced tree against the last
+accepted cache-insensitive identity, preventing a concurrent non-cache edit from
+being silently quarantined and discarded.
+
+Global bootstrap content is now rendered once during planning and those exact
+planned bytes are committed. The commit phase no longer re-renders a potentially
+changed source template. A source change during installation therefore becomes a
+later update rather than mixing source epochs inside one transaction.
+
+Recovery now honors the existing `--json` flag with a small stable recovery
+payload. Installation documentation was reconciled with these guarantees.
+
 ## Validator and repository-code audit, 2026-09-23
 
 Reviewed the default validator, focused pytest wrapper, current package contracts,

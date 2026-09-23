@@ -11,7 +11,7 @@ import pytest
 from scripts import install_skills, skill_pack_contract
 
 
-def test_campaign_install_cli_flags_remain_supported(
+def test_install_cli_flags_remain_supported(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setattr(
@@ -213,6 +213,43 @@ def test_dry_run_returns_stable_structured_cohort_and_identities(
     assert current["new"] == []
     assert current["unchanged"] == ["alpha"]
     assert current["planned_identities"] == current["resulting_identities"]
+
+
+def test_recovery_json_cli_emits_machine_readable_evidence(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    installed = tmp_path / "skills"
+    transaction = tmp_path / install_skills.ACTIVE_TRANSACTION_NAME
+    transaction.mkdir()
+    install_skills.write_transaction_state(
+        transaction,
+        install_skills.preparing_transaction_state(installed, None, [], False),
+    )
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "install_skills",
+            "--recover-transaction",
+            str(transaction),
+            "--skills-dir",
+            str(installed),
+            "--skip-global-agents",
+            "--json",
+        ],
+    )
+
+    assert install_skills.main() == 0
+
+    payload = json.loads(capsys.readouterr().out)
+    assert payload == {
+        "operation": "recovery",
+        "schema_version": install_skills.INSTALL_EVIDENCE_SCHEMA_VERSION,
+        "skills_dir": str(installed),
+        "status": "cleared-preparation",
+    }
 
 
 def test_json_cli_preserves_human_output_default(
@@ -1832,6 +1869,56 @@ def test_rollback_records_terminal_state_before_recursive_quarantine_cleanup(
     assert observed_terminal_quarantine
     assert (installed / "alpha/SKILL.md").read_text(encoding="utf-8") == "v1"
     assert transaction_dirs(installed) == []
+
+
+def test_install_commits_the_planned_global_bootstrap_snapshot(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    root = tmp_path / "repo"
+    installed = tmp_path / "skills"
+    global_agents = tmp_path / "AGENTS.md"
+    write_source_skill(root, "alpha", "v1")
+    write_template(root)
+    install_skills.install(root, installed, global_agents)
+
+    (root / "skills/astra/alpha/SKILL.md").write_text("v2", encoding="utf-8")
+    template = root / install_skills.GLOBAL_TEMPLATE_NAME
+    template.write_text(
+        "# Global Codex Instructions\n\n"
+        "## Skill Pack Bootstrap\n\n"
+        "- **Route:** Planned route.\n",
+        encoding="utf-8",
+    )
+    _, planned = install_skills.render_global_bootstrap(template, global_agents)
+    original_replace = install_skills.replace_tree
+    changed = False
+
+    def change_template_during_apply(
+        source: Path,
+        destination: Path,
+        displaced: Path,
+        expected_live_hash: str | None,
+    ) -> None:
+        nonlocal changed
+        if not changed:
+            template.write_text(
+                "# Global Codex Instructions\n\n"
+                "## Skill Pack Bootstrap\n\n"
+                "- **Route:** Newer source route.\n",
+                encoding="utf-8",
+            )
+            changed = True
+        original_replace(source, destination, displaced, expected_live_hash)
+
+    monkeypatch.setattr(install_skills, "replace_tree", change_template_during_apply)
+
+    result = install_skills.install(root, installed, global_agents)
+
+    assert result["updated"] == ["alpha"]
+    assert result["global_bootstrap"] == "updated"
+    assert global_agents.read_bytes() == install_skills.native_text_bytes(planned)
+    assert install_skills.preview_global_bootstrap(template, global_agents) == "updated"
 
 
 def test_install_restores_the_pack_when_global_bootstrap_write_fails(
