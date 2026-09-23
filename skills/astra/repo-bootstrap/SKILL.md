@@ -1,6 +1,6 @@
 ---
 name: repo-bootstrap
-description: Inspect, create, or reconcile a repository's agent guidance when the user explicitly requests setup, migration, or a specific guidance repair. Establish repository instructions, commands, non-obvious constraints, context routes, and engineering conventions; exclude ordinary coding, environment installation, and setup triggered only by a missing preferred file.
+description: Inspect, create, migrate, or repair a repository's agent-guidance surface when the user explicitly requests repository guidance work. Establish repository instructions, commands, non-obvious constraints, context routes, and engineering conventions; exclude wording-only work on an already-scoped instruction artifact, ordinary coding, environment installation, and setup triggered only by a missing preferred file.
 ---
 
 # Repo bootstrap
@@ -9,6 +9,11 @@ Give future agents the repository-specific facts, constraints, and pointers they
 need to work correctly. Create or reconcile only the guidance the requested
 repository actually needs. For an inspection request, return findings without
 editing.
+
+Repo bootstrap owns which repository-level guidance surfaces, routes, and facts
+should exist and remain current. When that surface is already established and the
+task is only to write or audit one scoped instruction artifact, use
+[writing-for-agents](../writing-for-agents/SKILL.md) instead.
 
 ## 1. Establish the current instruction surface
 

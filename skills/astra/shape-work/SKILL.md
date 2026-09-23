@@ -1,6 +1,6 @@
 ---
 name: shape-work
-description: Clarify an underspecified change into settled behavior, constraints, and acceptance, or explicitly reconcile project domain meaning and accepted decisions. Exclude straightforward implementation, routine lookup, and ticket decomposition.
+description: Clarify consequentially underspecified product behavior, scope, constraints, acceptance, or project domain meaning. Exclude technical architecture or integration design, straightforward implementation, routine lookup, and ticket decomposition.
 ---
 
 # Shape work

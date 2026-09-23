@@ -44,9 +44,9 @@ An explicitly selected workflow can impose stronger requirements within its scop
 | --- | --- |
 | Local commands, facts, conditional pointers | Repository `AGENTS.md`, `CONTEXT.md`, and `docs/agents/` |
 | Engineering judgment during coding | [Repository engineering contract](../agents/engineering-contract.md), adapted from the [bootstrap seed](../../skills/astra/repo-bootstrap/templates/engineering-contract.md) |
-| Setup and reconciliation of agent guidance | [Repo bootstrap](../../skills/astra/repo-bootstrap/SKILL.md); [writing for agents](../../skills/astra/writing-for-agents/SKILL.md) owns instruction authoring |
-| Feature behavior, substantial approach decisions, and domain meaning | [Shape work](../../skills/astra/shape-work/SKILL.md), including its conditional domain path |
-| Unsettled integration design or empirical feasibility | [Codebase design](../../skills/astra/codebase-design/SKILL.md) and [prototype](../../skills/astra/prototype/SKILL.md) |
+| Repository guidance setup, migration, and repair | [Repo bootstrap](../../skills/astra/repo-bootstrap/SKILL.md); [writing for agents](../../skills/astra/writing-for-agents/SKILL.md) owns an already-scoped instruction artifact, skill, prompt, or handoff |
+| Product behavior, scope, acceptance, owner-held product decisions, and domain meaning | [Shape work](../../skills/astra/shape-work/SKILL.md), including its conditional domain path |
+| Technical architecture or integration ownership, interfaces, state, or migration; empirical feasibility | [Codebase design](../../skills/astra/codebase-design/SKILL.md) for the design decision and [prototype](../../skills/astra/prototype/SKILL.md) for a needed new observation |
 | Durable real-product verification tooling | [Verification harness](../../skills/astra/verification-harness/SKILL.md), only when explicitly requested |
 | Raw tracker intake disposition and ready handoff | [Triage](../../skills/astra/triage/SKILL.md), only when explicitly requested |
 | Delivery decomposition and tracker publication | [To tickets](../../skills/astra/to-tickets/SKILL.md), using repository tracker guidance and an accepted source |
@@ -56,6 +56,18 @@ An explicitly selected workflow can impose stronger requirements within its scop
 | Visual codebase mapping and baseline improvement discovery, hard bugs, or measured optimization | [Audit codebase](../../skills/astra/audit-codebase/SKILL.md), [diagnosing bugs](../../skills/astra/diagnosing-bugs/SKILL.md), and [hillclimb](../../skills/astra/hillclimb/SKILL.md) |
 | Evidence gathering, context upkeep, and guided procedures | [Research](../../skills/astra/research/SKILL.md), [context hygiene](../../skills/astra/context-hygiene/SKILL.md), and [wizard](../../skills/astra/wizard/SKILL.md) |
 | Active Git conflicts | [Resolving merge conflicts](../../skills/astra/resolving-merge-conflicts/SKILL.md) |
+
+Choose a skill by the decision or effect it owns, not merely by the artifact being
+edited. Shape-work owns product and domain meaning; codebase-design owns technical
+architecture and integration decisions. Research evaluates existing evidence;
+prototype creates one bounded new observation. Audit-codebase judges baseline
+code; change-review judges a fixed change candidate. Verification-harness creates
+durable agent-operated product proof; wizard creates a human-private procedure.
+Triage classifies raw intake; to-tickets decomposes settled work. Repo-bootstrap
+owns the repository guidance surface; writing-for-agents owns an already-scoped
+instruction artifact. Cost-aware-coding may be combined with parallel-implement:
+the former owns model and budget routing, while the latter owns concurrency,
+custody, and integration.
 
 The managed pack currently contains 18 skills. Their metadata owns invocation
 behavior; the README lists explicit-only workflows. Continuation handoffs belong

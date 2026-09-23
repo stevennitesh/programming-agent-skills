@@ -81,8 +81,8 @@ These are alternative starting points, not a required pipeline.
 | Your task | Skill | Use |
 | --- | --- | --- |
 | Implement a clear, bounded change | **No skill needed**—ask Codex to implement and verify using repository guidance | Direct |
-| Clarify a feature’s behavior and acceptance criteria | [$shape-work](skills/astra/shape-work/SKILL.md) | Request explicitly |
-| Decide how a feature fits the existing system | [$codebase-design](skills/astra/codebase-design/SKILL.md) | Automatic when relevant |
+| Clarify product behavior, scope, acceptance, or domain meaning | [$shape-work](skills/astra/shape-work/SKILL.md) | Request explicitly |
+| Resolve a consequential technical architecture or integration decision | [$codebase-design](skills/astra/codebase-design/SKILL.md) | Automatic when relevant |
 | Test an uncertain approach with a runnable experiment | [$prototype](skills/astra/prototype/SKILL.md) | Automatic when relevant |
 | Create durable tooling that drives and proves real user-facing behavior | [$verification-harness](skills/astra/verification-harness/SKILL.md) | Request explicitly |
 | Research a question or compare options using sources | [$research](skills/astra/research/SKILL.md) | Automatic when relevant |
@@ -95,8 +95,8 @@ These are alternative starting points, not a required pipeline.
 | Implement concurrently with separate ownership and clear dependencies | [$parallel-implement](skills/astra/parallel-implement/SKILL.md) | Request explicitly |
 | Route GPT 6 work to reduce Astra lead-token churn while preserving acceptance | [$cost-aware-coding](skills/astra/cost-aware-coding/SKILL.md) | Request explicitly |
 | Resolve an active Git merge or rebase conflict | [$resolving-merge-conflicts](skills/astra/resolving-merge-conflicts/SKILL.md) | Automatic when relevant |
-| Set up or reconcile repository agent guidance | [$repo-bootstrap](skills/astra/repo-bootstrap/SKILL.md) | Request explicitly |
-| Write agent instructions, guides, or continuation handoffs | [$writing-for-agents](skills/astra/writing-for-agents/SKILL.md) | Automatic when relevant |
+| Set up, migrate, or repair repository agent guidance | [$repo-bootstrap](skills/astra/repo-bootstrap/SKILL.md) | Request explicitly |
+| Write or audit a specific agent instruction, skill, guide, prompt, or handoff | [$writing-for-agents](skills/astra/writing-for-agents/SKILL.md) | Automatic when relevant |
 | Audit persistent context and reconcile requested cleanup | [$context-hygiene](skills/astra/context-hygiene/SKILL.md) | Request explicitly |
 | Create an interactive guide for a human-operated procedure | [$wizard](skills/astra/wizard/SKILL.md) | Request explicitly |
 

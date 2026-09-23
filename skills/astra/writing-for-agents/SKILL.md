@@ -1,6 +1,6 @@
 ---
 name: writing-for-agents
-description: Write or audit instructions another agent will execute, including skills, AGENTS.md, agent-facing guides or prompts, and continuation handoffs. Exclude product shaping and ordinary prose editing.
+description: Write or audit a specific instruction artifact another agent will execute, including skills, AGENTS.md, agent-facing guides or prompts, and continuation handoffs. Exclude repository guidance setup or migration, product shaping, and ordinary prose editing.
 ---
 
 # Writing for agents
@@ -9,6 +9,11 @@ Write the minimum guidance that helps a capable agent make the intended decision
 with the context it will actually receive. Preserve the user's settled choices,
 the document's authority, and any constraints the receiver cannot infer. For an
 audit, return findings without editing.
+
+Repository-level setup, pack migration, or repair of missing or stale guidance
+routes belongs to [repo-bootstrap](../repo-bootstrap/SKILL.md). This skill owns
+the content of an already-scoped instruction artifact once its repository surface
+and authority are established.
 
 ## 1. Identify the receiver, authority, and outcome
 
