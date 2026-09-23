@@ -86,6 +86,101 @@ def test_custom_manifest_migrates_ownership_to_astra_without_losing_edits(
     assert (installed / "personal/SKILL.md").read_text() == "old"
 
 
+def test_install_rejects_an_empty_source_pack_before_retiring_managed_skills(
+    tmp_path: Path,
+) -> None:
+    root = tmp_path / "repo"
+    installed = tmp_path / "skills"
+    write_source_skill(root, "alpha", "v1")
+    write_template(root)
+    install_skills.install(root, installed, None)
+    before = tree_snapshot(installed)
+
+    (root / "skills/astra/alpha/SKILL.md").unlink()
+    (root / "skills/astra/alpha").rmdir()
+
+    with pytest.raises(ValueError, match="contains no installable skills"):
+        install_skills.install(root, installed, None)
+
+    assert tree_snapshot(installed) == before
+    assert transaction_dirs(installed) == []
+
+
+def test_install_rejects_a_source_skill_folder_without_skill_entry(
+    tmp_path: Path,
+) -> None:
+    root = tmp_path / "repo"
+    installed = tmp_path / "skills"
+    (root / "skills/astra/alpha").mkdir(parents=True)
+    write_template(root)
+
+    with pytest.raises(ValueError, match="missing SKILL.md"):
+        install_skills.install(root, installed, None, dry_run=True)
+
+    assert not installed.exists()
+
+
+def test_install_rejects_redirected_source_and_manifest_inputs(
+    tmp_path: Path,
+) -> None:
+    root = tmp_path / "repo"
+    installed = tmp_path / "skills"
+    external_source = tmp_path / "external-astra"
+    (external_source / "alpha").mkdir(parents=True)
+    (external_source / "alpha/SKILL.md").write_text("v1", encoding="utf-8")
+    (root / "skills").mkdir(parents=True)
+    try:
+        (root / "skills/astra").symlink_to(external_source, target_is_directory=True)
+    except OSError as error:
+        pytest.skip(f"symlink creation unavailable: {error}")
+    write_template(root)
+
+    with pytest.raises(ValueError, match="managed skill source link/reparse point"):
+        install_skills.install(root, installed, None, dry_run=True)
+
+    (root / "skills/astra").unlink()
+    write_source_skill(root, "alpha", "v1")
+    installed.mkdir()
+    external_manifest = tmp_path / "external-manifest.json"
+    external_manifest.write_text(
+        json.dumps(
+            {
+                "format": 1,
+                "source": "skills/astra",
+                "skills": [],
+                "hashes": {},
+            }
+        ),
+        encoding="utf-8",
+    )
+    (installed / install_skills.MANIFEST_NAME).symlink_to(external_manifest)
+
+    with pytest.raises(ValueError, match="installed manifest link/reparse point"):
+        install_skills.install(root, installed, None, dry_run=True)
+
+
+def test_install_rejects_a_redirected_global_template(tmp_path: Path) -> None:
+    root = tmp_path / "repo"
+    installed = tmp_path / "skills"
+    target = tmp_path / "AGENTS.md"
+    write_source_skill(root, "alpha", "v1")
+    root.mkdir(parents=True, exist_ok=True)
+    external = tmp_path / "template.md"
+    external.write_text(
+        "# Global Codex Instructions\n\n## Skill Pack Bootstrap\n\nManaged.\n",
+        encoding="utf-8",
+    )
+    try:
+        (root / install_skills.GLOBAL_TEMPLATE_NAME).symlink_to(external)
+    except OSError as error:
+        pytest.skip(f"symlink creation unavailable: {error}")
+
+    with pytest.raises(ValueError, match="global AGENTS template link/reparse point"):
+        install_skills.install(root, installed, target, dry_run=True)
+
+    assert not target.exists()
+
+
 def test_dry_run_returns_stable_structured_cohort_and_identities(
     tmp_path: Path,
 ) -> None:
@@ -1249,6 +1344,7 @@ def test_install_refuses_to_retire_a_modified_managed_skill(tmp_path: Path) -> N
     root = tmp_path / "repo"
     installed = tmp_path / "skills"
     write_source_skill(root, "retired", "pack version")
+    write_source_skill(root, "anchor", "keep")
     write_template(root)
     install_skills.install(root, installed, None)
 
@@ -1421,6 +1517,7 @@ def test_retirement_uses_atomic_displacement_not_recursive_live_deletion(
     installed = tmp_path / "skills"
     write_template(root)
     write_source_skill(root, "retired", "v1")
+    write_source_skill(root, "anchor", "keep")
     install_skills.install(root, installed, None)
     (root / "skills/astra/retired/SKILL.md").unlink()
     (root / "skills/astra/retired").rmdir()

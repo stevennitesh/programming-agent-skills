@@ -35,6 +35,7 @@ else:
     import fcntl
 
 
+GLOBAL_TEMPLATE_NAME = "GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md"
 BOOTSTRAP_HEADING = "## Skill Pack Bootstrap"
 LEGACY_BOOTSTRAP_HEADING = "## Skill Pack Guide"
 LEGACY_BOUNDARY_HEADING = "## Boundary"
@@ -291,10 +292,28 @@ def repo_root() -> Path:
 
 
 def active_skill_dirs(root: Path) -> list[Path]:
-    paths = sorted(path for path in (root / MANIFEST_SOURCE).iterdir() if path.is_dir())
-    for path in paths:
+    skill_root = root / MANIFEST_SOURCE
+    reject_unsafe_redirect(skill_root, "managed skill source")
+    if not skill_root.is_dir():
+        raise ValueError(f"Managed skill source is not a directory: {skill_root}")
+
+    paths: list[Path] = []
+    for path in sorted(skill_root.iterdir()):
+        reject_unsafe_redirect(path, "managed skill source entry")
+        if not path.is_dir():
+            continue
         if not SKILL_NAME_RE.fullmatch(path.name):
             raise ValueError(f"Source pack has unsafe skill name: {path.name!r}")
+        entry = path / "SKILL.md"
+        reject_unsafe_redirect(entry, f"source skill entry for {path.name}")
+        if not entry.is_file():
+            raise ValueError(f"Source skill folder is missing SKILL.md: {path}")
+        paths.append(path)
+
+    if not paths:
+        raise ValueError(
+            f"Managed skill source contains no installable skills: {skill_root}"
+        )
     return paths
 
 
@@ -308,8 +327,11 @@ def transaction_plan_hash(payload: dict[str, object]) -> str:
 
 def read_managed_manifest(skills_dir: Path) -> tuple[set[str], dict[str, str]]:
     manifest = skills_dir / MANIFEST_NAME
-    if not manifest.is_file():
+    reject_unsafe_redirect(manifest, "installed manifest")
+    if not manifest.exists():
         return set(), {}
+    if not manifest.is_file():
+        raise ValueError(f"Installed manifest is not a file: {manifest}")
     try:
         payload = json.loads(manifest.read_text(encoding="utf-8"))
     except json.JSONDecodeError as error:
@@ -1579,8 +1601,15 @@ def rollback_install(
     return errors
 
 
+def read_global_template(template: Path) -> str:
+    reject_unsafe_redirect(template, "global AGENTS template")
+    if not template.is_file():
+        raise ValueError(f"Global AGENTS template is not a file: {template}")
+    return template.read_text(encoding="utf-8")
+
+
 def bootstrap_section(template: Path) -> str:
-    text = template.read_text(encoding="utf-8")
+    text = read_global_template(template)
     span = level_two_section_span(text, BOOTSTRAP_HEADING)
     if span is None:
         raise ValueError(f"Template is missing {BOOTSTRAP_HEADING}: {template}")
@@ -1589,9 +1618,14 @@ def bootstrap_section(template: Path) -> str:
 
 
 def render_global_bootstrap(template: Path, target: Path) -> tuple[str, str]:
-    section = bootstrap_section(template)
+    template_text = read_global_template(template)
+    span = level_two_section_span(template_text, BOOTSTRAP_HEADING)
+    if span is None:
+        raise ValueError(f"Template is missing {BOOTSTRAP_HEADING}: {template}")
+    start, end = span
+    section = template_text[start:end].strip() + "\n"
     if not target.exists():
-        return "created", template.read_text(encoding="utf-8").strip() + "\n"
+        return "created", template_text.strip() + "\n"
 
     text = target.read_text(encoding="utf-8")
     current_span = level_two_section_span(text, BOOTSTRAP_HEADING)
@@ -1791,7 +1825,7 @@ def _install_locked(
     global_target_text: str | None = None
     if global_agents is not None:
         bootstrap_status, global_target_text = render_global_bootstrap(
-            root / "GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md",
+            root / GLOBAL_TEMPLATE_NAME,
             global_agents,
         )
 
