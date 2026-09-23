@@ -56,6 +56,15 @@ internal types and established invariants. Validate untrusted,
 machine-consumed input once at the boundary that owns it, then use a valid
 internal representation.
 
+When repetitive mechanical work can be made materially more consistent or easier
+to verify with a small rerunnable script, codemod, generator, or check, build that
+lever and prove it on a representative unit. Do not add tooling when direct work
+is simpler and equally reviewable.
+
+When a deliberate simplification has a non-obvious ceiling that would materially
+change correctness, performance, or operations, record the ceiling and revisit
+condition at its natural owner.
+
 Preserve accepted behavior and touched authorization, privacy, secret, and
 data-integrity guarantees. Handle state, retry, recovery, cancellation,
 concurrency, compatibility, and observability only when reachable behavior or
