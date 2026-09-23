@@ -1,4 +1,4 @@
-"""Freeze and check the Fresh Composition Epoch migration control."""
+"""Freeze and check the legacy Fresh Composition Epoch migration control."""
 
 from __future__ import annotations
 
@@ -16,12 +16,12 @@ from scripts import fresh_epoch_contract
 
 
 PUBLIC_LEDGER = Path(
-    ".scratch/fresh-composition-epoch/migration-ledger.json"
+    ".archive/fresh-composition-epoch/migration-ledger.json"
 )
 PRIVATE_LEDGER = Path(
     ".tmp/fresh-composition-epoch/migration-ledger-private.json"
 )
-CLOSEOUT = Path(".scratch/fresh-composition-epoch/README.md")
+CLOSEOUT = Path(".archive/fresh-composition-epoch/README.md")
 
 PUBLIC_PREFIXES = (
     ".archive/docs/",
@@ -210,7 +210,9 @@ def discover_inventory(
         {
             path
             for path in (*tracked, *untracked)
-            if not path.startswith((".tmp/", ".scratch/"))
+            if not path.startswith(
+                (".tmp/", ".scratch/", ".archive/fresh-composition-epoch/")
+            )
         }
     )
     return (
@@ -3702,7 +3704,7 @@ def _closeout(public: dict[str, object], private: dict[str, object]) -> str:
     fixed_point = public.get("fixed_point")
     fixed_point = fixed_point if isinstance(fixed_point, dict) else {}
     status = (
-        f"active control; {len(verified_rows)} migration row(s) verified"
+        f"legacy control; {len(verified_rows)} migration row(s) verified"
         if verified_rows
         else "frozen inventory; no migration authorized or performed"
     )
@@ -3722,15 +3724,15 @@ def _closeout(public: dict[str, object], private: dict[str, object]) -> str:
         if verified_rows
         else "No row is `verified`; owner gaps remain explicit."
     )
-    return f"""# Fresh Composition Epoch migration control
+    return f"""# Legacy Fresh Composition Epoch migration control
 
 Status: {status}.
 
-This durable `.scratch/` control implements issue #41 and remains temporary
-cross-ticket execution state. It is not research, synthesis, validation, or
-runtime authority. The complete private inventory remains only in the ignored
-sidecar at `{PRIVATE_LEDGER.as_posix()}`; this tracked closeout deliberately
-publishes no private source locators.
+This preserved control belongs to the legacy Fresh Composition Epoch workflow
+from issue #41. It is not current Astra guidance, research, synthesis,
+validation, or runtime authority. The complete private inventory remains only
+in the ignored sidecar at `{PRIVATE_LEDGER.as_posix()}`; this tracked closeout
+deliberately publishes no private source locators.
 
 ## Fixed point
 

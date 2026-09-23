@@ -733,6 +733,11 @@ def test_required_installed_validation_rejects_a_missing_manifest(
     assert str(installed / validate_skills.INSTALLED_MANIFEST) in failures[0]
 
 
+def test_public_scan_safe_markers_cover_reserved_fixture_values() -> None:
+    assert "@example.invalid" in validate_skills.PUBLIC_SCAN_SAFE_MARKERS
+    assert "correct-horse-battery-staple" in validate_skills.PUBLIC_SCAN_SAFE_MARKERS
+
+
 def test_git_diff_validation_checks_worktree_and_index(monkeypatch, tmp_path: Path) -> None:
     calls: list[list[str]] = []
 

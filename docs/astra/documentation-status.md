@@ -6,6 +6,31 @@ referenced research/synthesis; it is not an audit of every historical packet or
 external project. The [design brief](design-brief.md) owns current direction. Do
 not treat this inventory as an execution backlog.
 
+## Public-release cleanup, 2026-09-23
+
+Audited root metadata, tracked workspace state, local/scratch artifacts,
+contribution guidance, dependency declarations, and release verification.
+
+Removed the tracked machine-specific `.codex/config.toml` and unreferenced
+`.diagram-design` profile and added ignore rules so those local tool settings
+do not re-enter the repository. The former Fresh Composition Epoch migration
+control was preserved but moved from root `.scratch/` into
+`.archive/fresh-composition-epoch/`; its original generated closeout is kept as
+historical evidence while a small archive README makes its legacy scope explicit.
+The legacy migration tool/tests now use the archived path.
+
+Added `CONTRIBUTING.md` with the current Astra source/legacy boundary and the
+small validation path expected of contributors. Added GitHub Actions CI on Linux
+and Windows using Python 3.11; it runs the repository public-readiness validator
+and the full pytest suite serially for deterministic filesystem/transaction
+coverage.
+
+The public validator now requires the contribution guide and CI workflow, scans
+the contributor guide as a current surface, and treats reserved synthetic
+`@example.invalid` fixture addresses as examples rather than secret leakage.
+The development dependency set remains warranted by current plus explicitly
+retained legacy tests; no dependency removal was justified in this pass.
+
 ## Installer architecture audit, 2026-09-23
 
 Reviewed `scripts/install_skills.py` and its installer tests for source

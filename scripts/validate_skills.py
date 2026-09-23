@@ -31,6 +31,8 @@ CURRENT_REQUIRED_FILES = (
     "AGENTS.md",
     "CONTEXT.md",
     "INSTALLATION.md",
+    "CONTRIBUTING.md",
+    ".github/workflows/ci.yml",
     "AGENTS_PORTABLE_FALLBACK.md",
     GLOBAL_AGENTS_TEMPLATE,
     "docs/astra/design-brief.md",
@@ -91,6 +93,7 @@ ASTRA_EXAMPLE_ROW_RE = re.compile(
 )
 CURRENT_ACTIVE_SURFACE_FILES = (
     "README.md",
+    "CONTRIBUTING.md",
     "AGENTS.md",
     "AGENTS_PORTABLE_FALLBACK.md",
     "CONTEXT.md",
@@ -107,6 +110,13 @@ LEGACY_ACTIVE_SURFACE_FILES = (
     "docs/validation/evals/README.md",
     "docs/validation/evals/core-workflows.md",
 )
+PUBLIC_SCAN_SAFE_MARKERS = (
+    "example.com",
+    "EXAMPLE.COM",
+    "@example.invalid",
+    "correct-horse-battery-staple",
+)
+
 STALE_ACTIVE_TOKENS = (
     "AGENTS_SKILL_PACK_GUIDE",
     "ask-matt",
@@ -993,7 +1003,13 @@ def validate_installed_skills(
 
 def published_markdown_files(root: Path) -> list[Path]:
     files: list[Path] = []
-    for name in ("README.md", "AGENTS.md", "AGENTS_PORTABLE_FALLBACK.md", GLOBAL_AGENTS_TEMPLATE):
+    for name in (
+        "README.md",
+        "CONTRIBUTING.md",
+        "AGENTS.md",
+        "AGENTS_PORTABLE_FALLBACK.md",
+        GLOBAL_AGENTS_TEMPLATE,
+    ):
         path = root / name
         if path.is_file():
             files.append(path)
@@ -1037,7 +1053,7 @@ def validate_public_mode(root: Path) -> list[str]:
         for hit in grep.stdout.splitlines():
             if hit.startswith("scripts/validate_skills.py:"):
                 continue
-            if "example.com" in hit or "EXAMPLE.COM" in hit or "correct-horse-battery-staple" in hit:
+            if any(marker in hit for marker in PUBLIC_SCAN_SAFE_MARKERS):
                 continue
             failures.append(f"Potential local identifier or secret pattern: {hit}")
     elif grep.returncode != 1:

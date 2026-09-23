@@ -173,7 +173,7 @@ def test_migration_check_survives_control_only_commit_and_rejects_source_drift(
 
     assert migration_ledger.freeze(tmp_path) == 0
     subprocess.run(
-        ["git", "add", ".scratch/fresh-composition-epoch"],
+        ["git", "add", ".archive/fresh-composition-epoch"],
         cwd=tmp_path,
         check=True,
     )

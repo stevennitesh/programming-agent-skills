@@ -3,6 +3,8 @@
 .pytest_cache/
 __pycache__/
 *.py[cod]
+.scratch/
+.diagram-design
 
 # Virtual environments
 .venv/
@@ -13,6 +15,7 @@ env/
 .env
 .env.*
 !.env.example
+.codex/config.toml
 
 # Editor and OS noise
 .idea/

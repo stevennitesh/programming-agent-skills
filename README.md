@@ -233,7 +233,8 @@ from [pstack](https://github.com/cursor/plugins/tree/main/pstack),
 [Acknowledgments](ACKNOWLEDGMENTS.md) for provenance and influences.
 
 If you're contributing to this repository, start with
-[AGENTS.md](AGENTS.md), [CONTEXT.md](CONTEXT.md), and the
+[CONTRIBUTING.md](CONTRIBUTING.md), then follow [AGENTS.md](AGENTS.md),
+[CONTEXT.md](CONTEXT.md), and the
 [Astra design brief](docs/astra/design-brief.md). The managed source is
 [skills/astra/](skills/astra/).
 
