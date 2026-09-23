@@ -547,9 +547,10 @@ def rollback_created_lane(
 ) -> str | None:
     head = git(worktree, "rev-parse", "HEAD", check=False)
     status = git(worktree, "status", "--porcelain", check=False)
-    if head.returncode != 0 or status.returncode != 0:
+    ignored, ignored_error = ignored_entries(worktree)
+    if head.returncode != 0 or status.returncode != 0 or ignored_error:
         return "new lane preserved because rollback state is uncertain"
-    if head.stdout.strip() != base or status.stdout.strip():
+    if head.stdout.strip() != base or status.stdout.strip() or ignored:
         return "new lane preserved because rollback is not exact-base and clean"
 
     state = lane_state(root, name)
@@ -635,6 +636,13 @@ def prepare(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
             probe_directory(path)
         if git(worktree, "status", "--porcelain").stdout.strip():
             raise LaneError("worktree probe did not restore a clean checkout")
+        ignored, ignored_error = ignored_entries(worktree)
+        if ignored_error:
+            raise LaneError(f"ignored artifact inspection failed: {ignored_error}")
+        if ignored:
+            raise LaneError(
+                "worktree has ignored artifacts: " + ", ".join(ignored)
+            )
         manifest = manifest_payload(
             repo,
             root,
@@ -1203,7 +1211,7 @@ def verify_cleanup(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
         path_exists = observation["present"] is True
         finish_clean = (
             not registered_lane
-            and not path_exists
+            and observation["present"] is False
             and not state_exists
             and not receipt_exists
         )
@@ -1233,6 +1241,13 @@ def verify_cleanup(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
                     or observation["ignored_error"]
                     or "registered lane is not cleanup eligible"
                 )
+        elif not finish_clean and head_matches and registered_lane:
+            reason = (
+                observation["path_error"]
+                or observation["status_error"]
+                or observation["ignored_error"]
+                or "registered lane state is uncertain"
+            )
         elif not finish_clean and head_matches and not registered_lane:
             receipt, receipt_error = read_cleanup_receipt(repo, root, worktree)
             integrated = None
