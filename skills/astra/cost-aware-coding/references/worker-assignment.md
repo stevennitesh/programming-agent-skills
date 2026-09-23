@@ -22,6 +22,13 @@ Include only decision-bearing fields that apply:
 Point to accessible detailed sources instead of copying conversations. Do not
 front-load repository facts the worker can cheaply discover itself.
 
+When overriding Astra to Sol or Luna Max with Codex multi-agent v2, use
+`fork_turns="none"` by default or a small positive turn count only when those
+recent turns replace a cheaper explicit brief. A full-history fork (`"all"` or
+the inherited default) keeps the parent model and reasoning effort and cannot use
+the Sol/Luna override; it also defeats the goal of avoiding unnecessary parent
+context transfer.
+
 For Luna Max, the packet must remain compact and fully bounded. If creating a
 self-contained Luna assignment requires substantial repository explanation,
 open-ended exploration, or a long list of judgment calls, use Sol instead.
