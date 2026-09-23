@@ -1,7 +1,8 @@
 # Astra skills pack design brief
 
-Current direction, reconciled 2026-09-07. The pack is built primarily for
-**GPT 6 Astra**, with **GPT 5.6 Sol compatibility**. This document owns design
+Current direction, reconciled 2026-09-23. The pack is built primarily for
+**GPT 6 Astra**. Optional cost-aware execution routes substantial implementation
+to GPT 6 Sol and compact bounded work to GPT 6 Luna. This document owns design
 rationale and composition for `skills/astra/`; individual skills own execution.
 [Issue #94](https://github.com/stevennitesh/programming-agent-skills/issues/94)
 preserves the original proposal. Subsequent accepted decisions below replace its
@@ -54,13 +55,13 @@ An explicitly selected workflow can impose stronger requirements within its scop
 | Evidence gathering, context upkeep, and guided procedures | [Research](../../skills/astra/research/SKILL.md), [context hygiene](../../skills/astra/context-hygiene/SKILL.md), and [wizard](../../skills/astra/wizard/SKILL.md) |
 | Active Git conflicts | [Resolving merge conflicts](../../skills/astra/resolving-merge-conflicts/SKILL.md) |
 
-The managed pack currently contains 17 skills. Their metadata owns invocation
+The managed pack currently contains 16 skills. Their metadata owns invocation
 behavior; the README lists explicit-only workflows. Continuation handoffs belong
 to writing-for-agents, with execution-specific state added by the relevant workflow.
 Ordinary implementation uses repository guidance and the engineering contract
-directly. The explicit worker-only `ponytail-implementer` is a standalone adaptation
-for the requested delivery mode; it does not own orchestration or replace that
-shared quality bar. Its body stays out of the lead's context.
+directly. A separate implementer-method skill is not required: worker scope and
+custody come from the active assignment, while implementation judgment comes from
+the repository engineering contract.
 
 A feature can be shaped and implemented without tickets. Tickets become useful
 when delivery needs tracked units; they do not authorize concurrent writers.
@@ -70,53 +71,37 @@ Skills remain usable individually; cost-aware coding is not an umbrella requirem
 
 ## Why cost-aware coding has stronger gates
 
-Cost-aware coding is an explicit experimental workflow. Its default feature route
-uses an Astra Medium lead and one reusable native Sol Medium subagent per coherent plan. It
-first checks that the remaining implementation or verification can repay the
-handoff; trivial changes and serial judgment-heavy investigations stay direct
-unless the user requires the pair. Otherwise, it runs the standard pair from a
-concrete invocation. A separate coordination proposal is reserved for plan-only
-requests, unresolved shaping, a root-model change, or a nonstandard route.
-Feature shaping remains with shape-work. Reuse accepted decisions instead of
-creating competing plans.
+Cost-aware coding is an explicit workflow whose objective is to reduce Astra lead
+token and context churn without weakening the accepted result. Its default GPT-6
+roles are Astra Medium for consequential reasoning and final review, Sol Medium
+for substantial implementation, and Luna Max for compact bounded work when
+briefing and verification remain cheap.
 
-For requested coordinated plan delivery, cost-aware-coding owns progression through
-justified review checkpoints and a final integrated review. Shape-work distinguishes
-accepted commitments from an adaptable delivery approach at one plan owner;
-codebase-design remains conditional and change-review retains judgment. Selected
-worker-only guidance may advise implementation without entering the lead's context
-or overriding the plan, engineering contract, or execution authority. The
-[planned-delivery reference](../../skills/astra/cost-aware-coding/references/planned-delivery.md)
-owns this optional composition; it is not a new skill or the ordinary coding default.
+The workflow delegates only when expected Astra-context savings exceed handoff,
+coordination, verification, and recovery overhead. While a worker owns
+implementation, Astra stays mostly dormant instead of shadowing the work or
+polling for routine progress. The worker returns a stable candidate,
+decision-relevant evidence, material limits, and released custody.
 
-The pair uses the same checkout by default with exclusive alternating custody.
-While Sol implements, Astra stays out of the repository and handles only user
-communication or consequential decisions. The lead waits on native agent events;
-Sol sends consequential questions and returns a stable candidate with custody
-released before Astra reviews. The same agent handles corrections. Interrupted
-runs recover from agent state and custody without resetting repair allowances.
-Worktrees remain conditional on a concrete
-isolation or concurrency need. Root model changes are presented to the user, not
-accomplished by instructions declaring a different model. The workflow gives the
-reason and exact setting; the user decides and applies the change.
+For requested coordinated serial delivery, meaningful checkpoints are optional.
+Use them when an early wrong interface, persisted representation, or integration
+decision would make later work materially expensive to redo. Checkpoint proof is
+reused only while later changes leave its relevant inputs and assumptions valid;
+the final integrated review still governs completion.
 
-The Astra lead reviews with change-review after Sol releases custody. A fresh
-independent Astra reviewer is conditional on an accepted high-assurance or
-independence requirement, not required for every run.
-Repair accounting distinguishes work-unit implementation recovery from review
-gates. Planned checkpoints and the final integrated review have separate bounded
-correction allowances. The skill and its references own exact limits,
-role permissions, custody, and acceptance semantics; do not duplicate them here.
-When a focused Sol Medium repair fails for implementation reasons, the default
-stronger attempt uses an accepted Sol High replacement; XHigh requires demonstrated
-need. Native follow-ups cannot change effort, so the replacement receives a compact
-handoff after custody release, retaining the remaining allowance.
+Recovery follows the actual cause rather than fixed attempt allowances. Requirement,
+permission, environment, or contradictory-acceptance failures return to their
+owner. Local implementation corrections normally return to the same worker while
+its retained context remains useful. A Luna task that grows beyond its bounded
+contract moves to Sol. Sol effort escalates only for demonstrated implementation
+reasoning difficulty; Astra effort escalates only when stronger lead reasoning can
+materially change a consequential decision.
 
-When combined, parallel-implement owns concurrency mechanics while cost-aware
-coding retains routing authority, accepted responsibility boundaries, and repair
-and review constraints. Helpers handle deterministic work such as lane management,
-report generation, installation, and bounded metadata extraction. They do not
-replace judgment or turn logged counters into proven task costs or savings.
+When combined, parallel-implement owns concurrency, lane custody, integration, and
+parallel recovery. Cost-aware coding retains model and effort routing, budget
+policy, and final review. Deterministic helpers may manage lanes or collect
+bounded telemetry, but they do not replace judgment or turn logged counters into
+proven savings.
 
 ## Installation and migration
 
