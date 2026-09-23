@@ -323,6 +323,27 @@ def test_prepare_reuses_only_the_clean_expected_base(tmp_path: Path) -> None:
     assert "not clean" in str(dirty["error"])
 
 
+def test_prepare_rejects_ignored_artifacts_in_a_reused_lane(
+    tmp_path: Path,
+) -> None:
+    repo, _ = repository(tmp_path)
+    (repo / ".gitignore").write_text("*.cache\n", encoding="utf-8")
+    git(repo, "add", ".gitignore")
+    git(repo, "commit", "-m", "ignore cache")
+    base = git(repo, "rev-parse", "HEAD")
+
+    lane_root = tmp_path / "lanes"
+    result, packet = prepare(repo, lane_root, base, "reused-ignored")
+    assert result.returncode == 0, packet
+    worktree = Path(str(packet["worktree"]))
+    (worktree / "worker.cache").write_text("preserve\n", encoding="utf-8")
+
+    result, blocked = prepare(repo, lane_root, base, "reused-ignored")
+    assert result.returncode == 1
+    assert "worktree has ignored artifacts" in str(blocked["error"])
+    assert (worktree / "worker.cache").read_text(encoding="utf-8") == "preserve\n"
+
+
 def test_dependent_lane_uses_integration_head_after_predecessor_lands(
     tmp_path: Path,
 ) -> None:
@@ -663,6 +684,31 @@ def test_prepare_rollback_preserves_state_until_worktree_removal_is_confirmed(
     assert rollback(repo, lane_root, worktree, base, "rollback") is None
     assert not worktree.exists()
     assert not state.exists()
+
+
+def test_prepare_rollback_preserves_ignored_artifacts(
+    tmp_path: Path,
+) -> None:
+    repo, _ = repository(tmp_path)
+    (repo / ".gitignore").write_text("*.cache\n", encoding="utf-8")
+    git(repo, "add", ".gitignore")
+    git(repo, "commit", "-m", "ignore cache")
+    base = git(repo, "rev-parse", "HEAD")
+
+    lane_root = tmp_path / "lanes"
+    result, packet = prepare(repo, lane_root, base, "rollback-ignored")
+    assert result.returncode == 0, packet
+    worktree = Path(str(packet["worktree"]))
+    (worktree / "worker.cache").write_text("preserve\n", encoding="utf-8")
+
+    namespace = runpy.run_path(str(HELPER))
+    blocked = namespace["rollback_created_lane"](
+        repo.resolve(), lane_root.resolve(), worktree, base, "rollback-ignored"
+    )
+
+    assert blocked == "new lane preserved because rollback is not exact-base and clean"
+    assert worktree.exists()
+    assert (worktree / "worker.cache").read_text(encoding="utf-8") == "preserve\n"
 
 
 def test_cleanup_reports_partial_failure_and_continues_named_lanes(
@@ -1127,6 +1173,26 @@ def test_cleanup_reports_runtime_enumeration_failure_and_continues(
     assert packet["preserved"][0]["reason"] == "runtime cleanup incomplete"
     assert packet["preserved"][0]["phase"] == "lane runtime enumeration"
     assert packet["removed"] == [str(Path(str(packets[1]["worktree"])).resolve())]
+
+
+def test_cleanup_receipt_records_worktree_identity_when_available(
+    tmp_path: Path,
+) -> None:
+    repo, base = repository(tmp_path)
+    lane_root = tmp_path / "lanes"
+    result, packet = prepare(repo, lane_root, base, "identity")
+    assert result.returncode == 0, packet
+    worktree = Path(str(packet["worktree"]))
+
+    namespace = runpy.run_path(str(HELPER))
+    receipt = namespace["write_cleanup_receipt"](
+        repo.resolve(), lane_root.resolve(), worktree, base, base
+    )
+    payload = json.loads(receipt.read_text(encoding="utf-8"))
+
+    assert payload["format"] == 2
+    expected = namespace["path_identity"](worktree)
+    assert payload["worktree_identity"] == expected
 
 
 def test_cleanup_receipt_requires_valid_read_back(
