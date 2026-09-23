@@ -25,9 +25,10 @@ quiescence or custody release.
   same worker when its retained context makes repair cheaper than reconstruction.
 - **Worker/runtime interruption:** resume the same assignment when custody and
   candidate state remain known and safe.
-- **Reasoning-capability failure:** increase effort or move to the stronger GPT-6
-  route defined by [Model policy](model-policy.md) only when evidence indicates
-  additional reasoning is likely to change the result.
+- **Luna Max task grew beyond its bounded contract:** move the coherent task to
+  Sol rather than expanding Astra supervision or creating more Luna microtasks.
+- **Sol reasoning-capability failure:** raise Sol effort under
+  [Model policy](model-policy.md) before moving implementation into Astra.
 - **Worker unavailable:** establish writer quiescence, preserve the candidate, then
   transfer a compact state packet to the accepted replacement.
 - **Custody uncertain:** stop before repository mutation until ownership and writer
@@ -35,7 +36,7 @@ quiescence or custody release.
 
 There is no universal repair-round count. Bound recovery by the user's budget,
 remaining value of worker context, likelihood that another attempt changes the
-result, and the lead-token cost of reconstructing implementation state.
+result, and the Astra-token cost of reconstructing implementation state.
 
 ## Preserve continuity without lead-context churn
 
