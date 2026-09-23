@@ -1191,8 +1191,38 @@ def test_cleanup_receipt_records_worktree_identity_when_available(
     payload = json.loads(receipt.read_text(encoding="utf-8"))
 
     assert payload["format"] == 2
+    assert payload["authorized_at_head"] == base
     expected = namespace["path_identity"](worktree)
     assert payload["worktree_identity"] == expected
+
+
+def test_cleanup_rejects_legacy_receipt_format(
+    tmp_path: Path,
+) -> None:
+    repo, base = repository(tmp_path)
+    lane_root = tmp_path / "lanes"
+    result, packet = prepare(repo, lane_root, base, "legacy-receipt")
+    assert result.returncode == 0, packet
+    worktree = Path(str(packet["worktree"]))
+
+    namespace = runpy.run_path(str(HELPER))
+    receipt = namespace["write_cleanup_receipt"](
+        repo.resolve(), lane_root.resolve(), worktree, base, base
+    )
+    payload = json.loads(receipt.read_text(encoding="utf-8"))
+    payload["format"] = 1
+    payload["integration_head"] = payload.pop("authorized_at_head")
+    payload.pop("worktree_identity")
+    receipt.write_text(json.dumps(payload), encoding="utf-8")
+
+    code, blocked = namespace["cleanup"](
+        Namespace(repo=str(repo), root=str(lane_root), completed=[str(worktree)])
+    )
+    assert code == 1
+    assert blocked["preserved"][0]["reason"] == "cleanup receipt failed"
+    assert "cleanup receipt format is invalid" in blocked["preserved"][0]["error"]
+    assert worktree.exists()
+    assert receipt.exists()
 
 
 def test_cleanup_receipt_requires_valid_read_back(
