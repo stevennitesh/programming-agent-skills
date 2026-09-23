@@ -22,8 +22,9 @@
 - Purpose, source ownership, and repo invariants: `CONTEXT.md`
 - When designing or changing Astra skills: `docs/astra/design-brief.md`
 - Active plans and runbooks: `docs/plans/README.md`
-- For `Run Deploy Campaign on <skill>`, read
-  `docs/synthesis/methods/deploy-prompts.md`.
+- For an explicitly requested legacy `Run Deploy Campaign on <skill>`, read
+  `docs/synthesis/methods/deploy-prompts.md`. Current Astra skill work follows
+  `docs/astra/design-brief.md` instead.
 - For substantive code design, implementation, debugging, refactoring, or review,
   read `docs/agents/engineering-contract.md`.
 - For tracker-backed work: `docs/agents/issue-tracker.md`,
