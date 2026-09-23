@@ -1,69 +1,64 @@
 # Inputs, effects, and recovery
 
-Apply the branches the generated procedure actually needs. Prefer established
-repository utilities over a new general wizard framework.
+Read the branches the generated procedure actually needs. Prefer established
+repository utilities over a new wizard framework.
 
 ## Private and structured input
 
-- Capture secrets with non-echoing native input in the operator's private terminal.
-  Refuse insecure fallback if secure input is unavailable. Hidden prompts alone
-  do not make an agent-attached or recorded terminal private.
-- Keep values as data. Do not use `eval`, source an input file as code, or build
-  shell commands from responses. Use argument arrays for non-secret parameters
-  and a tool's documented stdin or secure input mechanism for secrets. Avoid
-  secret-bearing command lines, diagnostic output, transcripts, and incidental
-  temporary files. Do not enable shell tracing around private inputs.
-- Validate public identifiers and input shape before effects. Treat whitespace,
-  quotes, backslashes, dollar signs, and newlines according to the destination's
-  actual parser; do not silently trim meaningful bytes. Reject unsupported input
-  clearly. Do not invent a credential format check stronger than the provider's.
-- Distinguish cancel, EOF, blank input, and an explicit request to retain an
-  existing value. Never display the existing secret as a default. Do not overwrite
-  it with an accidental blank or treat a closed prompt as consent.
+Capture secrets with non-echoing native input in the operator's private session.
+Refuse an insecure fallback when secure input is unavailable. A hidden prompt in
+an agent-attached or recorded terminal is not private.
+
+Keep captured values as data. Do not use `eval`, source responses as code, build
+shell commands from private input, enable shell tracing around secrets, or place
+secrets in command lines, diagnostics, transcripts, or incidental temporary
+files. Use the destination tool's documented secure input mechanism.
+
+Validate public identifiers and input shape according to the actual destination
+parser. Preserve meaningful whitespace and special characters, and do not invent
+credential-format restrictions stronger than the provider's.
+
+Treat cancel, EOF, blank input, and an explicit request to retain an existing
+value as different states. Never display the existing secret as a default or
+overwrite it because a prompt closed or returned blank.
 
 ## Secret destinations and local updates
 
-Resolve the exact destination and its intended consumer. A project secret file is
-an intentional output, not a scratch channel. Before writing, ensure it is not
-already tracked and that Git ignores the exact path; an ignore rule does not
-untrack a file. For non-Git locations, check the intended privacy/access boundary.
-Do not weaken permissions or overwrite an unexpected symlink target to proceed.
+Resolve the exact destination and consumer before writing. For a project secret
+file, establish that the exact path is untracked and ignored; an ignore rule does
+not untrack an existing file. For other locations, preserve the intended access
+boundary. Do not weaken permissions or follow an unexpected symlink target to
+proceed.
 
-Preserve unrelated keys, comments, and meaningful formatting. For ambiguous
-duplicate keys, fail with an actionable explanation or apply the consumer's
-documented semantics; do not silently assume first- or last-wins. Serialize for
-the actual `.env`, JSON, YAML, or other consumer and verify by parsing dummy data
-with that consumer when practical. Regex replacement is not a universal serializer.
+Preserve unrelated keys and meaningful formatting. Follow the consumer's
+documented duplicate-key semantics or fail when they are ambiguous. Serialize for
+the actual format rather than relying on regex replacement as a universal writer.
 
-Avoid truncating existing configuration on a failed write. Use the repository's
-established safe update mechanism; if atomic replacement requires a temporary
-secret-bearing file, give it the destination's restrictive protection before
-writing, keep it in the intended protected directory, and clean it on failure.
-Do not create plaintext backup copies or weaken existing access protections.
-If safe persistence is unavailable, stop that stage rather than improvise storage.
+Do not truncate existing configuration before a replacement is known to be
+usable. Use the established safe-update mechanism. If atomic replacement requires
+a secret-bearing temporary file, protect it like the destination, keep it in the
+intended protected location, and clean it after failure. Do not create plaintext
+backup copies. Stop the stage when safe persistence is unavailable.
 
 ## External effects and uncertain outcomes
 
-Bind each mutation to the explicit account, project/repository, environment,
-resource, and scope it actually affects. Do not rely silently on a CLI's current
-directory or default account. Recheck identity/target if either changes after the
-operator confirms. A confirmation covers only the displayed operation or bounded
-group of effects, not later different targets or expanded scope. Separate
-destructive effects that require their own decision. Do not collect values for
-environments outside the request.
+Bind each mutation to the explicit account, project or repository, environment,
+resource, and scope it affects. Do not rely silently on a CLI's default account or
+current directory. Recheck identity and target when either changes after
+confirmation.
 
-Check command exit status and read back an observable postcondition. For secrets
-that cannot be retrieved, verify their exact scope/name and available fresh
-metadata; describe value equality as unproved. Metadata alone does not establish
-that an application can use the credential. When no useful postcondition is
-observable, leave the mutation manual and unverified. A pause or affirmative response is
-operator-reported completion, not an independent check.
+Check command status and an observable postcondition. When a secret value cannot
+be read back, verify its exact scope/name and available fresh metadata and leave
+value equality unproved. Metadata also does not prove that the application can
+use the credential. If no useful postcondition is observable, report the effect as
+manual or unverified rather than manufacturing proof.
 
-After a timeout or partial failure, inspect current state before retrying. Use
-documented idempotent updates or stable operation identifiers when available;
-do not blindly repeat key creation, charges, deletion, or cutover actions. Preserve
-recoverable state and name the remaining action. Do not automatically roll back
-completed external changes when rollback could destroy work or has unknown effects.
-Checkpoint only non-secret status and resource identifiers when useful, and verify
-them against live state on resume. Stop dependent stages while prerequisites are
-unverified; independent stages may continue only when that is safe and explicit.
+After timeout, partial failure, or any uncertain effect, inspect current state
+before retrying. Prefer documented idempotent updates or stable operation
+identifiers when available; do not blindly repeat key creation, charges, deletion,
+or cutover actions.
+
+Preserve completed external effects unless rollback is itself authorized and
+understood. Record only non-secret recovery state such as resource identifiers and
+completion status, then verify it against live state on resume. Stop dependent
+stages while prerequisites remain unverified.

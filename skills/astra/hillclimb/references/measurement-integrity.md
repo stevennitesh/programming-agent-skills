@@ -4,55 +4,62 @@ Read when variation, repeated tuning, or tradeoffs could change the keep decisio
 Use the smallest method that makes the comparison trustworthy; no universal sample
 count, significance threshold, or benchmark framework is required.
 
-## Compare equivalent work
+## Compare equivalent useful work
 
-Match input scale, configuration, runtime/build mode, concurrency, and measured
-start/end boundaries. Verify useful outputs independently of the metric. Catch
-omitted work, lower precision, skipped validation, stale results, or changed quality
-that make a candidate look cheaper without delivering the accepted outcome.
+Match the input scale, relevant configuration, runtime or build mode, concurrency,
+and measured boundaries closely enough for the requested claim.
 
-If work is deferred or moved to another process, include the downstream cost when
-the requested outcome requires it. A faster first response may be a real gain,
-but it does not establish faster task completion. Check secondary consequences
-that matter, such as memory growth from caching or retry load from lower latency.
-Keep any user-approved tradeoff explicit; do not infer acceptance of quality loss.
+Verify useful output independently of the optimization metric. Omitted work, lower
+precision, skipped validation, stale results, or reduced quality are not valid
+performance gains unless the corresponding tradeoff was explicitly accepted.
+
+If work moves to another process or later stage, include the downstream cost when
+the requested outcome requires it. A faster first response does not establish
+faster task completion. Account for material secondary costs such as memory growth,
+retry amplification, or quality loss.
 
 ## Distinguish signal from environmental drift
 
-Account for warmup, cold versus warm cache, process reuse, thermal state, background
-load, ordering, and resource contention when material. Do not benchmark competing
-candidates simultaneously against shared scarce resources. Parallel implementation
-attempts require explicit delegation authority and independent state; their mere
-separate checkouts do not establish measurement independence.
+Account for warmup, cache state, process reuse, thermal state, background load,
+ordering, and resource contention when they can change the conclusion. Separate
+processes or checkouts do not establish measurement independence when candidates
+share scarce resources.
 
-Use paired or alternating baseline/candidate runs when drift could determine the
-winner. Report the relevant range or distribution rather than the best sample.
-For tail-latency or reliability claims, gather exposure capable of supporting that
-claim; an average alone is insufficient. Within-noise differences are inconclusive,
-not wins rounded into existence. State sampling limits without pretending a finite
-run proves all future behavior.
+Use paired, alternating, or otherwise comparable runs when environmental drift
+could determine the winner. Report the range or distribution relevant to the
+claim rather than only the best sample.
+
+Tail-latency, reliability, or failure-rate claims require exposure capable of
+supporting that claim; an average alone is insufficient. Differences inside the
+observed noise are inconclusive, not wins rounded into existence.
+
+State sampling limits rather than treating a finite clean run as proof of all
+future behavior.
 
 ## Avoid selecting a lucky or overfit winner
 
-Repeated attempts on the same benchmark can create selection bias. For variable
-measurements, confirm the final choice with fresh runs not used to select it.
-For deterministic results, verify the final candidate; repetition alone does not
-provide independent evidence. When tuning for generalization across
-inputs, reserve representative evaluation cases or a held-out workload and keep
-its results out of iterative selection. If you tune after seeing that evaluation,
-it becomes development evidence; obtain new independent confirmation or narrow
-the claim. Do not call a repeatedly inspected set held out.
+Repeated attempts on the same benchmark create selection pressure. For variable
+measurements, confirm the final candidate with fresh runs not used to select it.
+For deterministic metrics, verify the final candidate; repetition alone does not
+create independent evidence.
 
-The workload must represent the user's intended use, including materially different
-sizes or states where regressions could offset the gain. A deliberate optimization
-for one fixed workload is valid when that is the requested objective; say so instead
-of claiming broader improvement. More samples of the same narrow input do not prove
-generalization to other inputs.
+When the claim concerns generalization across inputs, reserve representative
+evaluation cases or a held-out workload from iterative selection. Once tuning uses
+that evaluation result, it becomes development evidence; obtain new independent
+confirmation or narrow the claim.
+
+A deliberately optimized fixed workload is valid when that is the requested
+objective. Do not generalize the result to other inputs merely by collecting more
+samples of the same narrow case.
 
 ## Change the ruler honestly
 
-Verify sensitivity to plausible meaningful differences before trusting a flat
-score. If the harness changes, record why and rerun both sides under the new method.
-Do not compare an old baseline measured one way with a new candidate measured
-another. Preserve prior results as observations under their original conditions,
-not evidence for the revised comparison.
+Make sure the measurement can detect differences large enough to matter before
+trusting a flat score.
+
+If the harness, workload, or scoring method changes materially, rerun both the
+baseline and candidate under the revised method. Do not compare numbers produced
+under incompatible rulers.
+
+Preserve earlier measurements as observations under their original conditions,
+not as evidence for the revised comparison.

@@ -1,81 +1,68 @@
 # Tracker publication and repair
 
-Read only when publishing or reconciling durable tickets is requested. Follow the
-repository's tracker and label guidance if present. Use the available connector,
-CLI, or repository helper; do not embed provider-specific label names or API
-mechanics in the delivery method. A configured local-file tracker follows its
-own format; an ordinary draft is not automatically a published tracker graph.
+Read only when durable tracker publication or repair is requested. Follow the
+repository's configured tracker, relationship, readiness, and label conventions.
+An ordinary draft is not a published tracker graph.
 
-## Prepare concrete effects
+## Prepare the concrete effects
 
-Resolve the target project, parent if any, existing items, relationships, status,
-and active ownership. Read decision-changing comments. Inspect before creating
-so equivalent existing work can be reused. Similar titles alone do not establish
-equivalence; compare purpose, scope, acceptance, dependencies, and current state.
+Resolve the target project, parent when applicable, existing items, relationships,
+status, readiness, and active ownership. Inspect before creating so equivalent
+work can be reused; title similarity alone does not establish equivalence.
 
-For repair, bound which bodies, edges, and readiness states may change. Preserve
-unrelated content and active claims. Do not rewrite or release work another agent
-is executing; return that conflict unless coordinated change is authorized.
-Duplicate, ambiguous, or divergent items require reconciliation within authority,
-not silently creating a second graph.
+For repair, bound which ticket bodies, relationships, and readiness states may
+change. Preserve unrelated content and active claims. Do not rewrite or release
+work another actor is executing without coordinated authority.
 
-When shaping revises an accepted source, identify the accepted revision and changed
-commitments, including purpose or scope rationale that changes delivery decisions.
-Coordinate affected active work with its execution owner before repairing tickets;
-keep affected pending work non-ready until purpose, acceptance, source
-pointers, gates and assignments agree. Preserve unaffected tickets and claims.
+If accepted meaning or acceptance changes while tickets, assignments, or proof
+depend on the current revision, use
+[Active delivery revisions](../../shape-work/references/active-delivery-revisions.md)
+first. Then reconcile only the tracker content, relationships, readiness, and
+claims affected by that settled revision.
 
-Prepare the exact titles, bodies, parent/child and blocking relationships, and
-intended state changes. Verify the needed mutation and independent read-back
-operations before the first effect. Missing setup leaves a reviewable draft and
-the specific publication gap; suggest setup repair only when needed.
+Prepare the exact ticket bodies, parent/child and blocking relationships, and
+intended state changes before mutation. Missing or incompatible tracker setup
+leaves a reviewable draft plus the concrete publication gap.
 
-Use the user's existing publication authority and applicable repository rules.
-When approval is required, ask about the concrete prepared effects. Reconfirm
-only a material change outside the accepted scope, not every routine technical
-adjustment or an unchanged graph already authorized for publication.
+Use only existing publication authority. When another approval is required, ask
+about the prepared effects that need it; do not repeatedly reconfirm unchanged
+authorized mutations.
 
 ## Apply and verify
 
-Reuse fresh verified state where it establishes the required content and
-relationships. Before mutation, refresh affected state when intervening activity
-is possible, or use supported conditional writes against the inspected version.
-Reconcile relevant drift before proceeding; do not overwrite an intervening edit. Reuse unchanged matching
-items and create verified missing items in dependency order. Record each returned
-identity and read it back before using it in later relationships.
+Refresh affected tracker state before writing when intervening activity can occur,
+or use supported conditional writes against the inspected version. Reconcile
+relevant drift instead of overwriting it.
 
-Where the tracker has a readiness state, keep new or materially revised work
-non-ready until its content and required relationships are verified. Respect
-active claims. Attach parent and dependency links through the configured
-representation; do not substitute prose for required native relationships.
-If text is the configured representation, keep it consistent and verify it.
+Reuse matching items and create only missing work. Record each returned identity
+and read it back before depending on it for later relationships. Where readiness
+exists, keep new or materially revised work non-ready until its body and required
+relationships are verified.
 
-Mark only work whose decisions, permissions, and blockers are actually resolved
-as actionable under the configured policy. A closed predecessor alone does not
-prove its required outcome exists. Preserve category and state distinctions;
-known dependency-blocked work is not necessarily awaiting triage or information.
+Use the configured native relationship representation when one exists; do not
+replace required parent/dependency links with prose. Mark only work whose
+decisions, permissions, and blockers are actually resolved as actionable.
+Human-only readiness does not authorize an agent to take over a human decision or
+action.
 
-Use mapped agent-readiness only for executable agent work; preserve human-only
-readiness for human handoffs. Neither a resolved blocker nor a ready-for-human
-label authorizes an agent to take over the human decision or action.
-
-After publication, verify bodies, relationships, readiness, and affected ownership
-through independent read-back. Reuse read-backs that still establish the final
-state; verify newly written relationships and final readiness. Derive the actual starting set from the verified graph rather than
-assuming the planned writes succeeded. Keep the source-to-published identity
-mapping so a resumed run can inspect the same items.
+After publication, independently verify affected bodies, relationships, readiness,
+and ownership. Derive the actual starting set from that verified graph rather
+than assuming planned writes succeeded. Preserve the source-to-published identity
+mapping needed for later repair or delivery.
 
 For version-controlled local tickets, identify the canonical checkout containing
-the published graph. Publication does not imply a Git commit. Before subsequent
-parallel delivery, the execution owner needs authority to commit owned tracker
-changes and a clean baseline containing the accepted graph. Do not let lane copies
-become independent tracker authorities.
+the published graph. Publication does not imply a Git commit, and worker lane
+copies do not become independent tracker authorities.
 
 ## Recover without duplicates
 
-On a failed, partial, or indeterminate effect, stop further mutations and inspect
-the affected graph. Report confirmed changes, unchanged items, unknown outcomes,
-and the next safe recovery step. Never retry an uncertain create blindly or
-pretend the remaining graph was published. Resume from observed identities after
-reconciliation; do not replay the entire creation sequence. Do not close or
-reclassify a parent or change unrelated assignments without authorization.
+If a create, update, relationship change, or readiness mutation has a partial,
+failed, or indeterminate result, stop dependent mutations and inspect the affected
+graph. Resume from observed identities after reconciliation.
+
+Do not blindly retry an uncertain create, replay the entire publication sequence,
+release an ambiguous claim, close a parent, or alter unrelated ownership merely to
+make the tracker match the intended plan.
+
+Finish publication when the requested graph is verified in its configured
+representation and any remaining publication or ownership uncertainty is explicit.

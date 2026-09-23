@@ -71,9 +71,10 @@ Synthesis is design authority only until implemented. Canonical runtime files
 remain executable authority; target-repository settings remain instance
 authority.
 
-## Canonical Extraction
+## Legacy campaign extraction
 
-Use `Run Deploy Campaign on <skill>` for one controllerless campaign:
+When explicitly maintaining the legacy custom pack, `Run Deploy Campaign on <skill>`
+selects one controllerless campaign:
 
 ```text
 Contract Lock

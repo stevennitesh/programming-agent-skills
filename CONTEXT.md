@@ -8,7 +8,8 @@ Explore imaginatively. Converge under proof. Simplify ruthlessly.
 
 ## Current direction
 
-The pack targets GPT 6 Astra primarily, with GPT 5.6 Sol compatibility.
+The pack targets GPT 6 Astra primarily. Optional cost-aware execution routes
+substantial implementation to GPT 6 Sol and compact bounded work to GPT 6 Luna.
 
 Build the Astra pack in `skills/astra/`. When designing or changing an Astra
 skill, read [the Astra design brief](docs/astra/design-brief.md). It records the
@@ -41,6 +42,9 @@ tools for mechanical facts; retain reasons and local conventions in guidance.
 ## Package distinctions
 
 - **Managed Astra skills:** `skills/astra/`, the installer source of truth.
+  Its immediate subdirectories containing `SKILL.md` define the current managed
+  set; derive inventory and count there rather than from historical synthesis,
+  research, validation, or archived records.
 - **Historical custom skills:** `skills/custom/`, retained evidence, not deployed.
 - **Installed skills:** copies in the target host's skill directory. Inspect
   their content before assuming which source or version is installed.

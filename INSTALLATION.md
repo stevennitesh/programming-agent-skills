@@ -66,7 +66,8 @@ python -m scripts.validate_skills `
   --installed-root "$HOME\.agents\skills" --require-installed
 ```
 
-Add `--json` to the preview or install command for machine-readable evidence.
+Add `--json` to preview, install, or recovery commands for machine-readable
+evidence.
 
 ## Global instructions
 
@@ -143,8 +144,14 @@ across other environments remain unverified.
 
 Skill additions, updates, retirements, the manifest, and the global bootstrap
 commit as one transaction. The installer takes a process lock, validates the
-complete managed manifest, and refuses unsafe names, modified managed trees,
-or conflicting unmanaged paths before mutation.
+managed source and manifest, and refuses an empty/incomplete source pack, unsafe
+redirects or names, modified managed trees, conflicting unmanaged paths, and
+live target changes observed after planning.
+
+The transaction commits the exact skill and global-bootstrap content captured by
+its plan. If repository source changes during an install, that newer source is
+left for the next run rather than being mixed into the in-flight transaction.
+Runtime cache artifacts remain excluded from managed skill identity.
 
 If installation fails, it restores the previous pack and removes the temporary
 snapshot. If rollback cannot finish, it preserves a named
@@ -172,4 +179,5 @@ previous nor the planned identity.
 | `cleared-commit` | The committed install was verified. Only recovery residue remained. | No reinstall is needed. |
 
 Recovery clears transaction claims while the snapshot still exists and
-removes the snapshot last.
+removes the snapshot last. Add `--json` when recovery evidence is consumed by
+another tool.

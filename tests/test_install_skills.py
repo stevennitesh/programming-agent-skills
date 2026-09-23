@@ -11,7 +11,7 @@ import pytest
 from scripts import install_skills, skill_pack_contract
 
 
-def test_campaign_install_cli_flags_remain_supported(
+def test_install_cli_flags_remain_supported(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setattr(
@@ -86,42 +86,99 @@ def test_custom_manifest_migrates_ownership_to_astra_without_losing_edits(
     assert (installed / "personal/SKILL.md").read_text() == "old"
 
 
-@pytest.mark.parametrize("modified", [None, "alpha", "retired"])
-def test_custom_manifest_migrates_ownership_to_astra_without_losing_edits(
-    tmp_path: Path, modified: str | None,
+def test_install_rejects_an_empty_source_pack_before_retiring_managed_skills(
+    tmp_path: Path,
 ) -> None:
     root = tmp_path / "repo"
-    installed = tmp_path / "installed"
-    write_source_skill(root, "alpha", "Astra")
-    hashes = {}
-    for name in ("alpha", "retired", "personal"):
-        folder = installed / name
-        folder.mkdir(parents=True)
-        (folder / "SKILL.md").write_text("old", encoding="utf-8")
-        if name != "personal":
-            hashes[name] = install_skills.skill_tree_hash(folder)
-    manifest = installed / install_skills.MANIFEST_NAME
-    manifest.write_text(json.dumps({
-        "format": 1, "source": "skills/custom", "skills": sorted(hashes), "hashes": hashes,
-    }), encoding="utf-8")
-    before = manifest.read_bytes()
-    if modified:
-        (installed / modified / "SKILL.md").write_text("local edit", encoding="utf-8")
-        with pytest.raises(ValueError, match="modified managed skill"):
-            install_skills.install(root, installed, None)
-        assert manifest.read_bytes() == before
-        assert (installed / modified / "SKILL.md").read_text() == "local edit"
-        assert (installed / "retired").is_dir()
-        return
-    preview = install_skills.install(root, installed, None, dry_run=True)
-    assert preview["updated"] == ["alpha"]
-    assert preview["retired"] == ["retired"]
-    assert manifest.read_bytes() == before
+    installed = tmp_path / "skills"
+    write_source_skill(root, "alpha", "v1")
+    write_template(root)
     install_skills.install(root, installed, None)
-    assert json.loads(manifest.read_text())["source"] == "skills/astra"
-    assert (installed / "alpha/SKILL.md").read_text() == "Astra"
-    assert not (installed / "retired").exists()
-    assert (installed / "personal/SKILL.md").read_text() == "old"
+    before = tree_snapshot(installed)
+
+    (root / "skills/astra/alpha/SKILL.md").unlink()
+    (root / "skills/astra/alpha").rmdir()
+
+    with pytest.raises(ValueError, match="contains no installable skills"):
+        install_skills.install(root, installed, None)
+
+    assert tree_snapshot(installed) == before
+    assert transaction_dirs(installed) == []
+
+
+def test_install_rejects_a_source_skill_folder_without_skill_entry(
+    tmp_path: Path,
+) -> None:
+    root = tmp_path / "repo"
+    installed = tmp_path / "skills"
+    (root / "skills/astra/alpha").mkdir(parents=True)
+    write_template(root)
+
+    with pytest.raises(ValueError, match="missing SKILL.md"):
+        install_skills.install(root, installed, None, dry_run=True)
+
+    assert not installed.exists()
+
+
+def test_install_rejects_redirected_source_and_manifest_inputs(
+    tmp_path: Path,
+) -> None:
+    root = tmp_path / "repo"
+    installed = tmp_path / "skills"
+    external_source = tmp_path / "external-astra"
+    (external_source / "alpha").mkdir(parents=True)
+    (external_source / "alpha/SKILL.md").write_text("v1", encoding="utf-8")
+    (root / "skills").mkdir(parents=True)
+    try:
+        (root / "skills/astra").symlink_to(external_source, target_is_directory=True)
+    except OSError as error:
+        pytest.skip(f"symlink creation unavailable: {error}")
+    write_template(root)
+
+    with pytest.raises(ValueError, match="managed skill source link/reparse point"):
+        install_skills.install(root, installed, None, dry_run=True)
+
+    (root / "skills/astra").unlink()
+    write_source_skill(root, "alpha", "v1")
+    installed.mkdir()
+    external_manifest = tmp_path / "external-manifest.json"
+    external_manifest.write_text(
+        json.dumps(
+            {
+                "format": 1,
+                "source": "skills/astra",
+                "skills": [],
+                "hashes": {},
+            }
+        ),
+        encoding="utf-8",
+    )
+    (installed / install_skills.MANIFEST_NAME).symlink_to(external_manifest)
+
+    with pytest.raises(ValueError, match="installed manifest link/reparse point"):
+        install_skills.install(root, installed, None, dry_run=True)
+
+
+def test_install_rejects_a_redirected_global_template(tmp_path: Path) -> None:
+    root = tmp_path / "repo"
+    installed = tmp_path / "skills"
+    target = tmp_path / "AGENTS.md"
+    write_source_skill(root, "alpha", "v1")
+    root.mkdir(parents=True, exist_ok=True)
+    external = tmp_path / "template.md"
+    external.write_text(
+        "# Global Codex Instructions\n\n## Skill Pack Bootstrap\n\nManaged.\n",
+        encoding="utf-8",
+    )
+    try:
+        (root / install_skills.GLOBAL_TEMPLATE_NAME).symlink_to(external)
+    except OSError as error:
+        pytest.skip(f"symlink creation unavailable: {error}")
+
+    with pytest.raises(ValueError, match="global AGENTS template link/reparse point"):
+        install_skills.install(root, installed, target, dry_run=True)
+
+    assert not target.exists()
 
 
 def test_dry_run_returns_stable_structured_cohort_and_identities(
@@ -156,6 +213,49 @@ def test_dry_run_returns_stable_structured_cohort_and_identities(
     assert current["new"] == []
     assert current["unchanged"] == ["alpha"]
     assert current["planned_identities"] == current["resulting_identities"]
+
+
+def test_recovery_json_cli_emits_machine_readable_evidence(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    installed = tmp_path / "skills"
+    transaction = tmp_path / install_skills.ACTIVE_TRANSACTION_NAME
+    transaction.mkdir()
+    install_skills.write_transaction_state(
+        transaction,
+        install_skills.preparing_transaction_state(
+            installed,
+            None,
+            [],
+            False,
+            manifest_target_sha256="0" * 64,
+        ),
+    )
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "install_skills",
+            "--recover-transaction",
+            str(transaction),
+            "--skills-dir",
+            str(installed),
+            "--skip-global-agents",
+            "--json",
+        ],
+    )
+
+    assert install_skills.main() == 0
+
+    payload = json.loads(capsys.readouterr().out)
+    assert payload == {
+        "operation": "recovery",
+        "schema_version": install_skills.INSTALL_EVIDENCE_SCHEMA_VERSION,
+        "skills_dir": str(installed),
+        "status": "cleared-preparation",
+    }
 
 
 def test_json_cli_preserves_human_output_default(
@@ -277,11 +377,11 @@ def test_incomplete_transaction_blocks_another_root_sharing_global_bootstrap(
         "- **Route:** Updated route.\n",
         encoding="utf-8",
     )
-    original_bootstrap = install_skills.install_global_bootstrap
+    original_write_global = install_skills.write_global_agents
     original_restore = install_skills.restore_file
 
-    def fail_after_bootstrap(template: Path, target: Path) -> str:
-        original_bootstrap(template, target)
+    def fail_after_global_write(target: Path, updated: str) -> None:
+        original_write_global(target, updated)
         raise OSError("injected global commit failure")
 
     def fail_global_restore(path: Path, snapshot: Path | None) -> None:
@@ -291,8 +391,8 @@ def test_incomplete_transaction_blocks_another_root_sharing_global_bootstrap(
 
     monkeypatch.setattr(
         install_skills,
-        "install_global_bootstrap",
-        fail_after_bootstrap,
+        "write_global_agents",
+        fail_after_global_write,
     )
     monkeypatch.setattr(install_skills, "restore_file", fail_global_restore)
 
@@ -303,8 +403,8 @@ def test_incomplete_transaction_blocks_another_root_sharing_global_bootstrap(
     assert len(transactions) == 1
     monkeypatch.setattr(
         install_skills,
-        "install_global_bootstrap",
-        original_bootstrap,
+        "write_global_agents",
+        original_write_global,
     )
     monkeypatch.setattr(install_skills, "restore_file", original_restore)
 
@@ -1287,6 +1387,7 @@ def test_install_refuses_to_retire_a_modified_managed_skill(tmp_path: Path) -> N
     root = tmp_path / "repo"
     installed = tmp_path / "skills"
     write_source_skill(root, "retired", "pack version")
+    write_source_skill(root, "anchor", "keep")
     write_template(root)
     install_skills.install(root, installed, None)
 
@@ -1459,6 +1560,7 @@ def test_retirement_uses_atomic_displacement_not_recursive_live_deletion(
     installed = tmp_path / "skills"
     write_template(root)
     write_source_skill(root, "retired", "v1")
+    write_source_skill(root, "anchor", "keep")
     install_skills.install(root, installed, None)
     (root / "skills/astra/retired/SKILL.md").unlink()
     (root / "skills/astra/retired").rmdir()
@@ -1518,6 +1620,60 @@ def test_dry_run_does_not_create_the_install_parent(tmp_path: Path) -> None:
     assert not installed.parent.exists()
 
 
+@pytest.mark.parametrize("target_kind", ["skill", "manifest", "global"])
+def test_install_detects_live_edits_after_snapshot_before_mutation(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    target_kind: str,
+) -> None:
+    root = tmp_path / "repo"
+    installed = tmp_path / "skills"
+    global_agents = tmp_path / "AGENTS.md"
+    write_template(root)
+    write_source_skill(root, "alpha", "v1")
+    install_skills.install(root, installed, global_agents)
+    (root / "skills/astra/alpha/SKILL.md").write_text("v2", encoding="utf-8")
+
+    original_copy2 = install_skills.shutil.copy2
+    edited = False
+
+    def edit_after_snapshot(source: Path, destination: Path, *args, **kwargs):
+        nonlocal edited
+        result = original_copy2(source, destination, *args, **kwargs)
+        if edited:
+            return result
+        source = Path(source)
+        if target_kind in {"skill", "manifest"} and source == installed / install_skills.MANIFEST_NAME:
+            if target_kind == "skill":
+                (installed / "alpha/SKILL.md").write_text("user edit", encoding="utf-8")
+            else:
+                (installed / install_skills.MANIFEST_NAME).write_text(
+                    "user manifest edit\n",
+                    encoding="utf-8",
+                )
+            edited = True
+        elif target_kind == "global" and source == global_agents:
+            global_agents.write_text("user global edit\n", encoding="utf-8")
+            edited = True
+        return result
+
+    monkeypatch.setattr(install_skills.shutil, "copy2", edit_after_snapshot)
+
+    with pytest.raises(RuntimeError, match="changed during install planning"):
+        install_skills.install(root, installed, global_agents)
+
+    assert edited is True
+    if target_kind == "skill":
+        assert (installed / "alpha/SKILL.md").read_text(encoding="utf-8") == "user edit"
+    elif target_kind == "manifest":
+        assert (installed / install_skills.MANIFEST_NAME).read_text(
+            encoding="utf-8"
+        ) == "user manifest edit\n"
+    else:
+        assert global_agents.read_text(encoding="utf-8") == "user global edit\n"
+    assert transaction_dirs(installed) == []
+
+
 def test_install_rolls_back_every_skill_when_the_second_swap_fails(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -1537,12 +1693,17 @@ def test_install_rolls_back_every_skill_when_the_second_swap_fails(
     original = install_skills.replace_tree
     calls = 0
 
-    def fail_second_swap(source: Path, destination: Path, displaced: Path) -> None:
+    def fail_second_swap(
+        source: Path,
+        destination: Path,
+        displaced: Path,
+        expected_live_hash: str | None,
+    ) -> None:
         nonlocal calls
         calls += 1
         if calls == 2:
             raise OSError("injected second swap failure")
-        original(source, destination, displaced)
+        original(source, destination, displaced, expected_live_hash)
 
     monkeypatch.setattr(install_skills, "replace_tree", fail_second_swap)
 
@@ -1619,9 +1780,13 @@ def test_install_restores_a_retired_skill_when_retirement_fails(
     original = install_skills.retire_tree
     failed = False
 
-    def fail_after_retirement(path: Path, displaced: Path) -> None:
+    def fail_after_retirement(
+        path: Path,
+        displaced: Path,
+        expected_live_hash: str,
+    ) -> None:
         nonlocal failed
-        original(path, displaced)
+        original(path, displaced, expected_live_hash)
         if not failed:
             failed = True
             raise OSError("injected retirement failure")
@@ -1712,6 +1877,56 @@ def test_rollback_records_terminal_state_before_recursive_quarantine_cleanup(
     assert transaction_dirs(installed) == []
 
 
+def test_install_commits_the_planned_global_bootstrap_snapshot(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    root = tmp_path / "repo"
+    installed = tmp_path / "skills"
+    global_agents = tmp_path / "AGENTS.md"
+    write_source_skill(root, "alpha", "v1")
+    write_template(root)
+    install_skills.install(root, installed, global_agents)
+
+    (root / "skills/astra/alpha/SKILL.md").write_text("v2", encoding="utf-8")
+    template = root / install_skills.GLOBAL_TEMPLATE_NAME
+    template.write_text(
+        "# Global Codex Instructions\n\n"
+        "## Skill Pack Bootstrap\n\n"
+        "- **Route:** Planned route.\n",
+        encoding="utf-8",
+    )
+    _, planned = install_skills.render_global_bootstrap(template, global_agents)
+    original_replace = install_skills.replace_tree
+    changed = False
+
+    def change_template_during_apply(
+        source: Path,
+        destination: Path,
+        displaced: Path,
+        expected_live_hash: str | None,
+    ) -> None:
+        nonlocal changed
+        if not changed:
+            template.write_text(
+                "# Global Codex Instructions\n\n"
+                "## Skill Pack Bootstrap\n\n"
+                "- **Route:** Newer source route.\n",
+                encoding="utf-8",
+            )
+            changed = True
+        original_replace(source, destination, displaced, expected_live_hash)
+
+    monkeypatch.setattr(install_skills, "replace_tree", change_template_during_apply)
+
+    result = install_skills.install(root, installed, global_agents)
+
+    assert result["updated"] == ["alpha"]
+    assert result["global_bootstrap"] == "updated"
+    assert global_agents.read_bytes() == install_skills.native_text_bytes(planned)
+    assert install_skills.preview_global_bootstrap(template, global_agents) == "updated"
+
+
 def test_install_restores_the_pack_when_global_bootstrap_write_fails(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -1732,16 +1947,16 @@ def test_install_restores_the_pack_when_global_bootstrap_write_fails(
         "- **Route:** Updated route.\n",
         encoding="utf-8",
     )
-    original = install_skills.install_global_bootstrap
+    original = install_skills.write_global_agents
 
-    def fail_after_bootstrap(template: Path, target: Path) -> str:
-        original(template, target)
+    def fail_after_global_write(target: Path, updated: str) -> None:
+        original(target, updated)
         raise OSError("injected global bootstrap failure")
 
     monkeypatch.setattr(
         install_skills,
-        "install_global_bootstrap",
-        fail_after_bootstrap,
+        "write_global_agents",
+        fail_after_global_write,
     )
 
     with pytest.raises(OSError, match="injected global bootstrap failure"):
@@ -1766,16 +1981,21 @@ def test_install_rolls_back_when_global_step_corrupts_the_manifest(
     before_agents = global_agents.read_bytes()
 
     (root / "skills/astra/alpha/SKILL.md").write_text("v2", encoding="utf-8")
-    original_bootstrap = install_skills.install_global_bootstrap
+    (root / install_skills.GLOBAL_TEMPLATE_NAME).write_text(
+        "# Global Codex Instructions\n\n"
+        "## Skill Pack Bootstrap\n\n"
+        "- **Route:** Changed before corruption test.\n",
+        encoding="utf-8",
+    )
+    original_write_global = install_skills.write_global_agents
 
-    def corrupt_manifest(template: Path, target: Path) -> str:
-        status = original_bootstrap(template, target)
+    def corrupt_manifest(target: Path, updated: str) -> None:
+        original_write_global(target, updated)
         (installed / install_skills.MANIFEST_NAME).write_text("{}", encoding="utf-8")
-        return status
 
     monkeypatch.setattr(
         install_skills,
-        "install_global_bootstrap",
+        "write_global_agents",
         corrupt_manifest,
     )
 
@@ -1790,8 +2010,8 @@ def test_install_rolls_back_when_global_step_corrupts_the_manifest(
     )
     monkeypatch.setattr(
         install_skills,
-        "install_global_bootstrap",
-        original_bootstrap,
+        "write_global_agents",
+        original_write_global,
     )
     result = install_skills.recover_transaction(
         transactions[0], installed, global_agents

@@ -57,6 +57,12 @@ Keep calculations separate from effects where that makes behavior clearer and
 easier to test. Hide framework and storage details when callers do not need
 them; do not add adapters solely to make a small design look layered.
 
+When many similar edits or checks share one mechanical recipe, and a small
+deterministic script, codemod, generator, or check would materially reduce
+inconsistency or verification cost, build the smallest rerunnable lever. Prove it
+on a representative unit before wider use. Do not build tooling when direct work
+is simpler and equally reviewable.
+
 ## Complete the change
 
 Fix the cause across affected callers within scope. When a change repeatedly needs
@@ -79,8 +85,12 @@ usable across the change or consumers upgrade independently, account for old and
 existing-data conversion, and rollback limitations.
 
 Update documentation when behavior, operations, or a non-obvious decision
-changes. Prefer an existing type, constraint, or check to repeated prose when
-it can enforce a recurring machine-relevant rule within the task's scope. Preserve
+changes. When a deliberate simplification has a non-obvious material ceiling
+whose violation would change correctness, performance, or operations, record the
+ceiling and revisit condition at its natural owner. Do not create a separate debt
+marker when the reason already has a maintained home. Prefer an existing type,
+constraint, or check to repeated prose when it can enforce a recurring
+machine-relevant rule within the task's scope. Preserve
 explanatory prose, research evidence, and code identity as context or provenance;
 make them runtime rejection or compatibility rules only when required semantics
 depend on them.

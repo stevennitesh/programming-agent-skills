@@ -6,7 +6,11 @@ import subprocess
 import sys
 
 
-DEFAULT_ARGS = ("tests/test_skill_pack_contracts.py",)
+DEFAULT_ARGS = (
+    "tests/test_validate_skills.py",
+    "-k",
+    "astra or current_ or installed or global_bootstrap or git_diff or pytest_runtime",
+)
 
 
 def main(argv: list[str] | None = None) -> int:

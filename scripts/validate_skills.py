@@ -13,14 +13,10 @@ from pathlib import Path
 
 import yaml
 
-from scripts import fresh_epoch_contract
-from scripts import pack_contract as pack_composition_contract
-from scripts import pack_integration
-from scripts import research_catalog
 from scripts import skill_pack_contract as pack_contract
 
 
-SKILL_ROOTS = ("skills/custom", "skills/extra")
+LEGACY_SKILL_ROOTS = ("skills/custom", "skills/extra")
 CUSTOM_SKILL_ROOT = "skills/custom"
 EXPERIMENTAL_SKILL_ROOT = pack_contract.EXPERIMENTAL_SOURCE
 EXPERIMENTAL_MANIFEST = (
@@ -30,23 +26,30 @@ SETUP_SKILL_ROOT = "skills/custom/repo-bootstrap"
 SETUP_SCHEMA_MANIFEST = f"{SETUP_SKILL_ROOT}/setup-schema.json"
 GLOBAL_AGENTS_TEMPLATE = "GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md"
 INSTALLED_MANIFEST = pack_contract.MANIFEST_NAME
-REQUIRED_AGENT_DOCS = ("AGENTS_PORTABLE_FALLBACK.md", GLOBAL_AGENTS_TEMPLATE)
-REQUIRED_REPO_FILES = (
+CURRENT_REQUIRED_FILES = (
     "README.md",
-    "scripts/install_skills.py",
-    "scripts/skill_pack_contract.py",
-)
-GLOBAL_AGENTS_SKILLS = frozenset(("repo-bootstrap",))
-GLOBAL_AGENTS_FORBIDDEN_TOKENS = ("## Shell Search Safety", "rg -F --")
-REQUIRED_SETUP_DOCS = (
     "AGENTS.md",
+    "CONTEXT.md",
+    "INSTALLATION.md",
+    "CONTRIBUTING.md",
+    ".github/workflows/ci.yml",
+    "AGENTS_PORTABLE_FALLBACK.md",
+    GLOBAL_AGENTS_TEMPLATE,
+    "docs/astra/design-brief.md",
     "docs/agents/issue-tracker.md",
     "docs/agents/triage-labels.md",
     "docs/agents/domain.md",
     "docs/agents/engineering-contract.md",
     "docs/plans/README.md",
+    "scripts/install_skills.py",
+    "scripts/skill_pack_contract.py",
+    "skills/astra/repo-bootstrap/templates/engineering-contract.md",
+)
+LEGACY_REQUIRED_FILES = (
     "skills/custom/repo-bootstrap/engineering-contract.md",
 )
+GLOBAL_AGENTS_SKILLS = frozenset(("repo-bootstrap",))
+GLOBAL_AGENTS_FORBIDDEN_TOKENS = ("## Shell Search Safety", "rg -F --")
 PUBLISHED_MARKDOWN_ROOTS = (
     "skills",
     "docs/books",
@@ -69,27 +72,76 @@ FENCED_CODE_RE = re.compile(
     r"(?ms)(?:^```[^\r\n]*\r?\n.*?^```[ \t]*$|^~~~[^\r\n]*\r?\n.*?^~~~[ \t]*$)"
 )
 FRONTMATTER_RE = re.compile(r"\A---\s*\r?\n(.*?)\r?\n---\s*(?:\r?\n|\Z)", re.DOTALL)
-FRONTMATTER_FIELD_RE = re.compile(r"(?m)^([a-zA-Z0-9_-]+):\s*(.+?)\s*$")
 TRAILING_WHITESPACE_RE = re.compile(r"[ \t]$")
 SKILL_HANDLE_RE = re.compile(r"\$([a-z0-9][a-z0-9-]*)")
 INVOCATION_ROW_RE = re.compile(
     r"(?m)^\| `([a-z0-9][a-z0-9-]*)` \| "
     r"(implicitly invocable|explicit-only) \|$"
 )
-ACTIVE_SURFACE_FILES = (
+ASTRA_README_ROW_RE = re.compile(
+    r"(?m)^\| [^|\n]+ \| \[\$([a-z0-9][a-z0-9-]*)\]\("
+    r"skills/astra/([a-z0-9][a-z0-9-]*)/SKILL\.md\) \| "
+    r"(Request explicitly|Automatic when relevant) \|$"
+)
+ASTRA_EXPLICIT_LABEL = "Request explicitly"
+ASTRA_IMPLICIT_LABEL = "Automatic when relevant"
+ASTRA_INTERFACE_FIELDS = ("display_name", "short_description", "default_prompt")
+ASTRA_SELECTION_EXAMPLES = "docs/astra/selection-examples.md"
+ASTRA_EXAMPLE_ROW_RE = re.compile(
+    r"(?m)^\| \[\$([a-z0-9][a-z0-9-]*)\]\(\.\./\.\./skills/astra/"
+    r"([a-z0-9][a-z0-9-]*)/SKILL\.md\) \| ([^|\n]+) \| ([^|\n]+) \| ([^|\n]+) \|$"
+)
+CURRENT_ACTIVE_SURFACE_FILES = (
     "README.md",
+    "CONTRIBUTING.md",
     "AGENTS.md",
     "AGENTS_PORTABLE_FALLBACK.md",
     "CONTEXT.md",
     GLOBAL_AGENTS_TEMPLATE,
+    "docs/astra/design-brief.md",
+    ASTRA_SELECTION_EXAMPLES,
     "docs/agents/engineering-contract.md",
     "docs/agents/issue-tracker.md",
     "docs/agents/triage-labels.md",
     "docs/agents/domain.md",
+)
+LEGACY_ACTIVE_SURFACE_FILES = (
     "docs/synthesis/skill-context-relationships.md",
     "docs/validation/evals/README.md",
     "docs/validation/evals/core-workflows.md",
 )
+PUBLIC_SCAN_SAFE_MARKERS = (
+    "example.com",
+    "EXAMPLE.COM",
+    "@example.invalid",
+    "correct-horse-battery-staple",
+)
+PUBLIC_CURRENT_SCAN_PATHS = (
+    ".github",
+    ".gitattributes",
+    ".gitignore",
+    "ACKNOWLEDGMENTS.md",
+    "AGENTS.md",
+    "AGENTS_PORTABLE_FALLBACK.md",
+    "CONTEXT.md",
+    "CONTRIBUTING.md",
+    GLOBAL_AGENTS_TEMPLATE,
+    "INSTALLATION.md",
+    "LICENSE",
+    "README.md",
+    "pyproject.toml",
+    "requirements-dev.txt",
+    "docs/agents",
+    "docs/astra",
+    "docs/plans",
+    "skills/astra",
+    "scripts/install_skills.py",
+    "scripts/pytest_focused.py",
+    "scripts/pytest_runtime.py",
+    "scripts/skill_pack_contract.py",
+    "scripts/validate_skills.py",
+)
+
 STALE_ACTIVE_TOKENS = (
     "AGENTS_SKILL_PACK_GUIDE",
     "ask-matt",
@@ -122,7 +174,7 @@ def repo_root() -> Path:
     return Path(result.stdout.strip())
 
 
-def iter_skill_dirs(root: Path, roots: tuple[str, ...] = SKILL_ROOTS) -> list[Path]:
+def iter_skill_dirs(root: Path, roots: tuple[str, ...] = LEGACY_SKILL_ROOTS) -> list[Path]:
     dirs: list[Path] = []
     for relative_root in roots:
         skill_root = root / relative_root
@@ -235,22 +287,18 @@ def validate_experimental_skills(root: Path) -> list[str]:
     return failures
 
 
-def unquote_yaml_scalar(value: str) -> str:
-    value = value.strip()
-    if len(value) >= 2 and value[0] == value[-1] and value[0] in {'"', "'"}:
-        return value[1:-1]
-    return value
-
-
-def skill_frontmatter(skill_file: Path) -> dict[str, str] | None:
+def skill_frontmatter(skill_file: Path) -> dict[str, object] | None:
     text = skill_file.read_text(encoding="utf-8")
     match = FRONTMATTER_RE.match(text)
     if match is None:
         return None
-    return {
-        key: unquote_yaml_scalar(value)
-        for key, value in FRONTMATTER_FIELD_RE.findall(match.group(1))
-    }
+    try:
+        data = yaml.safe_load(match.group(1))
+    except yaml.YAMLError:
+        return None
+    if not isinstance(data, dict) or not all(isinstance(key, str) for key in data):
+        return None
+    return data
 
 
 def markdown_without_fenced_code(path: Path) -> str:
@@ -283,34 +331,67 @@ def validate_skill_policy(skill_dir: Path, *, optional: bool = False) -> list[st
         if optional:
             return []  # Codex permits metadata omission for implicit skills.
         return [f"Skill missing invocation policy: {skill_dir.name}/agents/openai.yaml"]
-    if optional:
-        try:
-            data = yaml.safe_load(policy_file.read_text(encoding="utf-8"))
-        except yaml.YAMLError as error:
-            return [f"Invalid skill metadata: {policy_file}: {error}"]
-        if not isinstance(data, dict):
-            return [f"Skill metadata must be a mapping: {policy_file}"]
-        policy = data.get("policy", {})
-        if not isinstance(policy, dict):
-            return [f"Skill policy must be a mapping: {policy_file}"]
-        if "allow_implicit_invocation" not in policy:
-            return []
-        if type(policy["allow_implicit_invocation"]) is not bool:
-            return [f"Skill invocation policy must be boolean: {policy_file}"]
-    values = re.findall(
-        r"(?m)^\s*allow_implicit_invocation:\s*(true|false)\s*$",
-        policy_file.read_text(encoding="utf-8"),
+
+    try:
+        raw = policy_file.read_text(encoding="utf-8")
+        data = yaml.safe_load(raw)
+    except (OSError, yaml.YAMLError) as error:
+        return [f"Invalid skill metadata: {policy_file}: {error}"]
+    if not isinstance(data, dict):
+        return [f"Skill metadata must be a mapping: {policy_file}"]
+
+    failures: list[str] = []
+    interface = data.get("interface")
+    if interface is not None:
+        if not isinstance(interface, dict):
+            failures.append(f"Skill interface metadata must be a mapping: {policy_file}")
+        else:
+            for field in ASTRA_INTERFACE_FIELDS:
+                if field in interface and (
+                    not isinstance(interface[field], str) or not interface[field].strip()
+                ):
+                    failures.append(
+                        f"Skill interface {field} must be a non-empty string: {policy_file}"
+                    )
+
+    policy = data.get("policy")
+    if policy is None:
+        if not optional:
+            failures.append(f"Skill policy must be a mapping: {policy_file}")
+        return failures
+    if not isinstance(policy, dict):
+        failures.append(f"Skill policy must be a mapping: {policy_file}")
+        return failures
+
+    if "allow_implicit_invocation" not in policy:
+        if not optional:
+            failures.append(
+                "Skill invocation policy must set allow_implicit_invocation: "
+                f"{policy_file.as_posix()}"
+            )
+        return failures
+
+    if type(policy["allow_implicit_invocation"]) is not bool:
+        failures.append(f"Skill invocation policy must be boolean: {policy_file}")
+        return failures
+
+    occurrences = re.findall(
+        r"(?m)^\s*allow_implicit_invocation\s*:",
+        raw,
     )
-    if len(values) != 1:
-        return [
+    if len(occurrences) != 1:
+        failures.append(
             "Skill invocation policy must set allow_implicit_invocation exactly once: "
             f"{policy_file.as_posix()}"
-        ]
-    return []
+        )
+    return failures
 
 
 def validate_skill_folders(
-    root: Path, roots: tuple[str, ...] = SKILL_ROOTS, *, optional_policy: bool = False,
+    root: Path,
+    roots: tuple[str, ...] = LEGACY_SKILL_ROOTS,
+    *,
+    optional_policy: bool = False,
 ) -> tuple[list[str], list[str]]:
     failures: list[str] = []
     skill_names: list[str] = []
@@ -343,13 +424,13 @@ def validate_skill_folders(
         else:
             name = frontmatter.get("name", "")
             description = frontmatter.get("description", "")
-            if name != skill_dir.name:
+            if not isinstance(name, str) or name != skill_dir.name:
                 failures.append(
                     f"Skill name must match its directory: {skill_file.as_posix()} -> {name!r}"
                 )
-            if not re.fullmatch(r"[a-z0-9][a-z0-9-]*", name):
+            if not isinstance(name, str) or not re.fullmatch(r"[a-z0-9][a-z0-9-]*", name):
                 failures.append(f"Skill name is invalid: {skill_file.as_posix()} -> {name!r}")
-            if not description:
+            if not isinstance(description, str) or not description.strip():
                 failures.append(f"Skill description is missing: {skill_file.as_posix()}")
 
         failures.extend(validate_skill_policy(skill_dir, optional=optional_policy))
@@ -394,13 +475,110 @@ def validate_astra(root: Path) -> tuple[list[str], list[str]]:
     return names, failures
 
 
-def validate_active_surfaces(root: Path) -> list[str]:
+def astra_invocation_label(skill_dir: Path) -> str | None:
+    policy_file = skill_dir / "agents/openai.yaml"
+    if not policy_file.is_file():
+        return ASTRA_IMPLICIT_LABEL
+    try:
+        data = yaml.safe_load(policy_file.read_text(encoding="utf-8"))
+    except yaml.YAMLError:
+        return None
+    if not isinstance(data, dict):
+        return None
+    policy = data.get("policy", {})
+    if not isinstance(policy, dict):
+        return None
+    value = policy.get("allow_implicit_invocation", True)
+    if type(value) is not bool:
+        return None
+    return ASTRA_IMPLICIT_LABEL if value else ASTRA_EXPLICIT_LABEL
+
+
+def validate_astra_readme_catalog(root: Path, skill_names: list[str]) -> list[str]:
+    readme = root / "README.md"
+    if not readme.is_file():
+        return []
+
+    rows = ASTRA_README_ROW_RE.findall(readme.read_text(encoding="utf-8"))
     failures: list[str] = []
-    paths = {root / relative for relative in ACTIVE_SURFACE_FILES}
-    custom_root = root / CUSTOM_SKILL_ROOT
-    if custom_root.is_dir():
-        paths.update(custom_root.rglob("*.md"))
-        paths.update(custom_root.rglob("*.yaml"))
+    row_names = [name for name, _, _ in rows]
+    duplicates = {name for name in row_names if row_names.count(name) > 1}
+    for name in sorted(duplicates):
+        failures.append(f"README Astra catalog repeats skill: {name}")
+
+    actual_names = set(row_names)
+    expected_names = set(skill_names)
+    for name in sorted(expected_names - actual_names):
+        failures.append(f"README Astra catalog is missing skill: {name}")
+    for name in sorted(actual_names - expected_names):
+        failures.append(f"README Astra catalog contains unknown skill: {name}")
+
+    for name, path_name, label in rows:
+        if name != path_name:
+            failures.append(
+                f"README Astra catalog link disagrees with skill name: "
+                f"{name} -> skills/astra/{path_name}/SKILL.md"
+            )
+            continue
+        if name not in expected_names:
+            continue
+        expected_label = astra_invocation_label(
+            root / pack_contract.MANIFEST_SOURCE / name
+        )
+        if expected_label is not None and label != expected_label:
+            failures.append(
+                f"README Astra catalog invocation disagrees with metadata: "
+                f"{name} -> {label} (expected {expected_label})"
+            )
+    return failures
+
+
+def validate_astra_selection_examples(root: Path, skill_names: list[str]) -> list[str]:
+    path = root / ASTRA_SELECTION_EXAMPLES
+    if not path.is_file():
+        return [f"Missing Astra selection examples: {ASTRA_SELECTION_EXAMPLES}"]
+
+    rows = ASTRA_EXAMPLE_ROW_RE.findall(path.read_text(encoding="utf-8"))
+    failures: list[str] = []
+    row_names = [name for name, _, _, _, _ in rows]
+    duplicates = {name for name in row_names if row_names.count(name) > 1}
+    for name in sorted(duplicates):
+        failures.append(f"Astra selection examples repeat skill: {name}")
+
+    actual_names = set(row_names)
+    expected_names = set(skill_names)
+    for name in sorted(expected_names - actual_names):
+        failures.append(f"Astra selection examples are missing skill: {name}")
+    for name in sorted(actual_names - expected_names):
+        failures.append(f"Astra selection examples contain unknown skill: {name}")
+
+    for name, path_name, request, expected, near_miss in rows:
+        if name != path_name:
+            failures.append(
+                f"Astra selection example link disagrees with skill name: "
+                f"{name} -> skills/astra/{path_name}/SKILL.md"
+            )
+        for field_name, value in (
+            ("canonical request", request),
+            ("expected behavior", expected),
+            ("nearest non-match", near_miss),
+        ):
+            if not value.strip():
+                failures.append(
+                    f"Astra selection example {field_name} is empty: {name}"
+                )
+    return failures
+
+
+def validate_active_surfaces(root: Path, *, include_legacy: bool = False) -> list[str]:
+    failures: list[str] = []
+    paths = {root / relative for relative in CURRENT_ACTIVE_SURFACE_FILES}
+    if include_legacy:
+        paths.update(root / relative for relative in LEGACY_ACTIVE_SURFACE_FILES)
+        custom_root = root / CUSTOM_SKILL_ROOT
+        if custom_root.is_dir():
+            paths.update(custom_root.rglob("*.md"))
+            paths.update(custom_root.rglob("*.yaml"))
     for path in sorted(paths):
         if not path.is_file():
             continue
@@ -415,7 +593,10 @@ def validate_active_surfaces(root: Path) -> list[str]:
 def validate_skill_handle_references(root: Path, skill_names: list[str]) -> list[str]:
     failures: list[str] = []
     names = set(skill_names)
-    paths = {root / relative for relative in ACTIVE_SURFACE_FILES}
+    paths = {
+        root / relative
+        for relative in (*CURRENT_ACTIVE_SURFACE_FILES, *LEGACY_ACTIVE_SURFACE_FILES)
+    }
     astra_names = {p.parent.name for p in (root / "skills/astra").glob("*/SKILL.md")}
     custom_root = root / CUSTOM_SKILL_ROOT
     if custom_root.is_dir():
@@ -482,33 +663,53 @@ def validate_relationship_invocation_map(root: Path) -> list[str]:
 
 
 def validate_fresh_epoch_contract(root: Path) -> list[str]:
+    from scripts import fresh_epoch_contract
+
     return fresh_epoch_contract.validate_repository(root)
 
 
 def validate_research_catalog_contract(root: Path) -> list[str]:
+    from scripts import research_catalog
+
     return research_catalog.validate_repository(root)
 
 
 def validate_pack_composition_contract(root: Path) -> list[str]:
+    from scripts import pack_contract as pack_composition_contract
+
     return pack_composition_contract.validate_repository(root)
 
 
 def validate_pack_integration_contract(root: Path) -> list[str]:
+    from scripts import pack_integration
+
     return pack_integration.validate_repository(root)
 
 
-def validate_required_docs(root: Path) -> list[str]:
-    failures: list[str] = []
-    for file in REQUIRED_REPO_FILES:
-        if not (root / file).is_file():
-            failures.append(f"Missing required repository file: {file}")
-    for doc in REQUIRED_AGENT_DOCS:
-        if not (root / doc).is_file():
-            failures.append(f"Missing required agent instruction document: {doc}")
-    for doc in REQUIRED_SETUP_DOCS:
-        if not (root / doc).is_file():
-            failures.append(f"Missing required setup surface document: {doc}")
-    return failures
+def validate_required_docs(root: Path, *, include_legacy: bool = False) -> list[str]:
+    required = list(CURRENT_REQUIRED_FILES)
+    if include_legacy:
+        required.extend(LEGACY_REQUIRED_FILES)
+    return [
+        f"Missing required repository file: {relative}"
+        for relative in required
+        if not (root / relative).is_file()
+    ]
+
+
+def validate_legacy_integrity(root: Path) -> tuple[list[str], list[str]]:
+    skill_names, failures = validate_skill_folders(root)
+    custom_skill_names = [path.name for path in custom_skill_dirs(root)]
+    failures.extend(validate_experimental_skills(root))
+    failures.extend(validate_skill_handle_references(root, custom_skill_names))
+    failures.extend(validate_relationship_invocation_map(root))
+    failures.extend(validate_fresh_epoch_contract(root))
+    failures.extend(validate_pack_composition_contract(root))
+    failures.extend(validate_pack_integration_contract(root))
+    failures.extend(validate_research_catalog_contract(root))
+    failures.extend(validate_setup_schema_manifest(root))
+    failures.extend(validate_setup_surface(root))
+    return skill_names, failures
 
 
 def setup_contract_hash(root: Path, contract_files: list[str]) -> str:
@@ -827,7 +1028,13 @@ def validate_installed_skills(
 
 def published_markdown_files(root: Path) -> list[Path]:
     files: list[Path] = []
-    for name in ("README.md", "AGENTS.md", "AGENTS_PORTABLE_FALLBACK.md", GLOBAL_AGENTS_TEMPLATE):
+    for name in (
+        "README.md",
+        "CONTRIBUTING.md",
+        "AGENTS.md",
+        "AGENTS_PORTABLE_FALLBACK.md",
+        GLOBAL_AGENTS_TEMPLATE,
+    ):
         path = root / name
         if path.is_file():
             files.append(path)
@@ -866,14 +1073,25 @@ def validate_public_mode(root: Path) -> list[str]:
         failures.append("Tracked files match ignore rules:")
         failures.extend(indent_lines(ignored.stdout))
 
-    grep = run_git(["grep", "-n", "-I", "-E", LOCAL_IDENTIFIER_RE.pattern, "--", "."], cwd=root)
+    grep = run_git(
+        [
+            "grep",
+            "-n",
+            "-I",
+            "-E",
+            LOCAL_IDENTIFIER_RE.pattern,
+            "--",
+            *PUBLIC_CURRENT_SCAN_PATHS,
+        ],
+        cwd=root,
+    )
     if grep.returncode == 0:
         for hit in grep.stdout.splitlines():
             if hit.startswith("scripts/validate_skills.py:"):
                 continue
-            if "example.com" in hit or "EXAMPLE.COM" in hit or "correct-horse-battery-staple" in hit:
+            if any(marker in hit for marker in PUBLIC_SCAN_SAFE_MARKERS):
                 continue
-            failures.append(f"Potential local identifier or secret pattern: {hit}")
+            failures.append(f"Potential local identifier or secret pattern in current public surface: {hit}")
     elif grep.returncode != 1:
         failures.append(f"git grep local identifier scan failed: {grep.stderr.strip()}")
 
@@ -907,6 +1125,14 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--public", "--release", action="store_true", dest="public_mode")
     parser.add_argument(
+        "--legacy",
+        action="store_true",
+        help=(
+            "Also validate retained custom/experimental packs and legacy epoch, "
+            "synthesis, setup, and research contracts."
+        ),
+    )
+    parser.add_argument(
         "--installed-root",
         default=os.environ.get("AGENT_SKILLS_DIR", ""),
         help="Shared installed skills directory to compare against skills/astra.",
@@ -927,23 +1153,18 @@ def main(argv: list[str] | None = None) -> int:
     os.chdir(root)
 
     failures: list[str] = []
-    skill_names, skill_failures = validate_skill_folders(root)
-    custom_skill_names = [path.name for path in custom_skill_dirs(root)]
-    failures.extend(skill_failures)
     astra_names, astra_failures = validate_astra(root)
     failures.extend(astra_failures)
-    failures.extend(validate_experimental_skills(root))
-    failures.extend(validate_required_docs(root))
-    failures.extend(validate_setup_schema_manifest(root))
-    failures.extend(validate_active_surfaces(root))
-    failures.extend(validate_skill_handle_references(root, custom_skill_names))
-    failures.extend(validate_relationship_invocation_map(root))
-    failures.extend(validate_fresh_epoch_contract(root))
-    failures.extend(validate_pack_composition_contract(root))
-    failures.extend(validate_pack_integration_contract(root))
-    failures.extend(validate_research_catalog_contract(root))
-    failures.extend(validate_setup_surface(root))
+    failures.extend(validate_astra_readme_catalog(root, astra_names))
+    failures.extend(validate_astra_selection_examples(root, astra_names))
+    failures.extend(validate_required_docs(root, include_legacy=args.legacy))
+    failures.extend(validate_active_surfaces(root, include_legacy=args.legacy))
     failures.extend(validate_global_agents_template(root, astra_names))
+
+    legacy_skill_names: list[str] = []
+    if args.legacy:
+        legacy_skill_names, legacy_failures = validate_legacy_integrity(root)
+        failures.extend(legacy_failures)
     failures.extend(
         validate_installed_skills(
             root,
@@ -961,7 +1182,13 @@ def main(argv: list[str] | None = None) -> int:
         tracked = run_git(["ls-files"], cwd=root)
         if tracked.returncode == 0:
             print(f"Tracked files: {len([line for line in tracked.stdout.splitlines() if line])}")
-        print(f"Astra skill folders: {len(astra_names)}; historical/extra: {len(skill_names)}")
+        legacy_summary = (
+            str(len(legacy_skill_names)) if args.legacy else "not checked (use --legacy)"
+        )
+        print(
+            f"Astra skill folders: {len(astra_names)}; "
+            f"historical/extra: {legacy_summary}"
+        )
 
     if failures:
         for failure in failures:

@@ -1,132 +1,103 @@
 ---
 name: repo-bootstrap
-description: Inspect, create, or reconcile a repository's agent guidance when the user requests setup or a specific guidance repair. Covers repository instructions and engineering conventions; exclude ordinary coding, environment installation, and automatic setup merely because a preferred document is missing.
+description: Inspect, create, migrate, or repair a repository's agent-guidance surface when the user explicitly requests repository guidance work. Establish repository instructions, commands, non-obvious constraints, context routes, and engineering conventions; exclude wording-only work on an already-scoped instruction artifact, ordinary coding, environment installation, and setup triggered only by a missing preferred file.
 ---
 
 # Repo bootstrap
 
-Give future agents the repository facts and engineering guidance they need to
-work well. Reconcile existing guidance in place. For an inspection request,
-report findings without editing. A full bootstrap check includes existing
-engineering guidance, not just missing files or broken links. A focused repair
-stays within its requested scope.
+Give future agents the repository-specific facts, constraints, and pointers they
+need to work correctly. Create or reconcile only the guidance the requested
+repository actually needs. For an inspection request, return findings without
+editing.
 
-## 1. Read the repository
+Repo bootstrap owns which repository-level guidance surfaces, routes, and facts
+should exist and remain current. When that surface is already established and the
+task is only to write or audit one scoped instruction artifact, use
+[writing-for-agents](../writing-for-agents/SKILL.md) instead.
 
-Resolve the target root and inspect its working state. Read applicable agent
-instructions, the current engineering guidance, and the scripts or configuration
-that own build and verification commands. Follow existing pointers to domain
-decisions only far enough to identify their owners and relevant constraints.
+## 1. Establish the current instruction surface
 
-Establish the operating assumptions that affect engineering choices from those
-sources: intended users, execution and deployment model, persistence, and material
-scale. Preserve their existing owner or capture a compact statement where local
-scope belongs. Ask only when an unresolved assumption changes a consequential
-choice; do not introduce a questionnaire or separate required document.
+Resolve the target root and inspect its working state. Read the agent instruction
+files that govern the requested scope and the current owners of any guidance they
+reference. Verify build, test, lint, and other important commands against the
+scripts or configuration that define them.
 
-Distinguish verified commands, commands found in source but not executed, and
-missing prerequisites. An absent preferred document is not evidence that coding
-must stop. Identify the actual missing information before proposing setup.
+Identify operating facts only when they can change future engineering decisions,
+such as a non-obvious deployment model, persistence boundary, supported runtime,
+or material scale constraint. Preserve an existing owner rather than copying the
+fact into another document.
+
+Distinguish verified commands and facts from unexecuted source discoveries and
+missing prerequisites. A missing preferred document is not itself a setup gap or
+a reason to block ordinary coding. Identify the information future work actually
+needs.
 
 ## 2. Choose the smallest useful guidance
 
-Keep repository instructions short: working commands, non-obvious local
-constraints, and pointers with clear reading conditions. Use the instruction
-file the target agent actually reads; preserve other tools' compatible guidance.
-When creating or reconciling instruction files, read
-[Agent instruction files](references/agent-instructions.md) for local and global
-ownership, nested scopes, and pointer checks.
+Keep repository instructions focused on working commands, non-obvious local
+constraints, and conditional pointers to maintained guidance. Use the instruction
+files the target agent actually reads and preserve narrower rules at their proper
+scope. Read [Agent instruction files](references/agent-instructions.md) when
+creating or changing those surfaces.
 
-For a full setup or compatibility check, read
-[the current engineering contract](templates/engineering-contract.md) and compare
-it with the repository's actual contract, including guidance embedded in agent
-files. Do not infer currency from the file's existence, a version marker, or
-passing validation. For an approved update, reconcile missing practices and
-outdated pack wording using [Existing repositories](references/setup-defaults.md#existing-repositories).
-Keep brief engineering guidance in the repository's instruction file. Use a
-separate guide when substantial content or distinct reading conditions justify it,
-prefer an existing owner, and add a conditional pointer when split. The guidance
-is repository-owned, not a template to copy in full or overwrite mechanically.
-Adapt conditional practices to the supported operating model. Broader template
-coverage is not inherently a better local contract; preserve necessary correctness
-and safety while excluding obligations for unsupported capabilities.
+For initial setup, read [Setup defaults](references/setup-defaults.md). Seeds are
+starting material, not managed mirrors; adapt only the guidance that applies to
+the repository.
 
-For initial repository setup or work on tracker, label, or domain configuration,
-read [Setup defaults](references/setup-defaults.md). Start compact and configure
-only applicable concerns; preserve established choices. A focused repair changes
-only its requested scope. Configuring a tracker does not require direct coding tasks to
-become tickets.
+For an explicit compatibility update, pack migration, or repair of known stale
+skill-pack routes, read
+[Reconcile existing guidance](references/reconcile-existing.md). Do not compare
+every local document with every current template merely because their wording or
+coverage differs.
 
-When parallel execution setup is requested or execution reports a concrete
-environment gap, read [Parallel support](references/parallel-support.md).
-Reconcile the prerequisites without creating lanes or starting workers.
+For requested tracker configuration or an established tracker whose agent guidance
+needs setup, read [Tracker setup](references/tracker-setup.md). Ordinary repository
+setup does not create a ticketing requirement.
 
-Link existing domain rules and operating procedures at their current Astra owners.
-Projects using this pack target the latest Astra contracts. Migrate retired routes
-and obsolete setup fields rather than retaining compatibility branches. Preserve
-repository-specific meaning and historical evidence, not obsolete execution paths.
+When parallel execution setup is requested or an execution workflow reports a
+concrete repository prerequisite gap, read
+[Parallel support](references/parallel-support.md). Bootstrap configures
+prerequisites; it does not create lanes or start workers.
 
-If global guidance is explicitly in scope, keep only cross-repository preferences
-and a direction to follow each repository's instructions there. Preserve personal
-environment rules. Keep project commands and the engineering contract local.
-Otherwise report any relevant global conflict without editing the global file.
+If global guidance is explicitly in scope, keep only durable cross-repository
+preferences, environment-specific constraints, and a direction to follow each
+repository's instructions. Keep project commands, repository facts, and project
+engineering guidance local. Otherwise do not edit global instructions.
 
-## 3. Offer a compatibility update
+## 3. Apply the requested changes
 
-For an existing setup, compare its agent docs with this version of bootstrap,
-including the engineering contract and each applicable current seed or instruction
-structure. Compare meaning and behavior, not literal wording.
-When a material difference warrants reconciliation, follow
-[Existing repositories](references/setup-defaults.md#existing-repositories)
-to prepare one proposal covering all affected docs and compatibility checks.
-Show concrete edits, local policy differences, and validation changes. Where local
-policy differs, offer reconciliation that preserves useful local choices or adoption
-of the identified template defaults, explaining the consequences. Keep verified
-repository facts and operating constraints in either option. Keeping the existing
-setup remains an option for an optional update.
-Explain that the choice is needed because this updates established setup policy.
+For an authorized setup, migration, or repair, edit the current owners directly.
+Preserve verified repository facts, deliberate local policy, and unrelated work.
+Ask only when a consequential repository policy or operating commitment remains
+unresolved; continue independent authorized changes while that choice is pending.
 
-Wait for the user's choice before applying that optional update. A decline keeps
-the existing conventions and does not block independently authorized work. If
-the user already requested the compatibility update, proceed within that scope
-without asking again; ask only about consequential local choices that authorization
-has not settled. Bundle those choices in the proposal and continue independent
-reconciliation. With no material difference, report that the setup is
-current; do not ask merely because wording or a template version differs.
+Prefer updating existing instructions and pointers over appending parallel
+guidance. Keep mechanical enforcement in its owning configuration or tooling.
+A guidance task does not by itself authorize dependency installation, new
+tooling, tracker mutations, global-file edits, commits, or publication.
 
-## 4. Apply the requested changes
+When substantial shared engineering guidance is useful, adapt
+[the engineering contract seed](templates/engineering-contract.md) to the
+repository rather than copying it wholesale. The resulting guidance is
+repository-owned and does not need to track future template wording.
 
-For an authorized setup or repair, make the supported local edits directly.
-Ask only when an unresolved choice would change a consequential repository
-policy or operating commitment. Continue independent edits while that choice
-is unresolved. Preserve existing authorization rather than adding another
-approval step for an already requested change.
+## 4. Verify the receiving path
 
-Check affected content again before writing and preserve unrelated edits.
-Update existing sections and pointers instead of appending duplicates. Keep
-mechanical enforcement in its owning configuration or tooling; a documentation
-request alone does not authorize new tooling, dependency installation, external
-tracker changes, or global file edits.
+Read the result as a future agent entering the repository. Check that applicable
+instructions are discoverable at the right scope, commands match their current
+owners, conditional pointers lead to existing guidance, and the repository's
+meaning and deliberate policy remain intact.
 
-## 5. Verify the guidance
+Inspect the changed guidance for duplicate or conflicting obligations, stale
+pointers introduced by the edit, and requirements that do not apply to supported
+workflows. Execute a documented command only when necessary to substantiate a
+claim about that command; otherwise distinguish source verification from runtime
+verification.
 
-Read the resulting files as a future agent. Check that pointers resolve, commands
-match their source, and local requirements retained under the selected option
-remain intact. Run relevant existing
-documentation checks. Execute a documented command when practical and necessary
-to substantiate a setup claim; report unexecuted commands as such. Inspect the
-diff for duplicate rules and unintended changes to policy or unrelated work.
-Verify current Astra owner pointers and identify any installed/source mismatch;
-do not claim migration complete while the affected route still selects a retired
-skill. Updating installed copies or other repositories remains separately scoped.
-For an accepted compatibility update, verify the whole approved set together;
-do not leave dependent docs or validation rules for separate follow-up turns.
-Check that obsolete pack instructions have been removed or reconciled in active
-guidance, not merely supplemented with newer paragraphs. In the final report,
-state whether the engineering contract was updated or already current and name
-any retained local exceptions or unresolved migration gaps. A passing legacy
-validator alone does not establish that the guidance is current.
+For a pack migration or compatibility repair, use the reconciliation reference's
+additional checks for displaced routes and affected consumers. Updating installed
+copies, external repositories, or user-global state remains separately scoped.
 
-Finish when the requested guidance is coherent, discoverable, and supported by
-the repository, or report the specific unresolved gap. State what changed and
-what was verified. If setup is part of a larger authorized task, resume that task.
+Finish when the requested repository guidance is coherent, discoverable, grounded
+in its real sources, and sufficient for the future decisions in scope. Report the
+changes and any material unresolved gap.

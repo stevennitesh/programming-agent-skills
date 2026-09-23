@@ -1,99 +1,110 @@
 ---
 name: cost-aware-coding
-description: Run an Astra-led, Sol-implemented coding route. Use only when explicitly requested.
+description: Reduce GPT-6 lead-token churn by routing consequential reasoning and final review to Astra, substantial implementation to Sol, and tightly bounded tasks to Luna Max. Use only when explicitly requested; it does not itself coordinate parallel fanout.
 ---
 
 # Cost-aware coding
 
-Use GPT-6 Astra Medium to lead and review, with one reusable GPT-5.6 Sol Medium
-native subagent per coherent implementation plan. The engineering contract owns
-coding quality; this skill owns routing and exclusive repository custody.
+Minimize expensive Astra token and context use without weakening the accepted
+result. Keep Astra focused on consequential reasoning, exception handling, and
+final review; move implementation-heavy exploration, coding, debugging, and
+verification to Sol; use Luna Max for compact bounded tasks when briefing and
+verification stay cheap.
 
-## 1. Select the route
+The routing objective is lead-token efficiency, not delegation for its own sake.
+Delegate only when expected Astra-context savings exceed assignment,
+coordination, verification, and recovery overhead. If Astra must continuously
+follow, reconstruct, or supervise implementation to keep it on track, the route is
+not cost-efficient.
 
-Delegate when remaining implementation and verification can repay the handoff.
-Keep work direct when briefing, handoffs, and review would cost more than useful
-delegated implementation and verification, including small coherent changes and
-serial investigations where accumulated context is the work. An explicit invocation
-uses this routing judgment; an explicit requirement for the pair overrides the
-direct-work exception. When delegating, use the standard pair without another
-coordination approval; ordinary action permissions still apply.
+Read [GPT-6 model policy](references/model-policy.md) before selecting a worker.
 
-Reuse accepted plans. Use [shape-work](../shape-work/SKILL.md) when substantial
-behavior or approach remains unresolved. You own shaping, consequential decisions,
-review, and acceptance; Sol owns implementation investigation and routine coding.
-For requested delivery with checkpoints, read
-[Planned delivery](references/planned-delivery.md).
+## 1. Choose the cheapest sufficient route
 
-For a different route or escalation, read [Model policy](references/model-policy.md).
-The user applies any change to your own model/effort. Separate app tasks require
-an explicit request for that lifecycle; agree their transport and recovery before
-dispatch. For requested concurrent implementation,
-[parallel-implement](../parallel-implement/SKILL.md) owns isolation and integration;
-retain this skill's repair limits. Read [Telemetry](references/telemetry.md) before
-dispatch only for requested measurement or a hard budget.
+Keep work with Astra when consequential reasoning, ambiguous requirements,
+lead-owned context, or a very small task makes delegation overhead dominate.
 
-## 2. Assign Sol and wait
+Use Sol for substantial repository implementation whose investigation, coding,
+debugging, and checks would otherwise consume significant Astra context.
 
-Read only enough to settle scope and prepare the brief. Use
-[Sol assignment](references/sol-assignment.md), including
-its worker-only method section when the user requests a Ponytail implementer.
-Give Sol exclusive checkout custody and leave implementation exploration to it.
-Reuse that agent for the plan, questions, and corrections; use a fresh agent for
-an independent plan.
+Use Luna Max for a tightly bounded task with a compact self-contained assignment,
+clear acceptance, and cheap verification. Do not fragment one coherent Sol task
+into Luna microtasks when repeated briefing, synthesis, or verification would cost
+more Astra tokens than it saves.
 
-Use native `spawn_agent` with `model="gpt-5.6-sol"` and
-`reasoning_effort="medium"`. Prefer `fork_turns="none"` with a compact assignment;
-use a bounded recent-turn fork only when it replaces useful context transfer.
-Check tool support. Verify effective settings from exposed runtime metadata when
-available; otherwise report them as requested. Do not infer them from the starting
-model or search conversation logs solely to confirm identity.
+This skill has one delegated writer at a time. A Luna Max task may replace Sol for
+a bounded assignment or perform read-only bounded support, but it does not create
+a second writer for the delegated checkout.
 
-While Sol has custody, stay idle and silent until a substantive event below.
-Do not access the repository, run commands, or implement. Use native `wait_agent`
-with `timeout_ms=180000` for 180-second event-driven waits, shortened only when
-required by the runtime. Do not request routine progress, interrupt to check
-progress, speculate about implementation, repeat acceptance criteria, or narrate
-unchanged waiting. After a timeout, use only a minimal status check if the wait
-result does not already establish status, then wait again while Sol is running.
-A timeout consumes no attempt; ending your turn does not schedule continuation.
+Reuse accepted requirements and plans. Use [shape-work](../shape-work/SKILL.md)
+when consequential behavior or accepted meaning remains unresolved.
 
-Respond to consequential questions, candidate/blocker returns, user intervention,
-and actual errors or interruption. Use `followup_task` for blocking answers,
-release requests, and assignments; reserve `send_message` for necessary nonblocking
-coordination. Answer from supplied context. If resolving a consequential question
-or actual error requires repository inspection, request release and wait for
-confirmation that writers/subprocesses stopped before access;
-explicitly grant custody back afterward. Idle or interrupted status is not release.
+This skill does not coordinate parallel fanout. When the user explicitly combines
+it with [parallel-implement](../parallel-implement/SKILL.md), retain this skill's
+GPT-6 model and effort routing, budget policy, and final review requirement while
+parallel-implement owns decomposition, lane custody, concurrency, integration,
+and parallel recovery.
 
-Only if higher-priority instructions require commentary, give the shortest factual
-update; this does not justify additional monitoring or analysis. Otherwise remain
-silent while waiting. For noisy waiting, mention the optional
-[quiet-waiting setup](https://github.com/stevennitesh/programming-agent-skills/blob/main/INSTALLATION.md#optional-codex-quiet-waiting)
-once; it is not a prerequisite or permission to edit personal configuration.
-Follow runtime child cleanup rules, retaining IDs for follow-ups; cleanup does
-not grant custody. Read [Continuation](references/continuation.md) for interrupted,
-stale, errored, or unavailable-agent states.
+For coordinated serial delivery with meaningful checkpoints, read
+[Planned delivery](references/planned-delivery.md). When usage measurement or a
+hard budget materially affects routing, read [Telemetry](references/telemetry.md).
 
-## 3. Review and repair
+## 2. Assign work without importing it into Astra
 
-For a prerequisite-only return, resolve the gap and grant custody to resume the
-same assignment without charging an attempt. For a candidate, require a matching
-return with stopped writers and explicit release; no redundant status check is
-needed. Classify blocked or failed required checks under
-[Repair allowances](references/repairs.md).
+Read only enough to settle the assignment and lead-owned decisions. Use
+[Worker assignment](references/worker-assignment.md) to give the worker the
+outcome, accepted context, scope, authority, checkout, acceptance, and return
+contract it cannot infer. Do not assume inherited conversation or skill context.
 
-For a reviewable candidate, use [change-review](../change-review/SKILL.md), reusing
-valid evidence. Review available proof when a required manual/platform check is
-pending, but do not declare completion until it passes or its owner revises it.
-Add independent reviewers only when requested assurance requires them.
+Give one actor write custody of the delegated checkout at a time. While a worker
+holds custody, Astra stays dormant with respect to implementation: do not follow
+the work in parallel, reread intermediate changes merely to stay informed,
+reproduce worker reasoning, request routine summaries, or poll for progress.
 
-Send required corrections to the same Sol with the findings, candidate, stage,
-and custody grant. Follow [Repair allowances](references/repairs.md) before repair
-or escalation; do not take over implementation. Resume waiting.
+Use the host's event-driven wait/resume mechanism. Re-engage only when a
+lead-owned decision is required, a stable candidate is ready, execution fails, the
+user intervenes, or another consequential event occurs. Read-only work on
+independent immutable context is fine when it cannot race with the worker or
+recreate its implementation investigation.
+
+If Astra must inspect or take over the delegated checkout, first obtain explicit
+custody release and establish that worker-owned writers or subprocesses stopped.
+Idle, interrupted, or timed-out status alone does not establish release.
+
+## 3. Review and recover
+
+A reviewable return identifies the candidate, material changes, decisive checks
+and limits, and releases write custody. It returns decision-relevant evidence, not
+an implementation transcript.
+
+Review the candidate with [change-review](../change-review/SKILL.md), reusing valid
+candidate-bound evidence. Pending required proof remains incomplete until it
+passes or its owner revises the requirement.
+
+Return locally correctable implementation findings to the same worker when its
+accumulated context is still useful. Reusing worker context is usually cheaper
+than reconstructing implementation state in Astra or a replacement.
+
+Read [Recovery](references/recovery.md) for blocking questions, prerequisite
+failures, interruption, custody uncertainty, worker replacement, or route failure.
+
+Do not escalate model or effort because requirements are incomplete, acceptance is
+contradictory, permissions are missing, or the environment is broken. Resolve
+those causes at their owner.
+
+For a demonstrated implementation-reasoning failure, increase Sol effort before
+moving coherent implementation back into Astra. Move implementation ownership to
+Astra only when the task has become a lead-owned consequential reasoning problem
+or the accepted worker route cannot safely complete it.
 
 ## 4. Finish
 
-Complete when the accepted outcome, required checks, and review gate pass. Report
-the candidate, decisive evidence, and material limits. A reviewable implementation
-or pending required proof is not completion. Include telemetry only when requested.
+Complete when the accepted outcome is present in the reviewed candidate, required
+checks pass, and material evidence limits are resolved or explicitly owned.
+
+Report the candidate, decisive evidence, and material remaining limits. Do not
+replay the worker's implementation history into the final response.
+
+Include usage or cost telemetry only when requested or needed for a governing
+budget. Review success does not authorize merge, publication, deployment, or
+other external effects.

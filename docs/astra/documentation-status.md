@@ -1,9 +1,267 @@
 # Documentation reconciliation status
 
-Inspected 2026-09-07. This is a bounded review of the reader-facing entry points,
-agent routes, plans, ADRs, and referenced research/synthesis; it is not an audit
-of every historical packet or external project. The [design brief](design-brief.md)
-owns current direction. Do not treat this inventory as an execution backlog.
+Initial inspection 2026-09-07; public entry-point follow-up 2026-09-23. This is a
+bounded review of the reader-facing entry points, agent routes, plans, ADRs, and
+referenced research/synthesis; it is not an audit of every historical packet or
+external project. The [design brief](design-brief.md) owns current direction. Do
+not treat this inventory as an execution backlog.
+
+## Triage and verification-harness boundary review, 2026-09-23
+
+Reviewed the two explicit-only workflows against tracker configuration,
+ready-handoff semantics, diagnosis/review/ticket boundaries, real-product proof,
+retry/recovery behavior, and their nearest Astra neighbors.
+
+Triage now makes its state invariant explicit: a mutated item must end with one
+configured category role and one configured state role; ready states require one
+bounded actionable outcome and no configured blocker that makes the item
+non-actionable. If the configured state model cannot truthfully represent a
+blocked item, that is a Repo Bootstrap setup gap rather than permission to misuse
+`needs-info`, `wontfix`, or a ready state. Exact-state requests still cannot
+manufacture evidence or waive those invariants.
+
+Tracker mutation is now defined as one precomputed effect set, refreshed
+immediately before the first write. Required notes/briefs precede role changes,
+category is reconciled before state, conflicting state roles are removed before
+the target state, and closure remains last. Partial or uncertain retries must
+read back actual state and avoid replaying already-successful comments or role
+changes; rollback is never claimed without read-back evidence.
+
+Verification Harness now requires failure-sensitive proof of its own doctor or
+evidence assertion, binds evidence to the observed candidate identity, and
+classifies failed runs as harness defect, product defect, or environment blocker
+before changing expectations. Product defects are preserved as product evidence
+rather than taught around; causal diagnosis belongs to Diagnosing Bugs. Failed
+cleanup leaves the harness unverified until residual owned resources and recovery
+are understood.
+
+The canonical selection examples and design brief were reconciled with those
+boundaries. A focused current-contract test protects the critical safety markers
+without introducing a second runtime router.
+
+## CI fixture reconciliation, 2026-09-23
+
+After collection succeeded, the full Linux suite reached 392 tests and exposed
+three stale fixtures created by recent contract changes: a synthetic recovery
+state omitted the now-required planned manifest identity, a global-write
+corruption test did not create a changed bootstrap and therefore never entered
+the writer it was monkeypatching, and a legacy handle-routing fixture created an
+Astra directory without its required `SKILL.md`. The fixtures now model valid
+contract states while preserving the failure paths they are intended to test.
+
+## Python 3.11 legacy-helper compatibility, 2026-09-23
+
+Cross-platform CI next exposed a syntax error in the retained custom
+`audit-codebase` report helper: a nested same-quote f-string relied on parsing
+accepted by newer Python but not the repository's advertised Python 3.11 floor.
+The rendering expression was split into a precomputed trace fragment without
+changing report semantics. The legacy test remains in the full suite rather than
+being excluded to make CI green.
+
+## Public-release cleanup, 2026-09-23
+
+Audited root metadata, tracked workspace state, local/scratch artifacts,
+contribution guidance, dependency declarations, and release verification.
+
+Removed the tracked machine-specific `.codex/config.toml` and unreferenced
+`.diagram-design` profile and added ignore rules so those local tool settings
+do not re-enter the repository. The former Fresh Composition Epoch migration
+control was preserved but moved from root `.scratch/` into
+`.archive/fresh-composition-epoch/`; its original generated closeout is kept as
+historical evidence while a small archive README makes its legacy scope explicit.
+The legacy migration tool/tests now use the archived path.
+
+Added `CONTRIBUTING.md` with the current Astra source/legacy boundary and the
+small validation path expected of contributors. Added GitHub Actions CI on Linux
+and Windows using Python 3.11; it runs the repository public-readiness validator
+and the full pytest suite serially for deterministic filesystem/transaction
+coverage.
+
+The public validator now requires the contribution guide and CI workflow, scans
+the contributor guide as a current surface, and treats reserved synthetic
+`@example.invalid` fixture addresses as examples rather than secret leakage.
+Its local-identifier/secret heuristic is scoped to current public/runtime
+surfaces rather than preserved historical research, synthesis, validation, and
+test fixtures; the first CI run exposed that distinction by correctly surfacing
+old machine-path provenance as a false release blocker. The next CI pass then
+exposed a real Python 3.11 compatibility bug in pytest cleanup
+(`shutil.rmtree(onexc=...)`); the helper now uses the Python-3.11-compatible
+`onerror` callback while retaining read-only-file cleanup. The CI workflow uses
+the current Node-24/ESM GitHub Actions majors. The development dependency set
+remains warranted by current plus explicitly retained legacy tests; no dependency
+removal was justified in this pass.
+
+## Installer architecture audit, 2026-09-23
+
+Reviewed `scripts/install_skills.py` and its installer tests for source
+selection, ownership, idempotence, migration, target topology, transaction
+preparation, atomic displacement, rollback, crash recovery, and global-bootstrap
+updates.
+
+The transaction/recovery machinery is large but materially justified: it protects
+modified managed copies, unrelated skills, multi-target locking, partial swaps,
+retirements, manifest/global updates, interrupted state writes, rollback
+quarantines, and recovery identity. No broad rewrite was made.
+
+The changes instead harden boundaries the transaction previously trusted too
+long. The installer now rejects missing/empty Astra source packs and source skill
+directories without `SKILL.md`, rejects link/reparse redirects in the managed
+source, global template, and installed manifest before reading them, and refuses
+to interpret an incomplete checkout as a request to retire every managed skill.
+
+Live managed-skill, manifest, and global-AGENTS identities are rechecked after
+snapshots and again immediately before their corresponding mutations. Skill
+replacement and retirement also verify the displaced tree against the last
+accepted cache-insensitive identity, preventing a concurrent non-cache edit from
+being silently quarantined and discarded.
+
+Global bootstrap content is now rendered once during planning and those exact
+planned bytes are committed. The commit phase no longer re-renders a potentially
+changed source template. A source change during installation therefore becomes a
+later update rather than mixing source epochs inside one transaction.
+
+Recovery now honors the existing `--json` flag with a small stable recovery
+payload. Installation documentation was reconciled with these guarantees.
+
+## Validator and repository-code audit, 2026-09-23
+
+Reviewed the default validator, focused pytest wrapper, current package contracts,
+installed-pack parity checks, and adjacent repository tests for correctness,
+robustness, stale ownership, and avoidable duplication.
+
+The main defect was ownership drift: `python -m scripts.validate_skills` still
+unconditionally imported and executed retained custom/experimental, Fresh
+Composition Epoch, legacy synthesis/integration, legacy repo-bootstrap schema, and
+research-catalog validators even though `skills/astra/` is the only managed pack.
+Those checks now run only with explicit `--legacy`. The default path validates
+current Astra packages, README/example parity, current required guidance, current
+stale-token surfaces, global bootstrap, optional installed parity, repository
+Markdown hygiene, public checks when requested, and Git diff hygiene. Legacy
+modules are imported lazily so a historical helper failure cannot prevent current
+Astra validation from starting.
+
+The validator also now parses SKILL frontmatter and host metadata as YAML rather
+than treating frontmatter and required policy files as line-oriented regex data.
+Non-string names/descriptions fail cleanly instead of risking type errors, folded
+YAML descriptions are accepted, malformed metadata is rejected, and the
+invocation key is still required exactly once when policy is required.
+
+The focused pytest wrapper now targets current validator/Astra tests instead of
+the historical custom-pack contract suite. `AGENTS.md` documents the default
+Astra validator and the explicit `--legacy` extension.
+
+A duplicate parametrized installer test with the same Python function name and
+body was also removed. The second definition had replaced the first at import
+time, so the duplicate source added no test coverage. A repository-wide scan of
+top-level Python function names found no other duplicate definitions in
+`scripts/` or `tests/`.
+
+## Canonical skill-selection examples, 2026-09-23
+
+Added [selection-examples.md](selection-examples.md) as one compact discovery
+boundary specification for all 18 managed Astra skills. Each row contains one
+representative eligible request, the behavior that skill should own, and the
+nearest realistic non-match.
+
+The examples remain outside runtime skill bodies so normal invocations do not pay
+for duplicated teaching text. Frontmatter descriptions remain host-facing
+discovery authority and each `SKILL.md` remains execution authority. The examples
+serve maintainers, reviewers, and future discovery evaluations.
+
+The validator now requires exactly one example row per managed Astra skill and
+checks skill/link parity, so adding, retiring, or renaming a skill cannot silently
+leave this selection surface stale. The README and design brief link to the
+examples without turning them into a required workflow.
+
+## README and discoverability pass, 2026-09-23
+
+Reorganized the public README around the newcomer path: install first, understand
+the distinction between repository guidance/direct coding/specialist skills, then
+select a skill. The complete 18-skill catalog and invocation labels remain
+unchanged as a machine-validated contract.
+
+The previous README put installation after a long example and embedded detailed
+cost-aware worker policy, effort escalation, recovery, and telemetry guidance.
+Those mechanics now stay with the owning skill. The README retains only the
+stable cost-aware roles and its composition boundary with parallel-implement.
+It also makes explicit that ordinary bounded implementation is the default and
+that examples are not a required pipeline.
+
+## Astra package consistency audit, 2026-09-23
+
+Audited all 18 managed Astra packages for directory/frontmatter identity,
+selection descriptions, Codex invocation metadata, package-local resources, and
+public catalog consistency.
+
+The existing package shape is intentionally not uniform beyond its contract.
+Every skill has a matching `SKILL.md` name and nonempty description. The 11
+explicit-only skills are exactly the packages that set
+`policy.allow_implicit_invocation: false`; the seven automatically selectable
+skills omit `agents/openai.yaml` and use Codex's implicit default. Four
+explicit-only skills also carry optional launcher interface metadata where a
+custom display/default prompt is useful. References, scripts, and templates
+remain capability-specific rather than mandatory empty scaffolding.
+
+The consistency gap was enforcement rather than package content. The validator
+now checks that every managed Astra skill appears exactly once in the README
+catalog, each catalog link resolves to the same skill name, and its
+`Request explicitly` / `Automatic when relevant` label agrees with effective
+Codex metadata. It also validates known optional interface fields as nonempty
+strings when present. Regression tests cover valid parity, mode drift, duplicate,
+missing, unknown, and mismatched-link entries, plus malformed interface metadata.
+
+No skill package was padded or rewritten merely for visual uniformity.
+
+## Current-vs-historical cleanup, 2026-09-23
+
+Audited current routers and owners for stale counts, retired skill names,
+superseded workflows, installation directions, and abandoned design proposals.
+The current managed set is defined mechanically by immediate
+`skills/astra/*/SKILL.md` entries; this branch has **18**. Historical counts and
+retired names remain evidence and must not be used as current inventory.
+
+Changes from this pass:
+
+- moved the explicitly requested legacy Deploy Campaign route out of **Current
+  Runbooks**;
+- added a direct historical-scope notice to `docs/synthesis/skill-pack.md`, whose
+  recorded 24/25-skill composition and "active" terminology are legacy;
+- relabeled synthesis/method index sections so their Deploy Campaign instructions
+  cannot read like current Astra routing;
+- changed residual "active/current" wording inside the legacy-pack vocabulary to
+  legacy-scoped wording;
+- made `CONTEXT.md` state how to derive the managed inventory instead of trusting
+  counts in historical artifacts; and
+- aligned the design brief with the README: the historical custom pack is more
+  detailed, but there is not current comparative evidence that smaller models
+  perform better with it.
+
+The installer source and `INSTALLATION.md` remain consistent: `skills/astra/`
+is the only managed skill source, old custom manifests are migration evidence,
+and the documented preview/install/recovery route still matches the installer.
+No installation rewrite was warranted. Dated research proposals, numbered ADR
+bodies, validation results, and archived records keep their original counts,
+names, and conclusions when their historical scope is already explicit.
+
+## Public entry-point follow-up, 2026-09-23
+
+Rechecked the README, repository instructions, root context, installation guide,
+Astra design brief, plan/domain/tracker routes, ADR index and applicability record,
+and all 18 managed Astra skill entry points against pre-change branch HEAD
+`64c82a96`.
+
+The current navigation model remains intentionally small: `AGENTS.md` supplies
+commands and conditional pointers, `CONTEXT.md` owns repository/source boundaries,
+the Astra design brief owns current composition rationale, and each
+`skills/astra/*/SKILL.md` owns execution. No additional context layer or required
+workflow was introduced.
+
+This pass corrected public README text encoding, made the historical custom pack's
+non-managed status explicit, labeled Deploy Campaign as an explicitly requested
+legacy route in repository instructions, and replaced stale GPT 5.6 Sol wording in
+ADR-0018 with the current optional GPT 6 Sol/Luna cost-aware roles. The README's
+18-skill inventory matches the managed Astra entry points and their invocation
+boundaries.
 
 | Surface | Finding and disposition |
 | --- | --- |

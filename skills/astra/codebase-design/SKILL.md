@@ -1,114 +1,97 @@
 ---
 name: codebase-design
-description: Resolve unsettled architecture or integration decisions about ownership, interfaces, state, or migration. Exclude routine implementation and whole-codebase audits.
+description: Resolve a consequential unresolved technical architecture or integration decision about ownership, interfaces, state, trust boundaries, or migration. Exclude product or domain meaning, routine implementation, and whole-codebase audits.
 ---
 
 # Codebase design
 
-Resolve a bounded design question so implementation can proceed with the
-important decisions explicit. The question may cross several systems; its
-boundary follows the behavior and ownership involved, not a single file.
+Resolve a bounded architecture decision so implementation does not have to invent
+consequential ownership, interface, state, compatibility, or operational
+guarantees. The boundary follows the behavior and owners involved, not a file or
+module count.
 
 For a design-only request, inspect and recommend without changing product code.
-When called within authorized implementation, return the decision to that work;
-do not introduce another approval gate. Prototype remains a separate skill.
+When design is part of already-authorized implementation, return the decision to
+that work without adding another approval gate.
 
-## 1. Locate the decision
+Design is complete when implementation can proceed with the affected owners,
+guarantees, and proof clear enough that it does not need to invent consequential
+architecture policy.
 
-Identify the unsettled decision and the requirement or uncertainty driving it.
-Determine whether the current design or its smallest extension already satisfies
-it. Inspect the callers, state, dependencies, and accepted guarantees needed to
-resolve this decision. Trace a representative path when interactions or ownership
-are uncertain. Distinguish intended guarantees from accidental dependence.
+## 1. Establish the design pressure
 
-Before recommending a redesign, identify a demonstrated cost or an unmet new
-requirement. Costs include callers coordinating an invariant, one policy changing
-in several places, leaked representation, or repeated workarounds. Check sibling
-callers or relevant history when they could
-confirm or disprove the pattern. One awkward case does not establish a systemic
-problem. For new behavior, identify the new constraint that makes the choice
-consequential. Retaining the current design is a valid answer.
+Identify the unresolved decision and the accepted requirement or uncertainty that
+makes it consequential. Determine first whether the current design or its smallest
+sound extension already satisfies the need.
 
-Use audit findings as leads. Reuse attributable evidence while its relevant code,
-inputs, and environment remain valid; recheck gaps, contradictions, or relevant
-drift. Repository-wide discovery belongs to a separate audit; do not turn this decision into a full map
-or require an audit report before beginning.
+Inspect enough of the real callers, owners, state, and dependencies to establish
+the affected boundary and distinguish intended guarantees from accidental
+dependence. Do not turn a bounded design question into a repository-wide map.
 
-## 2. Design from usage and ownership
+Require demonstrated pressure before recommending redesign: an unmet requirement
+or a concrete cost such as duplicated policy, caller-coordinated invariants,
+representation leakage, repeated workarounds, or a guarantee the current owner
+cannot enforce. One awkward caller or isolated exception does not establish a
+systemic architecture problem. Retaining the current design is a valid result.
 
-Evaluate the ordinary caller's usage and relevant failure or state transitions.
-Derive the interface and data shape from what that caller needs to
-know. An interface includes ordering, errors, effects, and guarantees, not just
-its function signature. Establish actual operating conditions before choosing
-stronger guarantees. Compare extra recovery, isolation, or publication machinery
-against detecting failure and safely regenerating the result; choose the simpler
-complete workflow when it meets the required guarantees.
+Treat audit findings as leads rather than proof. Reuse evidence while its relevant
+code, inputs, dependencies, and environment remain applicable.
 
-When data access drives the choice, compare representative reads, writes, updates,
-and expected volume. Choose representation and ownership around those patterns;
-make consequential latency, memory, and consistency tradeoffs explicit.
+## 2. Design around callers and enforceable ownership
 
-Put each invariant where it can actually be enforced. A small interface earns
-its place by hiding useful decisions, not merely by forwarding calls. Imagine
-removing a proposed boundary while preserving behavior: does complexity vanish,
-or spread into callers? Preserve repository and domain terminology.
+An interface is the behavior callers rely on, including relevant errors, ordering,
+effects, state transitions, and guarantees, not merely a function signature.
 
-For cross-system state, trust boundaries, external dependencies, or compatibility-sensitive
-migration, read the relevant section of
-[Integration decisions](references/integration-decisions.md). Use it to resolve
-the affected ownership and guarantees, not as a checklist for unrelated risks.
+Choose ownership and boundaries around the required behavior and actual operating
+conditions. Put an invariant where an owner can enforce it. Do not add stronger
+recovery, isolation, compatibility, or scale guarantees than supported workflows
+require.
 
-## 3. Compare credible shapes
+A boundary earns its place when it hides meaningful policy, state, external
+translation, or coordination. If removing it eliminates complexity, collapse it;
+if removing it merely spreads that complexity into callers, the boundary may be
+useful.
 
-Compare against the current shape or its smallest sound extension. Develop a
-materially different option when competing designs remain credible; do not
-invent alternatives just to reach a quota. Give options the same required
-behavior and constraints. Different names or extra layers are not different
-designs.
+When representation is the decision, ground it in the real access pattern and
+material scale or consistency requirements rather than hypothetical future use.
 
-Evaluate credible options through the usage or change scenario that distinguishes
-them. Compare caller burden, enforceable guarantees, concentration of policy,
-operational consequences, and migration cost. A smaller diagram or more hidden
-implementation is not enough to outweigh harder failure handling or deployment.
-Treat a design from scratch as a useful comparison, not permission to rewrite.
+For cross-system state, trust boundaries, external dependencies, or
+compatibility-sensitive migration, read the relevant section of
+[Integration decisions](references/integration-decisions.md). Use only the branch
+that can change the decision.
 
-Consider which owners must change together when a governing rule changes.
-Group shared knowledge where it can remain consistent,
-while preserving independent policies even when their code looks similar. Use
-current requirements or known variation, not hypothetical future extensibility.
+## 3. Resolve the choice with proportionate evidence
 
-Make technical recommendations within the settled requirements. If the tradeoff
-requires an unresolved product priority or a change to an accepted guarantee
-that is not already authorized, present the specific choice and consequences to
-its owner. Continue independent
-design work while that choice is pending.
+Use the current design or its smallest sound extension as the baseline. Compare
+another shape only when a materially different option remains credible. Evaluate
+credible alternatives under the same accepted behavior and constraints, focusing
+on the tradeoff that actually distinguishes them, such as caller burden,
+enforceable guarantees, operational consequences, or migration cost.
 
-## 4. Resolve the uncertainty that could change the choice
+Resolve technical design choices within settled requirements. Return to a product
+or domain decision owner only when the choice would change accepted behavior,
+scope, risk tolerance, or another owner-held guarantee.
 
-Separate what current source establishes from an assumption needing evidence.
-Prefer the cheapest observation that can distinguish viable options. A usage
-sketch demonstrates clarity; it does not prove runtime behavior or performance.
+When the decision depends on an empirical fact the current evidence does not
+establish, keep the recommendation conditional and use
+[prototype](../prototype/SKILL.md) to obtain the smallest observation capable of
+distinguishing the options. Prototype evidence supports only the property and
+conditions it actually exercised; it does not prove production integration.
 
-When an executable experiment is needed, frame the decision, competing outcomes,
-representative conditions, and the observation that would change the choice.
-Use the separate `$prototype` skill when available and within the authorized
-scope; its procedure owns building, observing, and cleaning up the probe. If it
-is unavailable, return the framed experiment to authorized implementation for
-execution with available tools. Design-only work can return the evidence gap.
-Keep the recommendation conditional until the needed evidence returns. Do not
-invent a substitute result or treat a successful probe as proof of production
-integration.
+Keep unresolved assumptions explicit rather than filling them with plausible
+architecture.
 
-## 5. Recommend an implementable direction
+## 4. Return the implementable decision
 
-Return one recommendation, a supported retain decision, or a precise unresolved
-choice. Where a credible alternative was compared, explain why it loses. State
-what evidence could change the recommendation. Include a usage example when it
-clarifies the choice, and the ownership, affected interfaces and guarantees,
-migration and verification implications that matter for this decision. Scale the form to the problem;
-reuse the caller's artifact rather than creating a mandatory design document.
+Return the selected direction, a supported retain decision, or the precise
+unresolved choice. State the decisive tradeoff and the affected owner, interface,
+or guarantee. Include migration or verification implications only when they
+matter to this decision.
 
-Finish when the next implementer can locate the affected owners, understand the
-chosen behavior, and identify what must be proved without inventing consequential
-policy. Keep unresolved assumptions visible. A design-only request ends here;
-already-authorized implementation can continue under its original scope.
+Reuse the caller's artifact when one already exists; no design document is
+required merely because design work occurred.
+
+Finish when implementation can proceed without inventing consequential
+architecture policy and can identify the owners, guarantees, and proof that matter.
+A design-only request ends here; already-authorized implementation may continue
+within its original scope.

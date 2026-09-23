@@ -19,10 +19,10 @@ The parent owner is `docs/synthesis/methods/fresh-composition-epoch.md`. The
 one-skill owner is `docs/synthesis/methods/deploy-prompts.md`. Neither method
 inherits the other's authority.
 
-## Deploy Routing
+## Legacy deploy routing
 
-Use `Run Deploy Campaign on <skill>` for one controllerless campaign organized
-by four ordered proof obligations:
+For explicitly requested legacy custom-pack work, `Run Deploy Campaign on <skill>`
+selects one controllerless campaign organized by four ordered proof obligations:
 
 The lifecycle is:
 
