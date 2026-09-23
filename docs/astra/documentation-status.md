@@ -6,6 +6,15 @@ referenced research/synthesis; it is not an audit of every historical packet or
 external project. The [design brief](design-brief.md) owns current direction. Do
 not treat this inventory as an execution backlog.
 
+## Python 3.11 legacy-helper compatibility, 2026-09-23
+
+Cross-platform CI next exposed a syntax error in the retained custom
+`audit-codebase` report helper: a nested same-quote f-string relied on parsing
+accepted by newer Python but not the repository's advertised Python 3.11 floor.
+The rendering expression was split into a precomputed trace fragment without
+changing report semantics. The legacy test remains in the full suite rather than
+being excluded to make CI green.
+
 ## Public-release cleanup, 2026-09-23
 
 Audited root metadata, tracked workspace state, local/scratch artifacts,

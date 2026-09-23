@@ -737,8 +737,13 @@ def _render(state: dict[str, Any]) -> bytes:
             "representative_flows",
             "history_signals",
         )
+        trace = "".join(
+            f"<dt>{escape(k.replace('_', ' ').title())}</dt>"
+            f"<dd>{escape(a['source_trace'][k]) if isinstance(a['source_trace'][k], str) else _list(a['source_trace'][k])}</dd>"
+            for k in trace_order
+        )
         audits.append(
-            f"""<section><h2>Audit: {escape(sub["name"])}</h2><dl>{"".join(f"<dt>{escape(k.replace("_", " ").title())}</dt><dd>{escape(a['source_trace'][k]) if isinstance(a['source_trace'][k], str) else _list(a['source_trace'][k])}</dd>" for k in trace_order)}</dl><table><tr><th>Class</th><th>Coverage</th><th>Evidence</th><th>Reason</th></tr>{rows}</table>{"".join(_finding_html(x) for x in a["findings"])}<p><strong>Coverage:</strong> {escape(a["coverage"])}</p><p><strong>Evidence limits:</strong> {escape(a["evidence_limits"])}</p><p><strong>Recommendation:</strong> {escape(a["recommendation"])}</p></section>"""
+            f"""<section><h2>Audit: {escape(sub["name"])}</h2><dl>{trace}</dl><table><tr><th>Class</th><th>Coverage</th><th>Evidence</th><th>Reason</th></tr>{rows}</table>{"".join(_finding_html(x) for x in a["findings"])}<p><strong>Coverage:</strong> {escape(a["coverage"])}</p><p><strong>Evidence limits:</strong> {escape(a["evidence_limits"])}</p><p><strong>Recommendation:</strong> {escape(a["recommendation"])}</p></section>"""
         )
         candidates.extend(a["candidates"])
     raw = _canonical(state)
