@@ -1,4 +1,7 @@
-"""Behavioral checks for the standalone Astra report workflow."""
+"""Current-format tests for the Astra visual audit workbench."""
+from __future__ import annotations
+
+import hashlib
 import importlib.util
 import json
 import subprocess
@@ -10,263 +13,312 @@ import pytest
 
 SCRIPT = Path(__file__).parents[1] / "skills/astra/audit-codebase/scripts/atlas.py"
 SPEC = importlib.util.spec_from_file_location("astra_atlas", SCRIPT)
+assert SPEC and SPEC.loader
 atlas = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(atlas)
 
 
-@pytest.fixture
-def repo(tmp_path):
-    subprocess.run(["git", "init", str(tmp_path)], check=True, capture_output=True)
-    for name in ["src/a.py", "src/b.py", "README.md"]:
-        path = tmp_path / name
-        path.parent.mkdir(exist_ok=True)
-        path.write_text("original\n", encoding="utf-8")
-    subprocess.run(["git", "-C", str(tmp_path), "add", "."], check=True)
-    report = tmp_path / ".tmp/audit-codebase/test/report.html"
-    state = {"version": 1, "repo": str(tmp_path.resolve()), "title": "Test atlas", "records": {}, "history": []}
-    atlas.publish(tmp_path, report, state, "absent")
-    return tmp_path, report
+def write_json(path: Path, value: object) -> Path:
+    path.write_text(json.dumps(value, indent=2), encoding="utf-8")
+    return path
 
 
-def subsystem(repo, paths=("src/a.py",), name="Orders"):
-    root, report = repo
-    draft = atlas.prepare(root, report, "subsystem", paths=paths)
-    draft["content"].update(name=name, system="Application", purpose="Accept orders", ownership="Order state")
-    atlas.apply(root, report, draft)
-    return draft["record_id"]
+def sha(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def finding(repo, owner):
-    root, report = repo
-    draft = atlas.prepare(root, report, "finding", subsystem=owner)
-    draft["content"].update(title="Duplicated policy", scenario="Submit order", evidence="src/a.py caller",
-                            consequence="Two owners must change", direction="Concentrate the policy",
-                            preserve_and_verify="Both callers retain rejection behavior",
-                            priority="high", priority_rationale="Repeated changes", confidence_and_limits="Source confirmed")
-    return draft
+def make_repo(root: Path) -> None:
+    (root / "src").mkdir()
+    (root / "tests").mkdir()
+    (root / "src/a.py").write_text("VALUE=1\n", encoding="utf-8")
+    (root / "src/b.py").write_text("VALUE=2\n", encoding="utf-8")
+    (root / "tests/test_a.py").write_text("def test_ok(): assert True\n", encoding="utf-8")
+    subprocess.run(["git", "init"], cwd=root, check=True, capture_output=True)
+    subprocess.run(["git", "config", "user.email", "a@b.invalid"], cwd=root, check=True)
+    subprocess.run(["git", "config", "user.name", "Audit"], cwd=root, check=True)
+    subprocess.run(["git", "add", "."], cwd=root, check=True)
+    subprocess.run(["git", "commit", "-m", "fixture"], cwd=root, check=True, capture_output=True)
 
 
-def test_incremental_records_scoped_read_and_history(repo):
-    root, report = repo
-    first = subsystem(repo)
-    second = subsystem(repo, ("src/b.py",), "Shipping")
-    draft = finding(repo, first)
-    atlas.apply(root, report, draft)
-    before, _ = atlas.load(root, report)
-    update = atlas.prepare(root, report, "finding", ident=draft["record_id"])
-    update["content"]["status"] = "disproved"
-    update["content"]["evidence"] = "Caller owns an independent policy"
-    atlas.apply(root, report, update)
-    after, _ = atlas.load(root, report)
-    assert after["records"][second] == before["records"][second]
-    assert after["history"][-1]["previous"]["content"]["status"] == "open"
-    scoped = atlas.inspect(root, report, first)
-    assert set(scoped["records"]) == {first, draft["record_id"]}
-    assert atlas.inspect(root, report)["inventory"]["unmapped"] == 1
+def report(root: Path) -> Path:
+    return root / ".tmp/audit-codebase/run-1/report.html"
 
 
-@pytest.mark.parametrize("drift", ["source", "report", "new_selected_file"])
-def test_prepared_update_rejects_drift_without_overwrite(repo, drift):
-    root, report = repo
-    owner = subsystem(repo, ("src",))
-    draft = finding(repo, owner)
-    if drift == "source":
-        (root / "src/a.py").write_text("changed\n")
-    elif drift == "new_selected_file":
-        (root / "src/c.py").write_text("new\n")
-        subprocess.run(["git", "-C", str(root), "add", "src/c.py"], check=True)
-    else:
-        other = atlas.prepare(root, report, "subsystem", ident=owner)
-        other["content"]["purpose"] = "Revised purpose"
-        atlas.apply(root, report, other)
-    previous = report.read_bytes()
-    with pytest.raises(atlas.AtlasError, match="changed"):
-        atlas.apply(root, report, draft)
-    assert report.read_bytes() == previous
+def identity(root: Path, paths: list[str]) -> dict[str, object]:
+    packet = atlas.source_identity(repo_root=root, paths=paths)
+    return {"paths": packet["paths"], "sha256": packet["sha256"]}
 
 
-def test_unrelated_source_change_does_not_block_selected_evidence(repo):
-    root, report = repo
-    owner = subsystem(repo)
-    draft = finding(repo, owner)
-    (root / "src/b.py").write_text("changed\n")
-    atlas.apply(root, report, draft)
-    assert atlas.inspect(root, report, draft["record_id"])["freshness"][draft["record_id"]]["state"] == "unchanged"
+def map_manifest(root: Path) -> dict[str, object]:
+    return {
+        "version": atlas.MANIFEST_VERSION,
+        "expected_report_sha256": "absent",
+        "title": "Architecture atlas",
+        "observation_identity": atlas.inventory(repo_root=root)["identity"],
+        "systems": [{"id": "core", "name": "Core"}, {"id": "delivery", "name": "Delivery"}],
+        "subsystems": [
+            {
+                "id": "alpha",
+                "system_id": "core",
+                "name": "Alpha",
+                "purpose": "Own validation.",
+                "ownership": "Identity policy",
+                "authority": ["CONTEXT.md"],
+                "callers": ["beta"],
+                "dependencies": [{"id": "beta", "evidence": ["alpha imports beta"]}],
+                "interfaces": ["validated identity"],
+                "proof_seams": ["tests/test_a.py"],
+                "owned_paths": ["src/a.py", "tests/test_a.py"],
+            },
+            {
+                "id": "beta",
+                "system_id": "delivery",
+                "name": "Beta",
+                "purpose": "Deliver results.",
+                "ownership": "Delivery",
+                "authority": [],
+                "callers": ["operators"],
+                "dependencies": [],
+                "interfaces": ["result"],
+                "proof_seams": [],
+                "owned_paths": ["src/b.py"],
+            },
+        ],
+        "excluded": [],
+        "coverage": "Every tracked path has one owner.",
+        "evidence_limits": "Runtime not executed.",
+    }
 
 
-def test_refresh_flags_changes_without_revalidating_or_erasing_findings(repo):
-    root, report = repo
-    owner = subsystem(repo)
-    draft = finding(repo, owner)
-    atlas.apply(root, report, draft)
-    state, revision = atlas.load(root, report)
-    original = state["records"]
-    (root / "src/a.py").unlink()
-    atlas.publish(root, report, state, revision)
-    updated, _ = atlas.load(root, report)
-    assert updated["records"] == original
-    assert updated["freshness"][draft["record_id"]]["state"] == "changed"
+def finding() -> dict[str, object]:
+    return {
+        "id": "alpha-defect",
+        "kind": "defect",
+        "primary_class": "reliability",
+        "title": "Unchecked entry",
+        "expectation": "All identities are checked.",
+        "locations": ["src/a.py"],
+        "evidence": ["alternate caller bypasses validation"],
+        "impact": "Invalid identity crosses boundary.",
+        "causal_owner": "shared write seam",
+        "affected_scope": ["alpha", "beta"],
+        "direction": "Move policy to owner.",
+        "proof": ["exercise both callers"],
+        "confidence": "high",
+        "severity": "P1",
+        "scenario": "Alternate caller submits unchecked identity.",
+    }
 
 
-def test_overlap_rejected_and_lock_released(repo):
-    root, report = repo
-    subsystem(repo)
-    previous = report.read_bytes()
-    with pytest.raises(atlas.AtlasError, match="overlapping"):
-        subsystem(repo, ("src",), "Wrong owner")
-    assert report.read_bytes() == previous
-    assert not report.with_suffix(".lock").exists()
+def candidate() -> dict[str, object]:
+    return {
+        "id": "alpha-fix",
+        "title": "Centralize validation",
+        "primary_class": "design",
+        "strength": "strong",
+        "finding_ids": ["alpha-defect"],
+        "affected_scope": ["alpha", "beta"],
+        "problem": "Policy is scattered.",
+        "evidence": ["two callers coordinate it"],
+        "direction": "Own policy at the write seam.",
+        "benefit": "One invariant owner.",
+        "risks": ["format compatibility"],
+        "required_proof": ["both callers reject invalid input"],
+    }
 
 
-def test_explicit_removal_requires_no_dependents(repo):
-    root, report = repo
-    owner = subsystem(repo)
-    draft = finding(repo, owner)
-    atlas.apply(root, report, draft)
-    removal = atlas.prepare(root, report, "subsystem", ident=owner)
-    removal["remove"] = True
-    with pytest.raises(atlas.AtlasError, match="dependent"):
-        atlas.apply(root, report, removal)
-    remove_finding = atlas.prepare(root, report, "finding", ident=draft["record_id"])
-    remove_finding["remove"] = True
-    atlas.apply(root, report, remove_finding)
-    assert owner in atlas.load(root, report)[0]["records"]
+def audit_manifest(root: Path, rpt: Path) -> dict[str, object]:
+    lenses = [
+        {
+            "class": name,
+            "state": "evidence gap" if name == "performance" else "complete",
+            "evidence": [] if name == "performance" else [f"{name} evidence"],
+            "finding_ids": ["alpha-defect"] if name == "reliability" else [],
+            "reason": "Inspected current owner.",
+        }
+        for name in atlas._LENSES
+    ]
+    return {
+        "version": atlas.MANIFEST_VERSION,
+        "expected_report_sha256": sha(rpt),
+        "subsystem_id": "alpha",
+        "source_identity": identity(root, ["src/a.py", "src/b.py", "tests/test_a.py"]),
+        "source_trace": {
+            "summary": "Traced both entry paths.",
+            "entry_points": ["validate"],
+            "callers": ["beta"],
+            "dependencies": ["beta"],
+            "interfaces": ["validated identity"],
+            "proof_seams": ["tests/test_a.py"],
+            "representative_flows": ["input to write"],
+            "history_signals": ["validation moved twice"],
+        },
+        "lenses": lenses,
+        "findings": [finding()],
+        "candidates": [candidate()],
+        "systemic_findings": [],
+        "coverage": "All six classes resolved or have explicit gaps.",
+        "evidence_limits": "No production trace.",
+        "recommendation": "User may select alpha-fix.",
+    }
 
 
-def test_escaped_html_and_tamper_detection(repo):
-    root, report = repo
-    value = '</script><img src=x onerror="alert(1)">'
-    owner = subsystem(repo, name=value)
-    raw = report.read_text(encoding="utf-8")
-    assert value not in raw
-    assert "&lt;img" in raw
-    assert atlas.load(root, report)[0]["records"][owner]["content"]["name"] == value
-    report.write_bytes(report.read_bytes().replace(b"Order state", b"Other state", 1))
-    with pytest.raises(atlas.AtlasError):
-        atlas.load(root, report)
+def analysis_manifest(root: Path, rpt: Path) -> dict[str, object]:
+    return {
+        "version": atlas.MANIFEST_VERSION,
+        "expected_report_sha256": sha(rpt),
+        "candidate_id": "alpha-fix",
+        "state": "analyzed",
+        "question": "",
+        "source_identity": identity(root, ["src/a.py", "src/b.py", "tests/test_a.py"]),
+        "summary": "One owner can hide policy.",
+        "cause": "Callers coordinate validation.",
+        "affected_scope": ["alpha", "beta"],
+        "options": [
+            {"name": "Keep", "description": "Leave coordination in callers.", "tradeoffs": ["cost remains"]},
+            {"name": "Smallest", "description": "Move policy to write seam.", "tradeoffs": ["touch two callers"]},
+        ],
+        "recommendation": "Use the existing write seam as owner.",
+        "tradeoffs": ["small migration"],
+        "proof": ["exercise both callers"],
+        "evidence_limits": "Exact interface remains implementation-owned.",
+    }
 
 
-def test_writer_conflict_and_path_escape_preserve_report(repo):
-    root, report = repo
-    before = report.read_bytes()
-    report.with_suffix(".lock").write_text("active")
-    with pytest.raises(atlas.AtlasError, match="writer"):
-        subsystem(repo)
-    assert report.read_bytes() == before
-    with pytest.raises(atlas.AtlasError, match="traversal"):
-        atlas.snapshot(root, ["../outside"])
-    with pytest.raises(atlas.AtlasError, match="report must"):
-        atlas.report_path(root, root / "elsewhere.html")
+def publish(root: Path, objective: str, manifest: dict[str, object]) -> dict[str, object]:
+    packet = write_json(root / f"{objective}.json", manifest)
+    return atlas.mutate_report(
+        objective=objective, repo_root=root, report=report(root), manifest=packet
+    )
 
 
-def test_cli_prepare_apply_actual_html_roundtrip(repo):
-    root, report = repo
-    draft_path = report.parent / "draft.json"
-    base = [sys.executable, str(SCRIPT), "--repo", str(root), "--report", str(report)]
-    prepared = subprocess.run(base + ["prepare", "--kind", "subsystem", "--path", "src", "--out", str(draft_path)],
-                              check=True, capture_output=True, text=True)
-    ident = json.loads(prepared.stdout)["record_id"]
-    draft = json.loads(draft_path.read_text(encoding="utf-8"))
-    draft["content"].update(name="CLI system", system="Product", purpose="Roundtrip", ownership="Source")
-    draft_path.write_text(json.dumps(draft), encoding="utf-8")
-    subprocess.run(base + ["apply", "--draft", str(draft_path)], check=True, capture_output=True)
-    result = subprocess.run(base + ["inspect", "--id", ident], check=True, capture_output=True, text=True)
-    assert json.loads(result.stdout)["records"][ident]["content"]["name"] == "CLI system"
-    assert b'CLI system' in report.read_bytes()
-    again = subprocess.run(base + ["prepare", "--kind", "subsystem", "--path", "src", "--out", str(draft_path)],
-                           capture_output=True, text=True)
-    assert again.returncode == 2
+def test_map_renders_visual_workbench(tmp_path: Path) -> None:
+    make_repo(tmp_path)
+    publish(tmp_path, "render-report", map_manifest(tmp_path))
+    text = report(tmp_path).read_text(encoding="utf-8")
+    for value in (
+        "Architecture map",
+        "Subsystem explorer",
+        "Audit atlas",
+        "Copy audit command",
+        "$audit-codebase audit subsystem alpha in atlas run run-1",
+        "Subsystem dependency map",
+        "alpha imports beta",
+    ):
+        assert value in text
+    state = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]
+    assert state["run_id"] == "run-1"
+    assert state["freshness"] == {"alpha": "fresh", "beta": "fresh"}
 
 
-def test_deleted_source_can_be_removed_and_ids_are_not_recycled(repo):
-    root, report = repo
-    first = subsystem(repo)
-    subprocess.run(["git", "-C", str(root), "rm", "-f", "src/a.py"], check=True, capture_output=True)
-    removal = atlas.prepare(root, report, "subsystem", ident=first)
-    removal["remove"] = True
-    atlas.apply(root, report, removal)
-    second = subsystem(repo, ("src/b.py",))
-    assert second != first
-    state, _ = atlas.load(root, report)
-    assert state["history"][-2]["previous"]["content"]["name"] == "Orders"
+def test_audit_adds_findings_candidates_and_coverage(tmp_path: Path) -> None:
+    make_repo(tmp_path)
+    publish(tmp_path, "render-report", map_manifest(tmp_path))
+    publish(tmp_path, "audit-subsystem", audit_manifest(tmp_path, report(tmp_path)))
+    text = report(tmp_path).read_text(encoding="utf-8")
+    for value in (
+        "Unchecked entry",
+        "Centralize validation",
+        "Strong",
+        "Current problem",
+        "Required proof",
+        "$audit-codebase analyze candidate alpha-fix in atlas run run-1",
+        "Performance",
+    ):
+        assert value in text
+    state = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]
+    alpha = state["subsystems"][0]
+    assert alpha["state"] == "audited"
+    assert alpha["audit"]["candidates"][0]["strength"] == "strong"
 
 
-def test_reassign_record_preserves_id_and_new_owner(repo):
-    root, report = repo
-    first = subsystem(repo)
-    second = subsystem(repo, ("src/b.py",))
-    draft = finding(repo, first)
-    atlas.apply(root, report, draft)
-    moved = atlas.prepare(root, report, "finding", ident=draft["record_id"], subsystem=second, paths=["src/b.py"])
-    atlas.apply(root, report, moved)
-    record = atlas.inspect(root, report, draft["record_id"])["records"][draft["record_id"]]
-    assert record["subsystem"] == second
-    assert set(record["source"]) == {"src/b.py"}
+def test_analyze_updates_only_selected_candidate(tmp_path: Path) -> None:
+    make_repo(tmp_path)
+    publish(tmp_path, "render-report", map_manifest(tmp_path))
+    publish(tmp_path, "audit-subsystem", audit_manifest(tmp_path, report(tmp_path)))
+    publish(tmp_path, "analyze-candidate", analysis_manifest(tmp_path, report(tmp_path)))
+    state = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]
+    cand = state["subsystems"][0]["audit"]["candidates"][0]
+    assert cand["state"] == "analyzed"
+    assert cand["analysis"]["recommendation"] == "Use the existing write seam as owner."
+    text = report(tmp_path).read_text(encoding="utf-8")
+    assert "Leave coordination in callers." in text
+    assert "Move policy to write seam." in text
 
 
-def test_source_change_during_publication_does_not_replace_report(repo, monkeypatch):
-    root, report = repo
-    owner = subsystem(repo)
-    draft = finding(repo, owner)
-    before = report.read_bytes()
-    original = atlas.observations
-
-    def mutate_after_observation(root, state):
-        original(root, state)
-        (root / "src/a.py").write_text("concurrent change\n")
-
-    monkeypatch.setattr(atlas, "observations", mutate_after_observation)
-    with pytest.raises(atlas.AtlasError, match="source changed during"):
-        atlas.apply(root, report, draft)
-    assert report.read_bytes() == before
+def test_refresh_marks_changed_source_without_revalidating(tmp_path: Path) -> None:
+    make_repo(tmp_path)
+    publish(tmp_path, "render-report", map_manifest(tmp_path))
+    publish(tmp_path, "audit-subsystem", audit_manifest(tmp_path, report(tmp_path)))
+    before = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]
+    (tmp_path / "src/a.py").write_text("VALUE=9\n", encoding="utf-8")
+    atlas.refresh_report(repo_root=tmp_path, report=report(tmp_path))
+    after = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]
+    assert before["subsystems"][0]["audit"] == after["subsystems"][0]["audit"]
+    assert after["freshness"]["alpha"] == "changed"
+    assert "Source changed" in report(tmp_path).read_text(encoding="utf-8")
 
 
-def test_assessment_is_explicit_and_defect_needs_expectation(repo):
-    root, report = repo
-    owner = subsystem(repo)
-    assert b"mapped; not audited" in report.read_bytes()
-    draft = atlas.prepare(root, report, "assessment", subsystem=owner)
-    draft["content"].update(examined="Order intake", dimensions=["ownership"], limits="No deployment audit")
-    atlas.apply(root, report, draft)
-    assert b"mapped; not audited" not in report.read_bytes()
-    defect = finding(repo, owner)
-    defect["content"]["kind"] = "defect"
-    with pytest.raises(atlas.AtlasError, match="accepted expectation"):
-        atlas.apply(root, report, defect)
+def test_source_and_report_drift_are_rejected(tmp_path: Path) -> None:
+    make_repo(tmp_path)
+    publish(tmp_path, "render-report", map_manifest(tmp_path))
+    stale = audit_manifest(tmp_path, report(tmp_path))
+    (tmp_path / "src/a.py").write_text("VALUE=3\n", encoding="utf-8")
+    with pytest.raises(atlas.ReportError, match="current bound source"):
+        publish(tmp_path, "audit-subsystem", stale)
 
 
-def test_comprehensive_coverage_requires_accounting_and_displays_gaps(repo):
-    root, report = repo
-    owner = subsystem(repo)
-    draft = atlas.prepare(root, report, "assessment", subsystem=owner, coverage="comprehensive")
-    draft["content"].update(examined="Order intake and rejection", limits="No production workload")
-    assert set(draft["content"]["lens_coverage"]) == set(atlas.LENSES)
-    before = report.read_bytes()
-    with pytest.raises(atlas.AtlasError, match="pending lens"):
-        atlas.apply(root, report, draft)
-    assert report.read_bytes() == before
-    for row in draft["content"]["lens_coverage"].values():
-        row.update(status="examined", details="Order caller and rejection contract in src/a.py")
-    draft["content"]["lens_coverage"]["performance"] = {"status": "gap", "details": "Production workload unavailable; runtime cost unproved"}
-    draft["content"]["lens_coverage"]["domain"] = {"status": "excluded", "details": ""}
-    with pytest.raises(atlas.AtlasError, match="exclusion reason"):
-        atlas.apply(root, report, draft)
-    draft["content"]["lens_coverage"]["domain"]["details"] = "No separate domain model in this fixture"
-    atlas.apply(root, report, draft)
-    assert b"comprehensive with evidence gaps" in report.read_bytes()
-    restored, _ = atlas.load(root, report)
-    assert restored["records"][draft["record_id"]]["content"]["lens_coverage"]["performance"]["status"] == "gap"
+def test_map_requires_complete_nonoverlapping_ownership(tmp_path: Path) -> None:
+    make_repo(tmp_path)
+    manifest = map_manifest(tmp_path)
+    manifest["subsystems"][0]["owned_paths"] = ["src/a.py"]
+    with pytest.raises(atlas.ReportError, match="neither owned nor excluded"):
+        publish(tmp_path, "render-report", manifest)
+    manifest = map_manifest(tmp_path)
+    manifest["subsystems"][1]["owned_paths"] = ["src/a.py", "src/b.py"]
+    with pytest.raises(atlas.ReportError, match="multiple owners"):
+        publish(tmp_path, "render-report", manifest)
 
 
-def test_comprehensive_cannot_skip_ledger_but_incomplete_can_save_pending(repo):
-    root, report = repo
-    owner = subsystem(repo)
-    draft = atlas.prepare(root, report, "assessment", subsystem=owner)
-    draft["content"].update(coverage="comprehensive", examined="Order caller", limits="Pending investigation")
-    with pytest.raises(atlas.AtlasError, match="six-lens ledger"):
-        atlas.apply(root, report, draft)
-    full = atlas.prepare(root, report, "assessment", subsystem=owner, coverage="comprehensive")
-    full["content"].update(coverage="incomplete", examined="Order caller", limits="Five lenses remain")
-    atlas.apply(root, report, full)
-    scoped = atlas.inspect(root, report, full["record_id"])
-    assert scoped["records"][full["record_id"]]["content"]["coverage"] == "incomplete"
+def test_current_format_only_and_tamper_detection(tmp_path: Path) -> None:
+    make_repo(tmp_path)
+    publish(tmp_path, "render-report", map_manifest(tmp_path))
+    rpt = report(tmp_path)
+    raw = rpt.read_text(encoding="utf-8")
+    assert 'audit-codebase-report-version" content="1"' in raw
+    rpt.write_text(raw.replace("Architecture map", "Changed architecture", 1), encoding="utf-8")
+    with pytest.raises(atlas.ReportError, match="canonical"):
+        atlas.inspect_report(repo_root=tmp_path, report=rpt)
+
+
+def test_invalid_candidate_strength_and_selection_are_rejected(tmp_path: Path) -> None:
+    make_repo(tmp_path)
+    publish(tmp_path, "render-report", map_manifest(tmp_path))
+    bad = audit_manifest(tmp_path, report(tmp_path))
+    bad["candidates"][0]["strength"] = "99"
+    with pytest.raises(atlas.ReportError, match="candidate strength"):
+        publish(tmp_path, "audit-subsystem", bad)
+
+    publish(tmp_path, "audit-subsystem", audit_manifest(tmp_path, report(tmp_path)))
+    invalid = analysis_manifest(tmp_path, report(tmp_path))
+    invalid["candidate_id"] = "other"
+    with pytest.raises(atlas.ReportError, match="choose one of: alpha-fix"):
+        publish(tmp_path, "analyze-candidate", invalid)
+
+
+def test_writer_lock_preserves_report(tmp_path: Path) -> None:
+    make_repo(tmp_path)
+    publish(tmp_path, "render-report", map_manifest(tmp_path))
+    rpt = report(tmp_path)
+    before = rpt.read_bytes()
+    lock = rpt.with_name("report.lock")
+    lock.write_text("active", encoding="utf-8")
+    manifest = write_json(tmp_path / "audit.json", audit_manifest(tmp_path, rpt))
+    with pytest.raises(atlas.ReportError, match="writer is active"):
+        atlas.mutate_report(
+            objective="audit-subsystem",
+            repo_root=tmp_path,
+            report=rpt,
+            manifest=manifest,
+        )
+    assert rpt.read_bytes() == before
