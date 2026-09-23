@@ -12,6 +12,8 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/stevennitesh/programming-agent-skills/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/stevennitesh/programming-agent-skills/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="https://github.com/stevennitesh/programming-agent-skills/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/stevennitesh/programming-agent-skills"></a>
   <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-blue.svg"></a>
   <img alt="Python 3.11+" src="https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white">
 </p>
