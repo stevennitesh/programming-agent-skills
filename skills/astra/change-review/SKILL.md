@@ -16,10 +16,16 @@ A review-only request does not authorize product edits, external comments, merge
 release, or risk acceptance. For an already-authorized review-and-fix request,
 establish the review conclusion before continuing into repair.
 
-Use ordinary review by default. Only when the user explicitly requests high
-assurance or multiple independent reviewers, read
-[High assurance](references/high-assurance.md). A large diff, a PR, or the phrase
-"final review" does not activate that mode.
+Use ordinary review by default. Read
+[Impact analysis](references/impact-analysis.md) when the user asks for blast
+radius or candidate safety depends on consequential behavior outside the diff and
+direct callers. Read [Review feedback](references/review-feedback.md) when the
+input is existing reviewer comments or requested corrections that must be judged
+against the current candidate.
+
+Only when the user explicitly requests high assurance or multiple independent
+reviewers, read [High assurance](references/high-assurance.md). A large diff, a PR,
+or the phrase "final review" does not activate that mode.
 
 ## 1. Fix the candidate and obligations
 
