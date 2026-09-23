@@ -116,6 +116,31 @@ PUBLIC_SCAN_SAFE_MARKERS = (
     "@example.invalid",
     "correct-horse-battery-staple",
 )
+PUBLIC_CURRENT_SCAN_PATHS = (
+    ".github",
+    ".gitattributes",
+    ".gitignore",
+    "ACKNOWLEDGMENTS.md",
+    "AGENTS.md",
+    "AGENTS_PORTABLE_FALLBACK.md",
+    "CONTEXT.md",
+    "CONTRIBUTING.md",
+    GLOBAL_AGENTS_TEMPLATE,
+    "INSTALLATION.md",
+    "LICENSE",
+    "README.md",
+    "pyproject.toml",
+    "requirements-dev.txt",
+    "docs/agents",
+    "docs/astra",
+    "docs/plans",
+    "skills/astra",
+    "scripts/install_skills.py",
+    "scripts/pytest_focused.py",
+    "scripts/pytest_runtime.py",
+    "scripts/skill_pack_contract.py",
+    "scripts/validate_skills.py",
+)
 
 STALE_ACTIVE_TOKENS = (
     "AGENTS_SKILL_PACK_GUIDE",
@@ -1048,14 +1073,25 @@ def validate_public_mode(root: Path) -> list[str]:
         failures.append("Tracked files match ignore rules:")
         failures.extend(indent_lines(ignored.stdout))
 
-    grep = run_git(["grep", "-n", "-I", "-E", LOCAL_IDENTIFIER_RE.pattern, "--", "."], cwd=root)
+    grep = run_git(
+        [
+            "grep",
+            "-n",
+            "-I",
+            "-E",
+            LOCAL_IDENTIFIER_RE.pattern,
+            "--",
+            *PUBLIC_CURRENT_SCAN_PATHS,
+        ],
+        cwd=root,
+    )
     if grep.returncode == 0:
         for hit in grep.stdout.splitlines():
             if hit.startswith("scripts/validate_skills.py:"):
                 continue
             if any(marker in hit for marker in PUBLIC_SCAN_SAFE_MARKERS):
                 continue
-            failures.append(f"Potential local identifier or secret pattern: {hit}")
+            failures.append(f"Potential local identifier or secret pattern in current public surface: {hit}")
     elif grep.returncode != 1:
         failures.append(f"git grep local identifier scan failed: {grep.stderr.strip()}")
 

@@ -738,6 +738,33 @@ def test_public_scan_safe_markers_cover_reserved_fixture_values() -> None:
     assert "correct-horse-battery-staple" in validate_skills.PUBLIC_SCAN_SAFE_MARKERS
 
 
+def test_public_mode_scans_only_current_public_paths(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    calls: list[list[str]] = []
+
+    def fake_run_git(args: list[str], *, cwd: Path, check: bool = False):
+        calls.append(args)
+        if args == ["ls-files"]:
+            return subprocess.CompletedProcess(args, 0, "README.md\n", "")
+        if args == ["ls-files", "-ci", "--exclude-standard"]:
+            return subprocess.CompletedProcess(args, 0, "", "")
+        if args[:4] == ["grep", "-n", "-I", "-E"]:
+            return subprocess.CompletedProcess(args, 1, "", "")
+        raise AssertionError(args)
+
+    monkeypatch.setattr(validate_skills, "run_git", fake_run_git)
+
+    assert validate_skills.validate_public_mode(tmp_path) == []
+
+    grep_call = next(call for call in calls if call[:4] == ["grep", "-n", "-I", "-E"])
+    assert grep_call[grep_call.index("--") + 1 :] == list(
+        validate_skills.PUBLIC_CURRENT_SCAN_PATHS
+    )
+    assert "." not in grep_call[grep_call.index("--") + 1 :]
+
+
 def test_git_diff_validation_checks_worktree_and_index(monkeypatch, tmp_path: Path) -> None:
     calls: list[list[str]] = []
 
