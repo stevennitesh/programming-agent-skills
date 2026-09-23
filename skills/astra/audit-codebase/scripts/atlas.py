@@ -68,7 +68,7 @@ _SCRIPT = r"""
 """
 
 
-class ReportErrorclass ReportError(ValueError):
+class ReportError(ValueError):
     def __init__(self, message: str, *, stage: str = "validate") -> None:
         super().__init__(message)
         self.stage = stage
