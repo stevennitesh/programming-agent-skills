@@ -23,8 +23,9 @@ applicability notice controls which parts remain in force.
   shared owner. Skills add task-specific decisions and conditional references,
   rather than maintaining competing copies of common rules.
 - **Composition and installation:** Astra is the managed skill source, primarily
-  for GPT 6 Astra with GPT 5.6 Sol compatibility. Custom skills remain historical
-  and separately usable source material, not an alternative managed route.
+  for GPT 6 Astra, with optional GPT 6 Sol and Luna roles under cost-aware coding.
+  Custom skills remain historical and separately usable source material, not an
+  alternative managed route.
 - **Workflow ownership:** ordinary coding needs no skill pipeline. Shape-work
   owns substantial shaping and its conditional domain-modeling path; to-tickets
   and parallel-implement are optional workflows. No standalone Implement, To Spec,
