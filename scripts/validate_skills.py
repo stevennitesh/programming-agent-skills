@@ -76,6 +76,14 @@ INVOCATION_ROW_RE = re.compile(
     r"(?m)^\| `([a-z0-9][a-z0-9-]*)` \| "
     r"(implicitly invocable|explicit-only) \|$"
 )
+ASTRA_README_ROW_RE = re.compile(
+    r"(?m)^\| [^|\n]+ \| \[\$([a-z0-9][a-z0-9-]*)\]\("
+    r"skills/astra/([a-z0-9][a-z0-9-]*)/SKILL\.md\) \| "
+    r"(Request explicitly|Automatic when relevant) \|$"
+)
+ASTRA_EXPLICIT_LABEL = "Request explicitly"
+ASTRA_IMPLICIT_LABEL = "Automatic when relevant"
+ASTRA_INTERFACE_FIELDS = ("display_name", "short_description", "default_prompt")
 ACTIVE_SURFACE_FILES = (
     "README.md",
     "AGENTS.md",
@@ -283,6 +291,8 @@ def validate_skill_policy(skill_dir: Path, *, optional: bool = False) -> list[st
         if optional:
             return []  # Codex permits metadata omission for implicit skills.
         return [f"Skill missing invocation policy: {skill_dir.name}/agents/openai.yaml"]
+
+    failures: list[str] = []
     if optional:
         try:
             data = yaml.safe_load(policy_file.read_text(encoding="utf-8"))
@@ -290,23 +300,40 @@ def validate_skill_policy(skill_dir: Path, *, optional: bool = False) -> list[st
             return [f"Invalid skill metadata: {policy_file}: {error}"]
         if not isinstance(data, dict):
             return [f"Skill metadata must be a mapping: {policy_file}"]
+
+        interface = data.get("interface")
+        if interface is not None:
+            if not isinstance(interface, dict):
+                failures.append(f"Skill interface metadata must be a mapping: {policy_file}")
+            else:
+                for field in ASTRA_INTERFACE_FIELDS:
+                    if field in interface and (
+                        not isinstance(interface[field], str) or not interface[field].strip()
+                    ):
+                        failures.append(
+                            f"Skill interface {field} must be a non-empty string: {policy_file}"
+                        )
+
         policy = data.get("policy", {})
         if not isinstance(policy, dict):
-            return [f"Skill policy must be a mapping: {policy_file}"]
+            failures.append(f"Skill policy must be a mapping: {policy_file}")
+            return failures
         if "allow_implicit_invocation" not in policy:
-            return []
+            return failures
         if type(policy["allow_implicit_invocation"]) is not bool:
-            return [f"Skill invocation policy must be boolean: {policy_file}"]
+            failures.append(f"Skill invocation policy must be boolean: {policy_file}")
+            return failures
+
     values = re.findall(
         r"(?m)^\s*allow_implicit_invocation:\s*(true|false)\s*$",
         policy_file.read_text(encoding="utf-8"),
     )
     if len(values) != 1:
-        return [
+        failures.append(
             "Skill invocation policy must set allow_implicit_invocation exactly once: "
             f"{policy_file.as_posix()}"
-        ]
-    return []
+        )
+    return failures
 
 
 def validate_skill_folders(
@@ -392,6 +419,64 @@ def validate_astra(root: Path) -> tuple[list[str], list[str]]:
         for handle in sorted(set(SKILL_HANDLE_RE.findall(text)) - set(names)):
             failures.append(f"Astra references missing skill: {path} -> ${handle}")
     return names, failures
+
+
+def astra_invocation_label(skill_dir: Path) -> str | None:
+    policy_file = skill_dir / "agents/openai.yaml"
+    if not policy_file.is_file():
+        return ASTRA_IMPLICIT_LABEL
+    try:
+        data = yaml.safe_load(policy_file.read_text(encoding="utf-8"))
+    except yaml.YAMLError:
+        return None
+    if not isinstance(data, dict):
+        return None
+    policy = data.get("policy", {})
+    if not isinstance(policy, dict):
+        return None
+    value = policy.get("allow_implicit_invocation", True)
+    if type(value) is not bool:
+        return None
+    return ASTRA_IMPLICIT_LABEL if value else ASTRA_EXPLICIT_LABEL
+
+
+def validate_astra_readme_catalog(root: Path, skill_names: list[str]) -> list[str]:
+    readme = root / "README.md"
+    if not readme.is_file():
+        return []
+
+    rows = ASTRA_README_ROW_RE.findall(readme.read_text(encoding="utf-8"))
+    failures: list[str] = []
+    row_names = [name for name, _, _ in rows]
+    duplicates = {name for name in row_names if row_names.count(name) > 1}
+    for name in sorted(duplicates):
+        failures.append(f"README Astra catalog repeats skill: {name}")
+
+    actual_names = set(row_names)
+    expected_names = set(skill_names)
+    for name in sorted(expected_names - actual_names):
+        failures.append(f"README Astra catalog is missing skill: {name}")
+    for name in sorted(actual_names - expected_names):
+        failures.append(f"README Astra catalog contains unknown skill: {name}")
+
+    for name, path_name, label in rows:
+        if name != path_name:
+            failures.append(
+                f"README Astra catalog link disagrees with skill name: "
+                f"{name} -> skills/astra/{path_name}/SKILL.md"
+            )
+            continue
+        if name not in expected_names:
+            continue
+        expected_label = astra_invocation_label(
+            root / pack_contract.MANIFEST_SOURCE / name
+        )
+        if expected_label is not None and label != expected_label:
+            failures.append(
+                f"README Astra catalog invocation disagrees with metadata: "
+                f"{name} -> {label} (expected {expected_label})"
+            )
+    return failures
 
 
 def validate_active_surfaces(root: Path) -> list[str]:
@@ -932,6 +1017,7 @@ def main(argv: list[str] | None = None) -> int:
     failures.extend(skill_failures)
     astra_names, astra_failures = validate_astra(root)
     failures.extend(astra_failures)
+    failures.extend(validate_astra_readme_catalog(root, astra_names))
     failures.extend(validate_experimental_skills(root))
     failures.extend(validate_required_docs(root))
     failures.extend(validate_setup_schema_manifest(root))

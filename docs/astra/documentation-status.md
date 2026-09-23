@@ -6,6 +6,31 @@ referenced research/synthesis; it is not an audit of every historical packet or
 external project. The [design brief](design-brief.md) owns current direction. Do
 not treat this inventory as an execution backlog.
 
+## Astra package consistency audit, 2026-09-23
+
+Audited all 18 managed Astra packages for directory/frontmatter identity,
+selection descriptions, Codex invocation metadata, package-local resources, and
+public catalog consistency.
+
+The existing package shape is intentionally not uniform beyond its contract.
+Every skill has a matching `SKILL.md` name and nonempty description. The 11
+explicit-only skills are exactly the packages that set
+`policy.allow_implicit_invocation: false`; the seven automatically selectable
+skills omit `agents/openai.yaml` and use Codex's implicit default. Four
+explicit-only skills also carry optional launcher interface metadata where a
+custom display/default prompt is useful. References, scripts, and templates
+remain capability-specific rather than mandatory empty scaffolding.
+
+The consistency gap was enforcement rather than package content. The validator
+now checks that every managed Astra skill appears exactly once in the README
+catalog, each catalog link resolves to the same skill name, and its
+`Request explicitly` / `Automatic when relevant` label agrees with effective
+Codex metadata. It also validates known optional interface fields as nonempty
+strings when present. Regression tests cover valid parity, mode drift, duplicate,
+missing, unknown, and mismatched-link entries, plus malformed interface metadata.
+
+No skill package was padded or rewritten merely for visual uniformity.
+
 ## Current-vs-historical cleanup, 2026-09-23
 
 Audited current routers and owners for stale counts, retired skill names,

@@ -79,6 +79,91 @@ def test_astra_validates_implicit_metadata_resources_and_own_routes(tmp_path: Pa
     assert any("must stay inside skills/astra/" in item for item in failures)
 
 
+def test_astra_metadata_rejects_invalid_optional_interface_fields(
+    tmp_path: Path,
+) -> None:
+    skill = tmp_path / "skills/astra/example"
+    (skill / "agents").mkdir(parents=True)
+    (skill / "SKILL.md").write_text(
+        "---\nname: example\ndescription: Example task.\n---\n",
+        encoding="utf-8",
+    )
+    (skill / "agents/openai.yaml").write_text(
+        "interface:\n"
+        "  display_name: []\n"
+        "  short_description: \"\"\n"
+        "policy:\n"
+        "  allow_implicit_invocation: false\n",
+        encoding="utf-8",
+    )
+
+    failures = validate_skills.validate_astra(tmp_path)[1]
+
+    assert any("display_name must be a non-empty string" in item for item in failures)
+    assert any("short_description must be a non-empty string" in item for item in failures)
+
+
+def test_astra_readme_catalog_matches_packages_and_invocation_metadata(
+    tmp_path: Path,
+) -> None:
+    automatic = tmp_path / "skills/astra/automatic"
+    automatic.mkdir(parents=True)
+    (automatic / "SKILL.md").write_text(
+        "---\nname: automatic\ndescription: Automatic task.\n---\n",
+        encoding="utf-8",
+    )
+
+    explicit = tmp_path / "skills/astra/explicit"
+    (explicit / "agents").mkdir(parents=True)
+    (explicit / "SKILL.md").write_text(
+        "---\nname: explicit\ndescription: Explicit task.\n---\n",
+        encoding="utf-8",
+    )
+    (explicit / "agents/openai.yaml").write_text(
+        "policy:\n  allow_implicit_invocation: false\n",
+        encoding="utf-8",
+    )
+
+    readme = tmp_path / "README.md"
+    readme.write_text(
+        "| Your task | Skill | Use |\n"
+        "| --- | --- | --- |\n"
+        "| Automatic work | [$automatic](skills/astra/automatic/SKILL.md) | "
+        "Automatic when relevant |\n"
+        "| Explicit work | [$explicit](skills/astra/explicit/SKILL.md) | "
+        "Request explicitly |\n",
+        encoding="utf-8",
+    )
+
+    assert validate_skills.validate_astra_readme_catalog(
+        tmp_path, ["automatic", "explicit"]
+    ) == []
+
+    readme.write_text(
+        "| Your task | Skill | Use |\n"
+        "| --- | --- | --- |\n"
+        "| Wrong mode | [$automatic](skills/astra/automatic/SKILL.md) | "
+        "Request explicitly |\n"
+        "| Wrong link | [$explicit](skills/astra/automatic/SKILL.md) | "
+        "Request explicitly |\n"
+        "| Duplicate | [$explicit](skills/astra/explicit/SKILL.md) | "
+        "Request explicitly |\n"
+        "| Unknown | [$retired](skills/astra/retired/SKILL.md) | "
+        "Automatic when relevant |\n",
+        encoding="utf-8",
+    )
+
+    failures = validate_skills.validate_astra_readme_catalog(
+        tmp_path, ["automatic", "explicit", "missing"]
+    )
+
+    assert "README Astra catalog repeats skill: explicit" in failures
+    assert "README Astra catalog is missing skill: missing" in failures
+    assert "README Astra catalog contains unknown skill: retired" in failures
+    assert any("link disagrees with skill name: explicit" in item for item in failures)
+    assert any("invocation disagrees with metadata: automatic" in item for item in failures)
+
+
 def test_manifest_rejects_nonscalar_source_without_crashing() -> None:
     _, _, failures = skill_pack_contract.parse_managed_manifest_payload({
         "format": 1, "source": [], "skills": [], "hashes": {},
