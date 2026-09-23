@@ -371,11 +371,11 @@ def test_incomplete_transaction_blocks_another_root_sharing_global_bootstrap(
         "- **Route:** Updated route.\n",
         encoding="utf-8",
     )
-    original_bootstrap = install_skills.install_global_bootstrap
+    original_write_global = install_skills.write_global_agents
     original_restore = install_skills.restore_file
 
-    def fail_after_bootstrap(template: Path, target: Path) -> str:
-        original_bootstrap(template, target)
+    def fail_after_global_write(target: Path, updated: str) -> None:
+        original_write_global(target, updated)
         raise OSError("injected global commit failure")
 
     def fail_global_restore(path: Path, snapshot: Path | None) -> None:
@@ -385,8 +385,8 @@ def test_incomplete_transaction_blocks_another_root_sharing_global_bootstrap(
 
     monkeypatch.setattr(
         install_skills,
-        "install_global_bootstrap",
-        fail_after_bootstrap,
+        "write_global_agents",
+        fail_after_global_write,
     )
     monkeypatch.setattr(install_skills, "restore_file", fail_global_restore)
 
@@ -397,8 +397,8 @@ def test_incomplete_transaction_blocks_another_root_sharing_global_bootstrap(
     assert len(transactions) == 1
     monkeypatch.setattr(
         install_skills,
-        "install_global_bootstrap",
-        original_bootstrap,
+        "write_global_agents",
+        original_write_global,
     )
     monkeypatch.setattr(install_skills, "restore_file", original_restore)
 
@@ -1941,16 +1941,16 @@ def test_install_restores_the_pack_when_global_bootstrap_write_fails(
         "- **Route:** Updated route.\n",
         encoding="utf-8",
     )
-    original = install_skills.install_global_bootstrap
+    original = install_skills.write_global_agents
 
-    def fail_after_bootstrap(template: Path, target: Path) -> str:
-        original(template, target)
+    def fail_after_global_write(target: Path, updated: str) -> None:
+        original(target, updated)
         raise OSError("injected global bootstrap failure")
 
     monkeypatch.setattr(
         install_skills,
-        "install_global_bootstrap",
-        fail_after_bootstrap,
+        "write_global_agents",
+        fail_after_global_write,
     )
 
     with pytest.raises(OSError, match="injected global bootstrap failure"):
@@ -1975,16 +1975,15 @@ def test_install_rolls_back_when_global_step_corrupts_the_manifest(
     before_agents = global_agents.read_bytes()
 
     (root / "skills/astra/alpha/SKILL.md").write_text("v2", encoding="utf-8")
-    original_bootstrap = install_skills.install_global_bootstrap
+    original_write_global = install_skills.write_global_agents
 
-    def corrupt_manifest(template: Path, target: Path) -> str:
-        status = original_bootstrap(template, target)
+    def corrupt_manifest(target: Path, updated: str) -> None:
+        original_write_global(target, updated)
         (installed / install_skills.MANIFEST_NAME).write_text("{}", encoding="utf-8")
-        return status
 
     monkeypatch.setattr(
         install_skills,
-        "install_global_bootstrap",
+        "write_global_agents",
         corrupt_manifest,
     )
 
@@ -1999,8 +1998,8 @@ def test_install_rolls_back_when_global_step_corrupts_the_manifest(
     )
     monkeypatch.setattr(
         install_skills,
-        "install_global_bootstrap",
-        original_bootstrap,
+        "write_global_agents",
+        original_write_global,
     )
     result = install_skills.recover_transaction(
         transactions[0], installed, global_agents
