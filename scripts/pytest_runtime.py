@@ -48,7 +48,7 @@ def remove_session(config: Any) -> None:
     if session.parent != expected_parent or not session.name.startswith(SESSION_PREFIX):
         return
 
-    shutil.rmtree(session, onexc=_retry_writable)
+    shutil.rmtree(session, onerror=_retry_writable)
 
 
 @pytest.hookimpl(trylast=True)

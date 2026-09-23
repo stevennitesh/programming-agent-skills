@@ -31,10 +31,13 @@ the contributor guide as a current surface, and treats reserved synthetic
 Its local-identifier/secret heuristic is scoped to current public/runtime
 surfaces rather than preserved historical research, synthesis, validation, and
 test fixtures; the first CI run exposed that distinction by correctly surfacing
-old machine-path provenance as a false release blocker. The CI workflow uses the
-current Node-24/ESM GitHub Actions majors. The development dependency set remains
-warranted by current plus explicitly retained legacy tests; no dependency removal
-was justified in this pass.
+old machine-path provenance as a false release blocker. The next CI pass then
+exposed a real Python 3.11 compatibility bug in pytest cleanup
+(`shutil.rmtree(onexc=...)`); the helper now uses the Python-3.11-compatible
+`onerror` callback while retaining read-only-file cleanup. The CI workflow uses
+the current Node-24/ESM GitHub Actions majors. The development dependency set
+remains warranted by current plus explicitly retained legacy tests; no dependency
+removal was justified in this pass.
 
 ## Installer architecture audit, 2026-09-23
 
