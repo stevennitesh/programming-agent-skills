@@ -22,7 +22,7 @@ Include only decision-bearing fields that apply:
 Point to accessible detailed sources instead of copying conversations. Do not
 front-load repository facts the worker can cheaply discover itself.
 
-For Luna, keep the packet especially compact and fully bounded. If the task needs a
+For Luna Max, keep the packet especially compact and fully bounded. If the task needs a
 large repository brief, open-ended exploration, or substantial implementation
 judgment, route it to Sol rather than spending Astra tokens manufacturing a
 pseudo-bounded assignment.
