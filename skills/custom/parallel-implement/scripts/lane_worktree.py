@@ -12,7 +12,7 @@ import subprocess
 import time
 import uuid
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 
 LANE_NAME = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]{0,79}")
@@ -390,43 +390,16 @@ def clear_readonly_tree(path: Path) -> None:
             pending.extend(current.iterdir())
 
 
-def remove_tree(
-    path: Path, *, phase: str, receipt_authorized: bool
+def remove_with_retry(
+    path: Path,
+    remove: Callable[[Path], None],
+    *,
+    phase: str,
+    receipt_authorized: bool,
 ) -> dict[str, Any] | None:
     for retry_count in range(len(RETRY_DELAYS) + 1):
         try:
-            shutil.rmtree(path)
-            return None
-        except OSError as error:
-            winerror = getattr(error, "winerror", None)
-            if winerror not in TRANSIENT_WINDOWS_ERRORS or retry_count == len(RETRY_DELAYS):
-                return failure_evidence(phase, path, error, retry_count)
-            if receipt_authorized and winerror == 5:
-                try:
-                    clear_readonly_tree(path)
-                except (LaneError, OSError) as clear_error:
-                    if isinstance(clear_error, OSError):
-                        return failure_evidence(
-                            f"{phase}:clear-readonly", path, clear_error, retry_count
-                        )
-                    return {
-                        "phase": f"{phase}:clear-readonly",
-                        "path": str(path),
-                        "error": str(clear_error),
-                        "errno": None,
-                        "winerror": None,
-                        "retry_count": retry_count,
-                    }
-            time.sleep(RETRY_DELAYS[retry_count])
-    raise AssertionError("unreachable")
-
-
-def remove_file(
-    path: Path, *, phase: str, receipt_authorized: bool
-) -> dict[str, Any] | None:
-    for retry_count in range(len(RETRY_DELAYS) + 1):
-        try:
-            path.unlink()
+            remove(path)
             return None
         except FileNotFoundError:
             return None
@@ -437,11 +410,11 @@ def remove_file(
             if receipt_authorized and winerror == 5:
                 try:
                     clear_readonly_tree(path)
-                except (LaneError, OSError) as clear_error:
-                    if isinstance(clear_error, OSError):
-                        return failure_evidence(
-                            f"{phase}:clear-readonly", path, clear_error, retry_count
-                        )
+                except OSError as clear_error:
+                    return failure_evidence(
+                        f"{phase}:clear-readonly", path, clear_error, retry_count
+                    )
+                except LaneError as clear_error:
                     return {
                         "phase": f"{phase}:clear-readonly",
                         "path": str(path),
@@ -452,6 +425,28 @@ def remove_file(
                     }
             time.sleep(RETRY_DELAYS[retry_count])
     raise AssertionError("unreachable")
+
+
+def remove_tree(
+    path: Path, *, phase: str, receipt_authorized: bool
+) -> dict[str, Any] | None:
+    return remove_with_retry(
+        path,
+        shutil.rmtree,
+        phase=phase,
+        receipt_authorized=receipt_authorized,
+    )
+
+
+def remove_file(
+    path: Path, *, phase: str, receipt_authorized: bool
+) -> dict[str, Any] | None:
+    return remove_with_retry(
+        path,
+        lambda target: target.unlink(),
+        phase=phase,
+        receipt_authorized=receipt_authorized,
+    )
 
 
 def remove_runtime_payload(root: Path, worktree: Path) -> dict[str, Any] | None:
