@@ -38,6 +38,17 @@ owned callers and remove displaced paths together.
 Preserve meaningful failure and partial-result semantics. A fallback must not turn
 an error or incomplete result into apparent success.
 
+When many similar edits or checks share one mechanical recipe, and a small
+deterministic script, codemod, generator, or check would materially reduce
+inconsistency or verification cost, build the smallest rerunnable lever and prove
+it on a representative unit. Do not add tooling when direct work is simpler and
+equally reviewable.
+
+When a deliberate simplification has a non-obvious material ceiling whose
+violation would change correctness, performance, or operations, record that
+ceiling and the condition that should trigger reconsideration at its natural
+owner.
+
 ## Match proof to the claim
 
 Run required checks and the nearest useful evidence that can fail for the changed
