@@ -956,7 +956,13 @@ def test_cleanup_preserves_git_uncertainty(tmp_path: Path, monkeypatch) -> None:
     assert cleaned == {
         "ok": False,
         "removed": [],
-        "preserved": [{"worktree": str(worktree), "reason": "uncertain"}],
+        "preserved": [
+            {
+                "worktree": str(worktree),
+                "reason": "uncertain",
+                "error": "status denied",
+            }
+        ],
         "error": "cleanup incomplete",
     }
     assert worktree.exists()
