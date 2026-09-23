@@ -1,102 +1,115 @@
 ---
 name: audit-codebase
-description: Audit an existing codebase for evidence-backed defects and worthwhile architecture or maintainability improvements. Exclude reviewing a pending change and implementing fixes.
+description: Map and audit an existing codebase for evidence-backed defects and worthwhile architecture or maintainability improvements. Use explicitly for whole-codebase exploration or focused baseline audits; exclude pending-diff review and implementation.
 ---
 
 # Audit codebase
 
-Find demonstrated baseline defects or avoidable costs worth changing while
-distinguishing justified complexity and missing evidence.
+Build a useful picture of the current codebase, then deepen only the subsystem or
+improvement candidate the user selects.
 
-An audit is complete when the strongest opportunities in scope are supported by
-concrete scenarios and current evidence, significant justified complexity is not
-misreported as a defect, and coverage limits are explicit.
+Audit is read-only with respect to product behavior. The managed HTML report and
+invocation-owned temporary files are the only default writes. Findings and
+candidates do not authorize implementation, tracker publication, merge, release,
+deployment, or changes to accepted product meaning.
 
-Audit is read-only with respect to product behavior. Findings do not authorize
-implementation, tracker publication, external effects, or changes to accepted
-domain meaning.
+## 1. Choose focused audit or visual atlas
 
-## 1. Bound the audit
+For a user-selected subsystem, flow, or concrete baseline problem, perform a
+focused audit and return concise findings unless the user asks to preserve it in
+an atlas.
 
-Start with the user's scope, pain point, or concrete change pressure. For an
-open-ended audit, prioritize consequential flows and owners where repeated fixes,
-coordination cost, change frequency, or failure impact make inspection useful.
-Churn is a lead, not evidence of a defect.
+For a whole-codebase audit, architecture exploration, maintained map, or request
+to find where to improve next, use
+[Visual atlas](references/atlas.md). The atlas owns the interactive workflow:
 
-Match the coverage claim to the evidence. A focused audit may inspect only the
-relevant flow. A comprehensive claim requires materially distinct flows and
-applicable quality dimensions to be accounted for; a sampled file list is not
-comprehensive coverage.
+```text
+Map repository → user selects subsystem → Audit subsystem
+              → user selects candidate → Analyze candidate
+```
 
-When the user requests a maintained map, visual report, explicit coverage atlas,
-or continuation of an existing atlas, read [Atlas](references/atlas.md). Mapping
-is an artifact choice and does not itself establish audit coverage.
+Do not choose the user's next subsystem or candidate. The report may expose
+evidence-backed qualitative strength and coverage to support that choice.
 
 ## 2. Find demonstrated costs
 
-Read the governing behavior and accepted decisions relevant to the selected scope.
-Inspect enough of the actual behavior, ownership, and change history to demonstrate
-the claimed cost and its affected set.
+Read the governing behavior and accepted decisions relevant to the selected
+scope. Inspect enough of the actual behavior, ownership, callers, dependencies,
+proof, and bounded history to demonstrate the claimed cost and its affected set.
 
 Judge the current design against supported behavior and real change pressure, not
-hypothetical future features or extensibility.
-
-Look for demonstrated coordination costs such as duplicated policy, callers
-enforcing invariants that belong elsewhere, leaked representation, or unrelated
-policies forced to change together. Treat each as a hypothesis until a real
-scenario and consequence support it.
+hypothetical extensibility.
 
 Use [Quality questions](references/quality-questions.md) only for dimensions that
-can affect the requested scope. Follow shared owners or sibling callers far enough
-to establish the affected set before calling a problem systemic.
+can expose a meaningful defect, avoidable cost, justified complexity, or evidence
+gap in the selected scope.
+
+Treat coordination costs, leaked representation, duplicated policy, shallow
+ownership, repeated workaround shapes, difficult proof, and suspicious complexity
+as hypotheses until a concrete scenario and consequence support them. Follow
+shared owners or sibling callers far enough to establish the affected set before
+calling a problem systemic.
 
 Do not report a boundary as unnecessary merely because it has one implementation
-or adds files. Distinct ownership, external contracts, lifecycle, variation, or
+or adds files. Distinct ownership, lifecycle, external contracts, variation, or
 meaningful hidden policy can justify complexity.
 
-## 3. Challenge and admit findings
+## 3. Admit findings and form candidates
 
-For each proposed finding, establish a concrete supported scenario, current source
-evidence, and a consequential effect or avoidable cost. Seek evidence that could
-disprove the diagnosis; migration, independent lifecycle, external contracts, or
-domain distinctions may justify the current shape.
-
-Classify the result as one of:
+Classify supported observations as:
 
 - **defect:** an accepted expectation is violated;
 - **opportunity:** a demonstrated avoidable cost is worth reducing;
-- **retain:** suspicious complexity is justified by current requirements; or
-- **gap:** evidence is insufficient to support a conclusion.
+- **retained complexity:** suspicious complexity is justified by current
+  requirements; or
+- **gap:** evidence is insufficient to settle the claim.
 
-A smell, line count, preference, or unfamiliar design is none of these by itself.
-No findings is a valid result.
+A smell, line count, preference, or unfamiliar architecture is none of these by
+itself. Seek evidence capable of disproving the diagnosis.
 
-An opportunity must identify the demonstrated cost and a plausible direction for
-removing it. Detailed replacement architecture belongs to
-[codebase-design](../codebase-design/SKILL.md).
+Group defects and opportunities into an improvement candidate only when they share
+a coherent causal owner or improvement direction and can be reasoned about
+together. Keep individual findings visible.
 
-Use proportionate read-only or isolated checks when they can resolve a disputed
-finding. Missing production access or a representative workload is an evidence
-limit, not proof of failure. Do not mutate live product state as part of the audit.
+Candidate strength is qualitative evidence for attention, not a numeric score:
 
-## 4. Rank and return the useful result
+- **strong:** current evidence supports a consequential avoidable cost and a
+  credible improvement direction;
+- **worth exploring:** the problem is supported but material design/evidence
+  uncertainty remains; or
+- **speculative:** the signal is plausible but too weak for a stronger claim.
 
-Group findings that share one causal explanation instead of reporting the same
-cost as many independent wins.
+Do not optimize for finding count, deleted lines, architectural novelty, or a
+single top recommendation.
 
-Rank the strongest opportunities by demonstrated consequence, expected benefit,
-confidence, relevance to real work, and likely change and verification cost.
-Do not optimize for finding count, files removed, or architectural novelty.
+## 4. Analyze only the selected candidate
 
-Return the strongest supported candidates with the evidence and consequence needed
-to judge them, plus significant retained complexity and material evidence gaps.
-Do not pad the result with every rejected suspicion.
+Reinspect the candidate's current source, implicated subsystems, causal owner,
+callers, constraints, findings, and proof seams.
 
-The audit establishes the problem and evidence, not the replacement design. Use
-[codebase-design](../codebase-design/SKILL.md) when a consequential architecture
-choice must be settled and [prototype](../prototype/SKILL.md) when a new
-observation is required before deciding.
+Compare only materially different choices. Consider keeping the current design,
+the smallest sufficient change, a structural change, or replacement when each is
+actually relevant; do not manufacture alternatives to fill a template.
 
-Use a concise report unless the user requested the atlas. Audit-only requests end
-with the findings and requested artifacts. Broader work may continue only within
-its existing authorization; the audit itself grants no implementation authority.
+Use [codebase-design](../codebase-design/SKILL.md) when a consequential ownership,
+interface, seam, or migration choice requires dedicated design judgment. Use
+[prototype](../prototype/SKILL.md) when a new observation is required before the
+candidate can be judged.
+
+Analysis ends with the supported cause, affected scope, relevant options,
+recommendation or exact blocker, required proof, and evidence limits. It does not
+start implementation.
+
+## 5. Return the decision surface
+
+For a focused audit, return the strongest findings, retained complexity, evidence
+gaps, and useful candidates without padding.
+
+For atlas work, update the managed report and return its path plus the currently
+selectable subsystem or candidate IDs. The HTML is a read-only decision surface:
+its local controls may navigate, filter, and copy the next explicit invocation,
+but they never mutate the repository or start another workflow.
+
+Complete when the requested focused scope is judged, or when the requested atlas
+operation—Map, Audit one selected subsystem, or Analyze one selected candidate—is
+published against current source and the next selection remains with the user.
