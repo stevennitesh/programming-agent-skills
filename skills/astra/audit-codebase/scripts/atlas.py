@@ -664,14 +664,6 @@ def _analysis(raw: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def _list(values: Sequence[str], empty="None recorded") -> str:
-    return (
-        "<ul>" + "".join(f"<li>{escape(v)}</li>" for v in values) + "</ul>"
-        if values
-        else f'<span class="muted">{escape(empty)}</span>'
-    )
-
-
 def _source_packet(value: object, label: str) -> dict[str, Any]:
     packet = _obj(value, label)
     _strict(packet, {"paths", "sha256"}, set(), label)
