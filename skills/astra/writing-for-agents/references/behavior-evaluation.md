@@ -86,6 +86,13 @@ Do not reward a candidate merely for following more instructions from the
 candidate itself. An instruction can achieve perfect procedural compliance while
 making the actual result worse.
 
+When the claimed improvement is efficiency—fewer tokens, tool calls, lines of
+code, elapsed time, context, or cost—gate the comparison on the same accepted
+correctness, completeness, safety, and required-effect criteria first. A candidate
+that does less required work or drops a protection does not win an efficiency
+comparison. Report efficiency only among outcomes that satisfy those gates, and
+report any gate failure separately rather than averaging it into a score.
+
 Use a scenario that can expose the intended distinction. A happy path on which
 baseline and candidate naturally behave the same provides little evidence about
 the value of the instruction.
