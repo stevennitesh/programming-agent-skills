@@ -8,7 +8,8 @@ Explore imaginatively. Converge under proof. Simplify ruthlessly.
 
 ## Current direction
 
-The pack targets GPT 6 Astra primarily, with GPT 5.6 Sol compatibility.
+The pack targets GPT 6 Astra primarily. Optional cost-aware execution routes
+substantial implementation to GPT 6 Sol and compact bounded work to GPT 6 Luna.
 
 Build the Astra pack in `skills/astra/`. When designing or changing an Astra
 skill, read [the Astra design brief](docs/astra/design-brief.md). It records the
