@@ -505,7 +505,7 @@ def _candidate(value: object, label: str) -> dict[str, Any]:
     }
 
 
-def _audit(def _audit(raw: dict[str, Any]) -> dict[str, Any]:
+def _audit(raw: dict[str, Any]) -> dict[str, Any]:
     fields = {
         "version",
         "expected_report_sha256",
@@ -838,7 +838,7 @@ def _validate_state(state: dict[str, Any]) -> None:
     if len(fids)!=len(set(fids)) or len(cids)!=len(set(cids)): raise ReportError("duplicate finding or candidate ids")
 
 
-def _load(def _load(root: Path, report: Path) -> tuple[bytes, dict[str, Any]]:
+def _load(root: Path, report: Path) -> tuple[bytes, dict[str, Any]]:
     path = _report_path(root, report, exists=True)
     data = path.read_bytes()
     text = data.decode()
