@@ -1,8 +1,8 @@
 # Worker assignment
 
 Prepare the smallest self-contained assignment that lets the selected worker act
-without importing the lead's conversation. The packet should transfer necessary
-context once, not make Astra follow implementation continuously.
+without importing the lead's conversation. Transfer necessary context once; do
+not make Astra continuously follow implementation.
 
 ## Assignment contract
 
@@ -22,10 +22,13 @@ Include only decision-bearing fields that apply:
 Point to accessible detailed sources instead of copying conversations. Do not
 front-load repository facts the worker can cheaply discover itself.
 
-For Luna Max, keep the packet especially compact and fully bounded. If the task needs a
-large repository brief, open-ended exploration, or substantial implementation
-judgment, route it to Sol rather than spending Astra tokens manufacturing a
-pseudo-bounded assignment.
+For Luna Max, the packet must remain compact and fully bounded. If creating a
+self-contained Luna assignment requires substantial repository explanation,
+open-ended exploration, or a long list of judgment calls, use Sol instead.
+
+For Sol, give enough accepted context to own implementation end to end. Do not
+keep decisions with Astra merely so the lead can stay involved; reserve only
+choices whose consequences genuinely belong to the lead or user.
 
 Suggested mechanisms remain suggestions unless an accepted source makes them
 binding. The worker resolves routine technical choices within scope and raises a
@@ -40,18 +43,22 @@ custody. It preserves unrelated work and must not assume other actors are absent
 A blocking question identifies the unresolved decision, why it matters, and
 current custody state. A nonblocking question does not stop independent work.
 
+Do not send routine progress reports. Astra should not pay input/output tokens to
+consume intermediate implementation narration that does not change a lead-owned
+decision.
+
 If Astra requests checkout access, the worker stops its writers and relevant
 subprocesses, reports their state, and releases custody before Astra accesses that
 mutable checkout.
 
-A candidate return is reviewable only when it identifies the candidate and material
-proof, reports unresolved limitations, and releases custody with worker-owned
-writers stopped.
+A candidate return is reviewable only when it identifies the candidate and
+material proof, reports unresolved limitations, and releases custody with
+worker-owned writers stopped.
 
-Return decision-relevant evidence, not a narrated implementation journey. Do not
-send every file inspected, rejected idea, debugging step, or routine test iteration
-unless it changes review or recovery.
+Return decision-relevant evidence, not a narrated implementation journey. Omit
+every file inspected, rejected idea, debugging step, and routine test iteration
+unless it changes review, recovery, or a consequential decision.
 
 For follow-ups, preserve the established outcome and send only changed context,
-findings, acceptance, candidate identity, and renewed custody grant. Reuse the same
-worker while its accumulated context remains useful and safe.
+findings, acceptance, candidate identity, and renewed custody grant. Reuse the
+same worker while its accumulated context remains useful and safe.
