@@ -6,6 +6,16 @@ referenced research/synthesis; it is not an audit of every historical packet or
 external project. The [design brief](design-brief.md) owns current direction. Do
 not treat this inventory as an execution backlog.
 
+## CI fixture reconciliation, 2026-09-23
+
+After collection succeeded, the full Linux suite reached 392 tests and exposed
+three stale fixtures created by recent contract changes: a synthetic recovery
+state omitted the now-required planned manifest identity, a global-write
+corruption test did not create a changed bootstrap and therefore never entered
+the writer it was monkeypatching, and a legacy handle-routing fixture created an
+Astra directory without its required `SKILL.md`. The fixtures now model valid
+contract states while preserving the failure paths they are intended to test.
+
 ## Python 3.11 legacy-helper compatibility, 2026-09-23
 
 Cross-platform CI next exposed a syntax error in the retained custom

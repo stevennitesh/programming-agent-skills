@@ -281,6 +281,10 @@ def test_legacy_handle_validation_uses_current_and_legacy_surfaces(
 
     current_skill = tmp_path / "skills/astra/current"
     current_skill.mkdir(parents=True)
+    (current_skill / "SKILL.md").write_text(
+        "---\nname: current\ndescription: Current task.\n---\n",
+        encoding="utf-8",
+    )
     legacy_skill = tmp_path / "skills/custom/legacy"
     legacy_skill.mkdir(parents=True)
 

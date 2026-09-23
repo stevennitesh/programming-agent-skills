@@ -225,7 +225,13 @@ def test_recovery_json_cli_emits_machine_readable_evidence(
     transaction.mkdir()
     install_skills.write_transaction_state(
         transaction,
-        install_skills.preparing_transaction_state(installed, None, [], False),
+        install_skills.preparing_transaction_state(
+            installed,
+            None,
+            [],
+            False,
+            manifest_target_sha256="0" * 64,
+        ),
     )
     monkeypatch.setattr(
         sys,
@@ -1975,6 +1981,12 @@ def test_install_rolls_back_when_global_step_corrupts_the_manifest(
     before_agents = global_agents.read_bytes()
 
     (root / "skills/astra/alpha/SKILL.md").write_text("v2", encoding="utf-8")
+    (root / install_skills.GLOBAL_TEMPLATE_NAME).write_text(
+        "# Global Codex Instructions\n\n"
+        "## Skill Pack Bootstrap\n\n"
+        "- **Route:** Changed before corruption test.\n",
+        encoding="utf-8",
+    )
     original_write_global = install_skills.write_global_agents
 
     def corrupt_manifest(target: Path, updated: str) -> None:
