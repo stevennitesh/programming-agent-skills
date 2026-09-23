@@ -31,7 +31,7 @@ reproducer is not required before reasoning from trustworthy production evidence
 Read the relevant section of
 [Investigation methods](references/investigation-methods.md) when intermittency,
 concurrency, cross-system behavior, environment differences, history, test order,
-or performance affects the diagnosis. Do not simulate away the mechanism under
+performance, or repeated failed fixes sharing one premise affect the diagnosis. Do not simulate away the mechanism under
 investigation.
 
 ## 2. Establish the causal mechanism
