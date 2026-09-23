@@ -666,7 +666,45 @@ def claim_transaction(parent: Path, state: dict[str, object]) -> Path:
     return transaction
 
 
-def replace_tree(source: Path, destination: Path, displaced: Path) -> None:
+def file_identity(path: Path, label: str) -> str | None:
+    reject_unsafe_redirect(path, label)
+    if not path.exists():
+        return None
+    if not path.is_file():
+        raise RuntimeError(f"{label} has unsupported live type: {path}")
+    return file_hash(path)
+
+
+def verify_file_identity(path: Path, expected: str | None, label: str) -> None:
+    actual = file_identity(path, label)
+    if actual != expected:
+        raise RuntimeError(
+            f"{label} changed during install planning: {path}"
+        )
+
+
+def verify_skill_identity(
+    path: Path,
+    expected: str | None,
+    label: str,
+) -> None:
+    reject_unsafe_redirect(path, label)
+    if not path.exists():
+        actual = None
+    elif not path.is_dir():
+        raise RuntimeError(f"{label} has unsupported live type: {path}")
+    else:
+        actual = skill_tree_hash(path)
+    if actual != expected:
+        raise RuntimeError(f"{label} changed during install planning: {path}")
+
+
+def replace_tree(
+    source: Path,
+    destination: Path,
+    displaced: Path,
+    expected_live_hash: str | None,
+) -> None:
     temporary = destination.parent / f".{destination.name}.installing"
     for path in (temporary, displaced):
         if path.exists() or path.is_symlink():
@@ -674,9 +712,21 @@ def replace_tree(source: Path, destination: Path, displaced: Path) -> None:
                 f"Refusing to overwrite managed-skill coordination path: {path}"
             )
     shutil.copytree(source, temporary)
+    verify_skill_identity(
+        destination,
+        expected_live_hash,
+        f"managed skill {destination.name}",
+    )
     if destination.exists():
         displaced.parent.mkdir(parents=True, exist_ok=True)
         destination.rename(displaced)
+        if skill_tree_hash(displaced) != expected_live_hash:
+            if not destination.exists():
+                displaced.rename(destination)
+            remove_path(temporary)
+            raise RuntimeError(
+                f"Managed skill changed during atomic displacement: {destination.name}"
+            )
     try:
         temporary.rename(destination)
     except Exception:
@@ -685,13 +735,24 @@ def replace_tree(source: Path, destination: Path, displaced: Path) -> None:
         raise
 
 
-def retire_tree(path: Path, displaced: Path) -> None:
+def retire_tree(
+    path: Path,
+    displaced: Path,
+    expected_live_hash: str,
+) -> None:
     if displaced.exists() or displaced.is_symlink():
         raise RuntimeError(
             f"Refusing to overwrite retired-skill quarantine path: {displaced}"
         )
+    verify_skill_identity(path, expected_live_hash, f"managed skill {path.name}")
     displaced.parent.mkdir(parents=True, exist_ok=True)
     path.rename(displaced)
+    if skill_tree_hash(displaced) != expected_live_hash:
+        if not path.exists():
+            displaced.rename(path)
+        raise RuntimeError(
+            f"Managed skill changed during atomic retirement: {path.name}"
+        )
 
 
 def write_manifest(path: Path, payload: dict[str, object]) -> None:
@@ -1776,12 +1837,15 @@ def _install_locked(
 
     active_names = {path.name for path in sources}
     source_hashes = {source.name: skill_tree_hash(source) for source in sources}
+    manifest_path = skills_dir / MANIFEST_NAME
+    initial_manifest_sha256 = file_identity(manifest_path, "installed manifest")
     previous_names, recorded_hashes = read_managed_manifest(skills_dir)
     retired_names = sorted(previous_names - active_names)
 
     new_names: list[str] = []
     updated_names: list[str] = []
     unchanged_names: list[str] = []
+    verified_live_hashes: dict[str, str] = {}
     for source in sources:
         destination = managed_skill_path(skills_dir, source.name)
         if destination.exists() and not destination.is_dir():
@@ -1790,6 +1854,7 @@ def _install_locked(
             new_names.append(source.name)
         else:
             installed_hash = skill_tree_hash(destination)
+            verified_live_hashes[source.name] = installed_hash
             if source.name in previous_names:
                 recorded_hash = recorded_hashes[source.name]
                 raw_hash = tree_hash(destination)
@@ -1815,15 +1880,19 @@ def _install_locked(
             raise ValueError(f"Managed skill path is not a directory: {destination}")
         if destination.is_dir():
             recorded_hash = recorded_hashes[name]
+            installed_hash = skill_tree_hash(destination)
+            verified_live_hashes[name] = installed_hash
             if (
-                skill_tree_hash(destination) != recorded_hash
+                installed_hash != recorded_hash
                 and tree_hash(destination) != recorded_hash
             ):
                 raise ValueError(f"Refusing to retire modified managed skill: {name}")
 
     bootstrap_status = "skipped"
     global_target_text: str | None = None
+    initial_global_sha256: str | None = None
     if global_agents is not None:
+        initial_global_sha256 = file_identity(global_agents, "global AGENTS")
         bootstrap_status, global_target_text = render_global_bootstrap(
             root / GLOBAL_TEMPLATE_NAME,
             global_agents,
@@ -1857,20 +1926,23 @@ def _install_locked(
             raise ValueError(f"Managed skill path is not a directory: {destination}")
 
     skills_dir_existed = skills_dir.is_dir()
-    manifest_path = skills_dir / MANIFEST_NAME
-    reject_unsafe_redirect(manifest_path, "installed manifest")
-    if manifest_path.exists() and not manifest_path.is_file():
-        raise ValueError(f"Installed manifest is not a file: {manifest_path}")
-    manifest_existed = manifest_path.is_file()
-    manifest_sha256 = file_hash(manifest_path) if manifest_existed else None
+    verify_file_identity(
+        manifest_path,
+        initial_manifest_sha256,
+        "installed manifest",
+    )
+    manifest_existed = initial_manifest_sha256 is not None
+    manifest_sha256 = initial_manifest_sha256
     if (
         global_agents is not None
         and global_agents.exists()
         and not global_agents.is_file()
     ):
         raise ValueError(f"Global AGENTS target is not a file: {global_agents}")
-    global_agents_existed = global_agents is not None and global_agents.is_file()
-    global_sha256 = file_hash(global_agents) if global_agents_existed else None
+    if global_agents is not None:
+        verify_file_identity(global_agents, initial_global_sha256, "global AGENTS")
+    global_agents_existed = initial_global_sha256 is not None
+    global_sha256 = initial_global_sha256
     previous_hashes = {
         name: tree_hash(managed_skill_path(skills_dir, name))
         for name in mutated_names
@@ -1900,6 +1972,15 @@ def _install_locked(
         )
     )
     if not mutated_names and manifest_is_planned and global_is_planned:
+        for name in unchanged_names:
+            verify_skill_identity(
+                managed_skill_path(skills_dir, name),
+                verified_live_hashes[name],
+                f"managed skill {name}",
+            )
+        verify_file_identity(manifest_path, manifest_sha256, "installed manifest")
+        if global_agents is not None:
+            verify_file_identity(global_agents, global_sha256, "global AGENTS")
         return _install_evidence(
             skills_dir=skills_dir,
             active_names=active_names,
@@ -1993,6 +2074,16 @@ def _install_locked(
         transaction_state["status"] = "prepared"
         write_transaction_state(transaction, transaction_state)
 
+        for name in mutated_names:
+            verify_skill_identity(
+                managed_skill_path(skills_dir, name),
+                verified_live_hashes.get(name),
+                f"managed skill {name}",
+            )
+        verify_file_identity(manifest_path, manifest_sha256, "installed manifest")
+        if global_agents is not None:
+            verify_file_identity(global_agents, global_sha256, "global AGENTS")
+
         mark_operation_claims_mutation_started(
             operation_parents,
             transaction,
@@ -2004,20 +2095,31 @@ def _install_locked(
         skills_dir.mkdir(parents=True, exist_ok=True)
         for name in changed_names:
             destination = managed_skill_path(skills_dir, name)
-            replace_tree(paths.staged / name, destination, paths.displaced / name)
+            replace_tree(
+                paths.staged / name,
+                destination,
+                paths.displaced / name,
+                verified_live_hashes.get(name),
+            )
             if tree_hash(destination) != source_hashes[name]:
                 raise RuntimeError(f"Installed skill failed hash verification: {name}")
 
         for name in retired_names:
             retired = managed_skill_path(skills_dir, name)
             if retired.is_dir():
-                retire_tree(retired, paths.displaced / name)
+                retire_tree(
+                    retired,
+                    paths.displaced / name,
+                    verified_live_hashes[name],
+                )
 
+        verify_file_identity(manifest_path, manifest_sha256, "installed manifest")
         write_manifest(manifest_path, manifest)
 
         if global_agents is not None:
+            verify_file_identity(global_agents, global_sha256, "global AGENTS")
             bootstrap_status = install_global_bootstrap(
-                root / "GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md",
+                root / GLOBAL_TEMPLATE_NAME,
                 global_agents,
             )
 

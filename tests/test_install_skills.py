@@ -1577,6 +1577,60 @@ def test_dry_run_does_not_create_the_install_parent(tmp_path: Path) -> None:
     assert not installed.parent.exists()
 
 
+@pytest.mark.parametrize("target_kind", ["skill", "manifest", "global"])
+def test_install_detects_live_edits_after_snapshot_before_mutation(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    target_kind: str,
+) -> None:
+    root = tmp_path / "repo"
+    installed = tmp_path / "skills"
+    global_agents = tmp_path / "AGENTS.md"
+    write_template(root)
+    write_source_skill(root, "alpha", "v1")
+    install_skills.install(root, installed, global_agents)
+    (root / "skills/astra/alpha/SKILL.md").write_text("v2", encoding="utf-8")
+
+    original_copy2 = install_skills.shutil.copy2
+    edited = False
+
+    def edit_after_snapshot(source: Path, destination: Path, *args, **kwargs):
+        nonlocal edited
+        result = original_copy2(source, destination, *args, **kwargs)
+        if edited:
+            return result
+        source = Path(source)
+        if target_kind in {"skill", "manifest"} and source == installed / install_skills.MANIFEST_NAME:
+            if target_kind == "skill":
+                (installed / "alpha/SKILL.md").write_text("user edit", encoding="utf-8")
+            else:
+                (installed / install_skills.MANIFEST_NAME).write_text(
+                    "user manifest edit\n",
+                    encoding="utf-8",
+                )
+            edited = True
+        elif target_kind == "global" and source == global_agents:
+            global_agents.write_text("user global edit\n", encoding="utf-8")
+            edited = True
+        return result
+
+    monkeypatch.setattr(install_skills.shutil, "copy2", edit_after_snapshot)
+
+    with pytest.raises(RuntimeError, match="changed during install planning"):
+        install_skills.install(root, installed, global_agents)
+
+    assert edited is True
+    if target_kind == "skill":
+        assert (installed / "alpha/SKILL.md").read_text(encoding="utf-8") == "user edit"
+    elif target_kind == "manifest":
+        assert (installed / install_skills.MANIFEST_NAME).read_text(
+            encoding="utf-8"
+        ) == "user manifest edit\n"
+    else:
+        assert global_agents.read_text(encoding="utf-8") == "user global edit\n"
+    assert transaction_dirs(installed) == []
+
+
 def test_install_rolls_back_every_skill_when_the_second_swap_fails(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -1596,12 +1650,17 @@ def test_install_rolls_back_every_skill_when_the_second_swap_fails(
     original = install_skills.replace_tree
     calls = 0
 
-    def fail_second_swap(source: Path, destination: Path, displaced: Path) -> None:
+    def fail_second_swap(
+        source: Path,
+        destination: Path,
+        displaced: Path,
+        expected_live_hash: str | None,
+    ) -> None:
         nonlocal calls
         calls += 1
         if calls == 2:
             raise OSError("injected second swap failure")
-        original(source, destination, displaced)
+        original(source, destination, displaced, expected_live_hash)
 
     monkeypatch.setattr(install_skills, "replace_tree", fail_second_swap)
 
@@ -1678,9 +1737,13 @@ def test_install_restores_a_retired_skill_when_retirement_fails(
     original = install_skills.retire_tree
     failed = False
 
-    def fail_after_retirement(path: Path, displaced: Path) -> None:
+    def fail_after_retirement(
+        path: Path,
+        displaced: Path,
+        expected_live_hash: str,
+    ) -> None:
         nonlocal failed
-        original(path, displaced)
+        original(path, displaced, expected_live_hash)
         if not failed:
             failed = True
             raise OSError("injected retirement failure")
