@@ -39,8 +39,11 @@ or keep the task direct when handoff overhead dominates.
 
 Start with Astra Medium, Sol Medium, and Luna Max.
 
-For a difficult consequential lead decision or final review, raise Astra effort
-only when additional reasoning can materially change the decision.
+For a difficult consequential lead decision or final review, escalate Astra
+**Medium → High → XHigh → Max** only when additional reasoning can materially
+change the decision. Do not use Astra Ultra inside this serial route: in Codex,
+Ultra changes multi-agent behavior by enabling proactive delegation rather than
+serving as a simple next reasoning tier.
 
 For implementation or debugging that remains implementation-shaped, escalate
 **Sol Medium → Sol High → Sol Max** only as evidence warrants before pulling the
