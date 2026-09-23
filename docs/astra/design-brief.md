@@ -47,6 +47,7 @@ An explicitly selected workflow can impose stronger requirements within its scop
 | Setup and reconciliation of agent guidance | [Repo bootstrap](../../skills/astra/repo-bootstrap/SKILL.md); [writing for agents](../../skills/astra/writing-for-agents/SKILL.md) owns instruction authoring |
 | Feature behavior, substantial approach decisions, and domain meaning | [Shape work](../../skills/astra/shape-work/SKILL.md), including its conditional domain path |
 | Unsettled integration design or empirical feasibility | [Codebase design](../../skills/astra/codebase-design/SKILL.md) and [prototype](../../skills/astra/prototype/SKILL.md) |
+| Raw tracker intake disposition and ready handoff | [Triage](../../skills/astra/triage/SKILL.md), only when explicitly requested |
 | Delivery decomposition and tracker publication | [To tickets](../../skills/astra/to-tickets/SKILL.md), using repository tracker guidance and an accepted source |
 | Model allocation and execution authority | [Cost-aware coding](../../skills/astra/cost-aware-coding/SKILL.md), only when requested |
 | Concurrent implementation scheduling, custody, and integration | [Parallel implement](../../skills/astra/parallel-implement/SKILL.md), only when requested |
@@ -55,7 +56,7 @@ An explicitly selected workflow can impose stronger requirements within its scop
 | Evidence gathering, context upkeep, and guided procedures | [Research](../../skills/astra/research/SKILL.md), [context hygiene](../../skills/astra/context-hygiene/SKILL.md), and [wizard](../../skills/astra/wizard/SKILL.md) |
 | Active Git conflicts | [Resolving merge conflicts](../../skills/astra/resolving-merge-conflicts/SKILL.md) |
 
-The managed pack currently contains 16 skills. Their metadata owns invocation
+The managed pack currently contains 17 skills. Their metadata owns invocation
 behavior; the README lists explicit-only workflows. Continuation handoffs belong
 to writing-for-agents, with execution-specific state added by the relevant workflow.
 Ordinary implementation uses repository guidance and the engineering contract
