@@ -83,6 +83,11 @@ Parallel implementation requires independent ownership and integration proof.
 Specialists can also work sequentially without activating parallel delivery.
 Skills remain usable individually; cost-aware coding is not an umbrella requirement.
 
+The [canonical selection examples](selection-examples.md) provide one positive
+request and one nearest realistic non-match for each managed skill. They are
+maintenance checks for discovery boundaries, not another router or execution
+contract; frontmatter descriptions and skill bodies remain authoritative.
+
 ## Why cost-aware coding has stronger gates
 
 Cost-aware coding is an explicit workflow whose objective is to reduce Astra lead

@@ -6,6 +6,23 @@ referenced research/synthesis; it is not an audit of every historical packet or
 external project. The [design brief](design-brief.md) owns current direction. Do
 not treat this inventory as an execution backlog.
 
+## Canonical skill-selection examples, 2026-09-23
+
+Added [selection-examples.md](selection-examples.md) as one compact discovery
+boundary specification for all 18 managed Astra skills. Each row contains one
+representative eligible request, the behavior that skill should own, and the
+nearest realistic non-match.
+
+The examples remain outside runtime skill bodies so normal invocations do not pay
+for duplicated teaching text. Frontmatter descriptions remain host-facing
+discovery authority and each `SKILL.md` remains execution authority. The examples
+serve maintainers, reviewers, and future discovery evaluations.
+
+The validator now requires exactly one example row per managed Astra skill and
+checks skill/link parity, so adding, retiring, or renaming a skill cannot silently
+leave this selection surface stale. The README and design brief link to the
+examples without turning them into a required workflow.
+
 ## README and discoverability pass, 2026-09-23
 
 Reorganized the public README around the newcomer path: install first, understand

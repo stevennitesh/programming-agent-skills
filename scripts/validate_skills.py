@@ -84,6 +84,11 @@ ASTRA_README_ROW_RE = re.compile(
 ASTRA_EXPLICIT_LABEL = "Request explicitly"
 ASTRA_IMPLICIT_LABEL = "Automatic when relevant"
 ASTRA_INTERFACE_FIELDS = ("display_name", "short_description", "default_prompt")
+ASTRA_SELECTION_EXAMPLES = "docs/astra/selection-examples.md"
+ASTRA_EXAMPLE_ROW_RE = re.compile(
+    r"(?m)^\| \[\$([a-z0-9][a-z0-9-]*)\]\(\.\./\.\./skills/astra/"
+    r"([a-z0-9][a-z0-9-]*)/SKILL\.md\) \| ([^|\n]+) \| ([^|\n]+) \| ([^|\n]+) \|$"
+)
 ACTIVE_SURFACE_FILES = (
     "README.md",
     "AGENTS.md",
@@ -476,6 +481,43 @@ def validate_astra_readme_catalog(root: Path, skill_names: list[str]) -> list[st
                 f"README Astra catalog invocation disagrees with metadata: "
                 f"{name} -> {label} (expected {expected_label})"
             )
+    return failures
+
+
+def validate_astra_selection_examples(root: Path, skill_names: list[str]) -> list[str]:
+    path = root / ASTRA_SELECTION_EXAMPLES
+    if not path.is_file():
+        return [f"Missing Astra selection examples: {ASTRA_SELECTION_EXAMPLES}"]
+
+    rows = ASTRA_EXAMPLE_ROW_RE.findall(path.read_text(encoding="utf-8"))
+    failures: list[str] = []
+    row_names = [name for name, _, _, _, _ in rows]
+    duplicates = {name for name in row_names if row_names.count(name) > 1}
+    for name in sorted(duplicates):
+        failures.append(f"Astra selection examples repeat skill: {name}")
+
+    actual_names = set(row_names)
+    expected_names = set(skill_names)
+    for name in sorted(expected_names - actual_names):
+        failures.append(f"Astra selection examples are missing skill: {name}")
+    for name in sorted(actual_names - expected_names):
+        failures.append(f"Astra selection examples contain unknown skill: {name}")
+
+    for name, path_name, request, expected, near_miss in rows:
+        if name != path_name:
+            failures.append(
+                f"Astra selection example link disagrees with skill name: "
+                f"{name} -> skills/astra/{path_name}/SKILL.md"
+            )
+        for field_name, value in (
+            ("canonical request", request),
+            ("expected behavior", expected),
+            ("nearest non-match", near_miss),
+        ):
+            if not value.strip():
+                failures.append(
+                    f"Astra selection example {field_name} is empty: {name}"
+                )
     return failures
 
 
@@ -1018,6 +1060,7 @@ def main(argv: list[str] | None = None) -> int:
     astra_names, astra_failures = validate_astra(root)
     failures.extend(astra_failures)
     failures.extend(validate_astra_readme_catalog(root, astra_names))
+    failures.extend(validate_astra_selection_examples(root, astra_names))
     failures.extend(validate_experimental_skills(root))
     failures.extend(validate_required_docs(root))
     failures.extend(validate_setup_schema_manifest(root))

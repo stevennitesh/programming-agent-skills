@@ -164,6 +164,41 @@ def test_astra_readme_catalog_matches_packages_and_invocation_metadata(
     assert any("invocation disagrees with metadata: automatic" in item for item in failures)
 
 
+def test_astra_selection_examples_match_managed_inventory(tmp_path: Path) -> None:
+    examples = tmp_path / validate_skills.ASTRA_SELECTION_EXAMPLES
+    examples.parent.mkdir(parents=True)
+    examples.write_text(
+        "| Skill | Canonical request | Expected behavior | Nearest non-match |\n"
+        "| --- | --- | --- | --- |\n"
+        "| [$automatic](../../skills/astra/automatic/SKILL.md) | request | expected | near miss |\n"
+        "| [$explicit](../../skills/astra/explicit/SKILL.md) | request | expected | near miss |\n",
+        encoding="utf-8",
+    )
+
+    assert validate_skills.validate_astra_selection_examples(
+        tmp_path, ["automatic", "explicit"]
+    ) == []
+
+    examples.write_text(
+        "| Skill | Canonical request | Expected behavior | Nearest non-match |\n"
+        "| --- | --- | --- | --- |\n"
+        "| [$automatic](../../skills/astra/automatic/SKILL.md) | request | expected | near miss |\n"
+        "| [$explicit](../../skills/astra/automatic/SKILL.md) | request | expected | near miss |\n"
+        "| [$explicit](../../skills/astra/explicit/SKILL.md) | request | expected | near miss |\n"
+        "| [$retired](../../skills/astra/retired/SKILL.md) | request | expected | near miss |\n",
+        encoding="utf-8",
+    )
+
+    failures = validate_skills.validate_astra_selection_examples(
+        tmp_path, ["automatic", "explicit", "missing"]
+    )
+
+    assert "Astra selection examples repeat skill: explicit" in failures
+    assert "Astra selection examples are missing skill: missing" in failures
+    assert "Astra selection examples contain unknown skill: retired" in failures
+    assert any("link disagrees with skill name: explicit" in item for item in failures)
+
+
 def test_manifest_rejects_nonscalar_source_without_crashing() -> None:
     _, _, failures = skill_pack_contract.parse_managed_manifest_payload({
         "format": 1, "source": [], "skills": [], "hashes": {},

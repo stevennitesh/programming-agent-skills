@@ -146,6 +146,9 @@ matches. You can also invoke an automatic skill explicitly.
 | Audit persistent context and reconcile requested cleanup | [$context-hygiene](skills/astra/context-hygiene/SKILL.md) | Request explicitly |
 | Create an interactive guide for a human-operated procedure | [$wizard](skills/astra/wizard/SKILL.md) | Request explicitly |
 
+For one positive request and one realistic near-miss for every skill, see
+[canonical skill selection examples](docs/astra/selection-examples.md).
+
 A review or audit does not authorize its proposed fixes. A specification or
 ticket does not authorize implementation. Each skill keeps its own effect and
 completion boundary.
