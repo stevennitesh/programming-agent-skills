@@ -85,7 +85,7 @@ These are alternative starting points, not a required pipeline.
 | Create durable tooling that drives and proves real user-facing behavior | [$verification-harness](skills/astra/verification-harness/SKILL.md) | Request explicitly |
 | Research a question or compare options using sources | [$research](skills/astra/research/SKILL.md) | Automatic when relevant |
 | Find the root cause of a difficult bug | [$diagnosing-bugs](skills/astra/diagnosing-bugs/SKILL.md) | Automatic when relevant |
-| Assess architecture and select worthwhile improvements | [$audit-codebase](skills/astra/audit-codebase/SKILL.md) | Request explicitly |
+| Map a codebase visually, audit subsystems, and analyze improvement candidates | [$audit-codebase](skills/astra/audit-codebase/SKILL.md) | Request explicitly |
 | Optimize a measurable outcome through experiments | [$hillclimb](skills/astra/hillclimb/SKILL.md) | Request explicitly |
 | Review a code change for correctness and maintainability | [$change-review](skills/astra/change-review/SKILL.md) | Automatic when relevant |
 | Classify raw incoming tracker issues into an honest next state | [$triage](skills/astra/triage/SKILL.md) | Request explicitly |
