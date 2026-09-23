@@ -36,6 +36,8 @@ implementation pass through a skill pipeline.
 
 > Explore imaginatively. Converge under proof. Simplify ruthlessly.
 
+<a id="install"></a>
+
 ## Getting started
 
 You'll need [Codex](https://github.com/openai/codex), Git, and Python 3.11 or newer.
