@@ -813,7 +813,7 @@ def test_writing_for_agents_uses_progressive_disclosure_for_long_runs() -> None:
         assert marker in skill
 
     for marker in (
-        "pair the finish line with an escape condition",
+        "Pair the finish line with an escape condition",
         "predictably requires a separately authorized effect",
         "state the continuation policy",
         "offer to continue",
