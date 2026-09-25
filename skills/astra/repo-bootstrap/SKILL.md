@@ -1,6 +1,6 @@
 ---
 name: repo-bootstrap
-description: Inspect, create, migrate, or repair a repository's agent-guidance surface when the user explicitly requests repository guidance work. Establish repository instructions, commands, non-obvious constraints, context routes, and engineering conventions; exclude wording-only work on an already-scoped instruction artifact, ordinary coding, environment installation, and setup triggered only by a missing preferred file.
+description: Set up, migrate, or repair repository agent guidance. Exclude wording-only edits to an already-scoped instruction artifact, ordinary coding, and environment installation.
 ---
 
 # Repo bootstrap
@@ -24,8 +24,13 @@ scripts or configuration that define them.
 
 Identify operating facts only when they can change future engineering decisions,
 such as a non-obvious deployment model, persistence boundary, supported runtime,
-or material scale constraint. Preserve an existing owner rather than copying the
-fact into another document.
+or material scale constraint. A verified safety boundary for a routine local
+workflow can also earn a place when future agents would otherwise stop for
+unnecessary approval—for example, a test command that is mechanically confined to
+disposable local fixtures. Verify that boundary from its owning configuration or
+mechanism and record only the permission already implied by the authorized task;
+never infer safety or broaden authority to reduce questions. Preserve an existing
+owner rather than copying the fact into another document.
 
 Distinguish verified commands and facts from unexecuted source discoveries and
 missing prerequisites. A missing preferred document is not itself a setup gap or

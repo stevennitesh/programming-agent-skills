@@ -1,6 +1,6 @@
 ---
 name: hillclimb
-description: Iteratively improve a measurable runtime, resource, cost, capacity, or quality outcome through comparable experiments. Use for a requested optimization loop; exclude causal debugging, one-off feasibility probes, and unmeasured cleanup.
+description: Optimize a measurable outcome through comparable experiments. Exclude causal debugging, one-off feasibility probes, and unmeasured cleanup.
 ---
 
 # Hillclimb

@@ -1,6 +1,6 @@
 ---
 name: prototype
-description: Run a bounded experiment to resolve a design, interaction, integration, or performance uncertainty. Exclude root-cause debugging and sustained optimization.
+description: Run a bounded experiment to resolve a design, integration, interaction, or performance uncertainty. Exclude root-cause debugging and sustained optimization.
 ---
 
 # Prototype

@@ -1,6 +1,6 @@
 ---
 name: change-review
-description: Review a selected diff, branch, PR, or working-tree candidate for introduced or worsened correctness, contract, and maintainability problems. Exclude whole-codebase audits.
+description: Review a selected diff, branch, PR, or working-tree candidate for introduced or worsened problems. Exclude whole-codebase audits.
 ---
 
 # Change review

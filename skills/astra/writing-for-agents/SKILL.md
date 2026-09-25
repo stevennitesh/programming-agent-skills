@@ -1,6 +1,6 @@
 ---
 name: writing-for-agents
-description: Write or audit a specific instruction artifact another agent will execute, including skills, AGENTS.md, agent-facing guides or prompts, and continuation handoffs. Exclude repository guidance setup or migration, product shaping, and ordinary prose editing.
+description: Write or audit a specific instruction artifact another agent will execute. Exclude repository guidance setup, product shaping, and ordinary prose editing.
 ---
 
 # Writing for agents
@@ -27,28 +27,10 @@ completion condition clear. Prescribe a method or sequence when dependencies,
 fragile operations, or an accepted workflow make that method consequential.
 Otherwise leave valid implementation and reasoning strategies open.
 
-For a long-running task, pair the finish line with an escape condition: state both
-what "done" means and the concrete uncertainty, failure, missing access, or
-authority condition that should stop the receiver for input. Do not make the
-escape so broad that ordinary implementation choices become approval gates.
-
-When the task predictably requires a separately authorized effect, permission, or
-sensitive operation, make that authority explicit up front only when the user or
-governing source has actually granted it. Do not infer, broaden, or manufacture
-authority merely to avoid a future question.
-
-For long-running work, state the continuation policy when it can change behavior.
-Keep going through non-blocking findings, status updates, and reversible choices
-that are already within scope. Stop only when required user input or authorization,
-or a hard safety or operational boundary, prevents safe progress. A progress
-report, offer to continue, or list of non-blocking options is not completion
-unless the instruction explicitly makes it one.
-
-When mid-run steering is expected, define how later messages relate to the
-accepted objective when that distinction matters. Treat an added constraint or
-task as an amendment to the still-active objective unless the sender explicitly
-replaces, cancels, or conflicts with earlier scope. Reconcile a conflict instead
-of silently dropping an earlier accepted obligation.
+For a long-running autonomous instruction where continuation, steering,
+predictable permissions, or durable progress can materially affect behavior, read
+[Long-running instructions](references/long-running-instructions.md). Keep only
+the applicable rules in the final artifact.
 
 Do not ask for narrated reasoning merely to make the instruction look rigorous.
 Remove generic reasoning exhortations such as "think carefully," "think hard,"
@@ -88,14 +70,6 @@ Organize material for how it will be used: procedure when order is consequential
 reference when facts need lookup, and explanation when reasons or tradeoffs affect
 judgment. Split content when different readers or branches need it at different
 times, not to satisfy an arbitrary file-size target.
-
-For genuinely long autonomous work whose useful state may be lost to context
-compaction or a fresh receiver, use a small durable progress artifact only when it
-materially improves continuity. Record the accepted objective or finish line,
-completed work, remaining work, and real blockers. Update an existing authoritative
-plan or tracker when one already owns that state instead of creating a parallel
-task file. Do not create a progress artifact for ordinary bounded work or merely
-to make activity visible.
 
 Give each rule one authoritative home and point to procedures owned elsewhere.
 Prefer current code, configuration, command help, schemas, and maintained
@@ -172,11 +146,10 @@ Check whether it can identify:
 
 Look for unintended behavior introduced by the instruction: unnecessary stops,
 questions, delegation, progress artifacts, reviews, tests, context loading, or
-scope expansion. Check specifically that status updates, intermediate findings,
-and reversible non-blocking choices do not become accidental stopping points;
-that later steering does not silently discard earlier accepted obligations; and
-that avoiding a permission question did not broaden authority. Confirm that the
-user's settled choices and existing authorization survived the edit.
+scope expansion. For long-running guidance, apply the checks in
+[Long-running instructions](references/long-running-instructions.md) for
+accidental stopping, dropped obligations, and authority expansion. Confirm that
+the user's settled choices and existing authorization survived the edit.
 
 For changed discovery or conditional guidance, trace at least one representative
 applicable case and one realistic nearby case that should not activate it.

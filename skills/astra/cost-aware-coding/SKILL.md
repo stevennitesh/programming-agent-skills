@@ -1,6 +1,6 @@
 ---
 name: cost-aware-coding
-description: Reduce GPT-6 lead-token churn by routing consequential reasoning and final review to Astra, substantial implementation to Sol, and tightly bounded tasks to Luna Max. Use only when explicitly requested; it does not itself coordinate parallel fanout.
+description: Route GPT-6 work across Astra, Sol, and Luna to reduce Astra lead-token churn without weakening acceptance. Exclude parallel coordination.
 ---
 
 # Cost-aware coding

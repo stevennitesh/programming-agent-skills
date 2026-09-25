@@ -12,6 +12,15 @@ pointers in the nearest useful instruction surface. Verify commands against thei
 scripts or configuration. Keep brief guidance inline and move substantial
 conditional procedure to an existing maintained owner.
 
+When a routine local workflow is verified safe but that safety is not obvious,
+record the boundary and its existing within-task permission if doing so prevents
+needless approval turns. For example, if the owning configuration proves a test
+command uses only disposable fixtures and cannot reach production or durable
+external state, guidance may say the agent can run, fix, and rerun that workflow
+within otherwise-authorized work. Verify the claim from the mechanism that
+enforces it; never infer safety from convention, redact a real risk, or broaden
+authorization beyond the user's task.
+
 When changing scope, ownership, or reading paths, check that future agents encounter
 the applicable guidance before the decision it governs. Preserve compatible
 instructions for other tools unless the user requested their reconciliation.

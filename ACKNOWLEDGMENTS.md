@@ -21,6 +21,10 @@ I did not invent every good idea in this pack. It draws on public work from:
   especially whole-task finish lines, explicit keep-going versus stop conditions,
   removing generic "think hard" prompt cargo cults, and durable progress state for
   genuinely long runs.
+- [OpenAI's "Rethinking skills and prompts for GPT-6 Astra"](https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra),
+  especially compact discovery metadata, progressive disclosure, subtraction of
+  legacy model scaffolding, proportionate verification, and verified repository
+  facts that reduce unnecessary approval turns.
 
 These are influences, not affiliations. This repository is independent and is
 not endorsed, sponsored, or maintained by the people or projects above.

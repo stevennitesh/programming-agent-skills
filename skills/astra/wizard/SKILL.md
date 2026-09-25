@@ -1,6 +1,6 @@
 ---
 name: wizard
-description: Create a guided local script for a settled procedure that needs human identity, private input, dashboard access, or physical action. Use when explicitly requested and guidance reduces ordering, target-selection, or configuration mistakes; exclude unresolved design interviews and ordinary agent-executable work.
+description: Create a guided local script for a settled human-operated procedure requiring private input, dashboard access, or physical action. Exclude ordinary agent-executable work.
 ---
 
 # Wizard

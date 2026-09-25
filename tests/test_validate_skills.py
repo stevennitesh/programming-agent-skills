@@ -788,28 +788,90 @@ def test_shared_contracts_keep_continuation_boundary() -> None:
             assert marker in text
 
 
-def test_writing_for_agents_keeps_long_run_instruction_boundaries() -> None:
+def test_writing_for_agents_uses_progressive_disclosure_for_long_runs() -> None:
     root = Path(__file__).resolve().parents[1]
     skill = " ".join(
         (root / "skills/astra/writing-for-agents/SKILL.md")
         .read_text(encoding="utf-8")
         .split()
     )
+    long_run = " ".join(
+        (
+            root
+            / "skills/astra/writing-for-agents/references/long-running-instructions.md"
+        )
+        .read_text(encoding="utf-8")
+        .split()
+    )
 
     for marker in (
-        "state the continuation policy",
-        "offer to continue",
+        "Long-running instructions",
         '"think carefully," "think hard,"',
         "host's supported reasoning/effort control",
-        "small durable progress artifact",
-        "Do not create a progress artifact for ordinary bounded work",
-        "pair the finish line with an escape condition",
-        "predictably requires a separately authorized effect",
-        "mid-run steering is expected",
         "observable pattern or effect to avoid",
-        "did not broaden authority",
     ):
         assert marker in skill
+
+    for marker in (
+        "Pair the finish line with an escape condition",
+        "predictably requires a separately authorized effect",
+        "state the continuation policy",
+        "offer to continue",
+        "mid-run steering is expected",
+        "small durable progress artifact",
+        "Do not create a progress artifact for ordinary bounded work",
+        "did not broaden authority",
+    ):
+        assert marker in long_run
+
+
+def test_astra_authoring_prefers_compact_metadata_and_upgrade_subtraction() -> None:
+    root = Path(__file__).resolve().parents[1]
+    authoring = " ".join(
+        (
+            root
+            / "skills/astra/writing-for-agents/references/skill-authoring.md"
+        )
+        .read_text(encoding="utf-8")
+        .split()
+    )
+    hygiene = " ".join(
+        (root / "skills/astra/context-hygiene/SKILL.md")
+        .read_text(encoding="utf-8")
+        .split()
+    )
+    repo_bootstrap = " ".join(
+        (
+            root
+            / "skills/astra/repo-bootstrap/references/agent-instructions.md"
+        )
+        .read_text(encoding="utf-8")
+        .split()
+    )
+
+    for marker in (
+        "discovery metadata as scarce shared context",
+        "minimum reliable selector plus the nearest useful exclusion",
+        "progressive disclosure",
+        "do not retain compensating scaffolding",
+        "simplified or retired before adding new model-specific procedure",
+    ):
+        assert marker in authoring
+
+    for marker in (
+        "model or host changes materially",
+        "compensating scaffolding",
+        "previous receiver's limitation",
+    ):
+        assert marker in hygiene
+
+    for marker in (
+        "routine local workflow is verified safe",
+        "run, fix, and rerun that workflow",
+        "never infer safety",
+        "broaden authorization",
+    ):
+        assert marker in repo_bootstrap
 
 
 def test_continuation_handoff_prioritizes_human_attention_without_fixed_format() -> None:

@@ -1,6 +1,6 @@
 ---
 name: triage
-description: Classify raw tracker issues and configured external PR or MR intake into one supported next state or bounded handoff. Use only for explicit triage requests; exclude project-created ready work, implementation, deep diagnosis, and code review.
+description: Classify raw tracker intake into a supported next state or bounded handoff. Exclude project-created ready work, implementation, deep diagnosis, and code review.
 ---
 
 # Triage

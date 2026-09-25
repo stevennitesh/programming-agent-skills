@@ -1,6 +1,6 @@
 ---
 name: codebase-design
-description: Resolve a consequential unresolved technical architecture or integration decision about ownership, interfaces, state, trust boundaries, or migration. Exclude product or domain meaning, routine implementation, and whole-codebase audits.
+description: Resolve a consequential technical architecture or integration decision. Exclude product/domain meaning, routine implementation, and whole-codebase audits.
 ---
 
 # Codebase design
