@@ -1,6 +1,6 @@
 ---
 name: writing-for-agents
-description: Write or audit a specific instruction artifact another agent will execute, including skills, AGENTS.md, agent-facing guides or prompts, and continuation handoffs. Exclude repository guidance setup or migration, product shaping, and ordinary prose editing.
+description: Write or audit a specific instruction artifact another agent will execute. Exclude repository guidance setup, product shaping, and ordinary prose editing.
 ---
 
 # Writing for agents

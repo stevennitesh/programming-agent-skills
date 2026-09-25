@@ -1,6 +1,6 @@
 ---
 name: verification-harness
-description: Create or reconcile a repository-owned harness that launches, health-checks, drives, observes, and cleans up real user-facing behavior. Use only for explicit harness requests; exclude ordinary test writing, one-off prototypes, and human-only secret or dashboard procedures.
+description: Create or reconcile a repository-owned harness that drives and proves real user-facing behavior. Exclude ordinary tests, one-off prototypes, and human-private procedures.
 ---
 
 # Verification harness

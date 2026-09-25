@@ -1,6 +1,6 @@
 ---
 name: repo-bootstrap
-description: Inspect, create, migrate, or repair a repository's agent-guidance surface when the user explicitly requests repository guidance work. Establish repository instructions, commands, non-obvious constraints, context routes, and engineering conventions; exclude wording-only work on an already-scoped instruction artifact, ordinary coding, environment installation, and setup triggered only by a missing preferred file.
+description: Set up, migrate, or repair repository agent guidance. Exclude wording-only edits to an already-scoped instruction artifact, ordinary coding, and environment installation.
 ---
 
 # Repo bootstrap

@@ -1,6 +1,6 @@
 ---
 name: to-tickets
-description: Draft, publish, or repair delivery tickets from settled work, with acceptance and real dependencies. Use only for explicit ticketing requests.
+description: Turn settled work into delivery tickets with acceptance and real dependencies. Use only for explicit ticketing requests.
 ---
 
 # To tickets
