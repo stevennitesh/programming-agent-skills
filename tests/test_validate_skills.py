@@ -776,12 +776,11 @@ def test_portable_and_bootstrap_contracts_keep_continuation_boundary() -> None:
         root / "skills/astra/repo-bootstrap/templates/engineering-contract.md",
     )
     for path in surfaces:
-        text = path.read_text(encoding="utf-8")
+        text = " ".join(path.read_text(encoding="utf-8").split())
         for marker in (
             "Continue through authorized implementation, verification",
-            "Status updates, intermediate",
-            "reversible non-blocking choices",
-            "are not stopping points",
+            "Status updates, intermediate findings, passing checks, and reversible "
+            "non-blocking choices are not stopping points",
             "Stop when required user input or authority is missing",
         ):
             assert marker in text
