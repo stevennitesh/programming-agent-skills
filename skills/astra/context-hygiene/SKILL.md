@@ -1,6 +1,6 @@
 ---
 name: context-hygiene
-description: Review completed work or persistent agent context to decide what deserves durable context, and reconcile requested stale, duplicated, misplaced, or misleading context. Exclude live-thread summarization and ordinary documentation editing.
+description: Audit persistent agent context for stale, duplicated, misplaced, or misleading guidance and decide what should remain durable. Exclude live-thread summarization.
 ---
 
 # Context hygiene

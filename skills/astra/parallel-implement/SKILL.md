@@ -1,6 +1,6 @@
 ---
 name: parallel-implement
-description: Coordinate an explicitly requested parallel implementation across bounded items, with exclusive ownership, safe integration, cross-item proof, and recoverable worktree cleanup. Use for implementation fanout, not parallel research or a single coding task.
+description: Coordinate requested concurrent implementation with exclusive ownership, integration, and proof. Exclude parallel research and single-task coding.
 ---
 
 # Parallel implement

@@ -1,6 +1,6 @@
 ---
 name: diagnosing-bugs
-description: Investigate a difficult, intermittent, environment-specific, or cross-system failure when the causal mechanism is unclear. Exclude obvious local fixes and open-ended optimization.
+description: Find the causal mechanism of a difficult or intermittent failure. Exclude obvious local fixes and open-ended optimization.
 ---
 
 # Diagnosing bugs

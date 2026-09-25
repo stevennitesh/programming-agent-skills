@@ -1,6 +1,6 @@
 ---
 name: audit-codebase
-description: Map and audit an existing codebase for evidence-backed defects and worthwhile architecture or maintainability improvements. Use explicitly for whole-codebase exploration or focused baseline audits; exclude pending-diff review and implementation.
+description: Map or audit existing code for evidence-backed baseline defects and worthwhile improvements. Exclude pending-diff review and implementation.
 ---
 
 # Audit codebase
