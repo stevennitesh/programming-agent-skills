@@ -780,7 +780,8 @@ def test_portable_and_bootstrap_contracts_keep_continuation_boundary() -> None:
         for marker in (
             "Continue through authorized implementation, verification",
             "Status updates, intermediate",
-            "reversible non-blocking choices are not stopping points",
+            "reversible non-blocking choices",
+            "are not stopping points",
             "Stop when required user input or authority is missing",
         ):
             assert marker in text
