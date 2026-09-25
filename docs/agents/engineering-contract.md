@@ -130,7 +130,9 @@ evidence and the unproved claim. Completion follows the requested outcome,
 not merely a successful command or an exhausted budget.
 Continue through implementation, verification, and necessary corrections within
 the authorized scope. An intermediate finding or passing check is not a stopping
-point unless the requested outcome or an explicit gate makes it one.
+point unless the requested outcome or an explicit gate makes it one. When
+reporting status mid-run, pair the update with the next safe action in the same
+turn when practical instead of reporting and pausing.
 
 ## Handle effects where they occur
 

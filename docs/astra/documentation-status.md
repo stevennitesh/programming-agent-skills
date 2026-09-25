@@ -6,6 +6,32 @@ referenced research/synthesis; it is not an audit of every historical packet or
 external project. The [design brief](design-brief.md) owns current direction. Do
 not treat this inventory as an execution backlog.
 
+## Instruction steering and permission reconciliation, 2026-09-24
+
+Applied the remaining durable lessons from the reviewed Opus 5.5 transcript
+without turning model-specific commentary into universal pack policy.
+
+`writing-for-agents` now teaches four additional authoring decisions: pair a
+long-run finish line with a concrete escape condition; surface predictable
+separately authorized effects up front only when that authority has actually been
+granted; define mid-run steering as an amendment to still-active obligations
+unless the sender explicitly replaces, cancels, or conflicts with them; and make
+important negative constraints observable rather than relying on abstract
+adjectives such as "generic" or "bad."
+
+The continuation-handoff reference now prioritizes human-owned blockers,
+decisions, access, or approvals before changed state and non-blocking discoveries,
+without imposing mandatory headings when that shape would be misleading.
+
+The maintained engineering contract, Repo Bootstrap engineering-contract template,
+and portable fallback now also say that a mid-run status update should carry the
+next safe action in the same turn when practical. This strengthens the existing
+"status is not a stopping point" invariant without weakening authorization,
+review-only, design-only, tracker, publication, or destructive-effect gates.
+
+No automatic subagent fanout, cross-model review requirement, generic task file,
+or permission inference was added.
+
 ## Continuation-guidance distribution reconciliation, 2026-09-24
 
 Rechecked the full Astra pack after incorporating the long-run instruction

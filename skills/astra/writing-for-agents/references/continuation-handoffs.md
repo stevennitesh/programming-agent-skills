@@ -43,6 +43,13 @@ Refresh the material current state and include only what can affect resumption:
 - **Next action and preconditions:** the next authorized action and its stopping
   condition, or the missing fact, access, or decision that must come first.
 
+When a human is the handoff consumer, make their required attention cheap to find:
+lead with any human-owned decision, access, approval, or blocker that prevents
+progress; then summarize material changed state; then include non-blocking
+discoveries, risks, and evidence limits. Use headings when they improve scanning,
+but do not impose a fixed "blocked / changed / found" format when one of those
+sections would be empty or misleading.
+
 Reference maintained specs, decisions, diffs, and run state instead of duplicating
 them. Include essential reasoning held only in the conversation; pointers alone
 cannot preserve it. Preserve useful verified evidence without demanding a full

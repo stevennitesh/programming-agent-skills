@@ -769,10 +769,11 @@ def test_public_mode_scans_only_current_public_paths(
     assert "." not in grep_call[grep_call.index("--") + 1 :]
 
 
-def test_portable_and_bootstrap_contracts_keep_continuation_boundary() -> None:
+def test_shared_contracts_keep_continuation_boundary() -> None:
     root = Path(__file__).resolve().parents[1]
     surfaces = (
         root / "AGENTS_PORTABLE_FALLBACK.md",
+        root / "docs/agents/engineering-contract.md",
         root / "skills/astra/repo-bootstrap/templates/engineering-contract.md",
     )
     for path in surfaces:
@@ -781,6 +782,7 @@ def test_portable_and_bootstrap_contracts_keep_continuation_boundary() -> None:
             "Continue through authorized implementation, verification",
             "Status updates, intermediate findings, passing checks, and reversible "
             "non-blocking choices are not stopping points",
+            "When reporting status mid-run, pair the update with the next safe action",
             "Stop when required user input or authority is missing",
         ):
             assert marker in text
@@ -799,8 +801,29 @@ def test_writing_for_agents_keeps_long_run_instruction_boundaries() -> None:
         "host's supported reasoning/effort control",
         "small durable progress artifact",
         "Do not create a progress artifact for ordinary bounded work",
+        "pair the finish line with an escape condition",
+        "predictably requires a separately authorized effect",
+        "mid-run steering is expected",
+        "observable pattern or effect to avoid",
+        "did not broaden authority",
     ):
         assert marker in skill
+
+
+def test_continuation_handoff_prioritizes_human_attention_without_fixed_format() -> None:
+    root = Path(__file__).resolve().parents[1]
+    handoff = (
+        root / "skills/astra/writing-for-agents/references/continuation-handoffs.md"
+    ).read_text(encoding="utf-8")
+
+    for marker in (
+        "make their required attention cheap to find",
+        "human-owned decision, access, approval, or blocker",
+        "material changed state",
+        "non-blocking discoveries, risks, and evidence limits",
+        'do not impose a fixed "blocked / changed / found" format',
+    ):
+        assert marker in handoff
 
 
 def test_current_triage_and_verification_harness_keep_safety_boundaries() -> None:

@@ -78,8 +78,10 @@ effort budget.
 Continue through authorized implementation, verification, and necessary
 corrections until the requested outcome is complete. Status updates, intermediate
 findings, passing checks, and reversible non-blocking choices are not stopping
-points. Stop when required user input or authority is missing, or when a hard
-safety or operational boundary prevents safe progress.
+points. When reporting status mid-run, pair the update with the next safe action
+in the same turn when practical instead of reporting and pausing. Stop when
+required user input or authority is missing, or when a hard safety or operational
+boundary prevents safe progress.
 
 ## Handle consequential effects explicitly
 
