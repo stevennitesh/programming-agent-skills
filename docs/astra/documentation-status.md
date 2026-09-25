@@ -6,6 +6,31 @@ referenced research/synthesis; it is not an audit of every historical packet or
 external project. The [design brief](design-brief.md) owns current direction. Do
 not treat this inventory as an execution backlog.
 
+## Long-run instruction guidance, 2026-09-24
+
+Reviewed Addy Osmani's September 22, 2026 Opus 5.5 prompting guidance against the
+current `writing-for-agents` skill. Most durable principles were already present:
+define completion, preserve settled decisions, avoid narrated chain-of-thought,
+ask for observable evidence and uncertainty, and leave non-consequential
+implementation strategy open.
+
+Three useful gaps were incorporated in model-agnostic form. Long-running
+instructions now distinguish keep-going conditions from genuine stop conditions
+so status updates and reversible non-blocking choices do not become accidental
+completion points. Generic "think carefully", "think hard", and "think step by
+step" exhortations are explicitly treated as non-decision-bearing prompt cargo;
+authors should name the difficult decision/evidence requirement or use supported
+host effort controls instead. Finally, a small durable progress artifact is
+recommended only for genuinely long autonomous work where context compaction or a
+fresh receiver could lose useful state, and it must reuse an existing plan or
+tracker rather than duplicating one when possible.
+
+The source's broader recommendations to fan large work out to subagents or keep a
+task file for every long run were not promoted to universal pack rules. Existing
+Astra ownership remains: delegation activates only when requested or owned by an
+applicable workflow, and new progress artifacts must earn their maintenance and
+context cost.
+
 ## Triage and verification-harness boundary review, 2026-09-23
 
 Reviewed the two explicit-only workflows against tracker configuration,
