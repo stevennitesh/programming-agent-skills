@@ -75,6 +75,12 @@ only for demonstrated shared impact, repository policy, or a concrete unresolved
 risk. Completion follows the requested outcome, not a green command or exhausted
 effort budget.
 
+Continue through authorized implementation, verification, and necessary
+corrections until the requested outcome is complete. Status updates, intermediate
+findings, passing checks, and reversible non-blocking choices are not stopping
+points. Stop when required user input or authority is missing, or when a hard
+safety or operational boundary prevents safe progress.
+
 ## Handle consequential effects explicitly
 
 When retrying can duplicate or corrupt effects, choose the smallest adequate

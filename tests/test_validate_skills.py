@@ -769,6 +769,23 @@ def test_public_mode_scans_only_current_public_paths(
     assert "." not in grep_call[grep_call.index("--") + 1 :]
 
 
+def test_portable_and_bootstrap_contracts_keep_continuation_boundary() -> None:
+    root = Path(__file__).resolve().parents[1]
+    surfaces = (
+        root / "AGENTS_PORTABLE_FALLBACK.md",
+        root / "skills/astra/repo-bootstrap/templates/engineering-contract.md",
+    )
+    for path in surfaces:
+        text = " ".join(path.read_text(encoding="utf-8").split())
+        for marker in (
+            "Continue through authorized implementation, verification",
+            "Status updates, intermediate findings, passing checks, and reversible "
+            "non-blocking choices are not stopping points",
+            "Stop when required user input or authority is missing",
+        ):
+            assert marker in text
+
+
 def test_writing_for_agents_keeps_long_run_instruction_boundaries() -> None:
     root = Path(__file__).resolve().parents[1]
     skill = (root / "skills/astra/writing-for-agents/SKILL.md").read_text(

@@ -6,6 +6,26 @@ referenced research/synthesis; it is not an audit of every historical packet or
 external project. The [design brief](design-brief.md) owns current direction. Do
 not treat this inventory as an execution backlog.
 
+## Continuation-guidance distribution reconciliation, 2026-09-24
+
+Rechecked the full Astra pack after incorporating the long-run instruction
+guidance. The managed skills already preserved settled decisions, avoided generic
+progress polling, kept delegation conditional, and used durable workflow state
+only where a concrete owner already existed.
+
+One distribution gap remained: the repository-owned engineering contract already
+said that implementation should continue through verification and necessary
+corrections, but the Repo Bootstrap engineering-contract template and the portable
+fallback did not carry that keep-going/stop invariant. Both now state that status
+updates, intermediate findings, passing checks, and reversible non-blocking
+choices are not stopping points; work stops when required input or authority is
+missing or a hard safety/operational boundary prevents safe progress.
+
+No skill-specific stop boundary was removed. Review-only, design-only, triage,
+ticketing, audit-selection, and external-effect boundaries remain intentional
+completion or authority gates rather than accidental pauses. No generic task file
+or automatic audit fanout was added.
+
 ## Long-run instruction guidance, 2026-09-24
 
 Reviewed Addy Osmani's September 22, 2026 Opus 5.5 prompting guidance against the

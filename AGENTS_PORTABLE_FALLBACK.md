@@ -38,6 +38,12 @@ If consequential intent is unsettled, ask the smallest question that changes
 the result. If a bug's behavior, cause, or trusted reproduction is uncertain,
 diagnose it before changing behavior.
 
+Continue through authorized implementation, verification, and necessary
+corrections until the requested outcome is complete. Status updates, intermediate
+findings, passing checks, and reversible non-blocking choices are not stopping
+points. Stop when required user input or authority is missing, or when a hard
+safety or operational boundary prevents safe progress.
+
 ## Design for simplicity
 
 Subtract, reuse, or replace before adding another path. Model the domain with
