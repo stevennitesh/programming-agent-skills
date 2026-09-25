@@ -35,6 +35,11 @@ Use the smallest comparison that can establish the requested claim:
 - **Keep, simplify, or retire:** baseline without the method, current method, and
   candidate or reduced method.
 
+For a model or host upgrade, include a reduced candidate that removes suspected
+legacy compensations before inventing new instructions. A newer receiver behaving
+well under the current method does not establish that the current scaffolding is
+still necessary.
+
 The baseline still receives the same task, repository guidance, user decisions,
 permissions, safety requirements, and project-specific facts that ordinary work
 would receive. Do not handicap it by withholding necessary context merely to make

@@ -29,6 +29,15 @@ unlinked and stale context can be considered. For a managed memory store, read
 [Managed memory](references/managed-memory.md) when its artifact roles affect the
 review or before submitting a memory change.
 
+When the target agent model or host changes materially, treat that migration as a
+context-audit trigger. Inspect persistent agent guidance for compensating
+scaffolding written around the previous receiver's capability, stopping habits,
+tool limits, or context needs. Preserve project facts, authority, safety
+boundaries, and still-useful procedures. When deciding whether an instruction can
+be simplified or retired, use
+[Behavior evaluation](../writing-for-agents/references/behavior-evaluation.md)
+rather than assuming the new receiver needs either more or less guidance.
+
 An audit or reflection authorizes findings and recommendations. Apply cleanup
 already explicitly requested within the established scope without asking again.
 Treat age, repetition, retrieval frequency, and discovery cost as signals rather
@@ -89,7 +98,9 @@ not independently corroborate a claim.
 Preserve the reason a future agent needs, not the full path by which the current
 agent discovered it. Keep material limitations, expiration or revalidation
 conditions, and causal detail that can change future action. Do not promote a
-temporary workaround into a permanent rule.
+temporary workaround into a permanent rule. Scaffolding that existed only to
+compensate for a previous receiver's limitation is a migration candidate, not
+durable context by default.
 
 Do not store credentials, secret payloads, or unrelated sensitive detail in
 durable context. Refer to an appropriate protected source when future work needs

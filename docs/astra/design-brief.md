@@ -31,6 +31,18 @@ mechanical work. Put substantial conditional detail behind a clear trigger and
 pointer. A few natural actions and a recognizable outcome are useful shapes,
 not a word-count or step-count target.
 
+Discovery metadata is shared model context. Keep each skill description to the
+smallest reliable selector plus its nearest useful exclusion; procedure and
+rationale belong in the skill body. Keep the root `SKILL.md` to the method every
+applicable run needs and route recognizable branch-specific mechanics through
+conditional references.
+
+Treat a model upgrade as a subtraction opportunity before an addition
+opportunity. Challenge compensating scaffolding that existed for an earlier
+receiver and use behavioral comparison before retaining, simplifying, or retiring
+it. Do not burden Astra's primary path merely because a different receiver still
+needs extra steps.
+
 Shared coding judgment belongs at one repository owner: inline for brief guidance,
 or in a separate engineering contract when useful. Do not duplicate it
 across skills or make ordinary coding require tickets, TDD, full suites, reviewers,

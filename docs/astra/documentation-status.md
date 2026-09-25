@@ -6,6 +6,47 @@ referenced research/synthesis; it is not an audit of every historical packet or
 external project. The [design brief](design-brief.md) owns current direction. Do
 not treat this inventory as an execution backlog.
 
+## GPT-6 Astra prompting reconciliation, 2026-09-24
+
+Reviewed OpenAI's "Rethinking skills and prompts for GPT-6 Astra" against the
+current managed pack and applied the material deltas without weakening real
+authority or safety boundaries.
+
+All 18 frontmatter descriptions were compacted to carry only the task selector
+and nearest useful exclusion. No arbitrary word-count rule was added; the
+canonical positive and near-miss examples remain the semantic discovery contract.
+The skill-authoring reference now treats discovery metadata as scarce shared
+context and makes progressive disclosure explicit for multi-branch skills.
+
+`writing-for-agents` was the largest root skill and had accumulated a distinct
+long-run branch. Finish-line/escape semantics, predictable already-granted
+permissions, continuation/steering, and durable progress now live in
+`references/long-running-instructions.md`; the root keeps one conditional
+pointer plus only the guidance every invocation needs.
+
+Model or host migration is now a first-class Context Hygiene audit trigger.
+Persistent instructions written to compensate for an earlier receiver's
+capability, stopping habits, tool limits, or context needs are candidates for
+simplification or retirement, with behavioral evaluation used before claiming
+equivalence. Skill authoring likewise says to design the primary Astra method for
+Astra and isolate extra scaffolding needed by another receiver rather than taxing
+the primary path.
+
+Repo Bootstrap now recognizes verified non-obvious safety boundaries for routine
+local workflows as useful repository guidance when they prevent needless approval
+turns. The boundary must come from the enforcing configuration or mechanism and
+cannot broaden the user's task authority; for example, a test workflow may be
+described as safe to run/fix/rerun only when its configuration proves it is
+confined to disposable local fixtures and cannot reach production or durable
+external state.
+
+Existing proportionate-test guidance, conditional repository pointers, and real
+effect boundaries were retained: the Astra article supported those choices rather
+than justifying broader testing or weaker user/external-effect controls. Static
+selection examples were rechecked after the description compaction; improved
+behavioral selection remains an empirical claim for future discovery evaluation,
+not a consequence of shorter text alone.
+
 ## Instruction steering and permission reconciliation, 2026-09-24
 
 Applied the remaining durable lessons from the reviewed Opus 5.5 transcript

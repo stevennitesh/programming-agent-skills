@@ -9,7 +9,9 @@ is not a setup gap.
 For a new repository, prefer one compact root `AGENTS.md` containing:
 
 - commands grounded in current scripts or configuration;
-- non-obvious repository constraints; and
+- non-obvious repository constraints;
+- verified non-obvious safety boundaries for routine local workflows when they
+  prevent unnecessary approval stops; and
 - conditional pointers to maintained guidance that future work actually needs.
 
 Preserve useful existing instruction files and their scopes. Split guidance only
