@@ -27,12 +27,28 @@ completion condition clear. Prescribe a method or sequence when dependencies,
 fragile operations, or an accepted workflow make that method consequential.
 Otherwise leave valid implementation and reasoning strategies open.
 
+For a long-running task, pair the finish line with an escape condition: state both
+what "done" means and the concrete uncertainty, failure, missing access, or
+authority condition that should stop the receiver for input. Do not make the
+escape so broad that ordinary implementation choices become approval gates.
+
+When the task predictably requires a separately authorized effect, permission, or
+sensitive operation, make that authority explicit up front only when the user or
+governing source has actually granted it. Do not infer, broaden, or manufacture
+authority merely to avoid a future question.
+
 For long-running work, state the continuation policy when it can change behavior.
 Keep going through non-blocking findings, status updates, and reversible choices
 that are already within scope. Stop only when required user input or authorization,
 or a hard safety or operational boundary, prevents safe progress. A progress
 report, offer to continue, or list of non-blocking options is not completion
 unless the instruction explicitly makes it one.
+
+When mid-run steering is expected, define how later messages relate to the
+accepted objective when that distinction matters. Treat an added constraint or
+task as an amendment to the still-active objective unless the sender explicitly
+replaces, cancels, or conflicts with earlier scope. Reconcile a conflict instead
+of silently dropping an earlier accepted obligation.
 
 Do not ask for narrated reasoning merely to make the instruction look rigorous.
 Remove generic reasoning exhortations such as "think carefully," "think hard,"
@@ -107,7 +123,9 @@ Put conditions and prerequisites before the actions they govern. Address the
 executing reader directly and name other actors explicitly. Attach words such as
 "only," "unless," and "after" to one clear obligation. Prefer positive target
 behavior; use prohibitions for concrete boundaries or likely harmful
-misinterpretations.
+misinterpretations. When a negative constraint matters, name the observable
+pattern or effect to avoid rather than an abstract quality such as "generic,"
+"messy," or "bad."
 
 State what must be true when the work is complete. Prefer a precise completion
 condition over extra intermediate steps that merely encourage diligence.
@@ -155,9 +173,10 @@ Check whether it can identify:
 Look for unintended behavior introduced by the instruction: unnecessary stops,
 questions, delegation, progress artifacts, reviews, tests, context loading, or
 scope expansion. Check specifically that status updates, intermediate findings,
-and reversible non-blocking choices do not become accidental stopping points.
-Confirm that the user's settled choices and existing authorization survived the
-edit.
+and reversible non-blocking choices do not become accidental stopping points;
+that later steering does not silently discard earlier accepted obligations; and
+that avoiding a permission question did not broaden authority. Confirm that the
+user's settled choices and existing authorization survived the edit.
 
 For changed discovery or conditional guidance, trace at least one representative
 applicable case and one realistic nearby case that should not activate it.
