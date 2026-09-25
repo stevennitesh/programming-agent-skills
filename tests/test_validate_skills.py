@@ -777,7 +777,7 @@ def test_writing_for_agents_keeps_long_run_instruction_boundaries() -> None:
 
     for marker in (
         "state the continuation policy",
-        "A progress report, offer to continue",
+        "offer to continue",
         '"think carefully," "think hard,"',
         "host's supported reasoning/effort control",
         "small durable progress artifact",
