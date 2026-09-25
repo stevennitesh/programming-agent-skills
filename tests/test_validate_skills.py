@@ -790,8 +790,10 @@ def test_shared_contracts_keep_continuation_boundary() -> None:
 
 def test_writing_for_agents_keeps_long_run_instruction_boundaries() -> None:
     root = Path(__file__).resolve().parents[1]
-    skill = (root / "skills/astra/writing-for-agents/SKILL.md").read_text(
-        encoding="utf-8"
+    skill = " ".join(
+        (root / "skills/astra/writing-for-agents/SKILL.md")
+        .read_text(encoding="utf-8")
+        .split()
     )
 
     for marker in (
@@ -812,9 +814,14 @@ def test_writing_for_agents_keeps_long_run_instruction_boundaries() -> None:
 
 def test_continuation_handoff_prioritizes_human_attention_without_fixed_format() -> None:
     root = Path(__file__).resolve().parents[1]
-    handoff = (
-        root / "skills/astra/writing-for-agents/references/continuation-handoffs.md"
-    ).read_text(encoding="utf-8")
+    handoff = " ".join(
+        (
+            root
+            / "skills/astra/writing-for-agents/references/continuation-handoffs.md"
+        )
+        .read_text(encoding="utf-8")
+        .split()
+    )
 
     for marker in (
         "make their required attention cheap to find",
