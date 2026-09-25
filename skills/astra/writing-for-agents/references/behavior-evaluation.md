@@ -75,8 +75,9 @@ Useful measures can include:
 - correctness and completion;
 - consequential omissions;
 - invented policy or unsupported assumptions;
-- unnecessary questions or approval stops;
-- unnecessary plans, artifacts, delegation, reviews, or tests;
+- unnecessary questions, approval stops, or premature stops on non-blocking
+  status, findings, or reversible choices;
+- unnecessary plans, progress files, artifacts, delegation, reviews, or tests;
 - scope expansion;
 - preservation of authority and required effects;
 - maintainability or simplicity of the produced change;

@@ -17,6 +17,10 @@ I did not invent every good idea in this pack. It draws on public work from:
 - [Andrej Karpathy's observations on coding agents](https://x.com/karpathy/status/2015883857489522876),
   especially the warnings about hidden assumptions, unnecessary abstractions,
   unrelated edits, and work that is never meaningfully verified.
+- [Addy Osmani's "Getting the most out of Opus 5.5 in Claude and Claude Code"](https://claude.dev/blog/getting-the-most-out-of-opus-5-5/),
+  especially whole-task finish lines, explicit keep-going versus stop conditions,
+  removing generic "think hard" prompt cargo cults, and durable progress state for
+  genuinely long runs.
 
 These are influences, not affiliations. This repository is independent and is
 not endorsed, sponsored, or maintained by the people or projects above.

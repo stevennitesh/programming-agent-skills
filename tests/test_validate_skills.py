@@ -769,6 +769,23 @@ def test_public_mode_scans_only_current_public_paths(
     assert "." not in grep_call[grep_call.index("--") + 1 :]
 
 
+def test_writing_for_agents_keeps_long_run_instruction_boundaries() -> None:
+    root = Path(__file__).resolve().parents[1]
+    skill = (root / "skills/astra/writing-for-agents/SKILL.md").read_text(
+        encoding="utf-8"
+    )
+
+    for marker in (
+        "state the continuation policy",
+        "offer to continue",
+        '"think carefully," "think hard,"',
+        "host's supported reasoning/effort control",
+        "small durable progress artifact",
+        "Do not create a progress artifact for ordinary bounded work",
+    ):
+        assert marker in skill
+
+
 def test_current_triage_and_verification_harness_keep_safety_boundaries() -> None:
     root = Path(__file__).resolve().parents[1]
     triage = (root / "skills/astra/triage/SKILL.md").read_text(encoding="utf-8")

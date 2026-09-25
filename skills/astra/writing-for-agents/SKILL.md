@@ -27,9 +27,21 @@ completion condition clear. Prescribe a method or sequence when dependencies,
 fragile operations, or an accepted workflow make that method consequential.
 Otherwise leave valid implementation and reasoning strategies open.
 
+For long-running work, state the continuation policy when it can change behavior.
+Keep going through non-blocking findings, status updates, and reversible choices
+that are already within scope. Stop only when required user input or authorization,
+or a hard safety or operational boundary, prevents safe progress. A progress
+report, offer to continue, or list of non-blocking options is not completion
+unless the instruction explicitly makes it one.
+
 Do not ask for narrated reasoning merely to make the instruction look rigorous.
-Ask for observable evidence, a concise decision rationale, or an explicit
-uncertainty when one is useful to judge the result.
+Remove generic reasoning exhortations such as "think carefully," "think hard,"
+or "think step by step"; they do not name a decision, constraint, or acceptance
+criterion and may duplicate the receiver's own reasoning or host effort controls.
+Ask instead for observable evidence, a concise decision rationale, or an explicit
+uncertainty when one is useful to judge the result. When reasoning depth truly
+matters, state the difficult decision or comparison that deserves it, or use the
+host's supported reasoning/effort control.
 
 For a worker assignment, deliver the bounded task, essential role and authority
 boundaries, necessary context, acceptance, and expected return in its prompt or
@@ -60,6 +72,14 @@ Organize material for how it will be used: procedure when order is consequential
 reference when facts need lookup, and explanation when reasons or tradeoffs affect
 judgment. Split content when different readers or branches need it at different
 times, not to satisfy an arbitrary file-size target.
+
+For genuinely long autonomous work whose useful state may be lost to context
+compaction or a fresh receiver, use a small durable progress artifact only when it
+materially improves continuity. Record the accepted objective or finish line,
+completed work, remaining work, and real blockers. Update an existing authoritative
+plan or tracker when one already owns that state instead of creating a parallel
+task file. Do not create a progress artifact for ordinary bounded work or merely
+to make activity visible.
 
 Give each rule one authoritative home and point to procedures owned elsewhere.
 Prefer current code, configuration, command help, schemas, and maintained
@@ -133,9 +153,11 @@ Check whether it can identify:
 - when the requested work is complete.
 
 Look for unintended behavior introduced by the instruction: unnecessary stops,
-questions, delegation, artifacts, reviews, tests, context loading, or scope
-expansion. Confirm that the user's settled choices and existing authorization
-survived the edit.
+questions, delegation, progress artifacts, reviews, tests, context loading, or
+scope expansion. Check specifically that status updates, intermediate findings,
+and reversible non-blocking choices do not become accidental stopping points.
+Confirm that the user's settled choices and existing authorization survived the
+edit.
 
 For changed discovery or conditional guidance, trace at least one representative
 applicable case and one realistic nearby case that should not activate it.
