@@ -73,6 +73,12 @@ the property the change can lose. When a boundary changes, prefer the actual
 produced or persisted representation and real consumer over a hand-constructed
 substitute.
 
+When existing fixtures are updated to satisfy stricter validation or persisted-input
+acceptance, determine whether they represent previously supported persisted inputs.
+Check the affected caller and require a compatibility regression case using the
+previous input where that workflow remains supported. Passing tests with only
+migrated fixtures do not establish compatibility.
+
 For numerical or data changes, check semantics capable of making a plausible
 result wrong: identity, units, time and availability alignment, missing-value
 meaning, precision, aggregation, and consequential method assumptions. Use an

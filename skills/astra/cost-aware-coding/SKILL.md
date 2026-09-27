@@ -36,8 +36,13 @@ This skill has one delegated writer at a time. A Luna Max task may replace Sol f
 a bounded assignment or perform read-only bounded support, but it does not create
 a second writer for the delegated checkout.
 
-Reuse accepted requirements and plans. Use [shape-work](../shape-work/SKILL.md)
-when consequential behavior or accepted meaning remains unresolved.
+Reuse accepted requirements and plans. Before delegation, check whether they leave
+consequential behavior or preservation requirements unresolved. Use
+[shape-work](../shape-work/SKILL.md) for unresolved behavior or accepted meaning;
+use [codebase-design](../codebase-design/SKILL.md) for unresolved consequential
+ownership, interfaces, or migration. Otherwise proceed without another planning
+phase. Repeat this readiness check when follow-up instructions materially change
+the plan.
 
 This skill does not coordinate parallel fanout. When the user explicitly combines
 it with [parallel-implement](../parallel-implement/SKILL.md), retain this skill's
@@ -84,6 +89,12 @@ passes or its owner revises the requirement.
 Return locally correctable implementation findings to the same worker when its
 accumulated context is still useful. Reusing worker context is usually cheaper
 than reconstructing implementation state in Astra or a replacement.
+
+When a follow-up assignment changes validation ownership, shared interfaces, or
+persisted-input acceptance, carry forward the original preservation requirements
+and require a focused check of affected callers and compatibility obligations.
+Include a distinguishing regression test for changed shared validation or
+persisted-input acceptance, and review the correction's expanded impact on return.
 
 Read [Recovery](references/recovery.md) for blocking questions, prerequisite
 failures, interruption, custody uncertainty, worker replacement, or route failure.

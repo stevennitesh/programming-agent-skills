@@ -47,6 +47,12 @@ conditions. Put an invariant where an owner can enforce it. Do not add stronger
 recovery, isolation, compatibility, or scale guarantees than supported workflows
 require.
 
+Before strengthening shared validation, inspect its real callers and distinguish
+integrity checks from operation-specific eligibility. If it reads persisted
+artifacts, state which existing artifacts remain readable and which require
+migration before new execution. Identify a focused regression test through the
+affected caller that distinguishes those obligations.
+
 A boundary earns its place when it hides meaningful policy, state, external
 translation, or coordination. If removing it eliminates complexity, collapse it;
 if removing it merely spreads that complexity into callers, the boundary may be
