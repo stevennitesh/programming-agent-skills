@@ -1,7 +1,8 @@
 # Visual atlas
 
-Use for whole-codebase exploration, maintained architecture mapping, or continuing
-an existing current-format audit workbench.
+Use for a requested map, maintained report, guided subsystem exploration, or
+continuing an existing current-format audit workbench. Direct improvement
+discovery follows the main skill without requiring an atlas.
 
 The helper is [atlas.py](../scripts/atlas.py). Use its current `--help` and
 subcommand help for exact CLI syntax. The current format is authoritative; do not
