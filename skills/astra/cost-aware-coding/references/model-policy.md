@@ -7,12 +7,17 @@ effort are part of the token-efficiency strategy.
 
 | Role | Default route | Use when |
 | --- | --- | --- |
-| Lead | **Astra Medium or XHigh** | Consequential reasoning, shaping, ambiguous decisions, orchestration, exception handling, and final review; choose effort by reasoning intensity |
+| Lead | **User-selected starting model and effort** | Consequential reasoning, shaping, ambiguous decisions, orchestration, exception handling, and final acceptance |
 | Implementer | **Sol High** | Substantial repository investigation, coding, debugging, verification, and repair |
 | Bounded worker | **Luna Max** | Fine-grained edits, extraction, classification, targeted inspection, or other compact tasks with clear inputs and cheap verification |
+| Optional isolated reviewer | **Astra Medium or XHigh** | Read-only candidate review when fresh context materially helps; choose effort by review difficulty |
 
 These are default economic roles, not universal quality rankings. Preserve an
 explicit user-selected route when it is available and compatible with the task.
+
+The user starts the work with the lead. Do not select, replace, or change the
+lead's model or effort. The routes and escalation below govern subagents, not the
+active lead session.
 
 ## Route by ambiguity and verification burden
 
@@ -37,16 +42,16 @@ or keep the task direct when handoff overhead dominates.
 
 ## Effort escalation
 
-Use **Sol High** for every Sol assignment. Choose **Astra Medium** for ordinary
-lead work and **Astra XHigh** when intensive reasoning can materially change a
-consequential decision or final review. The lead may start at either effort.
+Use **Sol High** for every Sol assignment. For an optional isolated reviewer,
+choose **Astra Medium** by default and **Astra XHigh** when intensive reasoning
+can materially change the review conclusion.
 
 For a demonstrated implementation-reasoning failure, escalate
 **Sol High → Astra Medium → Astra XHigh** as evidence warrants. Transfer custody
-before Astra takes over implementation. The implementation escalation route is
-separate from the lead's selected effort.
+before an Astra subagent takes over implementation. This escalation does not
+change the lead's model or effort.
 
-These are the allowed efforts in this policy: Sol High, Astra Medium or XHigh,
+These are the allowed subagent efforts: Sol High, Astra Medium or XHigh,
 and Luna Max. Reserve **Max exclusively for Luna**; do not use other Sol or Astra
 efforts. Do not spend stronger-model tokens on missing requirements, broken
 environments, permissions, or invalid acceptance.
@@ -59,7 +64,7 @@ for briefing, supervision, correction, and review churn—not token price in
 isolation.
 
 Availability and supported effort controls are host-dependent. If a requested
-route is unavailable, use a supported route within these allowed efforts that
+subagent route is unavailable, use a supported route within these allowed efforts that
 preserves the role boundaries and report the substitution when it materially
 affects the user's cost or quality intent. If none is suitable, surface the
 unavailable route rather than silently selecting an excluded effort.
