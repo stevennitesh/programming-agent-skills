@@ -18,6 +18,8 @@ follow, reconstruct, or supervise implementation to keep it on track, the route 
 not cost-efficient.
 
 Read [GPT-6 model policy](references/model-policy.md) before selecting a worker.
+The user selects the lead when starting the work; preserve that session's model
+and effort. Model routing here selects subagents, not the lead.
 
 ## 1. Choose the cheapest sufficient route
 
@@ -86,6 +88,14 @@ Review the candidate with [change-review](../change-review/SKILL.md), reusing va
 candidate-bound evidence. Pending required proof remains incomplete until it
 passes or its owner revises the requirement.
 
+When fresh context would materially reduce anchoring on implementation reasoning,
+the lead may assign one read-only Astra Medium or XHigh reviewer under the model
+policy. After writer custody is released, give it a fixed candidate, accepted
+requirements, relevant sources, and candidate-bound proof in a fresh context;
+omit implementation conversation, lead suspicions, and desired verdicts. This is
+an optional ordinary review, not the multi-reviewer high-assurance mode. The lead
+assesses the returned findings and coverage and retains final acceptance.
+
 Return locally correctable implementation findings to the same worker when its
 accumulated context is still useful. Reusing worker context is usually cheaper
 than reconstructing implementation state in Astra or a replacement.
@@ -103,10 +113,10 @@ Do not escalate model or effort because requirements are incomplete, acceptance 
 contradictory, permissions are missing, or the environment is broken. Resolve
 those causes at their owner.
 
-For a demonstrated implementation-reasoning failure, increase Sol effort before
-moving coherent implementation back into Astra. Move implementation ownership to
-Astra only when the task has become a lead-owned consequential reasoning problem
-or the accepted worker route cannot safely complete it.
+For a demonstrated implementation-reasoning failure, follow the model policy's
+Sol High → Astra Medium → Astra XHigh subagent route, transferring custody before
+changing implementers. Resolve lead-owned decisions in the existing lead session;
+implementation escalation does not select or reconfigure the lead.
 
 ## 4. Finish
 

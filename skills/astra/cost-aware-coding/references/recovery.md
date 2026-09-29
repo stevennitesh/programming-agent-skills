@@ -26,9 +26,10 @@ quiescence or custody release.
 - **Worker/runtime interruption:** resume the same assignment when custody and
   candidate state remain known and safe.
 - **Luna Max task grew beyond its bounded contract:** move the coherent task to
-  Sol rather than expanding Astra supervision or creating more Luna microtasks.
-- **Sol reasoning-capability failure:** raise Sol effort under
-  [Model policy](model-policy.md) before moving implementation into Astra.
+  Sol High rather than expanding Astra supervision or creating more Luna microtasks.
+- **Implementation reasoning-capability failure:** follow the Sol High → Astra
+  Medium → Astra XHigh route under [Model policy](model-policy.md), transferring
+  custody before implementation changes owners.
 - **Worker unavailable:** establish writer quiescence, preserve the candidate, then
   transfer a compact state packet to the accepted replacement.
 - **Custody uncertain:** stop before repository mutation until ownership and writer
