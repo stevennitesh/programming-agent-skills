@@ -7,8 +7,8 @@ effort are part of the token-efficiency strategy.
 
 | Role | Default route | Use when |
 | --- | --- | --- |
-| Lead | **Astra Medium** | Consequential reasoning, shaping, ambiguous decisions, orchestration, exception handling, and final review |
-| Implementer | **Sol Medium** | Substantial repository investigation, coding, debugging, verification, and repair |
+| Lead | **Astra Medium or XHigh** | Consequential reasoning, shaping, ambiguous decisions, orchestration, exception handling, and final review; choose effort by reasoning intensity |
+| Implementer | **Sol High** | Substantial repository investigation, coding, debugging, verification, and repair |
 | Bounded worker | **Luna Max** | Fine-grained edits, extraction, classification, targeted inspection, or other compact tasks with clear inputs and cheap verification |
 
 These are default economic roles, not universal quality rankings. Preserve an
@@ -37,27 +37,29 @@ or keep the task direct when handoff overhead dominates.
 
 ## Effort escalation
 
-Start with Astra Medium, Sol Medium, and Luna Max.
+Use **Sol High** for every Sol assignment. Choose **Astra Medium** for ordinary
+lead work and **Astra XHigh** when intensive reasoning can materially change a
+consequential decision or final review. The lead may start at either effort.
 
-For a difficult consequential lead decision or final review, escalate Astra
-**Medium → High → XHigh → Max** only when additional reasoning can materially
-change the decision. Do not use Astra Ultra inside this serial route: in Codex,
-Ultra changes multi-agent behavior by enabling proactive delegation rather than
-serving as a simple next reasoning tier.
+For a demonstrated implementation-reasoning failure, escalate
+**Sol High → Astra Medium → Astra XHigh** as evidence warrants. Transfer custody
+before Astra takes over implementation. The implementation escalation route is
+separate from the lead's selected effort.
 
-For implementation or debugging that remains implementation-shaped, escalate
-**Sol Medium → Sol High → Sol Max** only as evidence warrants before pulling the
-work into Astra. Do not spend stronger-model tokens on missing requirements,
-broken environments, permissions, or invalid acceptance.
+These are the allowed efforts in this policy: Sol High, Astra Medium or XHigh,
+and Luna Max. Reserve **Max exclusively for Luna**; do not use other Sol or Astra
+efforts. Do not spend stronger-model tokens on missing requirements, broken
+environments, permissions, or invalid acceptance.
 
 Luna has no effort ladder in this policy: bounded Luna work uses **Luna Max**.
-If the assignment outgrows a compact bounded contract, move it to Sol.
+If the assignment outgrows a compact bounded contract, move it to Sol High.
 
 Prefer the least expensive route that reliably meets acceptance after accounting
 for briefing, supervision, correction, and review churn—not token price in
 isolation.
 
 Availability and supported effort controls are host-dependent. If a requested
-route is unavailable, use the closest supported route that preserves these role
-boundaries and report the substitution when it materially affects the user's cost
-or quality intent.
+route is unavailable, use a supported route within these allowed efforts that
+preserves the role boundaries and report the substitution when it materially
+affects the user's cost or quality intent. If none is suitable, surface the
+unavailable route rather than silently selecting an excluded effort.

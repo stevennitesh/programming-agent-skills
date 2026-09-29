@@ -1,6 +1,6 @@
 interface:
   display_name: "Cost-aware coding"
   short_description: "Route GPT-6 work to reduce Astra token churn"
-  default_prompt: "Use $cost-aware-coding for this coding task. Keep consequential reasoning and final review with GPT-6 Astra Medium, route substantial implementation to GPT-6 Sol Medium, and use GPT-6 Luna Max only for compact bounded tasks. Keep Astra mostly dormant during worker implementation and optimize for reduced Astra lead-token churn without weakening acceptance."
+  default_prompt: "Use $cost-aware-coding for this coding task. Keep consequential reasoning and final review with GPT-6 Astra Medium or XHigh according to reasoning intensity, route substantial implementation to GPT-6 Sol High, and use GPT-6 Luna Max only for compact bounded tasks. Escalate implementation from Sol High to Astra Medium, then Astra XHigh when evidence warrants. Reserve Max for Luna. Keep Astra mostly dormant during worker implementation and optimize for reduced Astra lead-token churn without weakening acceptance."
 policy:
   allow_implicit_invocation: false

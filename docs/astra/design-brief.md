@@ -107,8 +107,9 @@ contract; frontmatter descriptions and skill bodies remain authoritative.
 
 Cost-aware coding is an explicit workflow whose objective is to reduce Astra lead
 token and context churn without weakening the accepted result. Its default GPT-6
-roles are Astra Medium for consequential reasoning and final review, Sol Medium
-for substantial implementation, and Luna Max for compact bounded work when
+roles are Astra Medium or XHigh according to reasoning intensity for consequential
+reasoning and final review, Sol High for substantial implementation, and Luna Max
+for compact bounded work when
 briefing and verification remain cheap.
 
 The workflow delegates only when expected Astra-context savings exceed handoff,
@@ -127,9 +128,11 @@ Recovery follows the actual cause rather than fixed attempt allowances. Requirem
 permission, environment, or contradictory-acceptance failures return to their
 owner. Local implementation corrections normally return to the same worker while
 its retained context remains useful. A Luna task that grows beyond its bounded
-contract moves to Sol. Sol effort escalates only for demonstrated implementation
-reasoning difficulty; Astra effort escalates only when stronger lead reasoning can
-materially change a consequential decision.
+contract moves to Sol High. Demonstrated implementation reasoning difficulty
+follows Sol High → Astra Medium → Astra XHigh. Lead effort is Medium or XHigh
+according to reasoning intensity; Max is reserved for Luna. The
+[model policy](../../skills/astra/cost-aware-coding/references/model-policy.md)
+owns routing and allowed efforts.
 
 When combined, parallel-implement owns concurrency, lane custody, integration, and
 parallel recovery. Cost-aware coding retains model and effort routing, budget

@@ -103,10 +103,10 @@ Do not escalate model or effort because requirements are incomplete, acceptance 
 contradictory, permissions are missing, or the environment is broken. Resolve
 those causes at their owner.
 
-For a demonstrated implementation-reasoning failure, increase Sol effort before
-moving coherent implementation back into Astra. Move implementation ownership to
+For a demonstrated implementation-reasoning failure, follow the model policy's
+Sol High → Astra Medium → Astra XHigh route. Move implementation ownership to
 Astra only when the task has become a lead-owned consequential reasoning problem
-or the accepted worker route cannot safely complete it.
+or the accepted worker route cannot safely complete it; obtain custody first.
 
 ## 4. Finish
 
