@@ -4,6 +4,21 @@ Use only questions that could expose a meaningful defect, avoidable cost, justif
 complexity, or evidence gap in the selected scope. These are discovery prompts,
 not a checklist or finding quota.
 
+## User and developer workflows
+
+For product or developer-experience opportunities, identify the actor, task,
+current path, and concrete friction or limitation. Where relevant, inspect how a
+user completes a product workflow or a developer configures, builds, diagnoses,
+or releases the system, including supported platform differences.
+
+A proposed capability must address an evidenced limitation of an existing
+workflow. Separate the observed limitation from unverified assumptions about
+user demand or benefit. Recommend a change only when its practical value
+justifies implementation complexity and ongoing maintenance. Keep unresolved
+product behavior or acceptance explicit and route it to
+[shape-work](../../shape-work/SKILL.md) when clarification is requested; an audit
+recommendation does not settle product policy.
+
 ## Ownership and change
 
 Does a caller need knowledge the interface should own? Does one policy require
