@@ -22,6 +22,8 @@ Include only decision-bearing fields that apply:
 Point to accessible detailed sources instead of copying conversations. Do not
 front-load repository facts the worker can cheaply discover itself.
 
+For Sol assignments, explicitly pass `model="gpt-6.1-sol"` and
+`reasoning_effort="high"` under the [model policy](model-policy.md).
 When overriding Astra to Sol or Luna Max with Codex multi-agent v2, use
 `fork_turns="none"` by default or a small positive turn count only when those
 recent turns replace a cheaper explicit brief. A full-history fork (`"all"` or

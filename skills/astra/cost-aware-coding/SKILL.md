@@ -26,7 +26,7 @@ and effort. Model routing here selects subagents, not the lead.
 Keep work with Astra when consequential reasoning, ambiguous requirements,
 lead-owned context, or a very small task makes delegation overhead dominate.
 
-Use Sol for substantial repository implementation whose investigation, coding,
+Use Sol 6.1 High (`gpt-6.1-sol`) for substantial repository implementation whose investigation, coding,
 debugging, and checks would otherwise consume significant Astra context.
 
 Use Luna Max for a tightly bounded task with a compact self-contained assignment,
@@ -114,7 +114,7 @@ contradictory, permissions are missing, or the environment is broken. Resolve
 those causes at their owner.
 
 For a demonstrated implementation-reasoning failure, follow the model policy's
-Sol High → Astra Medium → Astra XHigh subagent route, transferring custody before
+Sol 6.1 High → Astra Medium → Astra XHigh subagent route, transferring custody before
 changing implementers. Resolve lead-owned decisions in the existing lead session;
 implementation escalation does not select or reconfigure the lead.
 

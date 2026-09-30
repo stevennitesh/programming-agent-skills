@@ -8,7 +8,7 @@ effort are part of the token-efficiency strategy.
 | Role | Default route | Use when |
 | --- | --- | --- |
 | Lead | **User-selected starting model and effort** | Consequential reasoning, shaping, ambiguous decisions, orchestration, exception handling, and final acceptance |
-| Implementer | **Sol High** | Substantial repository investigation, coding, debugging, verification, and repair |
+| Implementer | **Sol 6.1 High** (`gpt-6.1-sol`, `high`) | Substantial repository investigation, coding, debugging, verification, and repair |
 | Bounded worker | **Luna Max** | Fine-grained edits, extraction, classification, targeted inspection, or other compact tasks with clear inputs and cheap verification |
 | Optional isolated reviewer | **Astra Medium or XHigh** | Read-only candidate review when fresh context materially helps; choose effort by review difficulty |
 
@@ -18,6 +18,10 @@ explicit user-selected route when it is available and compatible with the task.
 The user starts the work with the lead. Do not select, replace, or change the
 lead's model or effort. The routes and escalation below govern subagents, not the
 active lead session.
+
+In this workflow, **Sol** means **`gpt-6.1-sol` with `high` reasoning effort**.
+Select that exact model for Sol assignments, including repairs and resumed work;
+do not resolve the shorthand to `gpt-6-sol` or an unpinned latest-model alias.
 
 ## Route by ambiguity and verification burden
 
@@ -42,22 +46,22 @@ or keep the task direct when handoff overhead dominates.
 
 ## Effort escalation
 
-Use **Sol High** for every Sol assignment. For an optional isolated reviewer,
+Use **Sol 6.1 High** for every Sol assignment. For an optional isolated reviewer,
 choose **Astra Medium** by default and **Astra XHigh** when intensive reasoning
 can materially change the review conclusion.
 
 For a demonstrated implementation-reasoning failure, escalate
-**Sol High → Astra Medium → Astra XHigh** as evidence warrants. Transfer custody
+**Sol 6.1 High → Astra Medium → Astra XHigh** as evidence warrants. Transfer custody
 before an Astra subagent takes over implementation. This escalation does not
 change the lead's model or effort.
 
-These are the allowed subagent efforts: Sol High, Astra Medium or XHigh,
+These are the allowed subagent routes: Sol 6.1 High, Astra Medium or XHigh,
 and Luna Max. Reserve **Max exclusively for Luna**; do not use other Sol or Astra
 efforts. Do not spend stronger-model tokens on missing requirements, broken
 environments, permissions, or invalid acceptance.
 
 Luna has no effort ladder in this policy: bounded Luna work uses **Luna Max**.
-If the assignment outgrows a compact bounded contract, move it to Sol High.
+If the assignment outgrows a compact bounded contract, move it to Sol 6.1 High.
 
 Prefer the least expensive route that reliably meets acceptance after accounting
 for briefing, supervision, correction, and review churn—not token price in
@@ -65,6 +69,6 @@ isolation.
 
 Availability and supported effort controls are host-dependent. If a requested
 subagent route is unavailable, use a supported route within these allowed efforts that
-preserves the role boundaries and report the substitution when it materially
+preserves the role boundaries and the Sol version pin, and report the substitution when it materially
 affects the user's cost or quality intent. If none is suitable, surface the
 unavailable route rather than silently selecting an excluded effort.
