@@ -2,7 +2,7 @@
 
 Current direction, reconciled 2026-09-23. The pack is built primarily for
 **GPT 6 Astra**. Optional cost-aware execution routes substantial implementation
-to GPT 6 Sol and compact bounded work to GPT 6 Luna. This document owns design
+to GPT 6.1 Sol and compact bounded work to GPT 6 Luna. This document owns design
 rationale and composition for `skills/astra/`; individual skills own execution.
 [Issue #94](https://github.com/stevennitesh/programming-agent-skills/issues/94)
 preserves the original proposal. Subsequent accepted decisions below replace its
@@ -107,7 +107,7 @@ contract; frontmatter descriptions and skill bodies remain authoritative.
 
 Cost-aware coding is an explicit workflow whose objective is to reduce Astra lead
 token and context churn without weakening the accepted result. Its default GPT-6
-roles preserve the user's starting lead model and effort, use Sol High for
+roles preserve the user's starting lead model and effort, use Sol 6.1 High for
 substantial implementation, and Luna Max for compact bounded work when briefing
 and verification remain cheap. When context isolation materially helps review,
 the lead may use one read-only Astra Medium or XHigh reviewer while retaining
@@ -129,8 +129,8 @@ Recovery follows the actual cause rather than fixed attempt allowances. Requirem
 permission, environment, or contradictory-acceptance failures return to their
 owner. Local implementation corrections normally return to the same worker while
 its retained context remains useful. A Luna task that grows beyond its bounded
-contract moves to Sol High. Demonstrated implementation reasoning difficulty
-follows Sol High → Astra Medium → Astra XHigh across subagents without changing
+contract moves to Sol 6.1 High. Demonstrated implementation reasoning difficulty
+follows Sol 6.1 High → Astra Medium → Astra XHigh across subagents without changing
 the lead session. Subagent Max effort is reserved for Luna. The
 [model policy](../../skills/astra/cost-aware-coding/references/model-policy.md)
 owns routing and allowed efforts.

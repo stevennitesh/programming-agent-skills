@@ -81,7 +81,7 @@ adapt [AGENTS_PORTABLE_FALLBACK.md](AGENTS_PORTABLE_FALLBACK.md) into your globa
 <summary><strong>Model support</strong></summary>
 
 The managed pack is tuned primarily for **GPT 6 Astra**. The optional
-cost-aware workflow can route implementation-heavy work to **GPT 6 Sol** and
+cost-aware workflow can route implementation-heavy work to **GPT 6.1 Sol** and
 compact bounded work to **GPT 6 Luna**.
 
 The historical [custom skill pack](skills/custom/) remains available for
