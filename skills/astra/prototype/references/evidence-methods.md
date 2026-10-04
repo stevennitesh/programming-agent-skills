@@ -2,6 +2,8 @@
 
 Read only the section for the uncertainty being tested. These methods refine the
 experiment; they do not start a design review or production verification workflow.
+Choose and adapt methods and the amount of evidence to the claim. No fixed
+experimental protocol, variant count, sample size, or report template is required.
 
 ## State, logic, or integration behavior
 

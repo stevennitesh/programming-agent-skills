@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 import runpy
+import subprocess
 from pathlib import Path
+
+import pytest
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -86,7 +89,48 @@ def test_git_root_check_accepts_only_the_repository_root() -> None:
     assert check(ROOT / "skills") == ["Target must be the Git repository root"]
 
 
-def test_current_repository_setup_is_structurally_valid() -> None:
+@pytest.mark.parametrize("domain_owner", ["domain-modeling", "shape-work"])
+def test_legacy_repository_setup_remains_supported(
+    tmp_path: Path, domain_owner: str,
+) -> None:
+    subprocess.run(["git", "init", "-q"], cwd=tmp_path, check=True, capture_output=True)
+    (tmp_path / ".gitignore").write_text(".tmp/\n", encoding="utf-8")
+    (tmp_path / "AGENTS.md").write_text(
+        "# Repository Instructions\n\n## Commands\n\n"
+        "- Run tests: `python -m pytest`\n\n## Pointers\n\n"
+        "- docs/agents/issue-tracker.md\n"
+        "- docs/agents/triage-labels.md\n"
+        "- docs/agents/domain.md\n"
+        "- docs/agents/engineering-contract.md\n",
+        encoding="utf-8",
+    )
+    guides = tmp_path / "docs/agents"
+    guides.mkdir(parents=True)
+    (guides / "issue-tracker.md").write_text(
+        (PACKAGE / "issue-tracker-github.md").read_text(encoding="utf-8"),
+        encoding="utf-8",
+    )
+    (guides / "triage-labels.md").write_text(
+        (PACKAGE / "triage-labels.md").read_text(encoding="utf-8"),
+        encoding="utf-8",
+    )
+    domain = (PACKAGE / "domain.md").read_text(encoding="utf-8")
+    (guides / "domain.md").write_text(
+        domain.replace("<single-context | multi-context>", "single-context")
+        .replace("$domain-modeling", f"${domain_owner}"),
+        encoding="utf-8",
+    )
+    contract = guides / "engineering-contract.md"
+    contract.write_text(
+        "# Engineering contract\n\n## Local decisions\n\nPreserve ledger identities.\n",
+        encoding="utf-8",
+    )
+
     assert VALIDATOR["validate_setup"](
-        ROOT, repository_owned_contract=True, domain_owner="shape-work"
+        tmp_path, repository_owned_contract=True, domain_owner=domain_owner,
     ) == []
+
+    contract.unlink()
+    assert VALIDATOR["validate_setup"](
+        tmp_path, repository_owned_contract=True, domain_owner=domain_owner,
+    ) == ["Missing required setup file: docs/agents/engineering-contract.md"]

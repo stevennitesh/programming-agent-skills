@@ -1,8 +1,10 @@
 # Integration decisions
 
-Read only the section that can change the architecture decision. Return the
+Read only the section that can change the design decision. Return the
 resulting ownership or guarantee to the calling work; this reference does not
-start implementation or a broader audit.
+start implementation or a broader audit. For design-only work, establish what
+available evidence supports and identify any verification still needed. Run
+experiments or implementation checks only within the authorized scope.
 
 ## State crosses owners or processes
 
@@ -24,8 +26,9 @@ become an authorization or concurrency authority.
 ## Access crosses a trust boundary
 
 Identify the caller identity, protected operation or data, and the owner that
-actually enforces permission. Check an allowed and forbidden case through the
-real entry path; a check in a bypassable caller does not enforce the boundary.
+actually enforces permission. Trace allowed and forbidden cases through the real
+entry path using evidence appropriate to the request; a check in a bypassable
+caller does not enforce the boundary.
 
 Keep validity and authorization distinct. Resolve only the access guarantee that
 affects this design rather than expanding into a general security audit.
@@ -47,16 +50,25 @@ durable recovery. Use a direct boundary check or prototype for the property that
 actually drives the decision. Do not widen a public interface solely for testing
 convenience.
 
-## A contract or stored representation must change
+## An implementation, contract, or stored representation must change
 
-Identify real consumers that cannot move atomically, such as persisted records,
-old clients, background workers, or independently deployed services. Distinguish
-a current compatibility obligation from hypothetical future compatibility.
+For replacement or consolidation, identify the intended owner, affected callers,
+and code, configuration, tests, or guidance displaced by the change. Include the
+caller transition and retirement obligations in the implementable decision.
+Distinguish supported consumers and necessary overlap from abandoned paths;
+absence of direct symbol references alone does not establish that code is unused.
+
+When compatibility or stored data constrains the change, identify real consumers
+that cannot move atomically, such as persisted records, old clients, background
+workers, or independently deployed services. Distinguish a current compatibility
+obligation from hypothetical future compatibility.
 
 Define the supported transition and any allowed old/new reader-writer
 combinations. When stored data needs conversion, decide when conversion happens
 and how concurrent writes affect it.
 
-Give every temporary compatibility path a removal condition. Make rollback limits
-part of the decision when newly written data or external effects cannot be safely
-read or undone by the previous version.
+Explain why any superseded path must remain and give temporary overlap a removal
+condition. Compatibility can justify a retained path; keeping it merely in case
+does not complete a replacement. Make rollback limits part of the decision when
+newly written data or external effects cannot be safely read or undone by the
+previous version.

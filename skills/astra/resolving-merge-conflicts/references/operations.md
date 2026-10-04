@@ -41,10 +41,16 @@ and directory/file conflicts can span multiple paths. Inspect the whole path set
 | Attributes, filters, line endings | Compare repository and worktree representations. Use the established normalization/generation rules; avoid changing attributes or global configuration just to hide a conflict. |
 | Binary, executable bit, or symlink | Inspect the chosen object and mode as well as its usable result; textual marker removal cannot establish correctness. |
 | Submodule | Resolve and verify the exact gitlink commit and its intended history. Inspect the nested repository when needed; fetch or mutate it only within existing task authority. Do not equate its current checkout with the selected gitlink. |
-| `rerere`, merge driver, or mergetool output | Review the reused or generated result, including already staged content. Empty conflict listings do not prove preserved intent. Do not rewrite caches or configuration as an incidental fix. |
+| `rerere`, merge driver, or mergetool output | Review the reused or generated result, including already staged content. Empty conflict listings do not prove preserved intent. Repair incorrect reused resolutions narrowly within task authority; preserve unrelated records and configuration. |
 | Autostash restoration | A merge/rebase may finish before restoring local changes produces new conflicts. Inspect the remaining index, worktree, and stash evidence. Preserve recoverable data; do not repeat continuation when that operation has ended. Resolve the restoration only within task authority and report its distinct state. |
 
 ## Stops and recovery
+
+For an incorrect recorded resolution, `git rerere forget <pathspec>` can reset
+the record for matching current conflicts within existing authority. Inspect the
+affected paths and re-resolve them; a cache repair does not establish correctness
+of the resulting content. Avoid clearing unrelated records or changing global
+configuration to repair one conflict.
 
 For an empty replay, compare the requested delta with the target: it may already
 be present, intentionally empty, or accidentally erased by the resolution.
@@ -52,8 +58,9 @@ Establish which before following the operation's configured empty-change policy.
 Do not skip, allow-empty, or alter the todo list simply to advance the sequencer.
 
 For editor, hook, or signing failures, inspect the error and whether Git advanced.
-Fix a routine invocation problem within existing authority while preserving the
-message and policy. Do not disable hooks or signing to obtain a passing command.
+Repair routine invocation or local tooling problems within existing authority,
+then retry the appropriate operation while preserving the message and policy.
+Do not disable hooks or signing to obtain a passing command.
 
 Abort, skip, quit, reset, stash manipulation, strategy/mainline changes, and history
 or message edits have different effects on retained work. Use them only when the

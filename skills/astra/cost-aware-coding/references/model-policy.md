@@ -1,74 +1,64 @@
-# GPT-6 model policy
+# Model policy
 
-Use this policy for cost-aware routing within the GPT-6 family. Model and reasoning
-effort are part of the token-efficiency strategy.
+Use the user's working assumption that Astra is roughly five times as expensive
+as Sol to reserve Astra attention for decisions where it adds value. This is a
+routing assumption, not a current pricing table or a measured savings claim.
+Account for the cost of the whole accepted result, including reviewer and helper
+usage, handoffs, verification, and repair.
 
-## Default roles
+## Role assignments
 
-| Role | Default route | Use when |
+| Role | Model and effort | Responsibility |
 | --- | --- | --- |
-| Lead | **User-selected starting model and effort** | Consequential reasoning, shaping, ambiguous decisions, orchestration, exception handling, and final acceptance |
-| Implementer | **Sol 6.1 High** (`gpt-6.1-sol`, `high`) | Substantial repository investigation, coding, debugging, verification, and repair |
-| Bounded worker | **Luna Max** | Fine-grained edits, extraction, classification, targeted inspection, or other compact tasks with clear inputs and cheap verification |
-| Optional isolated reviewer | **Astra Medium or XHigh** | Read-only candidate review when fresh context materially helps; choose effort by review difficulty |
+| Lead | **User-selected starting model and effort**, normally Astra Medium or XHigh | Planning, architecture, codebase ownership, consequential decisions, orchestration, and final acceptance |
+| Worker | **Sol 6.1 High** by default; **Sol 6.1 Max** for especially difficult implementation | Investigation, implementation, debugging, verification, and repair |
+| Bounded worker | **Luna Max** | Clearly bounded search, retrieval, extraction, bulk writing, and mechanical work with limited judgment, even with large inputs or outputs |
+| Isolated reviewer | **Astra Medium or XHigh** | Independent candidate assessment or a complementary scope under change-review; the lead can instead perform review directly |
 
-These are default economic roles, not universal quality rankings. Preserve an
-explicit user-selected route when it is available and compatible with the task.
+The user starts the work with the lead. Do not select, replace, or change that
+session's model or effort. Normal Astra work uses Medium; XHigh is the strongest
+Astra option in this policy for demanding scientific reasoning, state-of-the-art
+methods, and similarly intensive architecture or review. These assignments express
+the user's operating policy, not a universal ranking of model quality.
 
-The user starts the work with the lead. Do not select, replace, or change the
-lead's model or effort. The routes and escalation below govern subagents, not the
-active lead session.
+## Choose effort and support
 
-In this workflow, **Sol** means **`gpt-6.1-sol` with `high` reasoning effort**.
-Select that exact model for Sol assignments, including repairs and resumed work;
-do not resolve the shorthand to `gpt-6-sol` or an unpinned latest-model alias.
+Sol is the main implementation worker, including for difficult tasks. In this
+workflow, Sol means exactly `gpt-6.1-sol`; use `high` by default and `max` when
+the implementation's reasoning demands justify the additional effort. The lead
+may choose Max up front for clearly demanding work or raise effort after observing
+a reasoning limit. Routine corrections do not require escalation.
 
-## Route by ambiguity and verification burden
+Use Astra Medium for normal reviewer or advisory assignments. Use Astra XHigh
+when deep scientific, state-of-the-art, or other consequential reasoning can
+materially change the result. Resolve architecture or domain questions with Astra
+and return a clear decision to Sol when that lets implementation continue.
 
-Keep Astra on lead-owned decisions rather than implementation throughput.
+If implementation capability remains the bottleneck, an Astra implementation
+takeover is an exception the lead may choose when its benefit justifies the cost.
+Transfer write custody before replacing the worker. There is no mandatory
+promotion ladder or fixed number of attempts, and subagent routing never changes
+the user's lead session.
 
-Use Sol instead of Luna Max when the task requires substantial repository
-reasoning, long debugging context, nontrivial implementation judgment, or
-verification whose failure would be expensive to reconstruct.
+Luna work is bounded by scope, judgment, and observable acceptance, not by the
+number of files or tokens it reads or writes. Large searches and bulk writing are
+good candidates when the selection rules, source facts, or writing pattern are
+clear. Examples include populating templates, drafting repetitive documentation
+from supplied facts, and producing boilerplate from an established pattern.
+Keep instructions and handoff summaries focused while delivering the complete
+requested output. Move work to Sol when it needs open-ended implementation judgment
+or substantial debugging, rather than routing it upward just because input or
+output volume grew.
 
-Use Luna Max when the assignment can remain compact and the result is cheap to
-judge. Luna Max intentionally buys the strongest Luna reasoning for bounded work;
-do not spend Astra tokens trying to save marginal Luna effort.
+The allowed subagent efforts are **Sol High or Max, Astra Medium or XHigh, and
+Luna Max**. Preserve an explicit user-selected route within the task's constraints.
+Do not use stronger effort to compensate for missing requirements, contradictory
+acceptance, permissions, or broken environments.
 
-A cheap worker is not a cheap workflow when Astra must write a large brief,
-reconstruct missing context, deeply verify intermediate work, or repeatedly repair
-the result. Do not split one coherent Sol assignment into many Luna tasks merely
-because Luna tokens are inexpensive.
+## Availability
 
-If Astra cannot remain mostly dormant during worker implementation, reconsider
-the route: enlarge the worker's ownership, move a pseudo-bounded Luna task to Sol,
-or keep the task direct when handoff overhead dominates.
-
-## Effort escalation
-
-Use **Sol 6.1 High** for every Sol assignment. For an optional isolated reviewer,
-choose **Astra Medium** by default and **Astra XHigh** when intensive reasoning
-can materially change the review conclusion.
-
-For a demonstrated implementation-reasoning failure, escalate
-**Sol 6.1 High → Astra Medium → Astra XHigh** as evidence warrants. Transfer custody
-before an Astra subagent takes over implementation. This escalation does not
-change the lead's model or effort.
-
-These are the allowed subagent routes: Sol 6.1 High, Astra Medium or XHigh,
-and Luna Max. Reserve **Max exclusively for Luna**; do not use other Sol or Astra
-efforts. Do not spend stronger-model tokens on missing requirements, broken
-environments, permissions, or invalid acceptance.
-
-Luna has no effort ladder in this policy: bounded Luna work uses **Luna Max**.
-If the assignment outgrows a compact bounded contract, move it to Sol 6.1 High.
-
-Prefer the least expensive route that reliably meets acceptance after accounting
-for briefing, supervision, correction, and review churn—not token price in
-isolation.
-
-Availability and supported effort controls are host-dependent. If a requested
-subagent route is unavailable, use a supported route within these allowed efforts that
-preserves the role boundaries and the Sol version pin, and report the substitution when it materially
-affects the user's cost or quality intent. If none is suitable, surface the
-unavailable route rather than silently selecting an excluded effort.
+Pass model and effort explicitly using the host's supported controls. Preserve
+the Sol version pin; do not silently substitute `gpt-6-sol` or a latest-model alias.
+If the intended route is unavailable, choose a supported route within the allowed
+efforts and role boundaries, and report substitutions that materially affect the
+user's cost or quality intent. Surface the limitation if no suitable route exists.

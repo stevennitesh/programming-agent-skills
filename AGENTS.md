@@ -28,14 +28,20 @@
 - For an explicitly requested legacy `Run Deploy Campaign on <skill>`, read
   `docs/synthesis/methods/deploy-prompts.md`. Current Astra skill work follows
   `docs/astra/design-brief.md` instead.
-- For substantive code design, implementation, debugging, refactoring, or review,
-  read `docs/agents/engineering-contract.md`.
 - For tracker-backed work: `docs/agents/issue-tracker.md`,
   `docs/agents/triage-labels.md`
 - When domain meaning or accepted decisions matter: `docs/agents/domain.md`
 
 ## Invariants
 
+- Keep instructions that supply project facts, accepted requirements, authority,
+  or a useful workflow contract. General coding advice needs no separate owner.
+- Use test-first development only when requested or required by repository policy.
+  Delegate only when the user requests it or an applicable workflow calls for it;
+  follow that workflow's ownership and custody rules.
+- Documentation or implementation work does not itself authorize commits or pushes.
+- Test observable tool and package behavior. Do not add tests that merely require
+  instruction wording; structural checks do not establish behavioral effectiveness.
 - Do not rewrite historical research, synthesis, validation, issue notes, or
   run logs as current instructions.
 - Preserve unrelated dirty work and run both whitespace/diff checks before handoff.

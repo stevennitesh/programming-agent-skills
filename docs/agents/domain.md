@@ -13,10 +13,12 @@ research.
 
 Missing domain records are not setup gaps. Astra
 [shape-work](../../skills/astra/shape-work/SKILL.md) owns domain
-clarification, settled meaning, and authorized context or ADR reconciliation
-through its conditional domain-modeling path. Repo Bootstrap only configures
+clarification, settled decision capture, and reconciliation of affected domain
+records, ADRs, and guidance. Settled technical decisions can be recorded without
+another feature interview; unresolved architecture belongs to codebase-design.
+Context-hygiene owns broader context maintenance. Repo-bootstrap configures
 this route.
 
-Suggest `$shape-work` when domain clarification is needed; use it when the user
-requests that workflow. Reading existing domain records does not invoke it.
+Suggest `$shape-work` when domain clarification or durable decision capture is
+needed; use it when the user requests that workflow. Reading existing domain records does not invoke it.
 Retired domain routes are not compatibility alternatives.

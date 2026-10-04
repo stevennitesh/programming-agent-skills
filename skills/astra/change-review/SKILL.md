@@ -5,132 +5,89 @@ description: Review a selected diff, branch, PR, or working-tree candidate for i
 
 # Change review
 
-Review a fixed candidate against its accepted outcome and relevant engineering
-obligations. Admit only evidence-backed findings attributable to that candidate.
+Review the selected change against accepted requirements, supported behavior, and
+applicable repository guidance. Deliver actionable findings with evidence, the
+candidate reviewed, and material coverage limits.
 
-Review is complete when the candidate identity is known, material obligations in
-scope have been assessed, admitted findings meet the finding standard, and
-remaining coverage limits are explicit.
+Choose the investigation and verification needed to reach a defensible conclusion.
+Review is complete when material obligations in scope have been assessed and the
+result distinguishes established problems from unresolved questions.
 
-A review-only request does not authorize product edits, external comments, merge,
-release, or risk acceptance. For an already-authorized review-and-fix request,
-establish the review conclusion before continuing into repair.
+A review-only request authorizes assessment, not product edits or external effects.
+For already-authorized review-and-fix work, establish the conclusion and continue
+into repair under the active workflow's ownership and custody rules. A review
+verdict does not itself authorize publication, merge, release, or risk acceptance.
 
-Use ordinary review by default. Read
-[Impact analysis](references/impact-analysis.md) when the user asks for blast
-radius or candidate safety depends on consequential behavior outside the diff and
-direct callers. Read [Review feedback](references/review-feedback.md) when the
-input is existing reviewer comments or requested corrections that must be judged
-against the current candidate.
+## Review contract
 
-Only when the user explicitly requests high assurance or multiple independent
-reviewers, read [High assurance](references/high-assurance.md). A large diff, a PR,
-or the phrase "final review" does not activate that mode.
+Use the user's target and comparison, including the actual base and head for a
+named branch or PR. Otherwise resolve the current work in scope, including staged,
+unstaged, and applicable untracked content. An empty selection is no change to
+review, not a clean verdict on an imagined candidate.
 
-## 1. Fix the candidate and obligations
+Bind the review and its evidence to an identified candidate. For mutable work,
+capture the selected content or hold review custody, and recheck identity before
+concluding. If it moves, state what remains reviewed and what needs re-review.
 
-Use the target and comparison the user names. Otherwise resolve the relevant
-current work in scope, including staged, unstaged, and applicable untracked
-content. For a named branch or PR, use its actual base and head rather than
-assuming a conventional branch or silently substituting another comparison.
+Apply [Finding standards](references/finding-standards.md): concrete, reachable
+problems introduced, worsened, or left unsatisfied by the candidate, including
+missing required behavior and demonstrated maintenance costs. Tests and plans are
+evidence, not substitutes for accepted intent; their agreement does not establish
+an assumption they share. Preserve domain meaning and supported compatibility.
 
-An empty selection means there is no change to review, not that an imagined
-candidate is clean.
-
-Record the candidate identity and comparison. For mutable work, capture the
-selected content or hold review custody so the conclusion remains attached to the
-state actually examined. Bind supplied proof and decisive context to that same
-candidate.
-
-A diff alone is insufficient when callers, configuration, persisted
-representations, or external contracts determine the changed behavior.
-
-Read the accepted request, applicable repository guidance, and relevant decisions.
-Use tests and implementation as evidence of behavior, not substitutes for missing
-accepted intent. If intent is insufficient for a conformance claim, state that
-coverage limit while continuing correctness checks that have independent support.
-
-When independent review is required, use the high-assurance path and report any
-independence limitation.
-
-## 2. Review the changed behavior
-
-Check the requested outcome and scope before implementation quality. Attractive
-structure cannot compensate for incomplete behavior, and a working happy path
-does not excuse a demonstrated design or maintainability cost.
-
-Challenge the assumptions connecting the chosen approach to the accepted outcome.
-Agreement among a plan, implementation, and tests does not independently validate
-an assumption they share.
-
-Review against accepted behavior and binding constraints, not an unnecessary
-implementation mechanism merely because a plan proposed it. If a plan-level
-assumption is wrong, identify that decision rather than demanding additional
-machinery to satisfy it.
-
-Trace the changed behavior far enough through real owners and consumers to verify
-the property the change can lose. When a boundary changes, prefer the actual
-produced or persisted representation and real consumer over a hand-constructed
-substitute.
-
-When existing fixtures are updated to satisfy stricter validation or persisted-input
-acceptance, determine whether they represent previously supported persisted inputs.
-Check the affected caller and require a compatibility regression case using the
-previous input where that workflow remains supported. Passing tests with only
-migrated fixtures do not establish compatibility.
-
-For numerical or data changes, check semantics capable of making a plausible
-result wrong: identity, units, time and availability alignment, missing-value
-meaning, precision, aggregation, and consequential method assumptions. Use an
-independent reference, invariant, or analytic case when implementation and tests
-could share the same mistake.
-
-Inspect only risks activated by the change or required behavior. Do not manufacture
-hardening findings for risks the supported workflow does not have.
-
-When behavior is removed or replaced, follow its real consumers and registrations
-far enough to identify displaced code or required compatibility. Do not demand
-deletion while a real migration still requires coexistence.
-
-Report design or maintainability findings only when they demonstrate concrete
-caller burden, duplicated policy, change amplification, or another real cost.
-Preference, unfamiliarity, line count, or the existence of one adapter is not a
-finding by itself. Keep unrelated baseline-improvement discovery with
-[audit-codebase](../audit-codebase/SKILL.md).
-
-## 3. Admit findings under evidence
-
-Before reporting an observation, apply
-[Finding standards](references/finding-standards.md).
-
-Seek evidence capable of disproving the finding and distinguish a problem
-introduced or worsened by the candidate from unrelated baseline code. An unchanged
-line can still be the causal location of a regression activated by the change;
-explain that connection rather than restricting review to modified hunks.
-
-Reuse candidate-bound proof while its relevant code, inputs, dependencies,
-configuration, environment, and candidate identity remain valid. Run additional
-checks only when they can settle a material question or repository policy requires
-them. A substitute proves only properties it preserves.
-
-## 4. Conclude on the same candidate
-
-Recheck mutable candidate identity before returning the conclusion. If the
-candidate moved, identify what remains reviewed and what requires re-review rather
-than attaching the old verdict to the new state.
+When shared validation or persisted-input acceptance changes, check the affected
+callers and compatibility obligations. If existing fixtures are migrated to a
+stricter contract, determine whether they represent previously supported persisted
+inputs. Require a distinguishing compatibility regression case using the previous
+input where that workflow remains supported; passing only migrated fixtures does
+not establish compatibility.
 
 For a repair review, preserve prior finding identities, re-evaluate each against
-the successor, and inspect the repair's affected behavior. Broaden only when the
-repair materially expands the candidate.
+the successor, and assess the correction's affected behavior, including expanded
+impact from changed ownership, interfaces, or persisted-input acceptance.
 
-Return findings under Finding standards in impact order, together with the reviewed
-identity, decisive evidence, and material coverage limits. If no findings are
-admitted, say so without implying coverage beyond what was actually established.
+## Choose the review arrangement
 
-When the caller requests a gate verdict, use the gate semantics in Finding
-standards.
+The lead chooses the arrangement according to difficulty, uncertainty, the value
+of isolated context, and budget. Honor explicit user requirements and host
+constraints. A large diff or "final review" does not by itself require delegation.
 
-For review-only work, stop with the conclusion. For already-authorized
-review-and-fix work, continue within the active workflow's ownership and custody
-rules. Review does not grant publication, merge, release, deployment, or residual
-risk authority.
+- **Direct review:** review in the current context when additional reviewers
+  would not materially improve the result.
+- **Independent review:** use a fresh read-only reviewer when context isolation
+  would materially help. Read [Independent review](references/independent-review.md).
+- **High assurance:** use multiple independent reviewers with complementary scopes
+  when added coverage warrants the cost. The lead chooses the count and scopes.
+  Read [High assurance](references/high-assurance.md).
+
+Keep model selection with the active model policy. The lead assesses returned
+findings and coverage and retains final acceptance.
+
+Read [Impact analysis](references/impact-analysis.md) when asked for blast radius
+or when consequential assumptions extend beyond the diff and direct callers.
+Read [Review feedback](references/review-feedback.md) when assessing or applying
+existing reviewer comments. Unrelated baseline-improvement discovery belongs to
+[audit-codebase](../audit-codebase/SKILL.md).
+
+## Output
+
+Use this structure, adapting its rendering to a caller-required schema or review
+interface. Order findings by severity and use precise, clickable locations.
+
+```text
+Findings
+
+[P1] Specific, actionable title — path:line
+Trigger or affected workflow, what goes wrong, and why it matters.
+Decisive evidence and the correction needed, where established.
+
+Reviewed: candidate identity and comparison
+Coverage: material areas assessed and verification used
+Limits: consequential uncertainty or missing evidence
+```
+
+If none qualify, say "No actionable findings." Keep evidence gaps and optional
+suggestions separate from established defects. Preserve stable finding IDs and
+report their dispositions across correction rounds. Include a gate verdict only
+when requested or required, using the semantics in Finding standards. State
+coverage limits without implying that unreviewed behavior is correct.

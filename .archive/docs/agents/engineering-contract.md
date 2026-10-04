@@ -1,5 +1,9 @@
 # Engineering contract
 
+> Retired 2026-10-03. Preserved for historical references, not active guidance.
+> Current repository constraints live in AGENTS.md; pack policy lives in
+> docs/astra/design-brief.md. Bootstrap no longer supplies this contract.
+
 Use this guidance to make engineering decisions within the requested change.
 Repository-specific requirements and accepted domain decisions supply the local
 meaning. Apply a conditional practice only when its condition is present.

@@ -1,37 +1,54 @@
 # Document reconciliation
 
-Read when a durable update replaces, relocates, or retires another current plan,
-specification, guide, decision record, or agent-facing document.
+Use when current specs, domain records, ADRs, plans, or guidance conflict, or when
+a durable update replaces, relocates, or retires an active source. Reconcile the
+documents and consumers affected by the task; a wider context audit is not required.
 
-## Establish current authority
+## Establish current authority and useful ownership
 
-Inspect the affected current documents and relevant inbound pointers. Distinguish
-accepted authority, proposals, and historical evidence. Age alone does not make a
-document obsolete, and a new proposal does not supersede accepted work.
+Distinguish accepted decisions, proposals, current facts, and historical evidence.
+Age alone does not establish obsolescence, and a new proposal does not supersede
+accepted work. Resolve consequential contradictions from governing decisions or
+their owner rather than silently choosing whichever document is newest.
 
-Prefer updating an existing useful owner when only part of it changes. Do not leave
-two documents presenting conflicting current truth.
+Follow the repository's owners. These roles can help place meaning without
+requiring separate files or a prescribed hierarchy:
 
-## Replace without losing meaning
+| Role | What it preserves |
+| --- | --- |
+| Specification | Intended outcome, scope, behavior, constraints, and acceptance |
+| Domain record | Shared language, relationships, and invariants |
+| ADR | A consequential choice, rationale, consequences, and current applicability |
+| Repository guidance | Local requirements, commands, and routes needed for work |
+| Delivery plan | Remaining work and adaptable sequencing within accepted constraints |
 
-Before retiring a document, preserve still-governing commitments and useful
-decision evidence at the surviving owner. Make the replacement readable before
-removing or reclassifying its predecessor.
+Prefer updating a useful owner over creating a competing source. Consolidate,
+correct, relocate, retire, or retain with clarified applicability as warranted.
+A requirement should remain authoritative at a clear owner; other documents can
+link to it instead of maintaining independent copies.
 
-Update affected indexes, agent pointers, and other consumers within scope. When a
-consumer cannot be reconciled safely, retain the old document with clear
-applicability rather than creating a broken route.
+## Preserve meaning and the reading path
 
-Archive only when repository policy or a concrete retention need warrants it.
-Historical evidence can remain searchable without remaining active authority.
+Before retiring a source, preserve still-governing commitments and useful decision
+evidence at the surviving owner. Make the replacement readable before removing or
+reclassifying its predecessor.
 
-For ADRs, preserve predecessor rationale and state current applicability or
-supersession according to repository conventions.
+Inspect and update affected indexes, guidance, and other consumers within scope,
+including when a conflict is corrected without removing a document. If a consumer
+cannot yet be reconciled, keep a usable source with explicit applicability and
+report the unresolved dependency rather than leaving an unexplained contradiction.
+
+Preserve ADR rationale and mark supersession or partial replacement according to
+repository conventions. Archive when policy or a concrete retention need warrants
+it; historical evidence can remain searchable without being active authority.
+
+Shaping owns coherence around the decisions it settles. Context-hygiene owns
+broader maintenance of repository context and can use this reference for accepted
+meaning and preservation. Neither authorizes unrelated policy or product changes.
 
 ## Verify the receiving path
 
-Read the resulting path as a future agent. Confirm that current pointers lead to
-one coherent owner, still-governing meaning survived, historical material is not
-mistaken for current instruction, and relocated links still resolve.
-
-Report any unresolved owner, consumer, or publication consequence.
+Check that future agents can find the current meaning, see what has been
+superseded, and follow relocated links. Preserve still-governing commitments and
+identify unresolved owners, consumers, or publication effects. Choose verification
+suited to the affected sources; no fixed reconciliation report is required.

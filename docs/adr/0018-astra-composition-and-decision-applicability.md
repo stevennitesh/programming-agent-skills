@@ -2,6 +2,15 @@
 
 **Status**: accepted 2026-09-07
 
+> **Current applicability, 2026-10-03:** The [design brief](../astra/design-brief.md)
+> remains the current owner. Its context policy retires the shared engineering
+> contract and seed: keep necessary project facts, decisions, and workflow
+> contracts at their specific owners, with methods left to the agent. Current
+> review and delegation behavior comes from the skills, including the user's
+> selected lead and discretionary review organization. Conflicting statements
+> below record the earlier composition and are superseded; other scoped legacy
+> and source-ownership decisions remain in force.
+
 ## Context
 
 Earlier ADRs record several generations of the pack. Their accepted statuses and

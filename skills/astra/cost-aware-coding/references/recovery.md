@@ -1,54 +1,42 @@
 # Recovery
 
-Use when delegated implementation is interrupted, blocked, off-contract, or cannot
-safely continue. Preserve actual candidate and custody state before choosing the
-next action.
+Use when delegated work is interrupted, blocked, off-contract, or cannot continue
+under its current assignment. Preserve the actual candidate, unfinished work,
+useful context, and custody before choosing how to recover.
 
-## Reconcile state first
+## Preserve continuity and ownership
 
-Establish the worker model/effort when relevant, assignment, checkout and base,
-current candidate, writer/subprocess state, custody owner, last substantive return
-or question, and required proof still missing. For checkpointed delivery, also
-preserve the active checkpoint and its accepted coverage.
+Establish the current assignment and candidate, active writers and subprocesses,
+custody owner, meaningful worker return or question, and missing required proof.
+For phased work, preserve the active boundary and accepted earlier results.
 
-Do not create a competing writer while the previous worker may still mutate the
-checkout. Idle, interrupted, unavailable, or timed-out status does not prove writer
-quiescence or custody release.
+Do not create a competing writer while an earlier actor may still mutate the
+checkout. Idle, interrupted, unavailable, or timed-out status does not establish
+quiescence or release. Reconcile uncertainty before mutation.
 
-## Resolve the actual cause
+## Choose the response that resolves the cause
 
-- **Blocking question:** answer the reserved decision and renew custody if needed.
-- **Missing prerequisite, permission, environment, or contradictory acceptance:**
-  resolve it at its owner; do not spend stronger-model tokens on a non-model
-  problem.
-- **Locally correctable implementation failure:** return focused findings to the
-  same worker when its retained context makes repair cheaper than reconstruction.
-- **Worker/runtime interruption:** resume the same assignment when custody and
-  candidate state remain known and safe.
-- **Luna Max task grew beyond its bounded contract:** move the coherent task to
-  Sol 6.1 High rather than expanding Astra supervision or creating more Luna microtasks.
-- **Implementation reasoning-capability failure:** follow the Sol 6.1 High → Astra
-  Medium → Astra XHigh route under [Model policy](model-policy.md), transferring
-  custody before implementation changes owners.
-- **Worker unavailable:** establish writer quiescence, preserve the candidate, then
-  transfer a compact state packet to the accepted replacement.
-- **Custody uncertain:** stop before repository mutation until ownership and writer
-  state are reconciled.
+- **Question or unforeseen codebase issue:** the lead supplies needed knowledge or
+  a consequential decision, clarifies the assignment within accepted requirements,
+  and returns implementation to the worker.
+- **Missing requirement, permission, environment, or contradictory acceptance:**
+  resolve the actual prerequisite rather than raising model effort.
+- **Correctable implementation problem:** reuse the worker while its context is
+  useful; give focused findings and let it choose the repair.
+- **Reasoning difficulty:** consider Sol Max, Astra guidance, or exceptional
+  implementation reassignment under [Model policy](model-policy.md). Choose from
+  the observed need and cost, not a fixed retry count or mandatory ladder.
+- **Bounded work became open-ended:** transfer it to Sol. Large input or output
+  volume alone does not disqualify a Luna task whose scope and acceptance remain clear.
+- **Worker interruption or replacement:** resume useful context when safe, or
+  confirm quiescence and transfer the preserved candidate, assignment, evidence,
+  limits, and custody to the replacement.
 
-There is no universal repair-round count. Bound recovery by the user's budget,
-remaining value of worker context, likelihood that another attempt changes the
-result, and the Astra-token cost of reconstructing implementation state.
+The lead chooses recovery proportionately within the user's scope and budget.
+Do not repeatedly reconstruct implementation in Astra when a clarified assignment
+would let Sol proceed independently.
 
-## Preserve continuity without lead-context churn
-
-A resume does not reset accepted scope, candidate identity, completed proof, or
-the active checkpoint. Process repeated returns once and do not redo valid
-candidate-bound review or verification merely because execution was interrupted.
-
-When replacement is necessary, transfer the assignment, actual candidate, failed
-or missing proof, decisive observations, custody state, and remaining work. Do not
-load obsolete conversation history into Astra merely to rebuild a transcript for
-the replacement.
-
-Finish recovery only when one actor again has clear write custody or the work is
-safely preserved as blocked with the next required decision explicit.
+Process repeated returns once, preserve prior acceptance, and reuse evidence
+while it remains valid for the candidate. Resume authorized work when the cause
+is resolved. If required input or authority is unavailable, preserve the work and
+state the specific blocker; an interruption does not reset the accepted outcome.

@@ -1,73 +1,93 @@
 # Worker assignment
 
-Prepare the smallest self-contained assignment that lets the selected worker act
-without importing the lead's conversation. Transfer necessary context once; do
-not make Astra continuously follow implementation.
+Give capable workers a clear outcome and enough context to act independently.
+The lead owns the assignment and consequential constraints; the worker owns the
+implementation method and ordinary technical decisions within them.
 
 ## Assignment contract
 
-Include only decision-bearing fields that apply:
+Include the decision-bearing context that applies:
 
-- **Outcome:** the behavior or result the assignment must deliver.
-- **Accepted source:** the request, plan, specification, or repository guidance
-  that governs the work.
-- **Scope:** responsibilities, exclusions, and authorized effects.
-- **Checkout:** repository path, base or candidate identity, relevant existing
-  work, and write-custody boundary.
-- **Acceptance:** observable behavior and required checks.
-- **Reserved decisions:** consequential choices Astra or another owner must settle.
-- **Return:** candidate identity, material changed scope, decisive checks, material
-  limits or pending proof, consequential deviations, and custody state.
+- **Outcome and scope:** accepted behavior, responsibilities, exclusions, and
+  authorized effects.
+- **Acceptance:** observable completion, required checks, and preservation
+  requirements.
+- **Codebase context:** relevant owners, source pointers, important interfaces or
+  implementation constraints, and facts that would be expensive to rediscover.
+- **Checkout and custody:** working path, base or candidate identity, existing
+  work to preserve, and the actor holding write authority.
+- **Support and decisions:** access to the bounded worker, agreed checkpoints,
+  and consequential choices reserved for the lead or user.
+- **Return:** candidate identity, material changes, decisive evidence, unresolved
+  limits, and custody state.
 
-Point to accessible detailed sources instead of copying conversations. Do not
-front-load repository facts the worker can cheaply discover itself.
+Give important details directly and point to accessible sources for the rest.
+Avoid importing the full lead conversation. For model overrides, pass the selected
+model and effort explicitly under [Model policy](model-policy.md); a Sol assignment
+uses `gpt-6.1-sol` with `high` or the lead-selected `max`. Prefer a fresh worker
+context with a self-contained brief; with Codex multi-agent, `fork_turns="none"`
+provides that boundary. Reuse the worker's own context for continuing work.
 
-For Sol assignments, explicitly pass `model="gpt-6.1-sol"` and
-`reasoning_effort="high"` under the [model policy](model-policy.md).
-When overriding Astra to Sol or Luna Max with Codex multi-agent v2, use
-`fork_turns="none"` by default or a small positive turn count only when those
-recent turns replace a cheaper explicit brief. A full-history fork (`"all"` or
-the inherited default) keeps the parent model and reasoning effort and cannot use
-the Sol/Luna override; it also defeats the goal of avoiding unnecessary parent
-context transfer.
+The worker may choose techniques, tools, implementation order, and local design
+within the accepted constraints. Suggested mechanisms remain suggestions unless
+a governing source makes them binding. Do not require lead approval for routine,
+reversible implementation choices.
 
-For Luna Max, the packet must remain compact and fully bounded. If creating a
-self-contained Luna assignment requires substantial repository explanation,
-open-ended exploration, or a long list of judgment calls, use Sol instead.
+## Replacement and cleanup
 
-For Sol, give enough accepted context to own implementation end to end. Do not
-keep decisions with Astra merely so the lead can stay involved; reserve only
-choices whose consequences genuinely belong to the lead or user.
+When the assignment replaces or consolidates behavior, completion includes moving
+affected callers and removing code, configuration, tests, and guidance made
+obsolete by that change within scope. Preserve supported behavior and required
+compatibility. Identify why any superseded path must remain and the removal
+condition for temporary overlap. Consider supported entry points and indirect
+consumers before treating a lack of direct references as evidence of disuse.
 
-Suggested mechanisms remain suggestions unless an accepted source makes them
-binding. The worker resolves routine technical choices within scope and raises a
-conflict only when satisfying the assignment would change accepted behavior,
-scope, risk, or another reserved commitment.
+A test is obsolete when its asserted obligation is obsolete, not merely because
+the implementation changed. Replace or retire tests coupled to removed internals
+while preserving meaningful regression coverage for surviving behavior and
+compatibility. Passing tests against only the new path do not establish that the
+transition preserved supported consumers.
 
-## Custody and communication
+The worker chooses cleanup methods and sequencing as part of delivering the
+assignment. No separate cleanup phase or repository-wide sweep is required.
+Unrelated baseline cleanup remains outside the assignment unless requested.
 
-The worker owns writes to the assigned checkout until it explicitly releases
-custody. It preserves unrelated work and must not assume other actors are absent.
+## Bounded support
 
-A blocking question identifies the unresolved decision, why it matters, and
-current custody state. A nonblocking question does not stop independent work.
+The default team has one Luna bounded-worker slot. The lead can assign it directly
+or give Sol standing authority to use that slot within the assignment's scope and
+budget. Identify who dispatches it and any existing agent handle so both actors
+do not create duplicate helpers. When parallel-implement governs execution, its
+coordinator owns dispatch.
 
-Do not send routine progress reports. Astra should not pay input/output tokens to
-consume intermediate implementation narration that does not change a lead-owned
-decision.
+A bounded assignment states the question or production rule, source material,
+expected evidence or deliverable, and completion boundary. Inputs and outputs may
+be large. For retrieval, return concise results with source locations and material
+gaps. For bulk writing, provide the required facts, pattern or examples, and output
+requirements; deliver the complete artifacts with a concise handoff summary.
 
-If Astra requests checkout access, the worker stops its writers and relevant
-subprocesses, reports their state, and releases custody before Astra accesses that
-mutable checkout.
+Bounded support is read-only by default and uses fixed or independent inputs
+while Sol writes. Writing or editing the delegated checkout requires an explicit
+transfer of write custody; it must not create a second implementation writer.
+Sol's freedom to use the helper does not authorize more implementation agents or
+unrelated work.
 
-A candidate return is reviewable only when it identifies the candidate and
-material proof, reports unresolved limitations, and releases custody with
-worker-owned writers stopped.
+## Questions and returns
 
-Return decision-relevant evidence, not a narrated implementation journey. Omit
-every file inspected, rejected idea, debugging step, and routine test iteration
-unless it changes review, recovery, or a consequential decision.
+Ask the lead when accepted meaning, architecture, scope, a significant unforeseen
+constraint, or an important codebase question needs its judgment or knowledge.
+State the question, decisive evidence, why it matters, and any recommendation.
+Continue independent work while a nonblocking question is pending. Routine
+implementation uncertainty remains the worker's responsibility.
 
-For follow-ups, preserve the established outcome and send only changed context,
-findings, acceptance, candidate identity, and renewed custody grant. Reuse the
-same worker while its accumulated context remains useful and safe.
+Send meaningful questions, agreed checkpoint candidates, failures, and completion.
+Do not send routine narration or progress reports just because time passed.
+
+The worker preserves unrelated work and owns writes until it explicitly releases
+custody. Before the lead accesses the mutable checkout, stop relevant writers and
+subprocesses and report their state. A reviewable return includes that release,
+the actual candidate, acceptance evidence, and consequential limits.
+
+For follow-ups, preserve the established outcome and send changed context,
+findings, acceptance, candidate identity, and renewed custody rather than rebuilding
+the full brief. Keep useful worker context while the assignment remains coherent.

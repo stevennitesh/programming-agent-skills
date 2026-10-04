@@ -1,131 +1,116 @@
 ---
 name: cost-aware-coding
-description: Route GPT-6 work across Astra, Sol, and Luna to reduce Astra lead-token churn without weakening acceptance. Exclude parallel coordination.
+description: Organize coding across a lead, worker, reviewer, and bounded worker to reduce expensive model usage while preserving acceptance. Exclude parallel implementation coordination.
 ---
 
 # Cost-aware coding
 
-Minimize expensive Astra token and context use without weakening the accepted
-result. Keep Astra focused on consequential reasoning, exception handling, and
-final review; move implementation-heavy exploration, coding, debugging, and
-verification to Sol; use Luna Max for compact bounded tasks when briefing and
-verification stay cheap.
+Deliver the accepted outcome using capable workers while reserving expensive
+Astra attention for planning, architecture, codebase ownership, consequential
+questions, and review. Judge efficiency across the completed task, including
+briefing, implementation, verification, review, and repair.
 
-The routing objective is lead-token efficiency, not delegation for its own sake.
-Delegate only when expected Astra-context savings exceed assignment,
-coordination, verification, and recovery overhead. If Astra must continuously
-follow, reconstruct, or supervise implementation to keep it on track, the route is
-not cost-efficient.
+## Roles and default team
 
-Read [GPT-6 model policy](references/model-policy.md) before selecting a worker.
-The user selects the lead when starting the work; preserve that session's model
-and effort. Model routing here selects subagents, not the lead.
+The default team has one lead, one primary worker, and one bounded worker
+available for useful support. The lead can also be the reviewer; use an isolated
+reviewer when fresh context helps. Activate roles when they have useful work,
+rather than creating idle agents to fill a roster.
 
-## 1. Choose the cheapest sufficient route
+| Role | Responsibility |
+| --- | --- |
+| Lead | Preserve the user's starting model and effort, normally Astra. Plan and divide the work, own architecture and codebase decisions, answer consequential questions, and retain final acceptance. |
+| Worker | Sol owns implementation, investigation, debugging, verification, and repair within its assignment. It chooses how to deliver the accepted result. |
+| Bounded worker | Luna handles clearly scoped searching, retrieval, extraction, bulk writing, mechanical work, or other tasks with limited judgment, including large input contexts and output volumes. |
+| Reviewer | The lead or an isolated Astra reviewer assesses the candidate against acceptance and relevant engineering obligations. |
 
-Keep work with Astra when consequential reasoning, ambiguous requirements,
-lead-owned context, or a very small task makes delegation overhead dominate.
+Read [Model policy](references/model-policy.md) before selecting subagent models
+or effort. The user selects the lead; this skill never reconfigures that session.
 
-Use Sol 6.1 High (`gpt-6.1-sol`) for substantial repository implementation whose investigation, coding,
-debugging, and checks would otherwise consume significant Astra context.
+Default to one implementation writer. A bounded helper can provide read-only
+support without starting parallel implementation. Use
+[parallel-implement](../parallel-implement/SKILL.md) when the user requests parallel
+implementation; it owns decomposition, concurrency, lane custody, integration,
+and parallel recovery. This skill retains model routing, budget, and final review.
+Additional read-only reviewers follow [change-review](../change-review/SKILL.md).
 
-Use Luna Max for a tightly bounded task with a compact self-contained assignment,
-clear acceptance, and cheap verification. Do not fragment one coherent Sol task
-into Luna microtasks when repeated briefing, synthesis, or verification would cost
-more Astra tokens than it saves.
+## Plan and assign
 
-This skill has one delegated writer at a time. A Luna Max task may replace Sol for
-a bounded assignment or perform read-only bounded support, but it does not create
-a second writer for the delegated checkout.
+The lead establishes the outcome, useful division of responsibilities, acceptance,
+and consequential constraints. Reuse accepted plans and repository knowledge.
+Choose the amount of planning and its format for the task; a formal plan artifact
+or another planning phase is not required. Keep a trivial task direct when
+delegation overhead would dominate.
 
-Reuse accepted requirements and plans. Before delegation, check whether they leave
-consequential behavior or preservation requirements unresolved. Use
-[shape-work](../shape-work/SKILL.md) for unresolved behavior or accepted meaning;
-use [codebase-design](../codebase-design/SKILL.md) for unresolved consequential
-ownership, interfaces, or migration. Otherwise proceed without another planning
-phase. Repeat this readiness check when follow-up instructions materially change
-the plan.
+Use phases or checkpoints when they help organization, continuity, or early
+verification. Read [Planned delivery](references/planned-delivery.md) when using
+them. A phase can remain worker-owned; not every phase needs a lead handoff.
 
-This skill does not coordinate parallel fanout. When the user explicitly combines
-it with [parallel-implement](../parallel-implement/SKILL.md), retain this skill's
-GPT-6 model and effort routing, budget policy, and final review requirement while
-parallel-implement owns decomposition, lane custody, concurrency, integration,
-and parallel recovery.
+Before delegating implementation, establish the behavior, preservation
+requirements, and decision boundaries needed for that assignment. Delegate
+bounded investigation when it is needed to resolve those questions. Use
+[shape-work](../shape-work/SKILL.md) for unresolved behavior or accepted meaning,
+and [codebase-design](../codebase-design/SKILL.md) for unresolved reuse, ownership,
+interfaces, or migration. Repeat this readiness check when follow-up instructions
+materially change the plan.
 
-For coordinated serial delivery with meaningful checkpoints, read
-[Planned delivery](references/planned-delivery.md). When usage measurement or a
-hard budget materially affects routing, read [Telemetry](references/telemetry.md).
+Give the worker scope, acceptance, relevant codebase context, and important
+implementation constraints through [Worker assignment](references/worker-assignment.md).
+Carry transition and retirement obligations into the assignment when behavior is
+replaced or consolidated. Leave routine implementation decisions and investigation
+with the worker. Luna can gather bounded context for planning or support Sol
+without bringing the raw source volume into the lead's context.
 
-## 2. Assign work without importing it into Astra
+## Support implementation, then wait
 
-Read only enough to settle the assignment and lead-owned decisions. Use
-[Worker assignment](references/worker-assignment.md) to give the worker the
-outcome, accepted context, scope, authority, checkout, acceptance, and return
-contract it cannot infer. Do not assume inherited conversation or skill context.
+While the worker implements, the lead waits through the host's event-driven
+mechanism. Use the longest practical event-driven wait; if it returns without a
+meaningful change, wait again. Do not poll, narrate elapsed time, inspect evolving
+changes merely to stay informed, or invent reading and commentary to fill idle
+time.
 
-Give one actor write custody of the delegated checkout at a time. While a worker
-holds custody, Astra stays dormant with respect to implementation: do not follow
-the work in parallel, reread intermediate changes merely to stay informed,
-reproduce worker reasoning, request routine summaries, or poll for progress.
+Re-engage for a consequential question, unexpected codebase or architectural
+issue, changed requirements, execution failure, an agreed checkpoint, a completed
+candidate, or user input. Answer the needed question and let the worker continue.
+Use existing knowledge or relevant fixed evidence; do not reconstruct the entire
+implementation investigation.
 
-Use the host's event-driven wait/resume mechanism. Re-engage only when a
-lead-owned decision is required, a stable candidate is ready, execution fails, the
-user intervenes, or another consequential event occurs. Read-only work on
-independent immutable context is fine when it cannot race with the worker or
-recreate its implementation investigation.
+One actor holds write custody at a time. If the lead must inspect the mutable
+checkout or take over work, obtain explicit release and confirm worker-owned
+writers and subprocesses have stopped. Idle or interrupted status alone does not
+establish release. Read-only support uses fixed inputs or independent material
+that cannot race with the writer.
 
-If Astra must inspect or take over the delegated checkout, first obtain explicit
-custody release and establish that worker-owned writers or subprocesses stopped.
-Idle, interrupted, or timed-out status alone does not establish release.
+## Review and finish
 
-## 3. Review and recover
+A reviewable return identifies the candidate, changed behavior, decisive checks,
+material limits, and released custody. Review it with
+[change-review](../change-review/SKILL.md), reusing evidence that remains valid.
+The lead reviews directly or selects isolated review according to difficulty,
+context independence, coverage, and budget. Scoped high assurance remains
+available under change-review; final acceptance stays with the lead.
 
-A reviewable return identifies the candidate, material changes, decisive checks
-and limits, and releases write custody. It returns decision-relevant evidence, not
-an implementation transcript.
+For replacement or consolidation, assess whether affected callers use the intended
+owner, superseded material has been removed within scope, and any retained path is
+justified. Check that test cleanup preserves coverage of supported behavior.
 
-Review the candidate with [change-review](../change-review/SKILL.md), reusing valid
-candidate-bound evidence. Pending required proof remains incomplete until it
-passes or its owner revises the requirement.
+Return correctable implementation findings to the same worker when its context
+remains useful. When a follow-up changes validation ownership, shared interfaces,
+or persisted-input acceptance, carry forward the original preservation
+requirements and check affected callers and compatibility obligations. Include a
+distinguishing regression test for changed shared validation or persisted-input
+acceptance, and review the correction's expanded impact.
 
-When fresh context would materially reduce anchoring on implementation reasoning,
-the lead may assign one read-only Astra Medium or XHigh reviewer under the model
-policy. After writer custody is released, give it a fixed candidate, accepted
-requirements, relevant sources, and candidate-bound proof in a fresh context;
-omit implementation conversation, lead suspicions, and desired verdicts. This is
-an optional ordinary review, not the multi-reviewer high-assurance mode. The lead
-assesses the returned findings and coverage and retains final acceptance.
+Read [Recovery](references/recovery.md) for interruption, custody uncertainty,
+blocking questions, or a failing assignment. Model effort cannot resolve missing
+requirements, permissions, broken environments, or contradictory acceptance.
 
-Return locally correctable implementation findings to the same worker when its
-accumulated context is still useful. Reusing worker context is usually cheaper
-than reconstructing implementation state in Astra or a replacement.
+Continue through authorized work and corrections until the complete accepted
+outcome is present in the reviewed candidate, required checks pass, and material
+limits are resolved or explicitly owned. A checkpoint or progress update is not
+completion. Return the result, decisive evidence, and remaining limits without
+replaying the implementation history.
 
-When a follow-up assignment changes validation ownership, shared interfaces, or
-persisted-input acceptance, carry forward the original preservation requirements
-and require a focused check of affected callers and compatibility obligations.
-Include a distinguishing regression test for changed shared validation or
-persisted-input acceptance, and review the correction's expanded impact on return.
-
-Read [Recovery](references/recovery.md) for blocking questions, prerequisite
-failures, interruption, custody uncertainty, worker replacement, or route failure.
-
-Do not escalate model or effort because requirements are incomplete, acceptance is
-contradictory, permissions are missing, or the environment is broken. Resolve
-those causes at their owner.
-
-For a demonstrated implementation-reasoning failure, follow the model policy's
-Sol 6.1 High → Astra Medium → Astra XHigh subagent route, transferring custody before
-changing implementers. Resolve lead-owned decisions in the existing lead session;
-implementation escalation does not select or reconfigure the lead.
-
-## 4. Finish
-
-Complete when the accepted outcome is present in the reviewed candidate, required
-checks pass, and material evidence limits are resolved or explicitly owned.
-
-Report the candidate, decisive evidence, and material remaining limits. Do not
-replay the worker's implementation history into the final response.
-
-Include usage or cost telemetry only when requested or needed for a governing
-budget. Review success does not authorize merge, publication, deployment, or
-other external effects.
+Read [Telemetry](references/telemetry.md) only when measurement is requested or a
+budget materially affects the work. Review success does not authorize publication,
+merge, deployment, or other external effects.

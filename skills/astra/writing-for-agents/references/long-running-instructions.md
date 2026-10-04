@@ -1,68 +1,38 @@
 # Long-running instructions
 
-Use this reference when an instruction governs a genuinely long autonomous run and
-continuation, steering, predictable permissions, or durable progress can
-materially change behavior. Apply only the branches the receiving task needs.
+Use when continuation, steering, or loss of context could materially affect the
+run. Include only the rules the receiver needs beyond its existing instructions.
 
-## Name the finish and the escape
+## Completion and authority
 
-Pair the finish line with an escape condition: state both what "done" means and the
-concrete uncertainty, failure, missing access, or authority condition that should
-stop the receiver for input. Do not make the escape so broad that ordinary
-implementation choices become approval gates.
+State the accepted finish line and the concrete missing input, authority, or
+operational boundary that would block progress. Keep routine choices within the
+agent's discretion. Intermediate results, passing checks, and status reports do
+not complete an unfinished assignment.
 
-A long run should not infer completion from elapsed effort, one green check, an
-intermediate phase, or a progress summary when the stated outcome remains
-unfinished.
+Make already-granted authority clear when needed for predictable effects. Do not
+manufacture permission to avoid a later question; publication, deployment, and
+other separately governed effects retain their actual authorization boundaries.
 
-## Surface only already-granted authority
+## Continuation and steering
 
-When the task predictably requires a separately authorized effect, permission, or
-sensitive operation, make that authority explicit up front only when the user or
-governing source has actually granted it. Do not infer, broaden, or manufacture
-authority merely to avoid a future question.
+Continue authorized work through non-blocking findings and reversible choices.
+Stop dependent work when required input, authority, or a hard boundary prevents
+progress; continue useful independent work within scope. When updates are useful,
+pair them with continued action rather than an unnecessary handoff to the user.
 
-Distinguish permission to perform the task from permission for publication,
-deployment, destructive changes, durable external effects, secrets, or other
-separately governed actions.
+Treat later constraints and requests as amendments to the active objective unless
+the user replaces or cancels it. Resolve conflicting direction without silently
+dropping earlier obligations. Define a different steering policy only when the
+receiving workflow requires it.
 
-## Define continuation and steering
+## Continuity
 
-For long-running work, state the continuation policy when it can change behavior.
-Keep going through non-blocking findings, status updates, and reversible choices
-that are already within scope. Stop only when required user input or authorization,
-or a hard safety or operational boundary, prevents safe progress. A progress
-report, offer to continue, or list of non-blocking options is not completion
-unless the instruction explicitly makes it one.
+Use durable progress only when compaction or a fresh receiver could lose useful
+state. Prefer an existing authoritative plan or tracker; keep the accepted
+objective, decisions, completed and remaining work, and blockers available.
+Routine work does not need a progress artifact or prescribed checkpoint cadence.
 
-When status updates are useful, ask the receiver to pair the update with its next
-safe action in the same turn when practical instead of reporting and pausing.
-
-When mid-run steering is expected, define how later messages relate to the
-accepted objective when that distinction matters. Treat an added constraint or
-task as an amendment to the still-active objective unless the sender explicitly
-replaces, cancels, or conflicts with earlier scope. Reconcile a conflict instead
-of silently dropping an earlier accepted obligation.
-
-## Persist progress only when continuity needs it
-
-For genuinely long autonomous work whose useful state may be lost to context
-compaction or a fresh receiver, use a small durable progress artifact only when it
-materially improves continuity. Record the accepted objective or finish line,
-completed work, remaining work, and real blockers.
-
-Update an existing authoritative plan or tracker when one already owns that state
-instead of creating a parallel task file. Do not create a progress artifact for
-ordinary bounded work or merely to make activity visible.
-
-## Check the receiver behavior
-
-Read the finished instruction as a fresh receiver. Confirm that it can identify
-the finish line and real escape condition, continue through non-blocking status,
-preserve still-active obligations under later steering, and distinguish explicit
-permission from effects that remain separately governed.
-
-Look for the opposite failure modes as well: an instruction that makes the agent
-bulldoze through real uncertainty, that adds approval gates for ordinary
-implementation judgment, or that creates progress ceremony without continuity
-value. Confirm that avoiding a permission question did not broaden authority.
+Check that the final instruction avoids both premature stopping and continuation
+beyond its authority. Let the agent choose the organization and working rhythm
+within the receiving workflow's constraints.

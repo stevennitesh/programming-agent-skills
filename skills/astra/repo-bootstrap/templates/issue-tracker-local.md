@@ -1,7 +1,9 @@
 # Issue tracker: Local Markdown
 
-Tracker state is version-controlled Markdown under `.scratch/<feature-slug>/`.
-Use this layout for tracker-backed work; direct coding creates no ticket files.
+Tracker state is version-controlled Markdown. The layout below is a setup default;
+adapt its paths and fields to an established repository convention or select a
+coherent layout during setup. Record the selected representation in the adopted
+guide and use it consistently during execution. Direct coding creates no tickets.
 
 ## Operations
 
@@ -11,13 +13,14 @@ Use this layout for tracker-backed work; direct coding creates no ticket files.
 - **Fetch:** read the referenced file.
 - **Comment:** append under `## Comments`.
 - **Close:** record the workflow's completion evidence, set the mapped
-  implemented state, and remove the active claim.
+  implemented state, and clear only the completing run's own claim under the
+  workflow's rules.
 
 ## Representation
 
 - Content lives in the parent or issue body, comments, and implementation notes.
 - Category and state use [the label mapping](triage-labels.md).
-- The parent links its children in order; each child links its parent.
+- The parent links its children; each child links its parent.
 - `Blocked by:` stores dependency links.
 - `Claimed by:` stores an active claim when the workflow requires claiming.
 

@@ -1,171 +1,85 @@
 ---
 name: writing-for-agents
-description: Write or audit a specific instruction artifact another agent will execute. Exclude repository guidance setup, product shaping, and ordinary prose editing.
+description: Write or audit a selected agent instruction, skill, or handoff. Exclude routine worker dispatch, repository-wide context work, and product shaping.
 ---
 
 # Writing for agents
 
-Write the minimum guidance that helps a capable agent make the intended decisions
-with the context it will actually receive. Preserve the user's settled choices,
-the document's authority, and any constraints the receiver cannot infer. For an
-audit, return findings without editing.
+Give the receiver the intent, context, and boundaries it needs, with freedom to
+choose how to reach the accepted outcome. Use this standard for a requested
+instruction artifact, reusable guidance, a consequential assignment, or a
+continuation handoff. Ordinary worker prompts can be written directly within
+their owning workflow; this skill is not a prerequisite for delegation.
 
-Repository-level setup, pack migration, or repair of missing or stale guidance
-routes belongs to [repo-bootstrap](../repo-bootstrap/SKILL.md). This skill owns
-the content of an already-scoped instruction artifact once its repository surface
-and authority are established.
+For an audit, return findings without editing. Initial repository guidance and
+requested setup migrations belong to [repo-bootstrap](../repo-bootstrap/SKILL.md).
+Maintenance of scattered, stale, conflicting, or missing repository context
+belongs to [context-hygiene](../context-hygiene/SKILL.md). This skill owns the
+content of a selected instruction artifact.
 
-## 1. Identify the receiver, authority, and outcome
+## Preserve intent and supply missing context
 
-Establish the receiving agent's task, baseline capabilities, available context,
-and how this document reaches it. Read the relevant caller or pointer and the
-source that owns the rules. Distinguish settled requirements and project facts
-from recommendations, examples, and historical evidence.
+Establish what the receiving agent will actually see. Preserve the user's
+accepted outcome, decisions, constraints, authorized effects, and completion
+criteria. Distinguish requirements from defaults, suggestions, examples, and
+historical evidence. Do not invent policy to fill a consequential gap.
 
-Make the intended outcome, authorized effects, material constraints, and
-completion condition clear. Prescribe a method or sequence when dependencies,
-fragile operations, or an accepted workflow make that method consequential.
-Otherwise leave valid implementation and reasoning strategies open.
+When a requirement or prohibition is easy to misinterpret, describe the observable
+outcome or pattern; use an example when it removes consequential ambiguity.
 
-For a long-running autonomous instruction where continuation, steering,
-predictable permissions, or durable progress can materially affect behavior, read
-[Long-running instructions](references/long-running-instructions.md). Keep only
-the applicable rules in the final artifact.
+Supply project facts, decision rationale, and context the receiver cannot infer
+or retrieve. For an assignment, make scope, authority, acceptance, and the
+expected return available in the prompt or an explicitly loaded source; do not
+assume inherited conversation context. Leave orchestration with its actual owner.
 
-Do not ask for narrated reasoning merely to make the instruction look rigorous.
-Remove generic reasoning exhortations such as "think carefully," "think hard,"
-or "think step by step"; they do not name a decision, constraint, or acceptance
-criterion and may duplicate the receiver's own reasoning or host effort controls.
-Ask instead for observable evidence, a concise decision rationale, or an explicit
-uncertainty when one is useful to judge the result. When reasoning depth truly
-matters, state the difficult decision or comparison that deserves it, or use the
-host's supported reasoning/effort control.
+Let the agent choose investigation, reasoning, tools, and implementation methods
+within those boundaries. Prescribe a sequence or technique when an accepted
+workflow, dependency, or fragile operation makes it necessary. Require a fixed
+output shape only when a consumer or acceptance criterion needs it. Ask for
+useful evidence, uncertainty, and concise rationale rather than narrated reasoning
+or generic exhortations to think harder.
 
-For a worker assignment, deliver the bounded task, essential role and authority
-boundaries, necessary context, acceptance, and expected return in its prompt or
-an explicitly loaded source. Do not assume the worker inherits the caller's
-context. Keep orchestration decisions with the caller.
+## Keep guidance at its owner
 
-When preparing a continuation handoff for another agent or fresh context, read
-[Continuation handoffs](references/continuation-handoffs.md). That reference owns
-the packet and its checks; writing a handoff does not execute the next step or
-transfer authority.
+Keep shared requirements in the main instruction and substantial conditional
+detail behind a clear trigger and pointer. Reference authoritative sources rather
+than copying facts or procedures that change elsewhere. Use existing mechanical
+enforcement where it can own a rule; retain the context and authority it cannot
+express.
 
-When creating a skill or changing its discovery, packaging, or invocation
-behavior, read [Skill authoring](references/skill-authoring.md).
-
-When migrating instructions to another model or host, deciding whether a method
-still earns its place, materially changing a skill's behavior, or claiming that
-wording improves agent performance, read
-[Behavior evaluation](references/behavior-evaluation.md).
-
-## 2. Put information where the decision needs it
-
-Keep information every applicable run needs in the main instruction. Put
-substantial branch-specific detail behind a pointer that states when to read it.
-If agents miss a reference, improve its trigger before copying the whole reference
-into the always-loaded document.
-
-Organize material for how it will be used: procedure when order is consequential,
-reference when facts need lookup, and explanation when reasons or tradeoffs affect
-judgment. Split content when different readers or branches need it at different
-times, not to satisfy an arbitrary file-size target.
-
-Give each rule one authoritative home and point to procedures owned elsewhere.
-Prefer current code, configuration, command help, schemas, and maintained
-documentation over copied mechanical facts unless the instruction adds a
-convention, reason, expensive-to-discover fact, or required interpretation.
-
-Before adding prose for a recurring mechanical invariant, ask whether a type,
-schema, configuration constraint, lint rule, canonical helper, runtime check, or
-small deterministic script can enforce it more reliably. Put the enforcement at
-that owner and keep agent-facing prose only when it still carries decision
-context, authority, rationale, recovery semantics, or a conditional pointer the
-mechanism cannot express.
-
-When changing an instruction's meaning, trigger, ownership, or authority, inspect
-directly affected callers and competing current guidance. Reconcile useful
-material and retire obsolete current pointers within scope. Keep historical
-evidence distinguishable from instructions still in force.
-
-For replacing specs or plans, follow
+When meaning, discovery, ownership, or authority changes, reconcile directly
+affected callers and competing current guidance within scope. Preserve history
+as evidence. For conflicting or displaced specs, plans, or decision records, use
 [Document reconciliation](../shape-work/references/document-reconciliation.md).
 
-## 3. Write literal, decision-changing guidance
+Remove generic writing advice, repeated defaults, and unnecessary procedural
+scaffolding. Preserve non-inferable context, user choices, effect and custody
+boundaries, acceptance, recovery contracts, and consequential ordering. A past
+failure or preferred technique alone does not justify a universal rule.
 
-Put conditions and prerequisites before the actions they govern. Address the
-executing reader directly and name other actors explicitly. Attach words such as
-"only," "unless," and "after" to one clear obligation. Prefer positive target
-behavior; use prohibitions for concrete boundaries or likely harmful
-misinterpretations. When a negative constraint matters, name the observable
-pattern or effect to avoid rather than an abstract quality such as "generic,"
-"messy," or "bad."
+Load these references only for the relevant branch:
 
-State what must be true when the work is complete. Prefer a precise completion
-condition over extra intermediate steps that merely encourage diligence.
+- [Skill authoring](references/skill-authoring.md): skill discovery, invocation,
+  packaging, or model/host adaptation.
+- [Long-running instructions](references/long-running-instructions.md): when
+  continuation, steering, or durable progress needs explicit treatment.
+- [Continuation handoffs](references/continuation-handoffs.md): preparing another
+  agent or fresh context to resume work.
+- [Behavior evaluation](references/behavior-evaluation.md): deciding what evidence
+  a consequential method change, migration, or performance claim needs.
 
-Use examples, templates, and exact output shapes when they remove meaningful
-ambiguity or protect an easily omitted requirement. For conditional behavior,
-name an observable trigger. For a hard boundary, state both the prohibited effect
-and the permitted next action.
+## Check the result
 
-Preserve the distinction between requirements, recommendations, defaults, and
-examples. Read each obligation as something a capable agent may enforce literally.
-Do not turn a past incident, preferred technique, or plausible future concern into
-a universal requirement.
+Read the artifact with only the receiver's expected context. It should make the
+intended outcome, applicable boundaries, available discretion, and completion
+recognizable without inventing missing requirements. Check for unintended scope
+expansion, approval stops, mandatory process, or lost obligations.
 
-Make every instruction earn its context:
+Choose verification to match the change. For changed discovery or conditional
+routes, consider an applicable request and a realistic near-miss. Check affected
+links and machine-read structure; exercise executable instructions when useful
+and authorized. Ordinary edits do not require a behavioral evaluation campaign.
+Editorial review and package checks do not prove improved agent performance.
 
-- Does it change a likely decision for the intended receiver?
-- Does it provide information or authority the receiver cannot otherwise obtain?
-- Does it prevent a credible failure or preserve a required contract?
-- Would removing it leave the intended behavior materially less reliable?
-
-Correct advice that the intended receiver already follows reliably can still be
-a no-op. Delete repeated defaults, generic exhortations, stale facts, defensive
-scaffolding retained for earlier models, and procedural ceremony that does not
-change the accepted outcome.
-
-Do not prune project meaning, user-settled decisions, repository-specific
-conventions, authorization, custody, effect boundaries, required acceptance
-semantics, recovery contracts, or fragile ordering merely because they seem
-obvious. Model capability cannot recover information or authority the receiver
-was never given.
-
-## 4. Check the receiving behavior
-
-Read the result as a future agent with only the context it is expected to receive.
-Check whether it can identify:
-
-- when the guidance applies;
-- what outcome and boundaries govern the task;
-- what context or conditional reference it needs;
-- what remains its judgment;
-- what evidence matters; and
-- when the requested work is complete.
-
-Look for unintended behavior introduced by the instruction: unnecessary stops,
-questions, delegation, progress artifacts, reviews, tests, context loading, or
-scope expansion. For long-running guidance, apply the checks in
-[Long-running instructions](references/long-running-instructions.md) for
-accidental stopping, dropped obligations, and authority expansion. Confirm that
-the user's settled choices and existing authorization survived the edit.
-
-For changed discovery or conditional guidance, trace at least one representative
-applicable case and one realistic nearby case that should not activate it.
-Confirm required guidance is encountered before the decision it governs without
-loading unrelated procedures.
-
-Check affected links, frontmatter, and other machine-read structure. For an
-executable recipe, exercise the changed path when authorized and useful. Report
-what was not verified.
-
-Structural validity, editorial review, or a successful example does not establish
-that wording improves agent behavior. Use
-[Behavior evaluation](references/behavior-evaluation.md) when the requested claim
-requires that evidence.
-
-Finish when the intended receiver can act within its authority, reach the required
-outcome with the context available to it, and recognize completion without
-inventing missing policy. Report the material change and any consequential
-verification gap concisely.
+Return the requested artifact or audit findings, the material changes, and any
+consequential verification limits. No fixed report template is required.

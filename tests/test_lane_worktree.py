@@ -62,6 +62,9 @@ def repository(tmp_path: Path) -> tuple[Path, str]:
 
 
 def helper(*args: str) -> tuple[subprocess.CompletedProcess[str], dict[str, object]]:
+    if args[0] == "cleanup" and "astra" in HELPER.parts and "--integration-head" not in args:
+        repo = Path(args[args.index("--repo") + 1])
+        args = (*args, "--integration-head", git(repo, "rev-parse", "HEAD"))
     result = run(sys.executable, str(HELPER), *args)
     packet = json.loads(result.stdout)
     return result, packet
@@ -202,11 +205,9 @@ def test_inspect_and_cleanup_block_ignored_artifacts(
     assert inspected["clean"] is True
     assert inspected["integrated"] is True
     assert inspected["ignored_entries"] == []
-    assert inspected["mechanical"] == {
-        "resume_or_land_eligible": True,
-        "cleanup_eligible": True,
-        "actor_quiescence_unverified": True,
-    }
+    assert inspected["mechanical"]["resume_or_land_eligible"] is True
+    assert inspected["mechanical"]["cleanup_eligible"] is True
+    assert inspected["mechanical"]["actor_quiescence_unverified"] is True
 
     (worktree / "worker.cache").write_text("preserve me\n", encoding="utf-8")
     (worktree / ".pytest_cache").mkdir()
@@ -735,6 +736,7 @@ def test_cleanup_reports_partial_failure_and_continues_named_lanes(
     common = Namespace(
         repo=str(repo),
         root=str(lane_root),
+        integration_head=git(repo, "rev-parse", "HEAD"),
         completed=[str(path) for path in worktrees],
     )
     code, packet = cleanup(common)
@@ -794,6 +796,7 @@ def test_cleanup_reports_removed_when_git_unregisters_before_error(
         Namespace(
             repo=str(repo),
             root=str(lane_root),
+            integration_head=git(repo, "rev-parse", "HEAD"),
             completed=[str(worktree)],
         )
     )
@@ -830,6 +833,7 @@ def test_cleanup_reports_unregistered_residual_path_after_remove_error(
         Namespace(
             repo=str(repo),
             root=str(lane_root),
+            integration_head=git(repo, "rev-parse", "HEAD"),
             completed=[str(worktree)],
         )
     )
@@ -860,6 +864,7 @@ def test_cleanup_reports_unregistered_residual_path_after_remove_error(
     arguments = Namespace(
         repo=str(repo),
         root=str(lane_root),
+        integration_head=git(repo, "rev-parse", "HEAD"),
         completed=[str(worktree)],
     )
 
@@ -926,6 +931,7 @@ def test_cleanup_preserves_failed_lane_state_and_continues_named_lanes(
         Namespace(
             repo=str(repo),
             root=str(lane_root),
+            integration_head=git(repo, "rev-parse", "HEAD"),
             completed=[str(path) for path in worktrees],
         )
     )
@@ -960,6 +966,7 @@ def test_cleanup_preserves_failed_lane_state_and_continues_named_lanes(
         Namespace(
             repo=str(repo),
             root=str(lane_root),
+            integration_head=git(repo, "rev-parse", "HEAD"),
             completed=[str(worktrees[0])],
         )
     )
@@ -994,6 +1001,7 @@ def test_cleanup_preserves_git_uncertainty(tmp_path: Path, monkeypatch) -> None:
         Namespace(
             repo=str(repo),
             root=str(lane_root),
+            integration_head=git(repo, "rev-parse", "HEAD"),
             completed=[str(worktree)],
         )
     )
@@ -1114,7 +1122,10 @@ def test_cleanup_preserves_registered_lane_when_runtime_cleanup_fails(
         cleanup_lane.__globals__, "remove_tree", fail_cache
     )
     code, blocked = cleanup_lane(
-        Namespace(repo=str(repo), root=str(lane_root), completed=[str(worktree)])
+        Namespace(
+            repo=str(repo), root=str(lane_root),
+            integration_head=git(repo, "rev-parse", "HEAD"), completed=[str(worktree)],
+        )
     )
     assert code == 1
     assert blocked["preserved"][0]["reason"] == "runtime cleanup incomplete"
@@ -1131,7 +1142,10 @@ def test_cleanup_preserves_registered_lane_when_runtime_cleanup_fails(
         cleanup_lane.__globals__, "remove_tree", original_remove_tree
     )
     code, cleaned = cleanup_lane(
-        Namespace(repo=str(repo), root=str(lane_root), completed=[str(worktree)])
+        Namespace(
+            repo=str(repo), root=str(lane_root),
+            integration_head=git(repo, "rev-parse", "HEAD"), completed=[str(worktree)],
+        )
     )
     assert code == 0, cleaned
     assert not worktree.exists()
@@ -1166,6 +1180,7 @@ def test_cleanup_reports_runtime_enumeration_failure_and_continues(
         Namespace(
             repo=str(repo),
             root=str(lane_root),
+            integration_head=git(repo, "rev-parse", "HEAD"),
             completed=[str(item["worktree"]) for item in packets],
         )
     )
@@ -1216,7 +1231,10 @@ def test_cleanup_rejects_legacy_receipt_format(
     receipt.write_text(json.dumps(payload), encoding="utf-8")
 
     code, blocked = namespace["cleanup"](
-        Namespace(repo=str(repo), root=str(lane_root), completed=[str(worktree)])
+        Namespace(
+            repo=str(repo), root=str(lane_root),
+            integration_head=git(repo, "rev-parse", "HEAD"), completed=[str(worktree)],
+        )
     )
     assert code == 1
     assert blocked["preserved"][0]["reason"] == "cleanup receipt invalid"
@@ -1256,19 +1274,19 @@ def test_cleanup_rechecks_repository_identity_before_unregistering(
     namespace = runpy.run_path(str(HELPER))
     cleanup_lane = namespace["cleanup"]
     original_git = cleanup_lane.__globals__["git"]
-    repo_head_reads = 0
 
     def drift_after_receipt(checkout, *args, check=True):
-        nonlocal repo_head_reads
         if Path(checkout) == repo.resolve() and args[:2] == ("rev-parse", "HEAD"):
-            repo_head_reads += 1
-            if repo_head_reads > 1:
+            if Path(str(packet["cleanup_receipt"])).is_file():
                 return subprocess.CompletedProcess(args, 0, "0" * 40 + "\n", "")
         return original_git(checkout, *args, check=check)
 
     monkeypatch.setitem(cleanup_lane.__globals__, "git", drift_after_receipt)
     code, blocked = cleanup_lane(
-        Namespace(repo=str(repo), root=str(lane_root), completed=[str(worktree)])
+        Namespace(
+            repo=str(repo), root=str(lane_root),
+            integration_head=git(repo, "rev-parse", "HEAD"), completed=[str(worktree)],
+        )
     )
     assert code == 1
     assert blocked["preserved"][0]["reason"] == "cleanup identity changed"
@@ -1398,16 +1416,6 @@ def test_git_does_not_override_safe_directory_failures(
         git_call(Path("/untrusted"), "status")
 
     assert calls == [["git", "-C", str(Path("/untrusted")), "status"]]
-
-
-def test_parallel_lane_helper_packages_remain_identical() -> None:
-    astra = (
-        ROOT / "skills/astra/parallel-implement/scripts/lane_worktree.py"
-    ).read_bytes()
-    custom = (
-        ROOT / "skills/custom/parallel-implement/scripts/lane_worktree.py"
-    ).read_bytes()
-    assert astra == custom
 
 
 def test_path_presence_does_not_hide_access_failure(

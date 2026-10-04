@@ -1,8 +1,16 @@
 # Engineering contract
 
+> Retired 2026-10-03. Preserved for historical references, not active guidance.
+> Current repository constraints live in AGENTS.md; pack policy lives in
+> docs/astra/design-brief.md. Bootstrap no longer supplies this contract.
+
 Use this guidance for engineering decisions that are easy to over-assume or
 mis-prove. Repository-specific requirements and accepted domain decisions supply
 the local meaning. Apply a conditional practice only when its condition is present.
+
+Choose investigation depth, implementation methods, tools, and work sequence to
+fit the task. The constraints below steer scope and evidence; they do not require
+a fixed development process or additional plans, reviews, or progress artifacts.
 
 Implement guarantees required by actual supported workflows. Do not infer scale,
 concurrency, independent consumers, crash recovery, future reuse, or stronger
@@ -97,8 +105,10 @@ For consequential performance or resource claims, compare equivalent work agains
 a relevant baseline. For external mutations, establish the target and authority and
 read back the result when confirmation matters.
 
-These conditions do not start additional workflows. Use TDD, delegation, formal
-review, optimization campaigns, or specialized operational procedures only when
-the user or applicable instructions call for them.
+Choose local development and review techniques when their value justifies the
+cost, within the user's and repository's constraints. Delegation and specialist
+workflows retain their own invocation and authority rules. These conditions do
+not make tickets, TDD, formal review, or an optimization campaign prerequisites
+for ordinary coding.
 
 Report the outcome, decisive evidence, and material limits.

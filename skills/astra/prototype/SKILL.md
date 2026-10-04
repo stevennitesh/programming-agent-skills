@@ -5,16 +5,15 @@ description: Run a bounded experiment to resolve a design, integration, interact
 
 # Prototype
 
-Produce the smallest trustworthy observation that can settle a bounded uncertainty.
-A successful probe does not establish production readiness.
-
-The prototype is complete when the calling work has judgeable evidence or a
-precise evidence gap. Production implementation is outside the experiment unless
-it was already authorized.
+Resolve a bounded uncertainty with evidence credible enough to guide the calling
+decision. Choose the experiment design, tools, fidelity, variants, measurements,
+and reporting format. Keep the effort proportionate to the question. A successful
+probe does not establish production readiness.
 
 Use [diagnosing-bugs](../diagnosing-bugs/SKILL.md) when the question is why an
 existing failure occurs. Use [hillclimb](../hillclimb/SKILL.md) when the goal is an
-iterative measured improvement loop rather than one bounded uncertainty.
+ongoing measured improvement loop. A bounded prototype can use multiple runs and
+revisions to answer its question.
 
 ## 1. Define the deciding observation
 
@@ -40,8 +39,9 @@ mechanism whose behavior is being tested.
 A substitute supports only claims about properties it preserves. An in-memory
 model cannot establish database isolation, and a static render cannot establish
 interaction behavior. If the required mechanism or environment is unavailable,
-return the remaining evidence gap rather than presenting a substitute as
-equivalent.
+determine whether ordinary setup or instrument repair can make it usable within
+scope. When faithful evidence remains unavailable, report the gap and limit
+substitute-based claims to the properties actually exercised.
 
 For state, logic, integration, visual interaction, or variable measurements, read
 the relevant section of [Evidence methods](references/evidence-methods.md).
@@ -57,23 +57,37 @@ Exercise the actual behavior, rendering, or measurement under the framed
 conditions. Confirm that the instrument reaches the intended mechanism and makes
 the deciding observation visible.
 
-Do not interpret a broken or invalid instrument as evidence about the design.
-Stop when the question is answered, a blocking limitation establishes the gap, or
-additional runs cannot change the decision.
+Use exploratory runs, comparisons, instrument improvements, and reruns when they
+help resolve the uncertainty. Repair ordinary probe errors, missing local setup,
+or faulty instrumentation within authorized scope and continue. A broken
+instrument is not evidence that the proposed approach fails.
+
+Keep question or criterion changes visible and distinguish exploratory findings
+from evidence for the revised conclusion. Stop experimenting when the question is
+answered, a genuine blocker establishes the evidence gap, or further effort is
+unlikely to improve the decision enough to justify its cost.
 
 Do not expand the experiment into production implementation merely to obtain a
 favorable result.
 
-## 4. Return the evidence
+## 4. Deliver the result and continue within scope
 
 Return the decisive observation, the conditions and substitutions that bound it,
-and the resulting conclusion or remaining gap. Preserve reproduction detail only
-when future verification, comparison, or requested reuse needs it.
+and the resulting conclusion or precise evidence gap. Deliver any requested
+runnable demo, comparison artifact, or reusable experiment with enough context to
+use or rerun it. Identify blocked deliverables explicitly. Preserve other
+reproduction detail when future verification or comparison needs it.
 
-Stop or account for resources created by the probe. Preserve requested demos or
-evidence artifacts with enough rerun context; otherwise remove disposable
-experiment material when safe. Preserve unrelated work.
+Completion includes the requested evidence and artifacts and accounting for the
+probe's resources. Stop or account for created processes and services; retain
+requested artifacts and remove other disposable material when safe. Preserve
+unrelated work.
 
 Prototype code is evidence first. Reuse it in production only after the calling
 work evaluates it against production ownership, quality, and integration
 requirements.
+
+When the experiment supports already-authorized implementation, carry its result
+back into that work and continue within the active workflow. A prototype-only
+request ends with its result; the experiment does not itself authorize production
+implementation or other effects outside its scope.

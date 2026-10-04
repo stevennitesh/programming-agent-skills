@@ -1,6 +1,23 @@
 # Delivery boundaries
 
-Read for cross-ticket composition, risky learning, or a wide migration.
+Read for cross-ticket composition, risky learning, or a wide migration. Apply the
+conditions relevant to the accepted work; the examples are not a checklist for
+every ticket.
+
+## Make dependency handoffs usable
+
+Describe the output a predecessor supplies and what its consumer needs to observe
+before starting. For a code dependency this may be an accepted interface integrated
+into the shared base; for learning it may be a settled decision supported by the
+experiment's evidence. Use the repository's dependency representation and keep the
+reason and unblock condition in accessible ticket context.
+
+A shared contract may enable two independent consumers, with combined verification
+depending on both only when the property requires their combined behavior. Record
+known ownership or mutable-resource overlap separately from that dependency graph.
+The execution coordinator can then isolate, serialize, or reslice affected work
+without inventing a product dependency. Potential parallelism is not a guarantee
+about the runtime or checkout state at dispatch.
 
 ## Preserve meaning across tickets
 

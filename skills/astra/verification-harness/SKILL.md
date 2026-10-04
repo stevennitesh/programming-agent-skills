@@ -1,142 +1,122 @@
 ---
 name: verification-harness
-description: Create or reconcile a repository-owned harness that drives and proves real user-facing behavior. Exclude ordinary tests, one-off prototypes, and human-private procedures.
+description: Create or improve reusable repository tooling for agents to exercise and verify real product interfaces. Exclude routine test execution and human-private procedures.
 ---
 
 # Verification harness
 
-Create the smallest durable way for future agents to exercise the real product
-through a supported user-facing surface and capture evidence they can trust.
+Create or improve repository-owned tools that make real product behavior faster,
+easier, and more reliable for agents to exercise and verify. Reduce repeated
+setup, fragile interactions, and rediscovery. The deliverable is reusable tooling
+and enough instructions to use it, demonstrated against the actual product.
 
-This skill owns verification tooling and its instructions. It does not change
-product behavior merely to make verification pass.
+Choose the tools, implementation, and verification methods for the requested
+capability. Ordinary test execution needs no tooling workflow. Use
+[prototype](../prototype/SKILL.md) when the goal is a bounded experiment to resolve
+a design or feasibility uncertainty, and [wizard](../wizard/SKILL.md) for a private
+or human-only prerequisite.
 
-## 1. Establish the real verification surface
+## Find the useful tooling improvement
 
-Inspect the repository's existing run commands, test or browser harnesses,
-development tooling, configuration, and user-facing entry points. Reuse an
-existing way to drive the product when it already preserves the property that
-must be proved.
+Inspect the relevant source, run commands, existing harnesses, and supported
+interfaces to identify what agents repeatedly struggle to launch, drive, or
+observe. Reuse or improve the existing owner before adding another tool. A script,
+tool configuration, or corrected usage instructions may be sufficient; build a
+framework only when the requested capability needs one.
 
-Establish five things:
+Select the surfaces needed for the task. These examples guide fidelity, not a
+requirement to support every interface:
 
-- **surface:** what supported interface the user actually touches;
-- **launch:** how the relevant candidate starts or becomes available;
-- **drive:** how an agent can exercise that interface through stable controls;
-- **observe:** what visible result and material side effects can be captured; and
-- **isolate:** how the run avoids mutating another user's session, data, ports,
-  profiles, processes, or external resources.
+- **User interfaces:** drive supported interactions and observe the resulting
+  state, persistence, and material side effects relevant to the claim.
+- **Commands:** exercise the actual entry point with relevant arguments, input,
+  and configuration; expose output, exit behavior, and resulting effects.
+- **Agent interfaces:** exercise the advertised API, tool, or MCP contract through
+  the interface available to its consumer, including discovery or schemas when
+  relevant. Observe usable results, errors, and effects; distinguish an accepted
+  asynchronous request from completed work.
 
-Prefer repository-native or already-installed mechanisms before adding a new
-dependency or service. If an existing verification harness already owns the
-surface, reconcile that owner rather than creating a parallel one.
+Internal calls can help setup or diagnosis, but cannot establish that an untested
+consumer interface works. Fixtures or substitutes support only claims about the
+properties they preserve; identify integrations or behavior they bypass.
 
-Use [prototype](../prototype/SKILL.md) instead when the need is one bounded
-observation rather than durable repeatable proof. Use
-[wizard](../wizard/SKILL.md) when the decisive steps require private human input,
-dashboard interaction, or another session the agent should not observe.
+Read [Feature map](references/feature-map.md) when several capabilities or surfaces
+need a maintained index to avoid repeated discovery, or when such a map is
+explicitly requested.
 
-If the product baseline cannot reach the chosen surface, report that product or
-environment blocker. Do not modify product behavior under this skill merely to
-make the harness succeed.
+## Build for repeatable use
 
-## 2. Define the harness contract
+Use the repository's established tooling and documentation locations. Add helpers
+where they remove repeated fragile work. Leave entry points, inputs, prerequisites,
+expected observations, and resource ownership clear enough for a fresh agent to
+use the tools without reconstructing their implementation.
 
-The harness must make these decisions explicit:
+Preserve these properties without requiring separate commands or a fixed sequence:
 
-- **Launch and teardown:** the exact entry point, candidate identity, readiness
-  condition, and resources the run owns.
-- **Doctor:** a read-only check that establishes the instance is the intended
-  build, target, profile, account, or environment and is safe to drive.
-- **Drive:** stable commands, routes, selectors, protocol calls, or other public
-  controls that exercise the ordinary supported path rather than internal setters
-  or test-only shortcuts.
-- **Evidence:** the action performed, resulting user-visible state, and material
-  side effects needed for the claim. A final screenshot or exit code alone is
-  insufficient when the transition or effect is what matters.
-- **Failure sensitivity:** one safe negative control or equivalent check showing
-  that the doctor or evidence assertion rejects a wrong target or wrong result.
-  Prefer a mismatched build identity, absent isolated target, deliberately wrong
-  expected marker, or disposable fixture; do not damage real product state just
-  to prove the harness can fail.
-- **Cleanup:** remove only resources created or explicitly owned by this run.
-  Never kill by broad process name or delete shared state merely to restore a
-  clean-looking environment.
+- **Target and readiness:** identify the intended source/build and relevant
+  configuration, instance, or account before driving it. Launch or attach as
+  appropriate; a separate doctor command is optional. Recheck identity when the
+  candidate or target changes so evidence belongs to the claimed instance.
+- **Drive and observe:** use stable supported controls and capture the action,
+  decisive result, and material side effects. A screenshot, successful tool
+  response, or exit code alone is insufficient when a transition or effect is
+  what must be established.
+- **Isolation and cleanup:** keep mutable fixtures and outputs within authorized
+  resources, protecting unrelated sessions, data, processes, and external state.
+  Remove only resources the run created or explicitly owns. Never kill by broad
+  process name or delete shared state to obtain a clean environment. Preserve
+  evidence needed for later review.
 
-Evidence must survive cleanup when later review needs it. A command named
-`dry-run`, `test`, or similar is not proof of harmlessness; verify the
-mechanism or observable effects that matter.
+Use authorized development/test targets and identities. Do not use real private
+credentials merely to validate tooling or expose secrets in captured evidence.
+A command named `dry-run` or `test` does not establish harmlessness; check the
+mechanism or effects that matter.
 
-Read [Feature map](references/feature-map.md) only when the repository has several
-material user-facing feature groups whose reachability or proof recipe would
-otherwise be rediscovered repeatedly, or when the user explicitly requests such a
-map.
+Repair ordinary setup, launch, driver, assertion, and cleanup problems within the
+assignment and continue without approval for each iteration. Harness scaffolding
+must preserve the product behavior being verified. Do not weaken an expectation
+or bypass a product defect to produce a passing run.
 
-## 3. Build the smallest repository-owned mechanism
+## Demonstrate the capability
 
-Use the repository's established script, tooling, and documentation locations.
-Keep the harness narrow: one script or existing tool configuration is enough when
-it can launch, doctor, drive, capture evidence, and clean up reliably.
+Exercise the created or improved tooling against the intended product using
+workflows that establish the requested capability. Choose relevant success,
+failure, or recovery cases rather than a fixed test count. A representative run
+can prove a driver works; it does not certify every feature reachable through it.
 
-Add helpers only when they remove repeated fragile work. Keep selectors,
-commands, ports, profiles, evidence locations, and cleanup ownership explicit
-enough that a fresh agent does not have to infer them from implementation code.
+When adding or materially changing custom target checks or outcome assertions,
+use a safe negative control or equivalent evidence that the affected check
+rejects the relevant wrong target or result. A disposable fixture or deliberately
+wrong expected marker may suffice; never damage real state for this purpose.
+Rejecting a wrong target alone does not prove that the outcome assertion detects
+incorrect behavior. Reuse trustworthy prior check evidence when its mechanism and
+conditions remain applicable; unchanged runs need no repeated demonstration.
 
-Harness-owned scaffolding may support verification without changing supported
-product behavior. If a discovered failure belongs to the product rather than the
-harness, report it separately instead of weakening the expected result or teaching
-the harness around the defect.
+Interpret failures from evidence. Distinguish broken tooling, product behavior
+that violates the accepted result, unavailable environment prerequisites, and
+unresolved causes. Failure to reach an interface is not itself a harness defect:
+the product may crash during startup. Preserve the observation and uncertainty
+until there is enough evidence to attribute it.
 
-Do not use real private credentials merely to validate the harness. Use an
-authorized development/test identity or stop at the exact credential or external
-access boundary.
+If product repair is already authorized, carry the finding into that work and
+rerun affected verification after the fix. Otherwise report the product defect
+separately. Use [diagnosing-bugs](../diagnosing-bugs/SKILL.md) when a difficult or
+intermittent failure needs causal investigation; ordinary repairs need no handoff.
 
-## 4. Prove the harness itself
+Account for owned resources after failed attempts and before retrying. Confirm
+cleanup by the resources' actual state, not only a command's success status, and
+confirm required evidence survives. Report anything left behind and its recovery
+path; unresolved cleanup prevents claiming reliable unattended reuse.
 
-When the intended environment is available and safe to exercise, run the
-generated or reconciled instructions end to end:
+## Deliver usable tooling
 
-1. launch or attach to the intended isolated target;
-2. run the doctor check and bind the run to the observed candidate identity;
-3. exercise one safe negative control that proves the doctor or evidence check
-   can fail for the wrong target or result;
-4. drive at least one representative supported user path;
-5. capture the promised visible result and material side effects;
-6. clean up only harness-owned resources; and
-7. confirm required evidence still exists and owned resources are gone after
-   cleanup.
+Complete when the requested tooling is usable by a fresh agent, has been exercised
+against the intended product, and produces evidence credible for its stated
+coverage with understood resource ownership and cleanup. If execution or decisive
+checks remain blocked, identify the unproved capability and label the affected
+tooling as unverified rather than claiming operational readiness.
 
-If the target is rebuilt, restarted into a different candidate, or otherwise
-changes identity after doctoring, run the doctor again before attaching evidence
-to it.
-
-Classify a failed run before changing the expected result:
-
-- **Harness defect:** launch, doctor, drive, observation, or cleanup is broken, or
-  the intended product seam was never reached. Repair only the harness, account
-  for owned resources, and rerun from a known state.
-- **Product defect:** harness validity and failure sensitivity are established,
-  the supported product path was reached, and observed behavior diverges from the
-  accepted result. Preserve that evidence and do not weaken the assertion or add a
-  shortcut around the defect. If causal diagnosis or repair is requested, hand
-  that work to [diagnosing-bugs](../diagnosing-bugs/SKILL.md).
-- **Environment blocker:** a required dependency, identity, service, permission,
-  or safe isolation boundary is unavailable. Report the exact boundary instead of
-  presenting it as a product or harness result.
-
-After a failed iteration, account for processes, ports, profiles, files, and
-other resources before retrying. Do not assume cleanup succeeded because a
-command returned. If cleanup leaves owned resources behind, report them precisely;
-the harness is not verified operational tooling until that recovery path is
-understood and safe.
-
-A harness that has not been exercised, or whose decisive observation has not been
-shown capable of failing, is a structurally reviewed draft rather than verified
-operational tooling. If execution or a safe negative control is unavailable,
-return the strongest static evidence and the exact unproved step.
-
-Complete when future agents can identify the target, run the harness without
-guessing its ownership boundaries, obtain failure-sensitive evidence for the
-supported claim, distinguish harness/product/environment failures, and clean up
-safely. Report the created or reconciled paths, candidate identity, proof
-performed, known coverage, and any product or environment blocker.
+Return the created or improved paths, how to use them, what was demonstrated on
+which candidate/environment, and material coverage limits or remaining defects.
+Resume any already-authorized calling work that the tools unblock. A tooling-only
+assignment ends with that deliverable; it does not start a broader product audit.

@@ -1,50 +1,27 @@
 # Setup defaults
 
-Use these defaults only for initial repository setup or a focused request that
-needs them. Preserve established repository choices. An absent optional setting
-is not a setup gap.
+Use for initial guidance or a requested setup migration that needs these seeds. Established
+repository choices take precedence; an absent optional setting is not a gap.
 
-## Start with the smallest useful surface
+For a new repository, one compact root `AGENTS.md` is a useful default. Split
+guidance when substantial content or different reading conditions justify it.
+`CONTEXT.md`, `docs/adr/`, and `docs/agents/` are available conventions, not a
+required document tree.
 
-For a new repository, prefer one compact root `AGENTS.md` containing:
+Use [Domain routing](../templates/domain.md) when agents need a route to maintained
+domain meaning and accepted decisions. Replace its generic route with verified
+repository pointers and their reading conditions; omit a separate guide when an
+existing owner already provides that route.
 
-- commands grounded in current scripts or configuration;
-- non-obvious repository constraints;
-- verified non-obvious safety boundaries for routine local workflows when they
-  prevent unnecessary approval stops; and
-- conditional pointers to maintained guidance that future work actually needs.
+No generic engineering-contract seed is supplied. Keep brief local requirements
+in `AGENTS.md` or their existing owner. A separate guide needs substantial
+project-specific content, such as compatibility obligations or scientific
+assumptions; general engineering advice alone does not justify one.
 
-Preserve useful existing instruction files and their scopes. Split guidance only
-when substantial content or different reading conditions justify another owner.
-Do not create documents, routes, or pointers merely to complete a template set.
+Keep brief local meaning inline and preserve established domain owners. Bootstrap
+records how to find meaning; it does not invent domain content or create empty
+context records. Missing records need resolution only when consequential meaning
+cannot be obtained from the actual owner or user.
 
-Use these seeds only when their content is applicable:
-
-- [Engineering contract](../templates/engineering-contract.md)
-- [Domain routing](../templates/domain.md)
-
-Adapt them to repository meaning rather than copying them wholesale. The resulting
-documents are repository-owned, not managed mirrors.
-
-## Domain and context routes
-
-Preserve existing owners for domain meaning and accepted decisions. Keep brief
-local meaning inline; introduce a separate route only when real maintained
-content needs one. Root `CONTEXT.md`, `docs/adr/`, and `docs/agents/` are
-available conventions, not required outputs.
-
-Do not create empty context records or routes to nonexistent material. Missing
-records are not automatically blockers; future work can resolve consequential
-meaning from the actual owner or user.
-
-## Optional setup branches
-
-Tracker configuration is separate from ordinary bootstrap. When requested or
-already established by repository practice, use [Tracker setup](tracker-setup.md).
-
-For requested parallel-execution support or a concrete execution prerequisite
-gap, use [Parallel support](parallel-support.md).
-
-Do not install dependencies, provision external resources, create tracker items,
-or broaden permissions unless the user's authorization separately covers those
-effects.
+Tracker configuration and parallel prerequisites remain conditional branches of
+the skill; initial setup does not make tickets or parallel execution mandatory.

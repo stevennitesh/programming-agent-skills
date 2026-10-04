@@ -18,11 +18,8 @@ an issue; the consuming workflow owns readiness and completion evidence.
 
 ## Operations
 
-Resolve the exact project and target type before acting. Prefer an available
-GitHub connector; otherwise use the installed CLI or documented API. Check
-current operation support and an independent read-back method before mutation.
-
-Read the issue body, comments, labels, state, assignee, and relevant relationships.
+Use a supported connector, CLI, or API under the environment's tool rules.
+Inspect the content, state, ownership, and relationships needed for the decision.
 Publish, comment, label, claim, or close only within the authorized task. The
 configured closure policy applies when the consuming workflow has established
 completion. It does not start work or authorize closure by itself.
@@ -34,6 +31,9 @@ completion. It does not start work or authorize closure by itself.
 - Parent and child links use the configured parent / child mode.
 - Blocking links use the configured dependency mode.
 - An active claim uses the assignee when the workflow requires claiming.
+
+The executing workflow establishes run and actor ownership when needed; a shared
+account's assignee alone does not distinguish competing runs.
 
 Do not switch relationship representations during one publication. Closing or
 superseding a blocker must not expose a dependent as ready while it remains

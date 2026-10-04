@@ -5,13 +5,10 @@ coding into a mandatory workflow.
 
 ## Start here
 
-Read, in order:
-
-1. [AGENTS.md](AGENTS.md) for repository commands and invariants.
-2. [CONTEXT.md](CONTEXT.md) for source ownership and current-vs-historical
-   boundaries.
-3. [Astra design brief](docs/astra/design-brief.md) when changing skill
-   composition, discovery, or behavior.
+Start with [AGENTS.md](AGENTS.md) for repository commands and constraints.
+[CONTEXT.md](CONTEXT.md) identifies source ownership and historical boundaries;
+the [Astra design brief](docs/astra/design-brief.md) governs changes to skill
+composition, discovery, or behavior.
 
 The managed source is `skills/astra/`. `skills/custom/`,
 `skills/experimental/`, archived records, and legacy epoch machinery are
@@ -52,14 +49,14 @@ state. Use the installer tests rather than modifying an installed skill copy.
 
 Keep local workspace configuration, scratch output, secrets, captures, and
 generated evidence out of Git. The repository ignores the common local paths;
-put disposable work under `.tmp/` or another ignored location.
+put disposable work under `.tmp/<purpose>/` as required by `AGENTS.md`.
 
 ## Change discipline
 
-Keep one clear owner for each behavior. Prefer the smallest coherent change,
-preserve historical evidence instead of rewriting it as current guidance, and
-update callers, documentation, tests, and validation together when a contract
-changes.
+Keep project facts, accepted requirements, and workflow contracts at their
+maintained owners. Retire displaced instructions and affected validator rules
+together; preserve history as evidence. General coding tutorials do not need
+another persistent document.
 
 Packaging or structural checks prove only those properties. Claims that a skill
 improves model behavior, quality, cost, or reliability need evidence appropriate

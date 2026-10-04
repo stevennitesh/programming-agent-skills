@@ -7,7 +7,7 @@ description: Find the causal mechanism of a difficult or intermittent failure. E
 
 Establish a supported causal explanation for an existing failure. When repair is
 requested, verify that the scoped fix addresses that mechanism rather than merely
-suppressing the symptom.
+suppressing the symptom. Choose and adapt the investigation as evidence changes.
 
 Diagnosis is complete when the evidence supports a mechanism strongly enough to
 distinguish it from credible alternatives. A fix is complete when the causal
@@ -29,25 +29,29 @@ mechanism. Reuse attributable incident evidence when it is sufficient; a local
 reproducer is not required before reasoning from trustworthy production evidence.
 
 Read the relevant section of
-[Investigation methods](references/investigation-methods.md) when intermittency,
-concurrency, cross-system behavior, environment differences, history, test order,
-performance, or repeated failed fixes sharing one premise affect the diagnosis. Do not simulate away the mechanism under
-investigation.
+[Investigation methods](references/investigation-methods.md) for runtime inspection,
+controlled experiments, intermittent or cross-system failures, working/failing
+comparisons, performance regressions, or an investigation that has stopped
+producing new information. Do not simulate away the mechanism under investigation.
 
 ## 2. Establish the causal mechanism
 
 Identify the earliest evidenced divergence from expected behavior and a mechanism
 that explains how it produces the reported symptom.
 
-Form a falsifiable explanation with a predicted observation. When credible
-alternatives remain, prefer an observation or controlled intervention that
-distinguishes them over another observation that merely agrees with the favored
-explanation. Keep alternative hypotheses only while the evidence does not separate
-them.
+Form a falsifiable explanation with a predicted observation. When existing
+evidence cannot distinguish credible causes, choose and execute a targeted probe
+or controlled intervention within the request's authority. Identify which possible
+results would separate the explanations. Prefer gaining that information over
+collecting more observations that merely agree with the favored explanation.
+Adapt the next action to the result; keep alternatives only while the evidence
+does not separate them.
 
-Confirm that diagnostic instrumentation reaches the intended path and still
-exposes the original failure rather than replacing or suppressing it. A reduced
-case is useful only while it preserves the same mechanism.
+Confirm that diagnostic instrumentation reaches the intended path and establish
+whether it changes or suppresses the original failure before interpreting the
+result. An absent observation is useful evidence only if the probe could have
+observed the event. A reduced case is useful only while it preserves the same
+mechanism.
 
 Support a causal claim with both the mechanism and evidence that separates it from
 viable alternatives, not a plausible story or one green run after an edit. Use a
@@ -95,3 +99,7 @@ removing instrumentation could change the observed behavior.
 
 Return the supported cause or precise unresolved alternatives, the decisive
 evidence, the requested repair if any, verification, and material limits.
+If unresolved, distinguish what was established or ruled out from what remains
+plausible, identify the next observation needed to separate those alternatives,
+and state what prevents obtaining it. Continue useful authorized checks within the
+task's constraints rather than stopping at a proposed probe.

@@ -2,108 +2,23 @@
 
 <!-- programming-agent-skills portable-contract-owner: 1 -->
 
-Use this as your global `AGENTS.md` when the skill pack is not installed. Give
-each repository its own short `AGENTS.md` with verified commands, local
-invariants, and source-of-truth pointers.
+Optional starting guidance when the skill pack is not installed. Adapt it to the
+user's actual preferences; keep repository-specific information in the repository.
 
-Explore imaginatively. Converge under proof. Simplify ruthlessly.
+Follow the repository's applicable instructions and current sources. Retain
+commands, non-obvious constraints, accepted requirements, and useful pointers in
+its `AGENTS.md` or their existing owners. A missing preferred document is not a
+reason to stop if the needed context is available elsewhere.
 
-## Authority
+Default to the simplest complete implementation for the stated workflow. Preserve
+accepted behavior and explicit project commitments; do not infer speculative
+production capabilities from broad goals.
 
-Follow the user, repository instructions, accepted domain decisions, and
-current source. The user owns product commitments, scope changes, destructive
-work, and irreversible external effects. Choose implementation technique
-inside those boundaries.
+Choose methods, tools, and verification within the user's scope and local rules.
+Complete authorized work, report material evidence and limits, and ask for input
+when a consequential decision or missing authority blocks progress. A task does
+not confer permission for unrelated publication, deployment, or external changes.
 
-Diagnosis, research, design, explanation, and review are read-only unless the
-user requests a change. Preserve unrelated work. Perform staging, commit,
-publication, deployment, tracker mutation, and external writes only when
-requested; push requires separate authority.
-
-Stay within authorized filesystem, Git, environment, tracker, deployment, and
-external boundaries.
-
-## Work directly
-
-For one bounded request:
-
-1. Understand the requested behavior, current owner, real callers, data flow,
-   repository rules, and existing proof.
-2. Choose the smallest sound design and a clear data shape.
-3. Implement the complete behavior in its current owner.
-4. Run the nearest useful check that can fail for the change.
-5. Inspect the result, remove displaced code, and stop.
-
-If consequential intent is unsettled, ask the smallest question that changes
-the result. If a bug's behavior, cause, or trusted reproduction is uncertain,
-diagnose it before changing behavior.
-
-Continue through authorized implementation, verification, and necessary
-corrections until the requested outcome is complete. Status updates, intermediate
-findings, passing checks, and reversible non-blocking choices are not stopping
-points. When reporting status mid-run, pair the update with the next safe action
-in the same turn when practical instead of reporting and pausing. Stop when
-required user input or authority is missing, or when a hard safety or operational
-boundary prevents safe progress.
-
-## Design for simplicity
-
-Subtract, reuse, or replace before adding another path. Model the domain with
-clear data shapes, explicit relationships, and representations that make
-invalid states difficult to express. Prefer small interfaces, local state,
-readable control flow, and modules that hide internal complexity.
-
-Start with the language, framework, repository conventions, existing
-abstractions, and installed dependencies. Add an abstraction, dependency,
-adapter, cache, configuration option, concurrency mechanism, or compatibility
-path only for supported variation or demonstrated value. Prefer bounded
-duplication to an abstraction that joins different meanings or owners.
-
-Fix the cause across affected callers instead of guarding one symptom. Trust
-internal types and established invariants. Validate untrusted,
-machine-consumed input once at the boundary that owns it, then use a valid
-internal representation.
-
-When repetitive mechanical work can be made materially more consistent or easier
-to verify with a small rerunnable script, codemod, generator, or check, build that
-lever and prove it on a representative unit. Do not add tooling when direct work
-is simpler and equally reviewable.
-
-When a deliberate simplification has a non-obvious ceiling that would materially
-change correctness, performance, or operations, record the ceiling and revisit
-condition at its natural owner.
-
-Preserve accepted behavior and touched authorization, privacy, secret, and
-data-integrity guarantees. Handle state, retry, recovery, cancellation,
-concurrency, compatibility, and observability only when reachable behavior or
-a supported requirement makes them relevant.
-
-## Prove proportionally
-
-Use tests as evidence, not a quota. Add or change one when repository policy
-requires it or when it is the cheapest durable protection for meaningful
-behavior. Prefer proof through the real caller or artifact. Broaden checks only
-for shared impact, repository policy, or a concrete risk. If safe execution is
-unavailable, use the strongest safe proxy and state what remains unproved.
-
-Remove code, callers, flags, configuration, tests, and documentation displaced
-by the change. Update documentation only when the public contract, operator
-procedure, or a durable non-obvious decision changes.
-
-## Activate protection from evidence
-
-Destructive work needs an exact target and approval. External durable mutation
-needs authority and read-back. Concurrent writers need isolated ownership and
-one integrator. Formal review needs a fixed candidate. Operations that can
-partially succeed need a recovery path. Consequential performance, capacity,
-reliability, latency, cost, or resource claims need comparable measurement.
-
-An inactive condition creates no checklist, artifact, reviewer, status field,
-or explanation obligation. Use test-first development only when the user
-explicitly requests it or repository policy requires it. Delegate only when
-the user explicitly requests subagents or an invoked skill owns required
-fanout. Use independent review, security work, deployment, or production
-operations only when the user, repository, or accepted task activates them.
-
-Return a concise summary of the outcome, proof run, and any material gap. Do
-not start another task.
+Use a separate guide only for substantial project-specific requirements or a
+workflow that needs it. No general engineering contract or document tree is
+required.

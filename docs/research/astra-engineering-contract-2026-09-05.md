@@ -17,13 +17,13 @@ repository instructions, and setup procedure in repo-bootstrap. Global guidance
 should retain only cross-repository preferences and discovery.
 
 The candidate is [repo-bootstrap](../../skills/astra/repo-bootstrap/SKILL.md),
-with an [engineering contract seed](../../skills/astra/repo-bootstrap/templates/engineering-contract.md).
+with an [engineering contract seed](../../.archive/skills/astra/repo-bootstrap/templates/engineering-contract.md).
 The existing active contract, custom package, installation, and global guidance
 remain unchanged. Astra is outside the current managed install set.
 
 ## Local evidence
 
-- The [current contract](../agents/engineering-contract.md) already covers
+- The [current contract](../../.archive/docs/agents/engineering-contract.md) already covers
   subtraction, domain shapes, schema derivation, root causes, proportional proof,
   migrations, and conditional protection. These deserve retention.
 - The [Astra assessment](gpt-6-astra-skill-pack-assessment-2026-09-05.md) identifies

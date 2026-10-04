@@ -1,19 +1,19 @@
 # Astra skills pack design brief
 
-Current direction, reconciled 2026-09-23. The pack is built primarily for
-**GPT 6 Astra**. Optional cost-aware execution routes substantial implementation
-to GPT 6.1 Sol and compact bounded work to GPT 6 Luna. This document owns design
-rationale and composition for `skills/astra/`; individual skills own execution.
+Current direction, reconciled 2026-10-03. The pack is built primarily for
+**GPT 6 Astra**. Optional cost-aware execution routes implementation to GPT 6.1 Sol
+and bounded work, including large-context retrieval and bulk writing, to GPT 6 Luna.
+This document owns design rationale and composition for `skills/astra/`;
+individual skills own execution.
 [Issue #94](https://github.com/stevennitesh/programming-agent-skills/issues/94)
 preserves the original proposal. Subsequent accepted decisions below replace its
 pilot sequence and candidate inventory, without claiming its evaluation goals met.
 
 ## Purpose and philosophy
 
-Improve coding beyond a capable agent's baseline through useful engineering
-judgment and project context. Ordinary coding stays direct: understand the request
-and real callers, choose a sound design, implement, run the nearest useful check,
-inspect the result, and remove displaced code. No default skill pipeline is needed.
+Supply the context, project decisions, and selected workflow contracts a capable
+agent needs. Ordinary coding stays direct, with freedom over methods within the
+user's accepted scope. No default skill pipeline or coding tutorial is needed.
 
 > Explore imaginatively. Converge under proof. Simplify ruthlessly.
 
@@ -37,60 +37,112 @@ rationale belong in the skill body. Keep the root `SKILL.md` to the method every
 applicable run needs and route recognizable branch-specific mechanics through
 conditional references.
 
-Treat a model upgrade as a subtraction opportunity before an addition
-opportunity. Challenge compensating scaffolding that existed for an earlier
-receiver and use behavioral comparison before retaining, simplifying, or retiring
-it. Do not burden Astra's primary path merely because a different receiver still
-needs extra steps.
+Ask what necessary information would disappear if guidance were deleted. Retain
+user priorities, repository facts, accepted obligations, and useful workflow
+contracts. Remove generic advice, duplicated defaults, and obsolete scaffolding.
+A model upgrade is an opportunity to reassess that need; claims of improved or
+equivalent performance still require behavioral evidence.
 
-Shared coding judgment belongs at one repository owner: inline for brief guidance,
-or in a separate engineering contract when useful. Do not duplicate it
-across skills or make ordinary coding require tickets, TDD, full suites, reviewers,
-subagents, or process artifacts. Preserve concrete protections for authority,
-concurrent writers, partial effects, recovery, fixed review candidates, and evidence.
-An explicitly selected workflow can impose stronger requirements within its scope.
+Keep brief project requirements in AGENTS.md or their existing owner. Separate
+guides need substantial local content, such as scientific assumptions or actual
+compatibility guarantees. The generic engineering contract and bootstrap seed are
+retired. Preserve focused safeguards at their applicable skill owners, including
+shared-validation ownership, persisted-input acceptance, writer custody, and
+review evidence. A selected workflow may require more within its own scope.
 
 ## Composition and ownership
 
 | Decision or responsibility | Current owner |
 | --- | --- |
 | Local commands, facts, conditional pointers | Repository `AGENTS.md`, `CONTEXT.md`, and `docs/agents/` |
-| Engineering judgment during coding | [Repository engineering contract](../agents/engineering-contract.md), adapted from the [bootstrap seed](../../skills/astra/repo-bootstrap/templates/engineering-contract.md) |
-| Repository guidance setup, migration, and repair | [Repo bootstrap](../../skills/astra/repo-bootstrap/SKILL.md); [writing for agents](../../skills/astra/writing-for-agents/SKILL.md) owns an already-scoped instruction artifact, skill, prompt, or handoff |
-| Product behavior, scope, acceptance, owner-held product decisions, and domain meaning | [Shape work](../../skills/astra/shape-work/SKILL.md), including its conditional domain path |
-| Technical architecture or integration ownership, interfaces, state, or migration; empirical feasibility | [Codebase design](../../skills/astra/codebase-design/SKILL.md) for the design decision and [prototype](../../skills/astra/prototype/SKILL.md) for a needed new observation |
-| Durable real-product verification tooling | [Verification harness](../../skills/astra/verification-harness/SKILL.md), only when explicitly requested |
-| Raw tracker intake disposition and ready handoff | [Triage](../../skills/astra/triage/SKILL.md), only when explicitly requested |
+| Initial repository guidance and requested setup migrations | [Repo bootstrap](../../skills/astra/repo-bootstrap/SKILL.md) |
+| Ongoing repository context and durable memory maintenance | [Context hygiene](../../skills/astra/context-hygiene/SKILL.md) |
+| Selected instruction artifacts, skills, prompts, and handoffs | [Writing for agents](../../skills/astra/writing-for-agents/SKILL.md) |
+| User alignment, specifications, domain meaning, and durable decision capture | [Shape work](../../skills/astra/shape-work/SKILL.md), including affected document reconciliation |
+| Code reuse, ownership, simplification, integration, and retirement decisions; empirical feasibility | [Codebase design](../../skills/astra/codebase-design/SKILL.md) for the design decision and [prototype](../../skills/astra/prototype/SKILL.md) for a needed new observation |
+| Reusable tooling for agents to exercise and verify real product interfaces | [Verification harness](../../skills/astra/verification-harness/SKILL.md), only when explicitly requested |
+| Requested intake assessment, backlog reconciliation, and actionable handoff | [Triage](../../skills/astra/triage/SKILL.md), only when explicitly requested |
 | Delivery decomposition and tracker publication | [To tickets](../../skills/astra/to-tickets/SKILL.md), using repository tracker guidance and an accepted source |
 | Model allocation and execution authority | [Cost-aware coding](../../skills/astra/cost-aware-coding/SKILL.md), only when requested |
 | Concurrent implementation scheduling, custody, and integration | [Parallel implement](../../skills/astra/parallel-implement/SKILL.md), only when requested |
-| Candidate correctness and maintainability assessment | [Change review](../../skills/astra/change-review/SKILL.md); high assurance is separately requested |
+| Candidate correctness and maintainability assessment | [Change review](../../skills/astra/change-review/SKILL.md); the lead chooses direct, independent, or scoped high-assurance review |
 | Visual codebase mapping and baseline improvement discovery, hard bugs, or measured optimization | [Audit codebase](../../skills/astra/audit-codebase/SKILL.md), [diagnosing bugs](../../skills/astra/diagnosing-bugs/SKILL.md), and [hillclimb](../../skills/astra/hillclimb/SKILL.md) |
-| Evidence gathering, context upkeep, and guided procedures | [Research](../../skills/astra/research/SKILL.md), [context hygiene](../../skills/astra/context-hygiene/SKILL.md), and [wizard](../../skills/astra/wizard/SKILL.md) |
+| Evidence gathering and guided procedures | [Research](../../skills/astra/research/SKILL.md) and [wizard](../../skills/astra/wizard/SKILL.md) |
 | Active Git conflicts | [Resolving merge conflicts](../../skills/astra/resolving-merge-conflicts/SKILL.md) |
 
 Choose a skill by the decision or effect it owns, not merely by the artifact being
-edited. Shape-work owns product and domain meaning; codebase-design owns technical
-architecture and integration decisions. Research evaluates existing evidence;
-prototype creates one bounded new observation. Audit-codebase judges baseline
+edited. Shape-work owns product alignment, domain meaning, and durable capture of
+settled decisions; codebase-design resolves reuse, ownership, simplification, and
+integration choices, including necessary caller transitions and retirement.
+When cost-aware-coding is selected, its worker assignment and final review carry
+those obligations through implementation without a mandatory cleanup phase or
+unrelated repository sweep. Research investigates substantive questions through
+inspected sources and critical synthesis, including credible counterevidence;
+prototype obtains new evidence for a bounded uncertainty, adapting and repeating
+experiments when needed to answer it. Audit-codebase judges baseline
 code; change-review judges a fixed change candidate. Verification-harness creates
-durable agent-operated product proof and must distinguish a harness defect from a
-product defect before interpreting a failed run; wizard creates a human-private
-procedure. Triage classifies raw intake and owns safe tracker-state transition,
-but it does not diagnose, review, decompose, or implement the downstream work;
-to-tickets decomposes settled work. Repo-bootstrap
-owns the repository guidance surface; writing-for-agents owns an already-scoped
-instruction artifact. Cost-aware-coding may be combined with parallel-implement:
+or improves reusable repository tooling for agents to exercise and verify real
+UI, command, and agent interfaces. It reduces repeated setup and fragile
+interactions while preserving target identity, meaningful evidence, and resource
+ownership. The agent chooses methods and demonstrates the requested capability;
+failure attribution follows evidence, including unresolved causes. Routine test
+execution needs no tooling workflow. Wizard prepares the smallest
+useful terminal handoff for a private or human-only step, reusing existing tools
+where suitable. Private input and session output stay with the human, while a
+deliberate non-secret result can establish the prerequisite for already-authorized
+work to resume. Triage assesses requested intake or existing backlog and applies
+authorized tracker corrections using the repository's state model. It preserves
+active ownership and requires evidence for readiness, completion, and dependency
+changes; investigation methods and queue ordering remain discretionary. It does
+not itself start deep diagnosis, code review, decomposition, or implementation;
+to-tickets decomposes specs, shaped work, or sufficiently clear ideas using the
+repository's tracker conventions. Its bounded tickets supply fresh-agent context,
+acceptance, and predecessor-result conditions; unresolved consequential meaning
+remains gated, and potential parallelism remains subject to execution ownership.
+Repo-bootstrap owns initial guidance and
+requested setup migrations. Context-hygiene owns ongoing context maintenance;
+writing-for-agents owns an already-scoped instruction artifact. Routine context
+maintenance needs no bootstrap or authoring phase.
+Cost-aware-coding may be combined with parallel-implement:
 the former owns model and budget routing, while the latter owns concurrency,
 custody, and integration.
+Parallel implementation establishes task-relevant runtime and data readiness before
+dispatch, shares durable inputs by reference, and isolates mutable outputs. The
+coordinator may use supported host-managed worktrees or the bundled helper while
+preserving each lifecycle owner's integration and cleanup contract.
 
 The managed pack currently contains 18 skills. Their metadata owns invocation
 behavior; the README lists explicit-only workflows. Continuation handoffs belong
 to writing-for-agents, with execution-specific state added by the relevant workflow.
-Ordinary implementation uses repository guidance and the engineering contract
-directly. A separate implementer-method skill is not required: worker scope and
-custody come from the active assignment, while implementation judgment comes from
-the repository engineering contract.
+Ordinary implementation uses the accepted assignment and applicable repository
+requirements. Worker scope and custody come from the active workflow; methods and
+local implementation decisions remain with the worker within those boundaries.
+
+Writing-for-agents preserves intent, receiver context, authority, and completion
+for selected instruction artifacts, reusable guidance, consequential assignments,
+and handoffs. Ordinary worker dispatch does not require a separate authoring
+phase. Capable receivers choose their methods within the accepted constraints;
+the skill's references carry conditional continuity and evidence rules, while
+host skill-creation guidance owns packaging mechanics. Editorial and structural
+checks do not establish improved agent performance, and ordinary edits need no
+behavioral evaluation campaign.
+
+Context-hygiene can be selected when scattered, stale, conflicting, or missing
+context affects the active task. It chooses investigation and consolidation
+methods within that scope. Repository guidance may own accepted requirements;
+managed memory supplies recall, with temporary state kept in task records or
+history and durable lessons kept conditional on their evidence and applicability.
+Memory writes require an explicit request and the runtime's supported mechanism.
+Read-only audits finish with findings; cleanup distinguishes verified changes
+from pending memory updates. Selection does not initiate unrelated context sweeps.
+
+Shape-work develops and challenges ideas through an adaptive interview and delivers
+a specification when requested. Domain and ADR capture can run directly for
+settled decisions. Shaping reconciles the current documents affected by those
+decisions; context-hygiene owns general context maintenance. Product priorities,
+stages, and dependencies can belong in a spec, while implementation planning stays
+with the execution lead. Cost-aware-coding organizes delivery when selected;
+ordinary planning needs no additional skill phase.
 
 A feature can be shaped and implemented without tickets. Tickets become useful
 when delivery needs tracked units; they do not authorize concurrent writers.
@@ -103,43 +155,17 @@ request and one nearest realistic non-match for each managed skill. They are
 maintenance checks for discovery boundaries, not another router or execution
 contract; frontmatter descriptions and skill bodies remain authoritative.
 
-## Why cost-aware coding has stronger gates
+## Cost-aware roles and autonomy
 
-Cost-aware coding is an explicit workflow whose objective is to reduce Astra lead
-token and context churn without weakening the accepted result. Its default GPT-6
-roles preserve the user's starting lead model and effort, use Sol 6.1 High for
-substantial implementation, and Luna Max for compact bounded work when briefing
-and verification remain cheap. When context isolation materially helps review,
-the lead may use one read-only Astra Medium or XHigh reviewer while retaining
-final acceptance.
-
-The workflow delegates only when expected Astra-context savings exceed handoff,
-coordination, verification, and recovery overhead. While a worker owns
-implementation, Astra stays mostly dormant instead of shadowing the work or
-polling for routine progress. The worker returns a stable candidate,
-decision-relevant evidence, material limits, and released custody.
-
-For requested coordinated serial delivery, meaningful checkpoints are optional.
-Use them when an early wrong interface, persisted representation, or integration
-decision would make later work materially expensive to redo. Checkpoint proof is
-reused only while later changes leave its relevant inputs and assumptions valid;
-the final integrated review still governs completion.
-
-Recovery follows the actual cause rather than fixed attempt allowances. Requirement,
-permission, environment, or contradictory-acceptance failures return to their
-owner. Local implementation corrections normally return to the same worker while
-its retained context remains useful. A Luna task that grows beyond its bounded
-contract moves to Sol 6.1 High. Demonstrated implementation reasoning difficulty
-follows Sol 6.1 High → Astra Medium → Astra XHigh across subagents without changing
-the lead session. Subagent Max effort is reserved for Luna. The
+[Cost-aware coding](../../skills/astra/cost-aware-coding/SKILL.md) owns the accepted
+lead, worker, bounded-helper, and reviewer responsibilities, optional checkpoints,
+and quiet waiting during delegated implementation. Its
 [model policy](../../skills/astra/cost-aware-coding/references/model-policy.md)
-owns routing and allowed efforts.
+owns exact models and effort choices; the user selects the starting lead.
 
-When combined, parallel-implement owns concurrency, lane custody, integration, and
-parallel recovery. Cost-aware coding retains model and effort routing, budget
-policy, and final review. Deterministic helpers may manage lanes or collect
-bounded telemetry, but they do not replace judgment or turn logged counters into
-proven savings.
+When parallel implementation is requested, parallel-implement owns concurrency,
+custody, integration, and recovery. Keep current routing and execution mechanics
+at these skill owners instead of duplicating them in repository context.
 
 ## Installation and migration
 
@@ -149,15 +175,16 @@ The custom pack contains more detailed instructions, but current model-specific
 comparisons are not sufficient to claim that smaller models perform better with
 that historical package.
 
-Repo bootstrap adapts the engineering contract and offers reconciliation of
-existing agent guidance. Where local policy differs, it offers reconciliation
-that preserves useful local choices or adoption of identified template defaults,
-with their consequences made explicit. Both retain verified repository facts and
-operating constraints while replacing obsolete pack routes within the approved
-scope. New repositories start with compact agent instructions; separate guides
-need useful content, and tracker setup requires requested or established tracking.
-The resulting contract is repository-owned, not a mirror that must match its seed
-forever.
+Repo bootstrap owns initial guidance and requested setup migrations: accurate repository
+guidance, preserved deliberate decisions, reconciled obsolete routes, and a
+coherent reading path. The agent chooses the investigation, files, organization,
+and verification. Conditional references supply migration and optional setup
+conventions; domain and tracker templates are starting material only when useful.
+No generic engineering contract, document tree, or template parity is required.
+Tracker setup requires requested or established tracking, and parallel
+prerequisites do not start workers.
+Adopted guidance belongs to the repository. Policy choices need user input only
+when consequential meaning remains unresolved.
 
 Follow [installation and recovery](../../INSTALLATION.md) for managed-copy ownership
 and updates. Editing source does not install it. Global preferences and external

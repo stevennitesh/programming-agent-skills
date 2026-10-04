@@ -1,6 +1,6 @@
 interface:
   display_name: "Triage"
-  short_description: "Classify raw tracker intake"
-  default_prompt: "Use $triage to classify this incoming tracker item and prepare or apply only the authorized next-state effects."
+  short_description: "Assess intake and reconcile tracked work"
+  default_prompt: "Use $triage to assess this intake or backlog against current evidence and apply only the requested cleanup under the repository's tracker conventions."
 policy:
   allow_implicit_invocation: false
