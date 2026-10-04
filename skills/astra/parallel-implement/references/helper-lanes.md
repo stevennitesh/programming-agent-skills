@@ -18,8 +18,11 @@ For a multi-lane delivery, supply the same optional `--run` name to each `prepar
 The helper maintains a run inventory and `status --run` inspects its complete lane
 set in one call. Status retains cleaned lanes' candidate and integration commit
 identities, rechecks integration against the current repository HEAD, and exposes
-the live checkout identity separately as `observed_lane_head`. Invalid metadata or
-failed observations make status fail; dirty, active, or unintegrated work remains
+the live checkout identity separately as `observed_lane_head`. During interrupted
+cleanup, a valid receipt supplies the removed candidate's identity and integration
+check. Invalid metadata or failed observations, including unreadable readiness
+metadata, make status fail. Absent readiness records and recorded failed health
+checks remain reportable. Dirty, active, or unintegrated work also remains
 reportable without being eligible for cleanup. Use a new lane name for a new
 assignment after cleanup. Existing lanes cannot be silently adopted into another
 run. An interrupted prepare remains
