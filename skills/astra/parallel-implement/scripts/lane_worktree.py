@@ -1438,8 +1438,13 @@ def status_run(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
             if ownership_error:
                 results.append({**item, "error": ownership_error["reason"]})
                 continue
-            # Completed candidates survive removal of their worktree and receipt.
-            lane_head = item["lane_head"] if item["state"] == "cleaned" else snapshot["lane_head"]
+            # Receipts retain removed candidates until completion reaches the inventory.
+            if item["state"] == "cleaned":
+                lane_head = item["lane_head"]
+            elif not snapshot["registered"] and snapshot["receipt_state"] == "valid":
+                lane_head = snapshot["receipt"]["lane_head"]
+            else:
+                lane_head = snapshot["lane_head"]
             integrated = (
                 integration_state(repo, lane_head, head)
                 if item["state"] == "cleaned" else snapshot["integrated"]
@@ -1461,6 +1466,9 @@ def status_run(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
                           if value["error"])
             if lane_head and integrated is None:
                 errors.append("candidate integration could not be determined")
+            readiness = readiness_record(root, lane)
+            if readiness["state"] == "unreadable":
+                errors.append("readiness metadata is unreadable")
             entry = {
                 **item, "registered": snapshot["registered"], "present": snapshot["present"],
                 "lane_head": lane_head, "observed_lane_head": snapshot["lane_head"],
@@ -1469,7 +1477,7 @@ def status_run(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
                 "cleanup_eligible": snapshot["cleanup_eligible"],
                 "command_active_or_interrupted": snapshot["command_active"],
                 "finish_clean": lane not in registered and completed_in_run(args, repo, root, lane, head),
-                "readiness": readiness_record(root, lane),
+                "readiness": readiness,
             }
             if errors:
                 entry["error"] = "; ".join(errors)
@@ -1532,10 +1540,20 @@ def expand_argument(value: str, manifest: dict[str, Any]) -> str:
 
 
 def execution_profile(args: argparse.Namespace, manifest: dict[str, Any]) -> dict[str, Any]:
+    def unique_members(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+        result = {}
+        for key, value in pairs:
+            if key in result:
+                raise LaneError(f"duplicate execution profile key: {key}")
+            result[key] = value
+        return result
+
     profile: dict[str, Any] = {}
     if args.profile:
         try:
-            profile = json.loads(Path(args.profile).read_text(encoding="utf-8-sig"))
+            profile = json.loads(
+                Path(args.profile).read_text(encoding="utf-8-sig"), object_pairs_hook=unique_members,
+            )
         except (OSError, ValueError) as error:
             raise LaneError(f"cannot read execution profile: {error}") from error
     allowed = {"env", "inputs", "outputs", "setup", "checks", "timeout"}
@@ -1546,6 +1564,9 @@ def execution_profile(args: argparse.Namespace, manifest: dict[str, Any]) -> dic
         if not isinstance(values, dict):
             raise LaneError(f"profile {field} must be a KEY=value object")
         if os.name == "nt":
+            names = [key.upper() for key in values]
+            if len(names) != len(set(names)):
+                raise LaneError(f"profile {field} keys must be distinct under host case rules")
             values = {key.upper(): value for key, value in values.items()}
         values = {**values, **assignments(getattr(args, field))}
         if any(not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", key)

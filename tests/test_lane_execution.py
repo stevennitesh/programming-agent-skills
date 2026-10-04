@@ -185,6 +185,66 @@ def test_exec_preserves_case_distinct_environment_on_supported_hosts(tmp_path):
         assert "case preserved" in result["commands"][0]["output_tail"]
 
 
+@pytest.mark.parametrize("host", ["nt", "posix"])
+@pytest.mark.parametrize("field", ["env", "inputs", "outputs"])
+@pytest.mark.parametrize("override", [False, True])
+def test_profile_rejects_case_collisions_before_cli_overrides(tmp_path, monkeypatch, host, field, override):
+    profile = tmp_path / "profile.json"
+    profile.write_text(json.dumps({field: {"DATA": "upper", "data": "lower"}}), encoding="utf-8")
+    ns = runpy.run_path(str(HELPER))
+    parse = ns["execution_profile"]
+    monkeypatch.setitem(parse.__globals__, "os", SimpleNamespace(name=host))
+    args = Namespace(profile=str(profile), env=[], inputs=[], outputs=[], timeout=None)
+    if override:
+        setattr(args, field, ["DATA=override"])
+    manifest = {key: str(tmp_path / key) for key in (
+        "worktree", "runtime_root", "temp_root", "cache_root", "pytest_basetemp", "pytest_cache",
+    )}
+    if host == "nt":
+        with pytest.raises(ns["LaneError"], match=f"profile {field}.*distinct"):
+            parse(args, manifest)
+    else:
+        assert parse(args, manifest)[field] == {
+            "DATA": "override" if override else "upper", "data": "lower",
+        }
+
+
+@pytest.mark.parametrize("host", ["nt", "posix"])
+@pytest.mark.parametrize("field", ["env", "inputs", "outputs"])
+def test_profile_allows_cli_override_under_host_case_rules(tmp_path, monkeypatch, host, field):
+    profile = tmp_path / "profile.json"
+    profile.write_text(json.dumps({field: {"data": "original"}}), encoding="utf-8")
+    ns = runpy.run_path(str(HELPER))
+    parse = ns["execution_profile"]
+    monkeypatch.setitem(parse.__globals__, "os", SimpleNamespace(name=host))
+    args = Namespace(profile=str(profile), env=[], inputs=[], outputs=[], timeout=None)
+    setattr(args, field, ["DATA=override" if host == "nt" else "data=override"])
+    manifest = {key: str(tmp_path / key) for key in (
+        "worktree", "runtime_root", "temp_root", "cache_root", "pytest_basetemp", "pytest_cache",
+    )}
+    assert parse(args, manifest)[field] == {"DATA" if host == "nt" else "data": "override"}
+
+
+@pytest.mark.parametrize("host", ["nt", "posix"])
+@pytest.mark.parametrize("field", ["env", "inputs", "outputs", None])
+def test_profile_rejects_duplicate_json_members(tmp_path, monkeypatch, host, field):
+    profile = tmp_path / "profile.json"
+    # Raw JSON retains duplicate members that constructing a Python dict would lose.
+    content = (f'{{"{field}":{{"DATA":"first","DATA":"second"}}}}' if field
+               else '{"env":{"DATA":"first"},"env":{"DATA":"second"}}')
+    profile.write_text(content, encoding="utf-8")
+    ns = runpy.run_path(str(HELPER))
+    parse = ns["execution_profile"]
+    monkeypatch.setitem(parse.__globals__, "os", SimpleNamespace(name=host))
+    args = Namespace(profile=str(profile), env=[], inputs=[], outputs=[], timeout=None)
+    setattr(args, field or "env", ["DATA=override"])
+    manifest = {key: str(tmp_path / key) for key in (
+        "worktree", "runtime_root", "temp_root", "cache_root", "pytest_basetemp", "pytest_cache",
+    )}
+    with pytest.raises(ns["LaneError"], match="duplicate execution profile key"):
+        parse(args, manifest)
+
+
 @pytest.mark.parametrize("argument", ["--input", "--output"])
 def test_data_and_output_paths_cannot_escape_ownership(tmp_path, argument):
     repo, root, _, packet = lane(tmp_path)
@@ -375,17 +435,78 @@ def test_status_propagates_soft_observation_errors(tmp_path, monkeypatch, field)
     assert Path(packet["worktree"]).is_dir()
 
 
-def test_status_allows_missing_manifest_during_receipted_cleanup(tmp_path):
+@pytest.mark.parametrize("integrated", [True, False, None])
+def test_status_uses_receipt_candidate_during_interrupted_cleanup(tmp_path, monkeypatch, integrated):
     repo, root, base, packet = lane(tmp_path, named=True)
+    worktree = Path(packet["worktree"])
+    git(worktree, "commit", "--allow-empty", "-m", "lane work")
+    candidate = git(worktree, "rev-parse", "HEAD")
+    git(repo, "merge", "--ff-only", candidate)
     ns = runpy.run_path(str(HELPER))
-    ns["write_cleanup_receipt"](repo.resolve(), root.resolve(), Path(packet["worktree"]), base, base)
+    ns["write_cleanup_receipt"](repo.resolve(), root.resolve(), worktree, candidate, candidate)
     git(repo, "worktree", "remove", packet["worktree"])
     Path(packet["lane_manifest"]).unlink()
-    code, result = call("status", "--repo", str(repo), "--root", str(root), "--run", "delivery")
-    assert code == 0 and result["ok"], result
+    status = ns["status_run"]
+    if integrated is False:
+        git(repo, "switch", "--detach", base)
+    elif integrated is None:
+        original_git = status.__globals__["git"]
+        def failed_merge_base(checkout, *args, **kwargs):
+            if args[:2] == ("merge-base", "--is-ancestor"):
+                return subprocess.CompletedProcess(args, 128, "", "cannot read candidate")
+            return original_git(checkout, *args, **kwargs)
+        monkeypatch.setitem(status.__globals__, "git", failed_merge_base)
+    code, result = status(Namespace(repo=str(repo), root=str(root), run="delivery"))
+    assert code == (1 if integrated is None else 0), result
+    assert result["ok"] is (integrated is not None)
     observed = result["lanes"][0]
     assert observed["state"] == "prepared" and observed["present"] is False
-    assert observed["cleanup_eligible"] is True and observed["finish_clean"] is False
+    assert observed["lane_head"] == candidate and observed["observed_lane_head"] is None
+    assert observed["integrated"] is integrated
+    assert observed["cleanup_eligible"] is (integrated is True)
+    assert observed["finish_clean"] is False
+    if integrated is None:
+        assert "integration could not be determined" in observed["error"]
+    assert Path(packet["cleanup_receipt"]).is_file()
+
+
+@pytest.mark.parametrize("readiness", [
+    "missing", "failed", "corrupt", "non-object", "inaccessible", "redirected",
+])
+def test_status_distinguishes_unreadable_readiness_from_absent_or_failed_checks(tmp_path, monkeypatch, readiness):
+    repo, root, _, packet = lane(tmp_path, named=True)
+    record = Path(packet["runtime_root"], "readiness.json")
+    if readiness != "missing":
+        content = {"corrupt": "invalid json", "non-object": "[]"}.get(
+            readiness, '{"state":"failed","ok":false}',
+        )
+        record.write_text(content, encoding="utf-8")
+    ns = runpy.run_path(str(HELPER))
+    status = ns["status_run"]
+    if readiness == "inaccessible":
+        original_read = Path.read_text
+        def denied_read(path, *args, **kwargs):
+            if path == record:
+                raise PermissionError("readiness access denied")
+            return original_read(path, *args, **kwargs)
+        monkeypatch.setattr(Path, "read_text", denied_read)
+    elif readiness == "redirected":
+        original_reparse = status.__globals__["is_reparse_point"]
+        monkeypatch.setitem(
+            status.__globals__, "is_reparse_point", lambda path: path == record or original_reparse(path),
+        )
+    code, result = status(Namespace(repo=str(repo), root=str(root), run="delivery"))
+    unreadable = readiness not in {"missing", "failed"}
+    assert code == int(unreadable) and result["ok"] is not unreadable, result
+    observed = result["lanes"][0]
+    if unreadable:
+        assert observed["readiness"]["state"] == "unreadable"
+        assert "readiness metadata is unreadable" in observed["error"]
+    elif readiness == "missing":
+        assert observed["readiness"]["state"] == "not-recorded"
+    else:
+        assert observed["readiness"]["last_result"]["state"] == "failed"
+    assert Path(packet["worktree"]).is_dir()
 
 
 def test_status_accepts_observable_unfinished_work(tmp_path):

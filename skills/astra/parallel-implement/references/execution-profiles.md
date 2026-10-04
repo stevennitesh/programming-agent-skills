@@ -22,7 +22,8 @@ override matching profile keys; one-off setup/check arrays append to the profile
 arguments or printed output; those are retained in command evidence.
 
 Environment names follow host case rules: Windows treats case variants as the
-same key, while POSIX keeps them distinct. Keys may not overlap across `env`,
+same key, while POSIX keeps them distinct. Each profile mapping must have distinct
+keys under those rules before applying one-off overrides. Keys may not overlap across `env`,
 `inputs`, and `outputs`, or replace the helper's `LANE_WORKTREE` and `LANE_RUNTIME`
 variables under those rules.
 
