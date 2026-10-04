@@ -225,6 +225,26 @@ def test_profile_allows_cli_override_under_host_case_rules(tmp_path, monkeypatch
     assert parse(args, manifest)[field] == {"DATA" if host == "nt" else "data": "override"}
 
 
+@pytest.mark.parametrize("host", ["nt", "posix"])
+@pytest.mark.parametrize("field", ["env", "inputs", "outputs", None])
+def test_profile_rejects_duplicate_json_members(tmp_path, monkeypatch, host, field):
+    profile = tmp_path / "profile.json"
+    # Raw JSON retains duplicate members that constructing a Python dict would lose.
+    content = (f'{{"{field}":{{"DATA":"first","DATA":"second"}}}}' if field
+               else '{"env":{"DATA":"first"},"env":{"DATA":"second"}}')
+    profile.write_text(content, encoding="utf-8")
+    ns = runpy.run_path(str(HELPER))
+    parse = ns["execution_profile"]
+    monkeypatch.setitem(parse.__globals__, "os", SimpleNamespace(name=host))
+    args = Namespace(profile=str(profile), env=[], inputs=[], outputs=[], timeout=None)
+    setattr(args, field or "env", ["DATA=override"])
+    manifest = {key: str(tmp_path / key) for key in (
+        "worktree", "runtime_root", "temp_root", "cache_root", "pytest_basetemp", "pytest_cache",
+    )}
+    with pytest.raises(ns["LaneError"], match="duplicate execution profile key"):
+        parse(args, manifest)
+
+
 @pytest.mark.parametrize("argument", ["--input", "--output"])
 def test_data_and_output_paths_cannot_escape_ownership(tmp_path, argument):
     repo, root, _, packet = lane(tmp_path)

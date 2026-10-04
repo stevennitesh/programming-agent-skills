@@ -1540,10 +1540,20 @@ def expand_argument(value: str, manifest: dict[str, Any]) -> str:
 
 
 def execution_profile(args: argparse.Namespace, manifest: dict[str, Any]) -> dict[str, Any]:
+    def unique_members(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+        result = {}
+        for key, value in pairs:
+            if key in result:
+                raise LaneError(f"duplicate execution profile key: {key}")
+            result[key] = value
+        return result
+
     profile: dict[str, Any] = {}
     if args.profile:
         try:
-            profile = json.loads(Path(args.profile).read_text(encoding="utf-8-sig"))
+            profile = json.loads(
+                Path(args.profile).read_text(encoding="utf-8-sig"), object_pairs_hook=unique_members,
+            )
         except (OSError, ValueError) as error:
             raise LaneError(f"cannot read execution profile: {error}") from error
     allowed = {"env", "inputs", "outputs", "setup", "checks", "timeout"}
