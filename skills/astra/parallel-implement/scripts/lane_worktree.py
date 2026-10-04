@@ -1438,16 +1438,42 @@ def status_run(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
             if ownership_error:
                 results.append({**item, "error": ownership_error["reason"]})
                 continue
-            results.append({
+            # Completed candidates survive removal of their worktree and receipt.
+            lane_head = item["lane_head"] if item["state"] == "cleaned" else snapshot["lane_head"]
+            integrated = (
+                integration_state(repo, lane_head, head)
+                if item["state"] == "cleaned" else snapshot["integrated"]
+            )
+            errors = [snapshot[key] for key in (
+                "path_error", "status_error", "ignored_error", "residual_identity_error",
+            ) if snapshot[key]]
+            missing_manifest_expected = (
+                not snapshot["registered"]
+                and snapshot["manifest_error"] == "lane manifest is missing"
+                and (item["state"] in {"preparing", "cleaned"}
+                     or snapshot["receipt_state"] == "valid")
+            )
+            if snapshot["manifest_error"] and not missing_manifest_expected:
+                errors.append(snapshot["manifest_error"])
+            if snapshot["receipt_state"] == "invalid":
+                errors.append(snapshot["receipt_error"])
+            errors.extend(f"{key}: {value['error']}" for key, value in snapshot["runtime"].items()
+                          if value["error"])
+            if lane_head and integrated is None:
+                errors.append("candidate integration could not be determined")
+            entry = {
                 **item, "registered": snapshot["registered"], "present": snapshot["present"],
-                "lane_head": snapshot["lane_head"], "clean": snapshot["clean"],
-                "integrated": snapshot["integrated"],
+                "lane_head": lane_head, "observed_lane_head": snapshot["lane_head"],
+                "clean": snapshot["clean"], "integrated": integrated,
                 "resume_or_land_eligible": snapshot["resume_or_land_eligible"],
                 "cleanup_eligible": snapshot["cleanup_eligible"],
                 "command_active_or_interrupted": snapshot["command_active"],
                 "finish_clean": lane not in registered and completed_in_run(args, repo, root, lane, head),
                 "readiness": readiness_record(root, lane),
-            })
+            }
+            if errors:
+                entry["error"] = "; ".join(errors)
+            results.append(entry)
         except (LaneError, OSError) as error:
             results.append({**item, "error": str(error)})
     final_head = git(repo, "rev-parse", "HEAD").stdout.strip()
@@ -1526,7 +1552,7 @@ def execution_profile(args: argparse.Namespace, manifest: dict[str, Any]) -> dic
                or not isinstance(value, str) or "\0" in value for key, value in values.items()):
             raise LaneError(f"invalid profile {field} assignment")
         profile[field] = values
-    names = [key.upper() for field in ("env", "inputs", "outputs") for key in profile[field]]
+    names = [key for field in ("env", "inputs", "outputs") for key in profile[field]]
     if len(names) != len(set(names)) or {"LANE_WORKTREE", "LANE_RUNTIME"} & set(names):
         raise LaneError("profile environment keys overlap or replace lane identity")
     for field in ("setup", "checks"):

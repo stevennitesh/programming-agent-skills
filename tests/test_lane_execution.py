@@ -7,7 +7,9 @@ import runpy
 import subprocess
 import sys
 import time
+from argparse import Namespace
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -139,6 +141,50 @@ def test_environment_names_follow_host_case_rules(tmp_path):
     assert result["inputs"][expected_key] == str(data.resolve())
 
 
+@pytest.mark.parametrize("host", ["nt", "posix"])
+@pytest.mark.parametrize("env,inputs,posix_valid", [
+    ({"DATA": "upper"}, {"data": "lower"}, True),
+    ({"lane_runtime": "custom"}, {}, True),
+    ({"DATA": "upper"}, {"DATA": "duplicate"}, False),
+    ({"LANE_RUNTIME": "replacement"}, {}, False),
+])
+def test_profile_key_collisions_respect_host_case_rules(
+    tmp_path, monkeypatch, host, env, inputs, posix_valid,
+):
+    profile = tmp_path / "profile.json"
+    profile.write_text(json.dumps({"env": env, "inputs": inputs}), encoding="utf-8")
+    ns = runpy.run_path(str(HELPER))
+    parse = ns["execution_profile"]
+    monkeypatch.setitem(parse.__globals__, "os", SimpleNamespace(name=host))
+    args = Namespace(profile=str(profile), env=[], inputs=[], outputs=[], timeout=None)
+    manifest = {key: str(tmp_path / key) for key in (
+        "worktree", "runtime_root", "temp_root", "cache_root", "pytest_basetemp", "pytest_cache",
+    )}
+    if host == "posix" and posix_valid:
+        result = parse(args, manifest)
+        assert result["env"] == env and result["inputs"] == inputs
+    else:
+        with pytest.raises(ns["LaneError"], match="overlap or replace lane identity"):
+            parse(args, manifest)
+
+
+def test_exec_preserves_case_distinct_environment_on_supported_hosts(tmp_path):
+    repo, root, _, packet = lane(tmp_path)
+    code, result = call(
+        "exec", *target(repo, root, packet),
+        "--env", "DATA=upper", "--env", "data=lower", "--env", "lane_runtime=custom",
+        "--", sys.executable, "-c",
+        "import os; assert os.environ['DATA'] == 'upper'; "
+        "assert os.environ['data'] == 'lower'; assert os.environ['lane_runtime'] == 'custom'; "
+        "assert os.environ['LANE_RUNTIME'] != 'custom'; print('case preserved')",
+    )
+    if os.name == "nt":
+        assert code == 1 and result["commands"] == []
+    else:
+        assert code == 0, result
+        assert "case preserved" in result["commands"][0]["output_tail"]
+
+
 @pytest.mark.parametrize("argument", ["--input", "--output"])
 def test_data_and_output_paths_cannot_escape_ownership(tmp_path, argument):
     repo, root, _, packet = lane(tmp_path)
@@ -257,6 +303,105 @@ def test_run_cannot_adopt_another_runs_lane(tmp_path):
     assert code == 1 and "ownership" in result["preserved"][0]["reason"]
 
 
+def test_status_preserves_cleaned_candidate_and_rechecks_current_integration(tmp_path):
+    repo, root, base, packet = lane(tmp_path, named=True)
+    worktree = Path(packet["worktree"])
+    git(worktree, "commit", "--allow-empty", "-m", "lane work")
+    lane_head = git(worktree, "rev-parse", "HEAD")
+    git(repo, "merge", "--ff-only", lane_head)
+    code, cleaned = call("cleanup", "--repo", str(repo), "--root", str(root),
+                         "--run", "delivery", "--integration-head", lane_head)
+    assert code == 0, cleaned
+    git(repo, "commit", "--allow-empty", "-m", "later integration")
+    status_args = ["status", "--repo", str(repo), "--root", str(root), "--run", "delivery"]
+    code, result = call(*status_args)
+    assert code == 0 and result["ok"], result
+    completed = result["lanes"][0]
+    assert completed["state"] == "cleaned"
+    assert completed["lane_head"] == lane_head
+    assert completed["observed_lane_head"] is None
+    assert completed["integration_head"] == lane_head
+    assert completed["integrated"] is True and completed["finish_clean"] is True
+
+    git(repo, "switch", "--detach", base)
+    code, result = call(*status_args)
+    assert code == 0, result
+    completed = result["lanes"][0]
+    assert completed["lane_head"] == lane_head
+    assert completed["integration_head"] == lane_head
+    assert completed["integrated"] is False and completed["finish_clean"] is False
+
+
+@pytest.mark.parametrize("damage,expected", [
+    ("manifest-corrupt", "manifest is unreadable"),
+    ("manifest-missing", "manifest is missing"),
+    ("receipt-corrupt", "receipt is unreadable"),
+])
+def test_status_fails_for_invalid_lifecycle_metadata(tmp_path, damage, expected):
+    repo, root, _, packet = lane(tmp_path, named=True)
+    if damage == "manifest-missing":
+        Path(packet["lane_manifest"]).unlink()
+    else:
+        key = "cleanup_receipt" if damage == "receipt-corrupt" else "lane_manifest"
+        Path(packet[key]).write_text("invalid json", encoding="utf-8")
+    code, result = call("status", "--repo", str(repo), "--root", str(root), "--run", "delivery")
+    assert code == 1 and result["ok"] is False, result
+    assert expected in result["lanes"][0]["error"]
+    assert Path(packet["worktree"]).is_dir()
+
+
+@pytest.mark.parametrize("field", [
+    "path_error", "status_error", "ignored_error", "runtime", "integrated",
+])
+def test_status_propagates_soft_observation_errors(tmp_path, monkeypatch, field):
+    repo, root, _, packet = lane(tmp_path, named=True)
+    ns = runpy.run_path(str(HELPER))
+    status = ns["status_run"]
+    observe = status.__globals__["observe_lane"]
+    def unreadable(*args, **kwargs):
+        snapshot = observe(*args, **kwargs)
+        if field == "runtime":
+            snapshot["runtime"]["temp_root"]["error"] = "access denied to test runtime"
+        elif field == "integrated":
+            snapshot[field] = None
+        else:
+            snapshot[field] = f"access denied to test {field}"
+        return snapshot
+    monkeypatch.setitem(status.__globals__, "observe_lane", unreadable)
+    code, result = status(Namespace(repo=str(repo), root=str(root), run="delivery"))
+    assert code == 1 and result["ok"] is False, result
+    expected = "integration could not be determined" if field == "integrated" else "access denied"
+    assert expected in result["lanes"][0]["error"]
+    assert Path(packet["worktree"]).is_dir()
+
+
+def test_status_allows_missing_manifest_during_receipted_cleanup(tmp_path):
+    repo, root, base, packet = lane(tmp_path, named=True)
+    ns = runpy.run_path(str(HELPER))
+    ns["write_cleanup_receipt"](repo.resolve(), root.resolve(), Path(packet["worktree"]), base, base)
+    git(repo, "worktree", "remove", packet["worktree"])
+    Path(packet["lane_manifest"]).unlink()
+    code, result = call("status", "--repo", str(repo), "--root", str(root), "--run", "delivery")
+    assert code == 0 and result["ok"], result
+    observed = result["lanes"][0]
+    assert observed["state"] == "prepared" and observed["present"] is False
+    assert observed["cleanup_eligible"] is True and observed["finish_clean"] is False
+
+
+def test_status_accepts_observable_unfinished_work(tmp_path):
+    repo, root, _, packet = lane(tmp_path, named=True)
+    worktree = Path(packet["worktree"])
+    git(worktree, "commit", "--allow-empty", "-m", "not yet integrated")
+    (worktree / "tracked.txt").write_text("in progress", encoding="utf-8")
+    Path(packet["runtime_root"], "active-command.json").write_text("{}", encoding="utf-8")
+    code, result = call("status", "--repo", str(repo), "--root", str(root), "--run", "delivery")
+    assert code == 0 and result["ok"], result
+    observed = result["lanes"][0]
+    assert observed["clean"] is False and observed["integrated"] is False
+    assert observed["command_active_or_interrupted"] is True
+    assert observed["cleanup_eligible"] is False and observed["finish_clean"] is False
+
+
 def test_worktree_inventory_parses_null_delimited_paths(monkeypatch):
     ns = runpy.run_path(str(HELPER))
     listing = ns["registered_worktrees"]
@@ -279,7 +424,6 @@ def test_failed_prepare_inventory_is_visible_and_cannot_claim_foreign_lane(tmp_p
             return subprocess.CompletedProcess(args, 1, "", "blocked")
         return original_git(checkout, *args, **kwargs)
     monkeypatch.setitem(prepare.__globals__, "git", fail_creation)
-    from argparse import Namespace
     with pytest.raises(ns["LaneError"]):
         prepare(Namespace(repo=str(repo), root=str(root), base=base, name="one", run="failed"))
     code, status = call("status", "--repo", str(repo), "--root", str(root), "--run", "failed")
