@@ -1,48 +1,45 @@
 # Planned delivery
 
-Use when the user requests coordinated serial delivery with checkpoints or when a
-wrong early interface, persisted representation, or integration decision would
-make later delegated work materially expensive to redo.
+Use when phases or checkpoints help organize the work, preserve continuity, or
+resolve important uncertainty before later work depends on it. The lead chooses
+their number, granularity, and format; length or difficulty can justify them
+without requiring a fixed delivery template.
 
-The lead owns checkpoint selection and review. The worker owns implementation
-within the current assignment.
+## Plan at the useful level
 
-## Choose meaningful checkpoints
+Reuse accepted requirements and plans. Preserve agreed product stages and
+sequencing constraints while adapting a merely suggested delivery outline. Fill
+the gaps needed to assign work without reopening settled decisions. Keep a short
+plan in the assignment when sufficient; use an existing plan or a small durable
+artifact when continuity warrants it.
 
-Reuse the accepted plan or shaping result; do not create a plan merely to use this
-reference. A checkpoint is useful when early evidence can prevent consequential
-downstream rework, not simply because a task has several steps.
+A phase groups coherent work and can be owned end to end by Sol. A checkpoint is a
+deliberate return to the lead for a decision or review of a stable candidate.
+Phases do not automatically create checkpoints. Sol can organize its own
+implementation steps and adjust the sequence within scope.
 
-Define the checkpoint's work boundary, accepted behavior, and required evidence
-once. Final integrated review remains necessary even when intermediate checkpoints
-pass.
+For a chosen checkpoint, make its boundary, accepted behavior, and deciding
+evidence clear. Use checkpoints for consequential interfaces or migrations, staged
+verification, difficult scientific assumptions, or other task-specific reasons.
+These are examples, not required phases or a review schedule.
 
-Suggested implementation mechanisms remain adaptable unless they are accepted
-constraints.
+## Continue through the plan
 
-## Advance serially
+Between checkpoints, the worker owns implementation and the lead remains dormant
+unless a meaningful question or event needs it. At a checkpoint, release custody
+and assess the behavior it claims to establish plus affected earlier integration.
+Unfinished future phases are not checkpoint defects.
 
-Assign work through the next meaningful checkpoint using the main skill's worker
-assignment and custody contract.
-
-When the worker returns a stable candidate and releases custody, review only the
-behavior the checkpoint claims to establish plus affected earlier integration.
-Future work outside that boundary is not a checkpoint defect.
-
-Return required implementation corrections through the main skill's recovery path.
-After a checkpoint is accepted, continue with the next assignment without reopening
-settled decisions.
-
-If accepted meaning must change while assignments or proof already depend on it,
-use
+Correct in-scope problems and continue with the next assignment without waiting
+for another user instruction. Adapt the plan to new evidence while preserving
+the accepted outcome and constraints. If accepted meaning must change while
+assignments or proof depend on it, use
 [Active delivery revisions](../../shape-work/references/active-delivery-revisions.md)
 before resuming affected work.
 
-## Confirm the whole outcome
+## Accept the whole result
 
-After the final worker return, review the complete accumulated in-scope candidate
-against the original accepted outcome. Reuse checkpoint evidence only while later
-changes leave its relevant code, inputs, and assumptions valid.
-
-Completion requires the whole outcome, required proof, and final candidate review;
-checkpoint passes are not substitutes for integrated acceptance.
+Review the complete accumulated candidate against the accepted outcome after the
+final worker return. Reuse checkpoint evidence while later changes leave its
+relevant code, inputs, and assumptions valid. Intermediate passes do not replace
+final review, required proof, or completion of the whole requested outcome.

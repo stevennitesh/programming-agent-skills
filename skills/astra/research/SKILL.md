@@ -1,14 +1,15 @@
 ---
 name: research
-description: Research or compare options by synthesizing and evaluating sources. Exclude quick factual lookups and runnable experiments.
+description: Investigate substantive questions or compare options through inspected sources and critical synthesis. Exclude quick factual lookups and runnable experiments.
 ---
 
 # Research
 
-Use evidence that can establish the class of claim being made. Do not promote
-documentation into observed behavior, implementation into effectiveness,
-association into causation, current evidence into historical availability, or a
-recommendation into established fact.
+Investigate thoroughly enough to answer the question for its intended use. Deliver
+a sourced synthesis that distinguishes established findings, inference, and
+unresolved uncertainty. Choose and adapt the search strategy, decomposition,
+methods, tools, and depth as findings emerge. No fixed search quota, planning
+artifact, or delegation step is required.
 
 ## 1. Frame the decisive claims
 
@@ -17,28 +18,28 @@ such as version, date, jurisdiction, repository state, audience, source limits, 
 comparison criteria. Reuse settled context; do not reopen it merely to make the
 research process complete.
 
-Identify the claims that could change the conclusion and distinguish their
-evidence class:
+Identify the important questions, claims, and competing explanations that could
+change the answer. Follow consequential gaps and promising leads; adapt the
+investigation as the evidence changes. A simple factual lookup can be answered
+directly without expanding it into this workflow.
 
-- contract, definition, or published position;
-- implementation mechanics;
-- observed runtime behavior;
-- empirical effectiveness or causality;
-- historical availability at a cutoff;
-- quantitative result or method; and
-- comparative judgment or recommendation.
-
-Evidence for one class does not establish a stronger one. If a simple factual
-lookup settles the request, answer it directly instead of expanding this workflow.
-
-## 2. Use the evidence method the claim requires
+## 2. Inspect evidence that can support the claim
 
 Prefer the source capable of establishing the claim: operative or authoritative
 text for a contract or obligation, exact code for mechanics, applicable
 observation or data for behavior, and appropriate empirical evidence for
-effectiveness. Use secondary material to find primary evidence when useful, but
-state the available source's actual evidentiary limit when the owner cannot be
-inspected.
+effectiveness. Rigorous syntheses can address a body of evidence; an official
+statement establishes a published position, not independent proof of effectiveness.
+Do not promote documentation into observed behavior, implementation into
+effectiveness, association into causation, or current evidence into historical
+availability.
+
+Inspect the relevant underlying passages, methods, data, tables, or code behind
+decisive claims. Search snippets, abstracts, and summaries can guide discovery;
+keep claims within what the inspected material supports. If the original source
+is unavailable, identify the accessible portion or secondary account actually
+used and its limits. Cite that inspected material without implying direct review
+of an inaccessible original.
 
 Load a specialist reference only when its trigger is present:
 
@@ -62,31 +63,42 @@ disagreement by scope, version, authority, population, method, or state before
 calling it a true contradiction. Absence from a bounded search is not proof of
 absence.
 
-Seek counterevidence when it could materially change the conclusion. For
-empirical, comparative, contested, or incentive-driven claims, use an independent
-evidence path capable of exposing the likely error. Independence means different
-underlying evidence or method relevant to that error, not a quota of URLs,
-articles, or subagents.
+Actively seek the strongest credible counterevidence and alternative explanations
+that could change the emerging conclusion. Negative results, failed replications,
+and contrary observations matter when applicable. For empirical, comparative,
+contested, or incentive-driven claims, pursue an independent evidence path capable
+of exposing the likely error; report the limit if it cannot be established.
+Independence means different underlying evidence or methods relevant to that
+error, not a quota of URLs, articles, or subagents.
 
-Stop when the decisive claims are supported to the strength the answer requires
-or their specific limits are established, material counterevidence has been
-considered, and further credible search is unlikely to change the conclusion. A
-time or source budget may stop research; it does not convert uncertainty into
-support.
+Weight agreement and disagreement by evidence quality, relevance, and independence.
+Do not manufacture a contradiction or give weak dissent equal weight merely to
+appear balanced. Finding no credible counterevidence in the investigated scope
+does not establish universal agreement.
+
+Finish investigating when the important questions and credible challenges have
+been addressed, decisive claims are supported to the required strength or their
+specific limits are established, and further credible search is unlikely to
+change the conclusion. Access, time, or source limits may stop research; report
+their effect on coverage and confidence without treating them as support.
 
 ## 4. Deliver the supported result
 
 Lead with the supported answer or requested recommendation. Include the decisive
-tradeoffs, assumptions, conflicts, and evidence limits that change how the answer
-should be used. A conditional recommendation, tie, or unknown is preferable to a
+supporting evidence, counterevidence, tradeoffs, assumptions, and unresolved gaps
+that affect how the answer should be used. Explain what could materially change
+the conclusion. A conditional recommendation, tie, or unknown is preferable to a
 stronger conclusion the evidence does not support.
 
 Check that decisive citations support the adjacent claim and apply to the relevant
 version, date, population, repository state, or other governing condition. Do not
 combine evidence from incompatible states into one apparently verified result.
 
-Return inline findings unless a durable artifact was requested. A recommendation
-does not itself authorize adoption or implementation.
+Choose the structure and length for the requested use. Completion includes the
+requested synthesis or report, with material search and access limitations made
+clear. Deliver a requested durable artifact; otherwise return findings inline.
+No fixed report template or permanent research record is required. A
+recommendation does not itself authorize adoption or implementation.
 
 Research evaluates existing evidence. When a decisive claim requires a new
 observation, identify that missing observation; use

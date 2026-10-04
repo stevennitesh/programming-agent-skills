@@ -1,6 +1,6 @@
 interface:
   display_name: "Wizard"
-  short_description: "Build a guided human-operated procedure"
-  default_prompt: "Use $wizard to create and check a local interactive script for this settled procedure."
+  short_description: "Guide private steps and hand control back"
+  default_prompt: "Use $wizard to prepare a terminal handoff for this private step, check it without real secrets, and define the non-secret result needed to resume the task."
 policy:
   allow_implicit_invocation: false

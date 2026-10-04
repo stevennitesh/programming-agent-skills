@@ -17,7 +17,9 @@ When available, track separately:
 
 - Astra lead input/output or reasoning usage;
 - Astra usage incurred while a worker was active;
-- Sol and Luna Max worker usage;
+- isolated Astra reviewer or advisory usage, separate from the lead;
+- Sol worker usage, distinguishing High and Max when available;
+- Luna Max bounded-worker usage, including large-input retrieval and bulk writing;
 - total usage;
 - number and approximate size of lead-worker handoffs;
 - correction or replacement cycles;

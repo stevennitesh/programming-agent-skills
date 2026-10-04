@@ -1,14 +1,19 @@
-"""Prepare, inspect, clean up, and verify concurrent-worker Git worktrees."""
+"""Manage worker worktrees, explicit readiness, scoped commands, and cleanup."""
 
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
+import math
 import os
 import re
 import shutil
+import signal
 import stat
 import subprocess
+import sys
+import threading
 import time
 import uuid
 from pathlib import Path
@@ -28,14 +33,15 @@ class LaneError(RuntimeError):
 
 
 def run(command: list[str], *, cwd: Path | None = None) -> subprocess.CompletedProcess[str]:
-    return subprocess.run(
-        command,
-        cwd=cwd,
-        text=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        check=False,
-    )
+    try:
+        return subprocess.run(
+            command, cwd=cwd, text=True, encoding="utf-8", errors="replace",
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False, timeout=120,
+        )
+    except subprocess.TimeoutExpired:
+        return subprocess.CompletedProcess(
+            command, 124, "", "command timed out after 120s; inspect state before retrying"
+        )
 
 
 def command_error(result: subprocess.CompletedProcess[str]) -> str:
@@ -107,10 +113,10 @@ def resolve_base(repo: Path, value: str) -> str:
 
 
 def registered_worktrees(repo: Path) -> set[Path]:
-    result = git(repo, "worktree", "list", "--porcelain")
+    result = git(repo, "worktree", "list", "--porcelain", "-z")
     return {
         Path(line.removeprefix("worktree ")).resolve()
-        for line in result.stdout.splitlines()
+        for line in result.stdout.split("\0")
         if line.startswith("worktree ")
     }
 
@@ -571,6 +577,107 @@ def rollback_created_lane(
     return None
 
 
+def write_json(path: Path, payload: dict[str, Any]) -> None:
+    """Replace helper-owned metadata without exposing a partially written document."""
+    if path_present(path) and is_reparse_point(path):
+        raise LaneError(f"metadata is a reparse point: {path}")
+    temporary = path.with_name(f"{path.name}.{uuid.uuid4().hex}.tmp")
+    try:
+        with temporary.open("x", encoding="utf-8", newline="\n") as handle:
+            handle.write(json.dumps(payload, indent=2, sort_keys=True) + "\n")
+            handle.flush()
+            os.fsync(handle.fileno())
+        temporary.replace(path)
+    finally:
+        temporary.unlink(missing_ok=True)
+
+
+def run_inventory(
+    repo: Path, root: Path, name: str, *, create: bool = False
+) -> tuple[Path, dict[str, Any]]:
+    if not LANE_NAME.fullmatch(name):
+        raise LaneError("invalid run name")
+    directory = root / ".runs"
+    if path_present(directory) and is_reparse_point(directory):
+        raise LaneError("run inventory directory is a reparse point")
+    if create:
+        directory.mkdir(exist_ok=True)
+    path = directory / f"{name}.json"
+    expected = {"schema_version": 1, "repository": str(repo), "root": str(root), "run": name}
+    if not path_present(path):
+        if not create:
+            raise LaneError(f"run inventory is missing: {path}")
+        return path, {**expected, "lanes": {}}
+    if is_reparse_point(path):
+        raise LaneError("run inventory is a reparse point")
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as error:
+        raise LaneError(f"run inventory is unreadable: {path}") from error
+    if (not isinstance(payload, dict)
+            or any(payload.get(key) != value for key, value in expected.items())
+            or not isinstance(payload.get("lanes"), dict)):
+        raise LaneError("run inventory does not match this repository and run")
+    for lane, item in payload["lanes"].items():
+        if (not LANE_NAME.fullmatch(lane) or not isinstance(item, dict)
+                or item.get("worktree") != str(root / lane)
+                or not isinstance(item.get("base"), str)
+                or not COMMIT_ID.fullmatch(item["base"])
+                or item.get("state") not in {"preparing", "prepared", "cleaned"}):
+            raise LaneError("run inventory contains invalid lane evidence")
+        if item["state"] == "cleaned" and not all(
+            isinstance(item.get(key), str) and COMMIT_ID.fullmatch(item[key])
+            for key in ("lane_head", "integration_head")
+        ):
+            raise LaneError("run inventory contains invalid completion evidence")
+    return path, payload
+
+
+def select_lanes(args: argparse.Namespace, repo: Path, root: Path, values: list[str]) -> list[Path]:
+    name = getattr(args, "run", None)
+    if not name:
+        return validate_completed(root, values)
+    _, inventory = run_inventory(repo, root, name)
+    owned = [Path(item["worktree"]) for item in inventory["lanes"].values()]
+    selected = validate_completed(root, values) if values else owned
+    if any(lane not in owned for lane in selected):
+        raise LaneError("selected lane is not owned by the named run")
+    return selected
+
+
+def run_ownership_blocker(args: argparse.Namespace, snapshot: dict[str, Any]) -> dict[str, str] | None:
+    manifest = snapshot["manifest"]
+    if manifest and manifest.get("run") != getattr(args, "run", None):
+        return {"reason": "lane run ownership does not match; supply its --run"}
+    return None
+
+
+def mark_run_cleaned(args: argparse.Namespace, repo: Path, root: Path, lane: Path,
+                     lane_head: str, integration_head: str) -> None:
+    if not getattr(args, "run", None):
+        return
+    path, inventory = run_inventory(repo, root, args.run)
+    inventory["lanes"][lane.name].update(
+        state="cleaned", lane_head=lane_head, integration_head=integration_head
+    )
+    write_json(path, inventory)
+
+
+def completed_in_run(args: argparse.Namespace, repo: Path, root: Path, lane: Path,
+                     repo_head: str) -> bool:
+    if not getattr(args, "run", None):
+        return False
+    _, inventory = run_inventory(repo, root, args.run)
+    item = inventory["lanes"][lane.name]
+    return (
+        item["state"] == "cleaned"
+        and not any(path_present(path) for path in (
+            lane, lane_state(root, lane.name), cleanup_receipt(root, lane.name)
+        ))
+        and integration_state(repo, item["lane_head"], repo_head) is True
+    )
+
+
 def prepare(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
     repo = repository_root(args.repo)
     root = lane_root(args.root, repo, create=True)
@@ -603,6 +710,8 @@ def prepare(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
             raise LaneError(
                 f"registered lane base {manifest['base']} does not match requested base {base}"
             )
+        if manifest.get("run") != getattr(args, "run", None):
+            raise LaneError("existing lane belongs to a different run; preserve its ownership")
         for key in (
             "runtime_root",
             "temp_root",
@@ -613,6 +722,16 @@ def prepare(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
             path = Path(manifest[key])
             if not path_present(path) or not path.is_dir() or is_reparse_point(path):
                 raise LaneError(f"registered lane runtime is invalid: {path}")
+    inventory_path = None
+    if getattr(args, "run", None):
+        inventory_path, inventory = run_inventory(repo, root, args.run, create=True)
+        previous = inventory["lanes"].get(args.name)
+        if previous and (previous["base"] != base or previous["state"] == "cleaned"):
+            raise LaneError("run lane identity cannot be reused for a different candidate")
+        inventory["lanes"][args.name] = {
+            "worktree": str(worktree), "base": base, "state": "preparing",
+        }
+        write_json(inventory_path, inventory)
     if not reused:
         result = git(
             repo, "worktree", "add", "--detach", str(worktree), base, check=False
@@ -651,8 +770,13 @@ def prepare(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
             pytest_basetemp,
             pytest_cache,
         )
+        if getattr(args, "run", None):
+            manifest["run"] = args.run
         if not reused:
             write_lane_manifest(root, args.name, manifest)
+        if inventory_path:
+            inventory["lanes"][args.name]["state"] = "prepared"
+            write_json(inventory_path, inventory)
         return 0, {"ok": True, "reused": reused, **manifest}
     except (LaneError, OSError) as error:
         if reused:
@@ -686,7 +810,8 @@ def residual_identity_check(
 
 
 def recover_unregistered_lane(
-    repo: Path, root: Path, worktree: Path, repo_head: str
+    repo: Path, root: Path, worktree: Path, repo_head: str,
+    args: argparse.Namespace | None = None,
 ) -> tuple[bool, str | None]:
     snapshot = observe_lane(
         repo,
@@ -695,6 +820,10 @@ def recover_unregistered_lane(
         repo_head,
         registered=False,
     )
+    if snapshot["command_active"]:
+        return False, "lane command active or interrupted; establish process quiescence"
+    if args is not None and (blocker := run_ownership_blocker(args, snapshot)):
+        return False, blocker["reason"]
     if snapshot["receipt"] is None:
         return False, snapshot["receipt_error"]
     if snapshot["integrated"] is False:
@@ -703,6 +832,8 @@ def recover_unregistered_lane(
         return False, "cleanup receipt integration is uncertain"
     if not snapshot["residual_identity_ok"]:
         return False, snapshot["residual_identity_error"]
+    if git(repo, "rev-parse", "HEAD").stdout.strip() != repo_head:
+        return False, "repository HEAD changed before residual cleanup"
 
     if snapshot["present"] is True:
         failure = remove_tree(
@@ -713,6 +844,8 @@ def recover_unregistered_lane(
         if failure:
             return False, json.dumps(failure, sort_keys=True)
 
+    if args is not None:
+        mark_run_cleaned(args, repo, root, worktree, snapshot["receipt"]["lane_head"], repo_head)
     failure = finish_lane_cleanup(root, worktree)
     if failure:
         return False, json.dumps(failure, sort_keys=True)
@@ -865,7 +998,8 @@ def observe_lane(
         if receipt_error == "cleanup receipt is missing"
         else "invalid"
     )
-    return {
+    command_active = path_present(lane_state(root, worktree.name) / "active-command.json")
+    snapshot = {
         "registered": registered,
         "present": present,
         "path_error": path_error,
@@ -874,6 +1008,7 @@ def observe_lane(
         "receipt": receipt,
         "receipt_error": receipt_error,
         "receipt_state": receipt_state,
+        "command_active": command_active,
         "lane_head": lane_head,
         "clean": clean,
         "status_error": status_error,
@@ -889,20 +1024,21 @@ def observe_lane(
             and manifest is not None
             and receipt_state == "absent"
             and runtime_valid
-        ),
-        "cleanup_eligible": (
-            (mechanically_clean and manifest is not None and integrated is True)
-            or (
-                not registered
-                and receipt is not None
-                and integrated is True
-                and residual_identity_ok
-            )
+            and not command_active
         ),
     }
+    snapshot["cleanup_eligible"] = (
+        cleanup_blocker(snapshot) is None if registered else (
+            receipt is not None and integrated is True and residual_identity_ok
+            and not command_active
+        )
+    )
+    return snapshot
 
 
 def cleanup_blocker(snapshot: dict[str, Any]) -> dict[str, Any] | None:
+    if snapshot.get("command_active"):
+        return {"reason": "lane command active or interrupted; establish process quiescence"}
     if snapshot["receipt_state"] == "invalid":
         return {
             "reason": "cleanup receipt invalid",
@@ -987,6 +1123,7 @@ def inspect_lane(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
         "ignored_entries": snapshot["ignored_entries"] or [],
         "ignored_error": snapshot["ignored_error"],
         "runtime": snapshot["runtime"],
+        "readiness": readiness_record(root, worktree),
         "cleanup_receipt": {
             "state": snapshot["receipt_state"],
             "error": snapshot["receipt_error"],
@@ -999,6 +1136,7 @@ def inspect_lane(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
             "resume_or_land_eligible": snapshot["resume_or_land_eligible"],
             "cleanup_eligible": snapshot["cleanup_eligible"],
             "actor_quiescence_unverified": True,
+            "command_active_or_interrupted": snapshot["command_active"],
         },
     }
     return (0 if ok else 1), packet
@@ -1007,18 +1145,29 @@ def inspect_lane(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
 def cleanup(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
     repo = repository_root(args.repo)
     root = lane_root(args.root, repo, create=False)
-    completed = validate_completed(root, args.completed)
+    completed = select_lanes(args, repo, root, args.completed)
     if completed and not root.is_dir():
         raise LaneError(f"worktree root does not exist: {root}")
 
     repo_head = git(repo, "rev-parse", "HEAD").stdout.strip()
+    expected_head = getattr(args, "integration_head", None)
+    if not expected_head or not COMMIT_ID.fullmatch(expected_head):
+        raise LaneError("cleanup requires --integration-head with the proved full commit ID")
+    if repo_head != expected_head:
+        raise LaneError("repository HEAD does not match the proved integration HEAD")
     registered = registered_worktrees(repo)
     removed: list[str] = []
     preserved: list[dict[str, Any]] = []
 
     for worktree in completed:
+        if git(repo, "rev-parse", "HEAD").stdout.strip() != expected_head:
+            preserved.append({"worktree": str(worktree), "reason": "integration HEAD changed"})
+            continue
+        if worktree not in registered and completed_in_run(args, repo, root, worktree, repo_head):
+            removed.append(str(worktree))
+            continue
         if worktree not in registered:
-            recovered, reason = recover_unregistered_lane(repo, root, worktree, repo_head)
+            recovered, reason = recover_unregistered_lane(repo, root, worktree, repo_head, args)
             if recovered:
                 removed.append(str(worktree))
             else:
@@ -1029,6 +1178,7 @@ def cleanup(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
             repo, root, worktree, repo_head, registered=True
         )
         blocker = cleanup_blocker(snapshot)
+        blocker = blocker or run_ownership_blocker(args, snapshot)
         if blocker:
             preserved.append({"worktree": str(worktree), **blocker})
             continue
@@ -1055,6 +1205,9 @@ def cleanup(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
             )
             continue
 
+        if git(repo, "rev-parse", "HEAD").stdout.strip() != expected_head:
+            preserved.append({"worktree": str(worktree), "reason": "cleanup identity changed"})
+            continue
         payload_failure = remove_runtime_payload(root, worktree)
         if payload_failure:
             preserved.append(
@@ -1135,6 +1288,7 @@ def cleanup(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
             )
             continue
 
+        mark_run_cleaned(args, repo, root, worktree, snapshot["lane_head"], repo_head)
         failure = finish_lane_cleanup(root, worktree)
         if failure:
             preserved.append(
@@ -1160,9 +1314,13 @@ def cleanup(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
 def verify_cleanup(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
     repo = repository_root(args.repo)
     root = lane_root(args.root, repo, create=False)
-    if not args.lane:
+    if not args.lane and not getattr(args, "run", None):
         raise LaneError("verify-cleanup requires at least one --lane")
-    lanes = validate_completed(root, args.lane)
+    if args.lane and getattr(args, "run", None):
+        raise LaneError("verify-cleanup --run verifies the entire inventory; omit --lane")
+    lanes = select_lanes(args, repo, root, args.lane)
+    if not lanes:
+        raise LaneError("run inventory contains no lanes")
     if not COMMIT_ID.fullmatch(args.integration_head):
         raise LaneError("--integration-head must be a full commit ID")
 
@@ -1190,13 +1348,15 @@ def verify_cleanup(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
             and not state_exists
             and not receipt_exists
         )
+        if finish_clean and getattr(args, "run", None):
+            finish_clean = completed_in_run(args, repo, root, worktree, initial_head)
 
         action = "none" if finish_clean else "preserve-and-report"
         reason: str | None = None
         if not finish_clean and not head_matches:
             reason = "repository HEAD does not match the proved integration HEAD"
         elif not finish_clean and snapshot["registered"]:
-            blocker = cleanup_blocker(snapshot)
+            blocker = cleanup_blocker(snapshot) or run_ownership_blocker(args, snapshot)
             if blocker is None:
                 action = "cleanup"
                 cleanup_paths.append(str(worktree))
@@ -1205,7 +1365,7 @@ def verify_cleanup(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
             else:
                 reason = blocker.get("error") or blocker["reason"]
         elif not finish_clean:
-            if snapshot["cleanup_eligible"]:
+            if snapshot["cleanup_eligible"] and not run_ownership_blocker(args, snapshot):
                 action = "retry-cleanup"
                 retry_paths.append(str(worktree))
             else:
@@ -1263,6 +1423,389 @@ def verify_cleanup(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
     return (0 if finish_clean else 1), packet
 
 
+def status_run(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
+    repo = repository_root(args.repo)
+    root = lane_root(args.root, repo, create=False)
+    path, inventory = run_inventory(repo, root, args.run)
+    head = git(repo, "rev-parse", "HEAD").stdout.strip()
+    registered = registered_worktrees(repo)
+    results = []
+    for item in inventory["lanes"].values():
+        lane = Path(item["worktree"])
+        try:
+            snapshot = observe_lane(repo, root, lane, head, registered=lane in registered)
+            ownership_error = run_ownership_blocker(args, snapshot)
+            if ownership_error:
+                results.append({**item, "error": ownership_error["reason"]})
+                continue
+            results.append({
+                **item, "registered": snapshot["registered"], "present": snapshot["present"],
+                "lane_head": snapshot["lane_head"], "clean": snapshot["clean"],
+                "integrated": snapshot["integrated"],
+                "resume_or_land_eligible": snapshot["resume_or_land_eligible"],
+                "cleanup_eligible": snapshot["cleanup_eligible"],
+                "command_active_or_interrupted": snapshot["command_active"],
+                "finish_clean": lane not in registered and completed_in_run(args, repo, root, lane, head),
+                "readiness": readiness_record(root, lane),
+            })
+        except (LaneError, OSError) as error:
+            results.append({**item, "error": str(error)})
+    final_head = git(repo, "rev-parse", "HEAD").stdout.strip()
+    ok = final_head == head and not any("error" in item for item in results)
+    return (0 if ok else 1), {
+        "ok": ok, "run": args.run, "inventory": str(path), "lanes": results,
+        "repository_head": final_head, "head_changed": final_head != head,
+        "actor_quiescence_unverified": True,
+    }
+
+
+def readiness_record(root: Path, lane: Path) -> dict[str, Any]:
+    path = lane_state(root, lane.name) / "readiness.json"
+    try:
+        if not path_present(path):
+            return {"state": "not-recorded"}
+        if is_reparse_point(path):
+            return {"state": "unreadable"}
+        result = json.loads(path.read_text(encoding="utf-8"))
+        if not isinstance(result, dict):
+            return {"state": "unreadable"}
+        return {"state": "recorded", "last_result": result, "freshness_unverified": True}
+    except (OSError, ValueError):
+        return {"state": "unreadable"}
+
+
+def execution_lane(args: argparse.Namespace) -> tuple[Path, Path, Path, dict[str, Any]]:
+    repo = repository_root(args.repo)
+    root = lane_root(args.root, repo, create=False)
+    lane = validate_lane(root, args.lane)
+    snapshot = observe_lane(repo, root, lane, git(repo, "rev-parse", "HEAD").stdout.strip())
+    if (not snapshot["registered"] or snapshot["present"] is not True
+            or snapshot["path_error"] or snapshot["status_error"]
+            or snapshot["manifest"] is None or not snapshot["runtime_valid"]
+            or snapshot["receipt_state"] != "absent" or snapshot["command_active"]):
+        raise LaneError("lane cannot execute commands: inspect its lifecycle/runtime state first")
+    return repo, root, lane, snapshot["manifest"]
+
+
+def assignments(values: list[str]) -> dict[str, str]:
+    result = {}
+    for value in values:
+        key, separator, content = value.partition("=")
+        if os.name == "nt":
+            key = key.upper()
+        if not separator or key in result:
+            raise LaneError("expected distinct KEY=value assignments")
+        result[key] = content
+    return result
+
+
+def expand_argument(value: str, manifest: dict[str, Any]) -> str:
+    for key in ("worktree", "runtime_root", "temp_root", "cache_root", "pytest_basetemp", "pytest_cache"):
+        value = value.replace(f"@{key}@", manifest[key])
+    return value
+
+
+def execution_profile(args: argparse.Namespace, manifest: dict[str, Any]) -> dict[str, Any]:
+    profile: dict[str, Any] = {}
+    if args.profile:
+        try:
+            profile = json.loads(Path(args.profile).read_text(encoding="utf-8-sig"))
+        except (OSError, ValueError) as error:
+            raise LaneError(f"cannot read execution profile: {error}") from error
+    allowed = {"env", "inputs", "outputs", "setup", "checks", "timeout"}
+    if not isinstance(profile, dict) or set(profile) - allowed:
+        raise LaneError("execution profile has unknown fields or is not an object")
+    for field in ("env", "inputs", "outputs"):
+        values = profile.get(field, {})
+        if not isinstance(values, dict):
+            raise LaneError(f"profile {field} must be a KEY=value object")
+        if os.name == "nt":
+            values = {key.upper(): value for key, value in values.items()}
+        values = {**values, **assignments(getattr(args, field))}
+        if any(not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", key)
+               or not isinstance(value, str) or "\0" in value for key, value in values.items()):
+            raise LaneError(f"invalid profile {field} assignment")
+        profile[field] = values
+    names = [key.upper() for field in ("env", "inputs", "outputs") for key in profile[field]]
+    if len(names) != len(set(names)) or {"LANE_WORKTREE", "LANE_RUNTIME"} & set(names):
+        raise LaneError("profile environment keys overlap or replace lane identity")
+    for field in ("setup", "checks"):
+        commands = profile.get(field, [])
+        if not isinstance(commands, list):
+            raise LaneError(f"profile {field} must be a list of argument arrays")
+        try:
+            commands = commands + [json.loads(value) for value in getattr(args, field, [])]
+        except ValueError as error:
+            raise LaneError(f"invalid {field} command JSON") from error
+        if any(not isinstance(command, list) or not command
+               or any(not isinstance(value, str) or "\0" in value for value in command)
+               for command in commands):
+            raise LaneError(f"profile {field} commands must be nonempty string arrays")
+        profile[field] = commands
+    timeout = args.timeout if args.timeout is not None else profile.get("timeout", 300)
+    if isinstance(timeout, bool) or not isinstance(timeout, (int, float)) or not math.isfinite(timeout) or timeout <= 0:
+        raise LaneError("timeout must be a finite positive number of seconds")
+    profile["timeout"] = timeout
+
+    for field in ("env", "inputs", "outputs"):
+        profile[field] = {key: expand_argument(value, manifest) for key, value in profile[field].items()}
+    for field in ("setup", "checks"):
+        profile[field] = [[expand_argument(value, manifest) for value in command] for command in profile[field]]
+    return profile
+
+
+def runtime_path(path: Path, runtime: Path) -> Path:
+    path = lexical_absolute(path)
+    if not contained(path, runtime):
+        raise LaneError(f"output must be inside this lane's disposable runtime: {path}")
+    if path.relative_to(runtime).parts[0].lower() in {
+        "lane.json", "active-command.json", "last-command.json", "readiness.json",
+    }:
+        raise LaneError("output overlaps helper metadata")
+    current = path
+    while current != runtime:
+        if path_present(current) and is_reparse_point(current):
+            raise LaneError(f"output path is redirected: {current}")
+        current = current.parent
+    return path
+
+
+def execution_environment(manifest: dict[str, Any], profile: dict[str, Any]) -> dict[str, str]:
+    lane = Path(manifest["worktree"])
+    runtime = Path(manifest["runtime_root"])
+    env = dict(os.environ)
+    env.update({
+        "TMP": manifest["temp_root"], "TEMP": manifest["temp_root"], "TMPDIR": manifest["temp_root"],
+        "XDG_CACHE_HOME": manifest["cache_root"], "UV_CACHE_DIR": str(runtime / "cache" / "uv"),
+        "PYTHONPYCACHEPREFIX": str(runtime / "cache" / "pycache"),
+        "LANE_WORKTREE": str(lane), "LANE_RUNTIME": str(runtime),
+    })
+    inputs = {}
+    for key, value in profile["inputs"].items():
+        path = (lane / value).resolve()
+        if path == runtime or contained(path, runtime) or contained(runtime, path):
+            raise LaneError(f"shared input overlaps disposable runtime: {path}")
+        if path.is_file():
+            with path.open("rb") as handle:
+                handle.read(1)
+        elif path.is_dir():
+            with os.scandir(path) as entries:
+                next(entries, None)
+        else:
+            raise LaneError(f"input is not an accessible file or directory: {path}")
+        inputs[key] = str(path)
+    outputs = {}
+    for key, value in profile["outputs"].items():
+        path = runtime_path(runtime / value, runtime)
+        if any(path == Path(item) or contained(path, Path(item)) or contained(Path(item), path)
+               for item in inputs.values()):
+            raise LaneError("shared inputs and writable outputs overlap")
+        path.mkdir(parents=True, exist_ok=True)
+        probe_directory(path)
+        outputs[key] = str(path)
+    env.update(profile["env"])
+    env.update(inputs)
+    env.update(outputs)
+    return {key.upper(): value for key, value in env.items()} if os.name == "nt" else env
+
+
+class WindowsJob:
+    """Own the launched command tree without process discovery or PID-based killing."""
+
+    def __init__(self) -> None:
+        import ctypes
+        from ctypes import wintypes
+
+        class BasicLimits(ctypes.Structure):
+            _fields_ = [
+                ("process_time", ctypes.c_longlong), ("job_time", ctypes.c_longlong),
+                ("flags", wintypes.DWORD), ("minimum_working_set", ctypes.c_size_t),
+                ("maximum_working_set", ctypes.c_size_t), ("active_process_limit", wintypes.DWORD),
+                ("affinity", ctypes.c_size_t), ("priority_class", wintypes.DWORD),
+                ("scheduling_class", wintypes.DWORD),
+            ]
+
+        class ExtendedLimits(ctypes.Structure):
+            _fields_ = [("basic", BasicLimits), ("io_counters", ctypes.c_ulonglong * 6),
+                        ("memory_limits", ctypes.c_size_t * 4)]
+
+        self.ctypes = ctypes
+        self.api = ctypes.WinDLL("kernel32", use_last_error=True)
+        signatures = {
+            "CreateJobObjectW": ([ctypes.c_void_p, wintypes.LPCWSTR], wintypes.HANDLE),
+            "SetInformationJobObject": ([wintypes.HANDLE, ctypes.c_int, ctypes.c_void_p, wintypes.DWORD], wintypes.BOOL),
+            "AssignProcessToJobObject": ([wintypes.HANDLE, wintypes.HANDLE], wintypes.BOOL),
+            "TerminateJobObject": ([wintypes.HANDLE, wintypes.UINT], wintypes.BOOL),
+            "CloseHandle": ([wintypes.HANDLE], wintypes.BOOL),
+        }
+        for name, (arguments, result) in signatures.items():
+            method = getattr(self.api, name)
+            method.argtypes, method.restype = arguments, result
+        self.handle = self.api.CreateJobObjectW(None, None)
+        if not self.handle:
+            raise ctypes.WinError(ctypes.get_last_error())
+        limits = ExtendedLimits()
+        limits.basic.flags = 0x2000  # JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE
+        if not self.api.SetInformationJobObject(self.handle, 9, ctypes.byref(limits), ctypes.sizeof(limits)):
+            error = ctypes.WinError(ctypes.get_last_error())
+            self.close()
+            raise error
+
+    def assign(self, process: subprocess.Popen[bytes]) -> None:
+        if not self.api.AssignProcessToJobObject(self.handle, int(process._handle)):
+            raise self.ctypes.WinError(self.ctypes.get_last_error())
+
+    def terminate(self) -> None:
+        if not self.api.TerminateJobObject(self.handle, 124):
+            raise self.ctypes.WinError(self.ctypes.get_last_error())
+
+    def close(self) -> None:
+        if self.handle:
+            if not self.api.CloseHandle(self.handle):
+                raise self.ctypes.WinError(self.ctypes.get_last_error())
+            self.handle = None
+
+
+def stop_command(process: subprocess.Popen[bytes], job: WindowsJob | None) -> None:
+    """Stop only the process group/tree launched by this invocation."""
+    if job is not None:
+        job.terminate()
+    else:
+        try:
+            os.killpg(process.pid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+    if process.poll() is None:
+        process.kill()
+    process.wait(timeout=15)
+
+
+def execute_command(manifest: dict[str, Any], command: list[str], env: dict[str, str],
+                    timeout: float) -> dict[str, Any]:
+    runtime = Path(manifest["runtime_root"])
+    marker = runtime / "active-command.json"
+    record = {"command": command, "cwd": manifest["worktree"], "state": "starting", "started_at": time.time()}
+    # Exclusive creation rejects overlapping commands and preserves interrupted custody.
+    with marker.open("x", encoding="utf-8") as handle:
+        json.dump(record, handle)
+    started = time.monotonic()
+    process = None
+    job = None
+    reader = None
+    tail = bytearray()
+    total = 0
+    timed_out = False
+    stopped = True
+    error = None
+    try:
+        launch = command
+        if os.name == "nt":
+            job = WindowsJob()
+            # The wrapper waits for input, so no user command can start before job assignment.
+            wrapper = "import json,subprocess,sys; args=json.loads(sys.stdin.buffer.readline()); sys.exit(subprocess.call(args,stdin=subprocess.DEVNULL))"
+            launch = [sys.executable, "-c", wrapper]
+        process = subprocess.Popen(
+            launch, cwd=manifest["worktree"], env=env, stdin=subprocess.PIPE if job else subprocess.DEVNULL,
+            stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+            start_new_session=os.name != "nt",
+            creationflags=(subprocess.CREATE_NEW_PROCESS_GROUP | subprocess.CREATE_NO_WINDOW) if os.name == "nt" else 0,
+        )
+        write_json(marker, {**record, "state": "running", "pid": process.pid})
+        if job:
+            job.assign(process)
+            assert process.stdin is not None
+            process.stdin.write(json.dumps(command).encode("utf-8") + b"\n")
+            process.stdin.close()
+
+        def drain() -> None:
+            nonlocal total
+            assert process is not None and process.stdout is not None
+            while chunk := process.stdout.read(4096):
+                total += len(chunk)
+                tail.extend(chunk)
+                del tail[:-16384]
+
+        reader = threading.Thread(target=drain, daemon=True)
+        reader.start()
+        try:
+            process.wait(timeout=timeout)
+        except subprocess.TimeoutExpired:
+            timed_out = True
+            stop_command(process, job)
+    except (OSError, subprocess.SubprocessError, KeyboardInterrupt) as failure:
+        error = str(failure) or type(failure).__name__
+    finally:
+        if process is not None and process.poll() is None:
+            try:
+                stop_command(process, job)
+            except (OSError, subprocess.SubprocessError) as failure:
+                error = str(failure)
+                stopped = False
+        if job:
+            try:
+                job.close()
+            except OSError as failure:
+                error = str(failure)
+                stopped = False
+        if reader is not None:
+            reader.join(timeout=2)
+            stopped = stopped and not reader.is_alive()
+        if process is not None and process.stdout is not None and stopped:
+            process.stdout.close()
+    result = {
+        **record, "state": "finished" if stopped else "uncertain", "pid": process.pid if process else None,
+        "ok": process is not None and process.returncode == 0 and not timed_out and not error and stopped,
+        "returncode": process.returncode if process else None, "timed_out": timed_out,
+        "elapsed_seconds": round(time.monotonic() - started, 3), "error": error,
+        "output_tail": bytes(tail).decode("utf-8", errors="replace"), "output_truncated": total > 16384,
+        "actor_quiescence_unverified": True,
+    }
+    write_json(runtime / "last-command.json", result)
+    if stopped:
+        marker.unlink()
+    return result
+
+
+def lane_command(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
+    _, _, lane, manifest = execution_lane(args)
+    ready = args.operation == "ready"
+    record = Path(manifest["runtime_root"]) / "readiness.json"
+    result: dict[str, Any] = {"ok": False, "worktree": str(lane), "state": "checking", "commands": []}
+    if ready:
+        write_json(record, result)
+    try:
+        profile = execution_profile(args, manifest)
+        if ready and not profile["checks"]:
+            raise LaneError("ready requires at least one explicit health check (--check or profile checks)")
+        command = getattr(args, "command", [])
+        if command[:1] == ["--"]:
+            command = command[1:]
+        if not ready and not command:
+            raise LaneError("exec requires a command after --")
+        command = [expand_argument(value, manifest) for value in command]
+        env = execution_environment(manifest, profile)
+        result.update(
+            head=git(lane, "rev-parse", "HEAD").stdout.strip(),
+            profile_digest=hashlib.sha256(json.dumps(profile, sort_keys=True).encode()).hexdigest(),
+            environment_keys=sorted(set(profile["env"]) | set(profile["inputs"]) | set(profile["outputs"])),
+            inputs={key: env[key] for key in profile["inputs"]},
+            outputs={key: env[key] for key in profile["outputs"]},
+        )
+        commands = (([] if args.checks_only else profile["setup"]) + profile["checks"]) if ready else [command]
+        for command in commands:
+            evidence = execute_command(manifest, command, env, profile["timeout"])
+            result["commands"].append(evidence)
+            if not evidence["ok"]:
+                break
+        result["ok"] = all(item["ok"] for item in result["commands"])
+    except (LaneError, OSError) as error:
+        result["error"] = str(error)
+    result.update(state="passed" if result["ok"] else "failed", observed_at=time.time())
+    if ready:
+        write_json(record, result)
+    return (0 if result["ok"] else 1), result
+
+
 def parser() -> argparse.ArgumentParser:
     value = argparse.ArgumentParser(description=__doc__)
     operations = value.add_subparsers(dest="operation", required=True)
@@ -1272,11 +1815,14 @@ def parser() -> argparse.ArgumentParser:
     prepare_parser.add_argument("--root", required=True)
     prepare_parser.add_argument("--base", required=True)
     prepare_parser.add_argument("--name", required=True)
+    prepare_parser.add_argument("--run", help="optional named inventory for this delivery")
 
     cleanup_parser = operations.add_parser("cleanup")
     cleanup_parser.add_argument("--repo", required=True)
     cleanup_parser.add_argument("--root", required=True)
     cleanup_parser.add_argument("--completed", action="append", default=[])
+    cleanup_parser.add_argument("--integration-head", required=True, help="proved full commit ID")
+    cleanup_parser.add_argument("--run", help="select owned run lanes when --completed is omitted")
 
     inspect_parser = operations.add_parser("inspect")
     inspect_parser.add_argument("--repo", required=True)
@@ -1288,6 +1834,28 @@ def parser() -> argparse.ArgumentParser:
     verify_parser.add_argument("--root", required=True)
     verify_parser.add_argument("--integration-head", required=True)
     verify_parser.add_argument("--lane", action="append", default=[])
+    verify_parser.add_argument("--run", help="verify the complete named inventory")
+
+    status_parser = operations.add_parser("status", help="inspect every lane in a named run")
+    status_parser.add_argument("--repo", required=True)
+    status_parser.add_argument("--root", required=True)
+    status_parser.add_argument("--run", required=True)
+    for operation in ("ready", "exec"):
+        command_parser = operations.add_parser(operation, help="run explicit setup/checks" if operation == "ready" else "run a command in the lane environment")
+        command_parser.add_argument("--repo", required=True)
+        command_parser.add_argument("--root", required=True)
+        command_parser.add_argument("--lane", required=True)
+        command_parser.add_argument("--profile", help="optional JSON execution profile; never auto-discovered")
+        command_parser.add_argument("--env", dest="env", action="append", default=[], metavar="KEY=value")
+        command_parser.add_argument("--input", dest="inputs", action="append", default=[], metavar="KEY=path")
+        command_parser.add_argument("--output", dest="outputs", action="append", default=[], metavar="KEY=runtime-relative-path")
+        command_parser.add_argument("--timeout", type=float, help="per-command seconds (default 300)")
+        if operation == "ready":
+            command_parser.add_argument("--checks-only", action="store_true", help="reuse established setup and rerun health checks")
+            command_parser.add_argument("--setup", dest="setup", action="append", default=[], help="JSON argument array; repeatable")
+            command_parser.add_argument("--check", dest="checks", action="append", default=[], help="JSON argument array; repeatable")
+        else:
+            command_parser.add_argument("command", nargs=argparse.REMAINDER)
     return value
 
 
@@ -1300,6 +1868,10 @@ def main() -> int:
             code, packet = inspect_lane(args)
         elif args.operation == "verify-cleanup":
             code, packet = verify_cleanup(args)
+        elif args.operation == "status":
+            code, packet = status_run(args)
+        elif args.operation in {"ready", "exec"}:
+            code, packet = lane_command(args)
         else:
             code, packet = cleanup(args)
     except (LaneError, OSError) as error:

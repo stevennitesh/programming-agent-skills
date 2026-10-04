@@ -13,7 +13,7 @@ scenario, or maintainability cost it claims. Check the current code, accepted
 requirements, supported versions, repository policy, and relevant history far
 enough to determine whether the claim holds here.
 
-Classify each item as:
+Classify claimed defects as:
 
 - **admitted:** it satisfies the main review finding standard;
 - **disproved:** current evidence shows the claimed problem does not apply;
@@ -26,13 +26,14 @@ silently override a user-settled product or architecture decision.
 
 ## Apply corrections only within authority
 
-If fixes are already authorized, implement only admitted corrections and any
-necessary in-scope consequences. Preserve stable finding identities when the
+When changes are authorized, apply supported corrections and other authorized
+improvements, distinguishing required fixes from optional changes. Include
+necessary in-scope consequences and preserve stable finding identities when the
 feedback already has them.
 
-Review the successor against the admitted item and the behavior affected by its
-correction. Do not broaden into unrelated cleanup merely because a reviewer
-mentioned it.
+Review the successor against the intended outcome and the behavior affected by
+the correction or improvement. Do not broaden into unrelated cleanup merely
+because a reviewer mentioned it.
 
 External replies, comment resolution, publication, merge, and acceptance of
 residual risk remain separately authorized effects.

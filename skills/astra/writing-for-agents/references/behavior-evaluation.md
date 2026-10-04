@@ -1,143 +1,57 @@
 # Behavior evaluation
 
-Use this reference when a meaningful claim depends on whether agent instructions
-change behavior: migrating to another model or host, materially revising a skill,
-changing discovery, deciding whether guidance still earns its context, or
-evaluating a claimed improvement.
+Use when deciding what evidence a consequential instruction change, model/host
+migration, keep-or-retire decision, or efficacy claim needs. Choose the method
+and depth to fit the uncertainty and consequence. This reference does not require
+an evaluation campaign for every edit or authorize extra agents or external effects.
 
-Do not require this procedure for ordinary wording corrections whose intended
-meaning and behavior are unchanged.
+## Match evidence to the claim
 
-## 1. State the behavioral claim
+Name the behavior the instruction should change or preserve, the receiver, and
+the relevant environment. Review can establish that wording preserves an accepted
+contract; claims about better results, reliability, or efficiency need observed
+behavior. When that evidence is unavailable, report the limit without implying
+that an editorial improvement has been empirically proved.
 
-Describe the behavior the instruction is supposed to change or preserve.
+For a comparison, choose a baseline that answers the question: ordinary execution
+without the method, the current method, or a reduced candidate. A migration or
+keep-or-retire decision may benefit from all three. Keep the same necessary task
+context, user decisions, permissions, and acceptance criteria in each case; do not
+make a baseline weaker by withholding information the receiver needs.
 
-Prefer a claim such as:
+Control consequential variables such as model, effort, tools, inputs, and source
+state where practical. Disclose differences that limit attribution. Use fresh
+contexts when earlier answers or candidate wording would bias the comparison.
+On a model upgrade, consider a reduced candidate before adding new scaffolding.
 
-> The review guidance should preserve candidate identity and find consequential
-> defects without introducing unnecessary review ceremony.
+## Observe outcomes
 
-over:
+Choose scenarios that can distinguish the alternatives, including relevant
+failure cases. Judge results against independent task acceptance: correctness,
+completion, preservation of authority, consequential omissions, and unnecessary
+process or scope. Procedural obedience alone is not success.
 
-> Make the review prompt better.
+For discovery changes, distinguish selection from execution. Include realistic
+matches and near-misses; use host selection/loading evidence when available and
+report when it is unavailable. A good final answer alone does not prove that the
+intended skill was selected.
 
-Name the receiver, relevant environment, and consequence if the behavior is
-missing. Keep explicit user requirements, project contracts, authorization, and
-safety boundaries fixed; evaluation does not reopen them merely because a capable
-model sometimes follows them without prompting.
+Compare efficiency only among results meeting the same correctness, completeness,
+and required-effect criteria. Include the cost of handoffs, review, and repair
+when relevant. Doing less required work is not an efficiency improvement.
 
-## 2. Choose a comparison that answers the question
+Use repetition or held-out cases when variation could change the decision or the
+claim extends beyond the observed examples. Include failures and material
+variation; one success does not establish general reliability or portability to
+another model or host.
 
-Use the smallest comparison that can establish the requested claim:
+## Decide and report
 
-- **New method:** baseline without the method versus candidate.
-- **Revision:** frozen current method versus candidate.
-- **Keep, simplify, or retire:** baseline without the method, current method, and
-  candidate or reduced method.
+Retain guidance that supplies needed context or authority, prevents a credible
+failure, or improves the accepted result at reasonable cost. Simplify or retire
+methods when the evidence supports it, preserving project requirements and
+operational contracts even when the model sometimes follows them unaided.
 
-For a model or host upgrade, include a reduced candidate that removes suspected
-legacy compensations before inventing new instructions. A newer receiver behaving
-well under the current method does not establish that the current scaffolding is
-still necessary.
-
-The baseline still receives the same task, repository guidance, user decisions,
-permissions, safety requirements, and project-specific facts that ordinary work
-would receive. Do not handicap it by withholding necessary context merely to make
-the skill appear useful.
-
-Hold other consequential variables constant: receiver model, reasoning setting,
-tools, repository state, task input, and acceptance criteria. If one of these
-changes, do not attribute the result solely to the instruction.
-
-Use fresh receiver contexts when earlier answers or candidate wording could
-contaminate the comparison.
-
-## 3. Test discovery separately from execution
-
-A method cannot help if the intended task never receives it, and a good method
-can still be harmful if it activates too broadly.
-
-For discovery changes, test:
-
-- representative requests that should select the skill;
-- realistic near-misses that should not; and
-- ambiguous cases where another skill or direct execution is preferable.
-
-Use host evidence of selection or loading when available. If the host does not
-expose that state, report the limitation rather than inferring selection solely
-from the final answer.
-
-Do not treat a discovery failure as proof that the skill body is poor, or a
-successful trigger as proof that its instructions improve execution.
-
-## 4. Judge outcomes, not obedience
-
-Evaluate the result against the task's independent acceptance criteria and the
-failure the instruction is meant to prevent.
-
-Useful measures can include:
-
-- correctness and completion;
-- consequential omissions;
-- invented policy or unsupported assumptions;
-- unnecessary questions, approval stops, or premature stops on non-blocking
-  status, findings, or reversible choices;
-- unnecessary plans, progress files, artifacts, delegation, reviews, or tests;
-- scope expansion;
-- preservation of authority and required effects;
-- maintainability or simplicity of the produced change;
-- latency, token use, or tool calls when efficiency is part of the claim.
-
-Do not reward a candidate merely for following more instructions from the
-candidate itself. An instruction can achieve perfect procedural compliance while
-making the actual result worse.
-
-When the claimed improvement is efficiency—fewer tokens, tool calls, lines of
-code, elapsed time, context, or cost—gate the comparison on the same accepted
-correctness, completeness, safety, and required-effect criteria first. A candidate
-that does less required work or drops a protection does not win an efficiency
-comparison. Report efficiency only among outcomes that satisfy those gates, and
-report any gate failure separately rather than averaging it into a score.
-
-Use a scenario that can expose the intended distinction. A happy path on which
-baseline and candidate naturally behave the same provides little evidence about
-the value of the instruction.
-
-## 5. Use enough variation for the strength of the claim
-
-A single run can reveal a clear failure, but one success does not establish broad
-reliability.
-
-For an editorial or local migration decision, a small set of representative
-cases may be sufficient to expose obvious regressions or no-op guidance. Add
-repetitions or held-out cases when variance could change the decision or when the
-claim is meant to generalize across task types.
-
-When comparing receiver models, hosts, or reasoning settings, change one
-meaningful dimension at a time when practical. Behavior established on one model
-or harness is evidence for that environment, not automatic portability to another.
-
-Record important failures as well as successes. Do not tune the candidate only
-to the visible examples and then describe performance on those same examples as
-general evidence.
-
-## 6. Decide whether the instruction earns its place
-
-Retain guidance when it provides material context or authority the receiver needs,
-changes a useful decision, prevents a credible failure, or measurably improves the
-accepted result at reasonable cost.
-
-Simplify guidance when a smaller version preserves the useful behavior with less
-context, ceremony, or accidental constraint.
-
-Retire a method when representative evidence shows no useful marginal behavior
-and it does not carry project-specific facts, authority, fragile operational
-contracts, or other information the receiver still requires.
-
-Keep uncertainty explicit when evidence is mixed or incomplete. Do not turn
-absence of demonstrated benefit into proof of harm, or structural validity into
-proof of efficacy.
-
-Report the comparison conditions, decisive observations, material variability,
-and resulting keep, simplify, revise, or retire recommendation. Separate observed
-behavior from the inference drawn from it.
+Report decisive observations, comparison conditions, limits, and the resulting
+recommendation. Distinguish observed behavior from inference. Absence of proven
+benefit is not proof of harm; valid packaging is not proof of efficacy.

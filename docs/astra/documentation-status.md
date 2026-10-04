@@ -6,6 +6,41 @@ referenced research/synthesis; it is not an audit of every historical packet or
 external project. The [design brief](design-brief.md) owns current direction. Do
 not treat this inventory as an execution backlog.
 
+## Context maintenance and memory ownership, 2026-10-03
+
+Context-hygiene now owns ongoing repository guidance maintenance and durable
+memory review. It is automatically selectable for relevant context problems
+within the active task; this does not authorize unrelated sweeps or memory writes.
+Repo-bootstrap owns initial guidance and requested setup migrations, while
+writing-for-agents owns a selected instruction artifact. Their current pointers,
+selection examples, and global bootstrap seed reflect that division.
+
+The root now leaves investigation, consolidation, and verification to the agent.
+Repository and managed-memory references preserve local meaning, historical
+evidence, and supported mutation boundaries. Temporary task state is evaluated
+separately from durable lessons; read-only audits finish with findings, while
+memory cleanup distinguishes submitted requests from verified active changes.
+These are source changes, not installed or global-memory updates, and do not
+establish improved model performance.
+
+## Context ownership cleanup, 2026-10-03
+
+Current policy retains project facts, accepted requirements, authority, and useful
+workflow contracts. Generic coding advice no longer has a shared required owner.
+The repository engineering contract and Astra bootstrap seed are retired from
+active use, with snapshots under `.archive/` for historical references.
+
+Unique repository constraints now live in `AGENTS.md`. `CONTEXT.md` owns package
+boundaries; the design brief owns skill-design decisions; skills own execution.
+The README, contributor guidance, portable and global bootstrap templates, ADR
+applicability notices, and validator were reconciled with that split. Focused
+compatibility safeguards remain at the design, review, and delegation owners.
+
+Earlier dated findings below describe their recorded state, including then-active
+engineering-contract guidance. They do not reinstate retired requirements.
+Source cleanup does not update installed skills or personal global instructions,
+and editorial reconciliation does not establish improved model performance.
+
 ## GPT-6 Astra prompting reconciliation, 2026-09-24
 
 Reviewed OpenAI's "Rethinking skills and prompts for GPT-6 Astra" against the

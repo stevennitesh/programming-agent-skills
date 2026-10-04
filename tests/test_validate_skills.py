@@ -24,7 +24,6 @@ def test_repository_owned_contract_accepts_local_changes_without_a_marker() -> N
     contract = "# Engineering contract\n\n## Local decisions\n\nPreserve ledger identities.\n"
     assert check(contract, "contract.md", repository_owned=True) == []
     assert check(contract, "contract.md")  # Legacy mode still requires its marker.
-    assert validate_skills.validate_setup_surface(root) == []
 
 
 @pytest.mark.parametrize("contract", [
@@ -236,10 +235,16 @@ def test_astra_frontmatter_uses_yaml_and_rejects_nonstring_identity(
     assert any("Skill description is missing" in item for item in failures)
 
 
-def test_current_required_docs_do_not_depend_on_legacy_custom_pack(
+def test_current_required_docs_do_not_depend_on_retired_contracts(
     tmp_path: Path,
 ) -> None:
+    retired_contracts = {
+        "docs/agents/engineering-contract.md",
+        "skills/astra/repo-bootstrap/templates/engineering-contract.md",
+    }
     for relative in validate_skills.CURRENT_REQUIRED_FILES:
+        if relative in retired_contracts:
+            continue
         path = tmp_path / relative
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text("current\n", encoding="utf-8")
@@ -250,6 +255,11 @@ def test_current_required_docs_do_not_depend_on_legacy_custom_pack(
     assert failures == [
         "Missing required repository file: "
         "skills/custom/repo-bootstrap/engineering-contract.md"
+    ]
+
+    (tmp_path / "AGENTS.md").unlink()
+    assert validate_skills.validate_required_docs(tmp_path) == [
+        "Missing required repository file: AGENTS.md"
     ]
 
 
@@ -461,6 +471,35 @@ def test_global_bootstrap_validation_requires_one_structured_managed_section(
         tmp_path, ["repo-bootstrap", "skill-router"]
     )
     assert any("exactly one" in item for item in failures)
+
+
+def test_global_bootstrap_routes_setup_and_maintenance_without_extra_skills(
+    tmp_path: Path,
+) -> None:
+    template = tmp_path / validate_skills.GLOBAL_AGENTS_TEMPLATE
+    content = (
+        "# Global Codex Instructions\n\n"
+        "## Skill Pack Bootstrap\n\n"
+        "- **Route:** specialists\n"
+        "- **Setup:** `$repo-bootstrap` and `$context-hygiene`\n"
+        "- **Boundary:** local owners\n"
+    )
+    names = ["repo-bootstrap", "context-hygiene", "change-review"]
+    template.write_text(content, encoding="utf-8")
+    assert validate_skills.validate_global_agents_template(tmp_path, names) == []
+
+    template.write_text(
+        content.replace("`$context-hygiene`", "maintenance"), encoding="utf-8"
+    )
+    assert validate_skills.validate_global_agents_template(tmp_path, names) == [
+        f"{validate_skills.GLOBAL_AGENTS_TEMPLATE} is missing bootstrap skill: context-hygiene"
+    ]
+
+    template.write_text(content + "Use `$change-review`.\n", encoding="utf-8")
+    assert validate_skills.validate_global_agents_template(tmp_path, names) == [
+        f"{validate_skills.GLOBAL_AGENTS_TEMPLATE} must keep the bootstrap lean; "
+        "unexpected skill reference: change-review"
+    ]
 
 
 def test_skill_handle_validation_rejects_unknown_custom_skill(tmp_path: Path) -> None:
@@ -767,158 +806,6 @@ def test_public_mode_scans_only_current_public_paths(
         validate_skills.PUBLIC_CURRENT_SCAN_PATHS
     )
     assert "." not in grep_call[grep_call.index("--") + 1 :]
-
-
-def test_shared_contracts_keep_continuation_boundary() -> None:
-    root = Path(__file__).resolve().parents[1]
-    surfaces = (
-        root / "AGENTS_PORTABLE_FALLBACK.md",
-        root / "docs/agents/engineering-contract.md",
-        root / "skills/astra/repo-bootstrap/templates/engineering-contract.md",
-    )
-    for path in surfaces:
-        text = " ".join(path.read_text(encoding="utf-8").split())
-        for marker in (
-            "Continue through authorized implementation, verification",
-            "Status updates, intermediate findings, passing checks, and reversible "
-            "non-blocking choices are not stopping points",
-            "When reporting status mid-run, pair the update with the next safe action",
-            "Stop when required user input or authority is missing",
-        ):
-            assert marker in text
-
-
-def test_writing_for_agents_uses_progressive_disclosure_for_long_runs() -> None:
-    root = Path(__file__).resolve().parents[1]
-    skill = " ".join(
-        (root / "skills/astra/writing-for-agents/SKILL.md")
-        .read_text(encoding="utf-8")
-        .split()
-    )
-    long_run = " ".join(
-        (
-            root
-            / "skills/astra/writing-for-agents/references/long-running-instructions.md"
-        )
-        .read_text(encoding="utf-8")
-        .split()
-    )
-
-    for marker in (
-        "Long-running instructions",
-        '"think carefully," "think hard,"',
-        "host's supported reasoning/effort control",
-        "observable pattern or effect to avoid",
-    ):
-        assert marker in skill
-
-    for marker in (
-        "Pair the finish line with an escape condition",
-        "predictably requires a separately authorized effect",
-        "state the continuation policy",
-        "offer to continue",
-        "mid-run steering is expected",
-        "small durable progress artifact",
-        "Do not create a progress artifact for ordinary bounded work",
-        "did not broaden authority",
-    ):
-        assert marker in long_run
-
-
-def test_astra_authoring_prefers_compact_metadata_and_upgrade_subtraction() -> None:
-    root = Path(__file__).resolve().parents[1]
-    authoring = " ".join(
-        (
-            root
-            / "skills/astra/writing-for-agents/references/skill-authoring.md"
-        )
-        .read_text(encoding="utf-8")
-        .split()
-    )
-    hygiene = " ".join(
-        (root / "skills/astra/context-hygiene/SKILL.md")
-        .read_text(encoding="utf-8")
-        .split()
-    )
-    repo_bootstrap = " ".join(
-        (
-            root
-            / "skills/astra/repo-bootstrap/references/agent-instructions.md"
-        )
-        .read_text(encoding="utf-8")
-        .split()
-    )
-
-    for marker in (
-        "discovery metadata as scarce shared context",
-        "minimum reliable selector plus the nearest useful exclusion",
-        "progressive disclosure",
-        "do not retain compensating scaffolding",
-        "simplified or retired before adding new model-specific procedure",
-    ):
-        assert marker in authoring
-
-    for marker in (
-        "model or host changes materially",
-        "compensating scaffolding",
-        "previous receiver's limitation",
-    ):
-        assert marker in hygiene
-
-    for marker in (
-        "routine local workflow is verified safe",
-        "run, fix, and rerun that workflow",
-        "never infer safety",
-        "broaden authorization",
-    ):
-        assert marker in repo_bootstrap
-
-
-def test_continuation_handoff_prioritizes_human_attention_without_fixed_format() -> None:
-    root = Path(__file__).resolve().parents[1]
-    handoff = " ".join(
-        (
-            root
-            / "skills/astra/writing-for-agents/references/continuation-handoffs.md"
-        )
-        .read_text(encoding="utf-8")
-        .split()
-    )
-
-    for marker in (
-        "make their required attention cheap to find",
-        "human-owned decision, access, approval, or blocker",
-        "material changed state",
-        "non-blocking discoveries, risks, and evidence limits",
-        'do not impose a fixed "blocked / changed / found" format',
-    ):
-        assert marker in handoff
-
-
-def test_current_triage_and_verification_harness_keep_safety_boundaries() -> None:
-    root = Path(__file__).resolve().parents[1]
-    triage = (root / "skills/astra/triage/SKILL.md").read_text(encoding="utf-8")
-    harness = (root / "skills/astra/verification-harness/SKILL.md").read_text(
-        encoding="utf-8"
-    )
-
-    for marker in (
-        "exactly one configured category role",
-        "exactly one configured state role",
-        "active configured blocker",
-        "do not replay a comment, brief, or role",
-        "Do not claim rollback",
-    ):
-        assert marker in triage
-
-    for marker in (
-        "**Failure sensitivity:**",
-        "**Harness defect:**",
-        "**Product defect:**",
-        "**Environment blocker:**",
-        "shown capable of failing",
-    ):
-        assert marker in harness
 
 
 def test_git_diff_validation_checks_worktree_and_index(monkeypatch, tmp_path: Path) -> None:

@@ -39,16 +39,14 @@ CURRENT_REQUIRED_FILES = (
     "docs/agents/issue-tracker.md",
     "docs/agents/triage-labels.md",
     "docs/agents/domain.md",
-    "docs/agents/engineering-contract.md",
     "docs/plans/README.md",
     "scripts/install_skills.py",
     "scripts/skill_pack_contract.py",
-    "skills/astra/repo-bootstrap/templates/engineering-contract.md",
 )
 LEGACY_REQUIRED_FILES = (
     "skills/custom/repo-bootstrap/engineering-contract.md",
 )
-GLOBAL_AGENTS_SKILLS = frozenset(("repo-bootstrap",))
+GLOBAL_AGENTS_SKILLS = frozenset(("repo-bootstrap", "context-hygiene"))
 GLOBAL_AGENTS_FORBIDDEN_TOKENS = ("## Shell Search Safety", "rg -F --")
 PUBLISHED_MARKDOWN_ROOTS = (
     "skills",
@@ -100,7 +98,6 @@ CURRENT_ACTIVE_SURFACE_FILES = (
     GLOBAL_AGENTS_TEMPLATE,
     "docs/astra/design-brief.md",
     ASTRA_SELECTION_EXAMPLES,
-    "docs/agents/engineering-contract.md",
     "docs/agents/issue-tracker.md",
     "docs/agents/triage-labels.md",
     "docs/agents/domain.md",
@@ -708,7 +705,6 @@ def validate_legacy_integrity(root: Path) -> tuple[list[str], list[str]]:
     failures.extend(validate_pack_integration_contract(root))
     failures.extend(validate_research_catalog_contract(root))
     failures.extend(validate_setup_schema_manifest(root))
-    failures.extend(validate_setup_surface(root))
     return skill_names, failures
 
 
@@ -803,24 +799,6 @@ def validate_setup_schema_manifest(root: Path) -> list[str]:
         )
 
     return failures
-
-
-def validate_setup_surface(root: Path) -> list[str]:
-    validator = root / "skills/custom/repo-bootstrap/scripts/validate_setup.py"
-    if not validator.is_file():
-        return [f"Missing setup-surface validator: {validator.relative_to(root).as_posix()}"]
-    result = subprocess.run(
-        [sys.executable, str(validator), str(root), "--repository-owned-contract",
-         "--domain-owner", "shape-work"],
-        cwd=root,
-        text=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-    )
-    if result.returncode == 0:
-        return []
-    output = (result.stdout + result.stderr).strip()
-    return ["Repo setup surface is invalid:", *indent_lines(output)]
 
 
 def global_agents_template_skill_references(root: Path) -> list[str]:

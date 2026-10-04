@@ -1,17 +1,26 @@
 # Attention scan
 
-Use only for a read-only overview of raw intake requiring maintainer attention.
+Use for an overview or cleanup of the requested intake, backlog, or tracked work
+set. An overview stays read-only; an authorized cleanup may proceed into the
+corrections supported by its findings.
 
-Query the configured tracker and return these disjoint groups, oldest first:
+Query the configured tracker within the requested scope. Choose filters, ordering,
+grouping, and depth according to the user's priorities and likely useful actions.
+Signals can include new intake, conflicting states, new information, stale
+readiness, newly satisfied prerequisites, duplicates, or possible completion.
+Oldest-first ordering and fixed categories are optional, not a required scan shape.
 
-1. items missing or carrying conflicting configured category or state roles;
-2. items in `needs-triage`; and
-3. items in `needs-info` with reporter activity since the latest attributable
-   triage request.
+Use bounded code, history, or verification checks when they can change the
+assessment. Distinguish a candidate for investigation from an established finding.
+Age and labels alone do not establish abandonment, readiness, or completion. When
+the tracker cannot establish an activity boundary or relationship, report the gap.
 
-Assign each item to its first matching group. If the tracker cannot establish the
-activity boundary, report that uncertainty rather than guessing.
+Include PRs or MRs only when configured for this purpose and identify their type.
+Account for pagination, filters, or sampling that limit coverage; counts must make
+their scope and any overlapping groups clear. Do not present an unexamined item as
+reconciled. One difficult item need not block independent assessment or correction.
 
-Include external PRs or MRs only when configured as intake and identify their
-type. Return counts and concise summaries. Do not verify claims, shape product
-meaning, publish handoffs, or mutate tracker state during the scan.
+Return the findings and useful next actions at a level suited to the queue.
+During cleanup, apply and verify changes under the main skill's authority and
+state-preservation rules. Scanning does not expand into implementation or unrelated
+repository maintenance.

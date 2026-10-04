@@ -1,13 +1,15 @@
 # Inputs, effects, and recovery
 
-Read the branches the generated procedure actually needs. Prefer established
+Read the branches the chosen procedure actually needs. Prefer established
 repository utilities over a new wizard framework.
 
 ## Private and structured input
 
 Capture secrets with non-echoing native input in the operator's private session.
 Refuse an insecure fallback when secure input is unavailable. A hidden prompt in
-an agent-attached or recorded terminal is not private.
+an agent-attached or recorded terminal is not private. Check the input API's
+failure behavior; for example, Python's `getpass` can warn and fall back to stdin
+when echo-free input is unavailable, so that fallback must be rejected.
 
 Keep captured values as data. Do not use `eval`, source responses as code, build
 shell commands from private input, enable shell tracing around secrets, or place
@@ -62,3 +64,29 @@ Preserve completed external effects unless rollback is itself authorized and
 understood. Record only non-secret recovery state such as resource identifiers and
 completion status, then verify it against live state on resume. Stop dependent
 stages while prerequisites remain unverified.
+
+## Non-secret completion handoff
+
+Choose the smallest return path sufficient for the blocker. A human can report
+that a named step completed without sharing its private output. When a separate
+status result is useful, emit only deliberately selected non-secret fields tied
+to the current task and target. Keep it separate from the private transcript;
+do not export raw logs and rely on redaction to make them safe. No persistent
+status file, polling loop, or callback service is required.
+
+Distinguish a stored value, provider acceptance, and application readiness. Use
+fresh evidence for the current prerequisite so a stale success result cannot
+unblock a later attempt. Attribute human-reported evidence as such; do not claim
+independent verification when the human's report is the available evidence.
+
+A known consumer or status check may verify readiness within existing authority
+if its observable output is constrained to safe, non-secret results. Check its
+success and failure output before agent-visible use. Do not inspect secret file
+contents, environment dumps, private-session output, or raw credentialed-tool
+diagnostics to establish readiness. If safe verification is unavailable, leave
+the check with the human and request only the relevant non-secret result.
+
+Validate any exported status with dummy inputs, including failure and cancellation.
+An unknown or failed prerequisite must not produce a success signal. A safe status
+channel does not grant access to the private session or authorize new external
+effects; resume only work already within the task's authority.

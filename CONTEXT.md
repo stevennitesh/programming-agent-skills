@@ -1,75 +1,53 @@
 # Programming Agent Skills
 
-This pack helps capable coding agents produce high-quality code through strong
-judgment, simple design, and focused verification. Ordinary work stays ordinary.
-Specialist procedures apply when the task needs them.
-
-Explore imaginatively. Converge under proof. Simplify ruthlessly.
-
-## Current direction
-
-The pack targets GPT 6 Astra primarily. Optional cost-aware execution routes
-substantial implementation to GPT 6.1 Sol and compact bounded work to GPT 6 Luna.
-
-Build the Astra pack in `skills/astra/`. When designing or changing an Astra
-skill, read [the Astra design brief](docs/astra/design-brief.md). It records the
-accepted principles from [issue #94](https://github.com/stevennitesh/programming-agent-skills/issues/94),
-subsequent decisions, and what remains unsettled.
-
-Projects using this pack target the latest Astra version. Retired source remains
-available as evidence; do not preserve legacy routes in current project guidance.
-[Legacy pack context](docs/agents/legacy-pack-context.md) documents that historical
-composition and does not govern current Astra execution.
+The managed source is `skills/astra/`, built primarily for GPT 6 Astra.
+[The design brief](docs/astra/design-brief.md) owns accepted pack-design decisions;
+each skill owns its execution rules. Ordinary coding needs no skill pipeline or
+general engineering-contract document.
 
 ## Sources and ownership
 
 | Concern | Owner |
 | --- | --- |
-| Working commands and local constraints | `AGENTS.md` |
-| Coding judgment | [Engineering contract](docs/agents/engineering-contract.md) |
-| Astra skill design and migration direction | [Astra design brief](docs/astra/design-brief.md) |
-| Agent-instruction authoring | [Astra writing-for-agents](skills/astra/writing-for-agents/SKILL.md) |
+| Working commands and repository constraints | [AGENTS.md](AGENTS.md) |
+| Skill design, composition, and migration direction | [Astra design brief](docs/astra/design-brief.md) |
+| Initial guidance and requested setup migrations | [Repo bootstrap](skills/astra/repo-bootstrap/SKILL.md) |
+| Ongoing repository context and durable memory maintenance | [Context hygiene](skills/astra/context-hygiene/SKILL.md) |
+| Selected agent-instruction artifacts | [Writing for agents](skills/astra/writing-for-agents/SKILL.md) |
 | Current work and conditional runbooks | [Plans index](docs/plans/README.md) |
-| Domain meaning and accepted decisions | [Domain route](docs/agents/domain.md), then relevant `docs/adr/` records |
+| Domain meaning and decision history | [Domain route](docs/agents/domain.md), then relevant ADRs |
 | Tracker-backed work | [Tracker guide](docs/agents/issue-tracker.md) and [label mapping](docs/agents/triage-labels.md) |
 | Managed installation | `scripts/install_skills.py` and its installed manifest |
-| Repository and package validation | `scripts/validate_skills.py` and focused tests |
+| Repository and package validation | `scripts/validate_skills.py` and tests |
 
-Keep each instruction at its owning location. Use conditional pointers to load
-procedures and evidence when needed. Prefer current code, configuration, and
-tools for mechanical facts; retain reasons and local conventions in guidance.
+## Package boundaries
 
-## Package distinctions
+- **Managed Astra skills:** immediate subdirectories of `skills/astra/` containing
+  `SKILL.md` define the managed set. Derive inventory from that source.
+- **Historical custom skills:** `skills/custom/`, retained evidence and explicitly
+  selected legacy work; not deployed by the current installer.
+- **Installed skills:** copies at the selected host target. Edit source packages;
+  inspect installed content before assuming its version or parity.
+- **Legacy experiments and optional packages:** `skills/experimental/` is governed
+  by its manifest; `skills/extra/` contains optional packages. Retired material
+  lives in `skills/.archive/` and `.archive/`.
 
-- **Managed Astra skills:** `skills/astra/`, the installer source of truth.
-  Its immediate subdirectories containing `SKILL.md` define the current managed
-  set; derive inventory and count there rather than from historical synthesis,
-  research, validation, or archived records.
-- **Historical custom skills:** `skills/custom/`, retained evidence, not deployed.
-- **Installed skills:** copies in the target host's skill directory. Inspect
-  their content before assuming which source or version is installed.
-- **Legacy experiments:** `skills/experimental/`, inactive alternatives governed
-  by their manifest. Optional packages live in `skills/extra/`; retired material
-  lives in `skills/.archive/`.
+The installer verifies ownership before replacement or retirement. Old custom
+manifests establish migration ownership only; modified managed copies and
+unmanaged name collisions stop installation. [Installation and recovery](INSTALLATION.md)
+owns preview, deployment, and recovery instructions.
 
-The managed installer deploys Astra and verifies ownership before replacement
-or retirement. Old custom manifests are migration evidence only. Modified
-managed copies and unmanaged name collisions stop installation. Preview before
-installing; edit source packages, not installed copies.
+## Current guidance and history
 
-The repository's engineering contract is adapted from Astra and is owned here.
-It is not required to match either bootstrap seed. Existing tracker and domain
-settings preserve repository meaning while their routes target current Astra;
-direct coding requires no ticket.
+Keep actual project requirements at their maintained owners. General coding
+advice does not need a separate document. Research, synthesis, transcripts,
+validation records, and retired guidance remain evidence; an explicit adopted
+decision is needed to make them current policy. The [ADR index](docs/adr/README.md)
+records applicability. [Legacy pack context](docs/agents/legacy-pack-context.md)
+supplies vocabulary only for selected legacy work.
 
-## Evidence and durable context
-
-Research, synthesis, transcripts, issue notes, and run logs preserve evidence.
-They become current guidance only through an explicitly adopted owner. Do not
-rewrite historical records to make them look current. Consult relevant ADRs for
-accepted decisions, with their stated scope and supersession status.
-
-The README explains the product and installation choices. Global templates are
-separate: `GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md` serves the Astra installer;
-`skills/astra/repo-bootstrap/templates/global-agents.md` seeds Astra guidance.
-Neither template overrides personal global preferences automatically.
+Global templates have separate consumers:
+`GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md` supplies the installer's managed bootstrap
+section; `skills/astra/repo-bootstrap/templates/global-agents.md` is an optional
+setup seed. Neither overrides personal preferences automatically. Source cleanup
+does not update installed skills, global instructions, or other repositories.

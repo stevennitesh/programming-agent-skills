@@ -1,6 +1,6 @@
 interface:
   display_name: "Cost-aware coding"
   short_description: "Route GPT-6 work to reduce Astra token churn"
-  default_prompt: "Use $cost-aware-coding for this coding task. Preserve my starting lead model and effort. Route implementation to gpt-6.1-sol with High effort, escalating subagents to Astra Medium then Astra XHigh when evidence warrants; use Luna Max for compact bounded work. Use one read-only Astra Medium or XHigh reviewer when fresh context materially helps, with final acceptance retained by the lead. Reserve Max for Luna and keep the lead mostly dormant during worker implementation."
+  default_prompt: "Use $cost-aware-coding for this task. Preserve my starting lead and follow the skill's role and model policy. Plan and delegate to one primary worker with bounded support as useful; choose phases, checkpoints, and isolated review as needed. Give the worker freedom within scope and acceptance, and keep the lead dormant between consequential questions and review returns. Use parallel implementation only if I request it."
 policy:
   allow_implicit_invocation: false

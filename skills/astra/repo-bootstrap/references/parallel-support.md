@@ -1,32 +1,23 @@
 # Parallel support
 
-Read only for requested parallel setup or a concrete execution prerequisite gap.
-The execution workflow owns lane lifecycle, worker assignments, and live admission.
-Bootstrap records repository environment choices and verifies capabilities; it
-does not create worktrees, start workers, or infer permission changes from gaps.
+Use for requested parallel setup or a concrete prerequisite gap. The execution
+workflow owns lane lifecycle, worker assignments, admission, claims, integration,
+and recovery. Bootstrap establishes repository prerequisites without starting work.
 
-Inspect the selected workflow and actual host configuration. For
-`parallel-implement`, establish required Git and runtime availability, any helper
-location, a permitted lane root, and whether worker commands can use that root and
-their isolated runtime paths. Preserve existing location and permission
-preferences. Do not prescribe obsolete host-specific schema or broaden access
-without authority.
+Use the selected workflow and current host configuration to determine what is
+needed. For `parallel-implement`, this can include a supported host worktree
+lifecycle or helper location, permitted placement, Git/runtime availability,
+durable input locations, and worker access to isolated writable runtime paths.
+Preserve existing placement and permission choices; do not broaden access without
+authorization or prescribe obsolete host schemas.
 
-Distinguish configuration found in source from effective permissions and
-capabilities actually verified. Directory existence alone does not prove worker
-access.
+Keep non-obvious placement, runtime, and tracker constraints at a repository owner
+the execution workflow can reach. For tracker-backed delivery, this may include
+the canonical local tracker and actor identity convention; live claims remain
+with the executing workflow.
 
-Record non-obvious placement and runtime constraints at an existing
-repository-owned location or in a conditional parallel-execution guide linked from
-the repository instructions. Name unresolved prerequisites and the evidence needed
-to establish them.
-
-When tracker-backed parallel delivery is configured, record only the repository
-facts the execution workflow needs, such as the canonical local tracker location
-or claim identity convention. The execution workflow owns live claims, commit
-ordering, proof, recovery, and lane cleanup.
-
-Apply already-authorized prerequisite changes together. If safe isolation or
-required access is unavailable, record serial execution as the supported fallback
-rather than claiming parallel readiness. Prose does not substitute for actual
-permissions or worker pre-mutation checks.
+Distinguish source configuration from verified effective capabilities. Directory
+existence or explanatory prose does not establish worker access or safe isolation.
+Apply authorized prerequisite changes and report unresolved gaps. If parallel
+readiness cannot be established, identify serial execution as the supported
+fallback without claiming the missing capability.

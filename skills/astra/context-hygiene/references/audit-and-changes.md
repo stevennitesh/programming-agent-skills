@@ -1,83 +1,63 @@
-# Audit and change records
+# Repository context
 
-Read for a persistent-context audit or before applying authorized cleanup.
+Use for ongoing repository context assessment or authorized maintenance. The
+result is a coherent reading path with trustworthy owners and enough local
+knowledge for the intended work. Choose the discovery and verification methods.
 
-## Discover the selected surface
+## Find what affects future work
 
-For a repository-wide audit, discover relevant context beyond existing links:
-agent instructions, context records, plans or specifications presented as current,
-decision records, indexes, and guides. Include unlinked material and search for
-obsolete paths, commands, skill names, or workflow conventions. For a narrower
-audit, keep discovery within the requested boundary and its affected routes.
+Follow relevant root and nested instructions, commands, guides, current plans,
+decision records, and indexes. For a repository-wide request, include unlinked
+material so existing pointers do not hide obsolete or conflicting guidance.
+A focused repair needs only its affected sources and consumers.
 
-Check candidates against current code, configuration, accepted decisions, and
-delivery state. Distinguish:
+Check current claims against code, configuration, accepted decisions, and actual
+workflow needs. Include missing knowledge: a needed command, non-obvious
+constraint, ownership decision, or reading condition may have no document yet.
+A missing preferred filename or an empty template section is not itself a gap.
+Source inspection establishes a command's definition; runtime success needs
+execution when that claim matters and execution is authorized.
 
-- incorrect or misleading current guidance;
-- completed or superseded material still presented as active;
-- historical evidence worth retaining; and
-- unverified material that needs investigation rather than cleanup.
+Distinguish incorrect current guidance, unresolved claims, superseded material
+still presented as active, and useful historical evidence. Newer code can reveal
+documentation drift without overriding accepted behavior or project meaning.
 
-Age, repetition, or a missing inbound link alone does not establish obsolescence.
+## Consolidate at the useful owner
 
-Compare apparent duplicates semantically. Scope, trigger, exceptions, authority,
-and intended behavior must match before one copy can safely replace another.
-Resolve contradictions through the current owner or leave the decision explicit;
-do not choose whichever statement looks newest or appears most often.
+Keep brief local requirements in existing instructions or another maintained
+owner. Split or combine documents when their content and reading conditions
+justify it. Consolidation should reduce conflicting ownership without forcing all
+context into one file or creating a generic engineering contract.
 
-When migrating knowledge to another owner, identify the actual destination and the
-meaning it must preserve. Do not remove the only useful active copy merely because
-a destination has been proposed. Verify that the replacement owner contains the
-needed meaning and that future agents can retrieve it.
+Compare apparent duplicates by meaning, including scope, triggers, exceptions,
+and authority. Preserve deliberate differences. Resolve contradictions through
+accepted decisions and current owners; ask only when an unresolved consequential
+choice cannot be established from evidence.
 
-## Route changes to the right owner
+Add or correct missing guidance from verified sources. Do not invent product or
+domain policy to fill a gap. When accepted meaning itself needs a decision, use
+the repository's domain route or
+[shape-work](../../shape-work/SKILL.md) under its invocation policy.
 
-Context hygiene decides whether information should remain durable and where it
-belongs.
-
-For agent-instruction wording, triggers, pointers, and reconciliation, use
-[writing-for-agents](../../writing-for-agents/SKILL.md).
-
-When cleanup replaces, relocates, or retires a current plan, specification, guide,
-or decision record, use
+For conflicting or displaced specs, domain records, plans, or decisions with
+active consumers, use
 [Document reconciliation](../../shape-work/references/document-reconciliation.md)
-for current-versus-historical ownership and affected pointers.
+for its applicability and preservation requirements. Routine command or pointer
+repairs do not need that separate workflow.
 
-When useful project meaning or decision rationale lacks a durable owner, follow
-the repository's domain guidance. Use
-[Domain modeling](../../shape-work/references/domain-modeling.md) when deciding how
-accepted meaning or consequential decision rationale should be represented. Do
-not create a domain record merely because a preferred file is missing.
+## Verify authorized maintenance
 
-Repository setup or pack migration belongs to
-[repo-bootstrap](../../repo-bootstrap/SKILL.md) when that outcome was requested;
-an audit finding does not start it automatically.
+Refresh mutable targets when drift could overwrite another actor's work. Preserve
+unrelated content and historical evidence unless their mutation is requested.
+Update affected pointers and competing current copies when relocating meaning;
+archiving one file does not retire instructions exposed elsewhere.
 
-## Apply a bounded authorized update
+Reconcile mechanical checks that enforce a displaced context convention when
+within the authorized maintenance, preserving still-valid protections. Product
+changes, new tooling, tracker mutations, and revisions to accepted behavior need
+their own task authority.
 
-Before mutation, identify the exact files or entries to change and the meaning to
-preserve, replace, or remove. Refresh mutable targets when drift could cause one
-writer to overwrite another.
-
-Preserve historical evidence unless deleting or rewriting it is part of the
-authorized effect. Archiving a file does not by itself retire active instructions
-that still reach future agents through another path.
-
-For managed-memory changes, use the runtime's supported mechanism. After a partial
-or uncertain effect, inspect actual state before retrying rather than replaying an
-indeterminate mutation.
-
-Verify at the real retrieval boundary:
-
-- intended retained meanings are still available;
-- stale active meanings no longer reach future agents within scope;
-- replacement owners are reachable;
-- unrelated context remains intact; and
-- historical sources remain evidence rather than accidentally active authority.
-
-Deleting one duplicate summary or index entry does not prove a meaning disappeared
-from active context if another retrieval surface still exposes it.
-
-Report verified changes, coverage gaps, and any pending or failed effects. A
-successful write proves completion only when the written object itself is the
-authorized active-context boundary.
+Verify retained meaning, replacement access, and the affected reading path.
+Check that stale rules are no longer active within scope and that missing
+knowledge has been supplied or remains an explicit gap. Reuse valid evidence;
+do not require an exhaustive repository audit for a bounded correction.

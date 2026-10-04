@@ -1,8 +1,41 @@
 # Investigation methods
 
-Use only the method that can distinguish the live causal explanations. No fixed
-tool, instrumentation framework, statistical threshold, or experiment count is
-required.
+Select, combine, and adapt methods that can distinguish the live causal
+explanations. No fixed tool, instrumentation framework, statistical threshold, or
+experiment count is required. Prefer existing diagnostics or a small targeted
+probe over building new diagnostic infrastructure.
+
+## Targeted instrumentation and runtime inspection
+
+When the symptom appears downstream of the bad state, observe selected boundaries
+or invariants to narrow the first divergence. Assertions, correlated traces,
+counters, or watchpoints can expose the relevant input, output, write, identity,
+or state transition. Capture what can change the explanation rather than logging
+everything. Account for filtering, sampling, buffering, and timing changes when
+interpreting missing or reordered observations.
+
+For hangs or unexplained stalls, thread or task snapshots, progress counters, and
+resource or lock ownership can distinguish waiting from slow progress. For
+corruption, races, or leaks, consider applicable runtime checks, sanitizers, or
+heap and resource profiles. Choose tools supported by the actual runtime and
+interpret their findings within the paths and properties they observe.
+
+## Controlled interventions and replay
+
+When several causes fit the observations, vary a suspected causal factor while
+keeping relevant comparison conditions stable. A reversible intervention or
+negative control can test whether the predicted consequence follows. If several
+factors change together, limit attribution to what the comparison distinguishes.
+
+For suspected timing or recovery failures, consider controlled scheduling,
+cancellation, timeouts, or injection of a relevant partial failure. Exercise the
+specific causal boundary within the authorized scope. Connect an induced failure
+to the reported mechanism; exposing some failure does not explain the incident.
+
+For rare failures, preserve captured inputs, seeds, event ordering, or a recorded
+execution when supported and useful. Replay can let successive probes examine
+the same failure. Establish which nondeterminism and external behavior the replay
+preserves before treating it as equivalent to the original execution.
 
 ## Intermittency, concurrency, and test pollution
 
@@ -56,24 +89,28 @@ Distinguish build or setup failure from the target defect and skip untestable
 revisions rather than classifying them as bad. Preserve the user's active work
 when executing historical states.
 
-Reduce failing input or sequence only while the reduced case continues to expose
-the reported mechanism.
+Use input or sequence reduction, including delta debugging when useful, to narrow
+the elements needed for failure. Keep the failure classifier tied to the reported
+symptom; a smaller case that instead fails during setup does not preserve the
+mechanism. Retain relevant interactions rather than assuming one input element
+must be responsible.
 
-## Challenge a shared premise after repeated failed fixes
+## Reassess an investigation that stops producing information
 
-When two or more attempted fixes fail the same gate while assuming the same
-mechanism, write that shared premise explicitly before trying another variant.
+When attempts stop producing useful information, identify the shared premise and
+choose an observation that could reject it or distinguish another explanation.
+Recheck the failure classifier, effective runtime, or instrument when those could
+explain the uninformative results. Change the investigation in response to
+evidence rather than requiring a fixed number of failed fixes.
 
-Build the smallest rerunnable census that can show where the relevant imbalance or
-failure is concentrated: by actor, partition, input class, state, worker, queue,
-resource, or other causal unit. A census establishes distribution, not cause.
+When concentration or imbalance could distinguish causes, a small rerunnable
+census by actor, partition, input class, state, queue, or resource may help. Compare
+failures with relevant exposure; a census establishes distribution, not cause.
 
-If the same subset repeatedly carries the skew, investigate what assigns or
-preserves that role and test that assignment as the next causal hypothesis. Prefer
-removing a demonstrated asymmetry over adding another compensating path around it.
-
-If the census does not show the predicted skew, reject or weaken the shared premise
-and look elsewhere. Keep the census only when it remains useful evidence.
+If a subset carries unexplained skew, investigate what assigns or preserves that
+role and test its causal contribution. If the predicted skew is absent, weaken or
+reject that premise. Keep a census only while it provides useful evidence; other
+failures may need a different probe entirely.
 
 ## Performance regressions
 

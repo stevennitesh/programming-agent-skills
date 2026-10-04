@@ -1,72 +1,31 @@
-# Optional high-assurance review
+# High-assurance review
 
-Use only when the user explicitly requests high assurance or multiple independent
-reviewers. This mode adds independent scrutiny; it does not change the standard of
-truth.
+Use when the lead selects multiple reviewers for complementary coverage or the
+caller requests high assurance. Apply [Independent review](independent-review.md)
+to each reviewer, using the same fixed candidate and comparison.
 
-The coordinator owns candidate selection, reviewer dispatch, convergence, and the
-final conclusion. Reviewers are read-only and do not delegate, repair, publish
-comments, merge, or release.
+The lead chooses the reviewer count and scopes based on material risks, task
+difficulty, and budget, respecting explicit user constraints. No fixed count or
+separate permission for each additional reviewer is required within an authorized
+review workflow. Each reviewer has a distinct primary scope; useful examples
+include behavior and integration, compatibility and persistence, or concurrency
+and lifecycle. Choose scopes for this candidate rather than filling a checklist.
 
-## Fix the candidate and factual brief
+Scopes focus attention without restricting evidence: reviewers may follow any
+dependency needed to judge their assigned obligations and report consequential
+problems found across boundaries. They need not each repeat a full-candidate
+review. All reviewers use the same finding standard, without finding quotas.
 
-Use the main skill's selected comparison and candidate. Give both reviewers the
-same immutable snapshot or otherwise fixed read-only target plus the surrounding
-code, configuration, accepted sources, and candidate-bound evidence needed to
-judge it.
+The lead owns coverage of the requested review as a whole, including gaps and
+interactions between scopes. Address material gaps through direct assessment or
+further focused review as appropriate. Several completed reviews do not establish
+coverage of an obligation none of them assessed.
 
-Worktrees or separate conversations do not automatically isolate shared services,
-databases, mutable external proof, or prior model context. Report the independence
-actually achieved.
+Consolidate supported findings, deduplicate overlaps, and resolve disagreements
+through evidence rather than votes. Agreement alone is not proof; one supported
+finding can be decisive. Return the main skill's output with reviewer identities,
+scopes, independence achieved, and material coverage limits.
 
-Give reviewers the accepted request, governing sources, candidate identity, scope,
-available proof, relevant delivery dispositions when they affect the integrated
-result, and material limits. Keep coordinator suspicions, desired verdicts, and
-peer findings out of their initial briefs.
-
-A missing required source is a coverage gap, not permission to invent intent.
-
-## Two independent reviewers
-
-Use two fresh read-only reviewers by default, separate from implementation and
-integration authors and from each other. Additional reviewers require explicit
-authorization.
-
-Each reviewer applies the same finding standard to the full candidate. Different
-primary lenses may diversify attention—for example behavior/integration versus
-engineering quality—but they do not create different truth standards or exempt
-either reviewer from material obligations.
-
-Give each reviewer the scope, read-only boundary, finding standard, expected
-return, and factual context it needs. Do not assume inherited skill context.
-
-Ask each reviewer to return finding candidates, material coverage, and evidence
-gaps. No finding quota and no duplicate checks merely for symmetry.
-
-If two independent reviewers or the fixed candidate cannot be obtained, report
-high-assurance review as incomplete. Preserve any useful ordinary-review evidence
-without labeling it high assurance.
-
-## Converge under evidence
-
-Evaluate every finding capable of changing the conclusion against the fixed
-candidate and contrary evidence. Deduplicate overlaps and resolve disagreements
-through code, contracts, or proportionate checks rather than votes.
-
-Agreement can guide attention but is not proof, and one independently supported
-finding can still be decisive. A completed pair of reviews does not close an
-uncovered obligation.
-
-Recheck candidate identity before the final conclusion. Return findings under
-[Finding standards](finding-standards.md), material coverage limits, decisive
-checks, reviewer identities, and the independence actually established.
-
-If the coordinator authored or integrated the candidate, state that fact rather
-than presenting the final synthesis itself as independent. Keep the independent
-reviewer contributions separately attributable.
-
-For a repaired successor, reuse prior reviewers while their independence remains
-meaningful. Re-evaluate prior findings and the affected repair behavior against
-the new candidate. Use fresh reviewers when necessary to restore independence and
-broaden only when the repair materially expands scope. Preserve prior evidence
-only while it remains applicable.
+If multiple independent reviewers or required coverage cannot be obtained, state
+what remains incomplete and preserve useful evidence. Do not label a direct or
+single-reviewer assessment as completed high assurance.

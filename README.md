@@ -73,16 +73,15 @@ To update, pull this repository and repeat the preview/install commands. See
 [installation and recovery](INSTALLATION.md) for migration, custom targets,
 installed-pack validation, and transaction recovery.
 
-If you want only the shared engineering principles without the managed skills,
-adapt [AGENTS_PORTABLE_FALLBACK.md](AGENTS_PORTABLE_FALLBACK.md) into your global
-`AGENTS.md`.
+Without the managed skills, [AGENTS_PORTABLE_FALLBACK.md](AGENTS_PORTABLE_FALLBACK.md)
+is an optional short starting point for global preferences and repository routing.
 
 <details>
 <summary><strong>Model support</strong></summary>
 
 The managed pack is tuned primarily for **GPT 6 Astra**. The optional
-cost-aware workflow can route implementation-heavy work to **GPT 6.1 Sol** and
-compact bounded work to **GPT 6 Luna**.
+cost-aware workflow routes implementation to **GPT 6.1 Sol** and bounded work,
+including large-context retrieval and bulk writing, to **GPT 6 Luna**.
 
 The historical [custom skill pack](skills/custom/) remains available for
 comparison and separate evaluation, but it is not installed by the current
@@ -99,7 +98,6 @@ The pack separates durable project context from specialized procedures:
 | --- | --- | --- |
 | Repository `AGENTS.md` | Verified commands, local constraints, and pointers | Read first in a repository |
 | Repository context and decisions | Project meaning, source boundaries, and durable decisions | When the task depends on project-specific meaning |
-| Engineering contract | Shared coding judgment such as simplicity, ownership, and proportionate proof | During substantive engineering work |
 | Direct coding | Normal implementation under repository guidance | Default for a clear bounded change |
 | Astra skills | A distinct method or effect with its own admission and completion boundary | Only when the task matches that skill |
 | Historical research/synthesis/validation | Evidence and rationale from earlier pack generations | Consult selectively; never treat as current routing by default |
@@ -113,7 +111,7 @@ Common paths stay simple:
 
 - **Clear change → direct implementation.**
 - **Unclear product behavior → `$shape-work` → direct implementation.**
-- **Consequential technical design question → `$codebase-design` → implementation.**
+- **Unresolved reuse, ownership, simplification, or integration → `$codebase-design` → implementation.**
 - **Hard causal failure → diagnosing-bugs; repair only when already authorized.**
 - **Fixed code candidate → change-review.**
 - **Tracked decomposition → `$to-tickets`; parallel delivery only when explicitly requested.**
@@ -129,31 +127,33 @@ matches. You can also invoke an automatic skill explicitly.
 | Your task | Skill | Use |
 | --- | --- | --- |
 | Implement a clear, bounded change | **No skill needed**—ask Codex to implement and verify using repository guidance | Direct |
-| Clarify product behavior, scope, acceptance, or domain meaning | [$shape-work](skills/astra/shape-work/SKILL.md) | Request explicitly |
-| Resolve a consequential technical architecture or integration decision | [$codebase-design](skills/astra/codebase-design/SKILL.md) | Automatic when relevant |
+| Develop an idea into an agreed spec, or reconcile domain meaning and decision records | [$shape-work](skills/astra/shape-work/SKILL.md) | Request explicitly |
+| Resolve code reuse, ownership, simplification, or integration decisions | [$codebase-design](skills/astra/codebase-design/SKILL.md) | Automatic when relevant |
 | Test an uncertain approach with a runnable experiment | [$prototype](skills/astra/prototype/SKILL.md) | Automatic when relevant |
-| Create durable tooling that drives and proves real user-facing behavior | [$verification-harness](skills/astra/verification-harness/SKILL.md) | Request explicitly |
+| Create or improve reusable tools for agents to exercise and verify product interfaces | [$verification-harness](skills/astra/verification-harness/SKILL.md) | Request explicitly |
 | Research a question or compare options using sources | [$research](skills/astra/research/SKILL.md) | Automatic when relevant |
 | Find the root cause of a difficult bug | [$diagnosing-bugs](skills/astra/diagnosing-bugs/SKILL.md) | Automatic when relevant |
 | Discover ranked improvements, audit subsystems, or explore a visual codebase atlas | [$audit-codebase](skills/astra/audit-codebase/SKILL.md) | Request explicitly |
 | Optimize a measurable outcome through experiments | [$hillclimb](skills/astra/hillclimb/SKILL.md) | Request explicitly |
 | Review a code change for correctness and maintainability | [$change-review](skills/astra/change-review/SKILL.md) | Automatic when relevant |
-| Classify raw incoming tracker issues into an honest next state | [$triage](skills/astra/triage/SKILL.md) | Request explicitly |
-| Turn an accepted plan or spec into tracked work units | [$to-tickets](skills/astra/to-tickets/SKILL.md) | Request explicitly |
+| Assess intake or clean up a requested backlog using current evidence | [$triage](skills/astra/triage/SKILL.md) | Request explicitly |
+| Turn a spec or sufficiently clear idea into bounded tickets with dependencies | [$to-tickets](skills/astra/to-tickets/SKILL.md) | Request explicitly |
 | Implement concurrently with separate ownership and clear dependencies | [$parallel-implement](skills/astra/parallel-implement/SKILL.md) | Request explicitly |
 | Route GPT 6 work to reduce Astra lead-token churn while preserving acceptance | [$cost-aware-coding](skills/astra/cost-aware-coding/SKILL.md) | Request explicitly |
 | Resolve an active Git merge or rebase conflict | [$resolving-merge-conflicts](skills/astra/resolving-merge-conflicts/SKILL.md) | Automatic when relevant |
-| Set up, migrate, or repair repository agent guidance | [$repo-bootstrap](skills/astra/repo-bootstrap/SKILL.md) | Request explicitly |
-| Write or audit a specific agent instruction, skill, guide, prompt, or handoff | [$writing-for-agents](skills/astra/writing-for-agents/SKILL.md) | Automatic when relevant |
-| Audit persistent context and reconcile requested cleanup | [$context-hygiene](skills/astra/context-hygiene/SKILL.md) | Request explicitly |
-| Create an interactive guide for a human-operated procedure | [$wizard](skills/astra/wizard/SKILL.md) | Request explicitly |
+| Establish repository agent guidance or migrate its setup | [$repo-bootstrap](skills/astra/repo-bootstrap/SKILL.md) | Request explicitly |
+| Write or audit reusable agent guidance, a consequential assignment, or a handoff | [$writing-for-agents](skills/astra/writing-for-agents/SKILL.md) | Automatic when relevant |
+| Maintain scattered, stale, conflicting, or missing repository context and durable memory | [$context-hygiene](skills/astra/context-hygiene/SKILL.md) | Automatic when relevant |
+| Guide a private human step through the terminal and safely hand control back | [$wizard](skills/astra/wizard/SKILL.md) | Request explicitly |
 
 For one positive request and one realistic near-miss for every skill, see
 [canonical skill selection examples](docs/astra/selection-examples.md).
 
 A review or audit does not authorize its proposed fixes. A specification or
 ticket does not authorize implementation. Each skill keeps its own effect and
-completion boundary.
+completion boundary. Context hygiene can address a relevant problem within the
+active task; selection does not authorize unrelated audits or memory writes.
+Memory cleanup needs an explicit request and the host's supported update path.
 
 ## Example: shape before implementation
 
@@ -176,18 +176,24 @@ unless the task actually needs it.
 explicit workflow for reducing Astra lead-token/context churn while preserving
 the accepted result:
 
-- **Astra** owns consequential reasoning, exceptions, and final review.
-- **Sol** owns substantial repository investigation, implementation, debugging,
-  verification, and repair.
-- **Luna** is reserved for compact bounded tasks whose briefing and verification
-  stay cheap.
+- **Lead:** the user's starting session, normally Astra, owns planning,
+  architecture, codebase decisions, consequential questions, and final acceptance.
+- **Worker:** Sol owns investigation, implementation, debugging, verification,
+  and repair, with freedom to choose methods within scope and acceptance.
+- **Bounded worker:** Luna handles clearly scoped search, retrieval, extraction,
+  bulk writing, or mechanical work, including large inputs or outputs when the
+  required judgment is limited.
+- **Reviewer:** the lead reviews directly or uses an isolated Astra reviewer
+  when fresh context helps.
 
-Delegation is worthwhile only when it saves more Astra context than the handoff,
-coordination, review, and recovery cost. While a worker owns implementation,
-Astra should remain mostly dormant rather than shadowing it.
+The default team uses one primary worker and one bounded worker as useful. The
+lead chooses the plan, phases, and checkpoints, then waits during implementation
+unless a meaningful question, event, or review return needs its attention.
+Account for the whole task's cost, including handoffs, review, and repair; avoid
+creating idle roles or repeating the worker's investigation.
 
-When combined with
-[$parallel-implement](skills/astra/parallel-implement/SKILL.md),
+When the user requests parallel implementation, combine with
+[$parallel-implement](skills/astra/parallel-implement/SKILL.md):
 parallel-implement owns concurrency, lane custody, integration, and parallel
 recovery; cost-aware-coding retains model/effort routing, budget policy, and its
 final review requirement.
@@ -196,21 +202,13 @@ The skill itself owns current model policy, worker assignment, recovery, planned
 serial delivery, and optional telemetry. Keep those changing mechanics there
 rather than copying them into repository guidance.
 
-## Engineering philosophy
+## What belongs in repository guidance
 
-- **Understand before changing.** Read the existing code, real callers, and
-  behavior people rely on.
-- **Build what the problem needs.** Prefer a small clear design; add abstraction
-  only when it earns its place.
-- **Check the result that matters.** Use evidence capable of exposing a real
-  failure, not test count as a proxy for rigor.
-- **Leave useful context.** Preserve decisions, reasons, and local conventions
-  where future contributors can actually find them.
-
-The maintained seed lives in the
-[engineering contract template](skills/astra/repo-bootstrap/templates/engineering-contract.md).
-Repository setup adapts it to local conventions rather than maintaining a
-template mirror.
+Keep information that changes decisions: actual commands, non-obvious constraints,
+accepted behavior and compatibility requirements, and the user's priorities.
+Leave methods to the agent within those boundaries. A separate guide is useful
+for substantial project-specific requirements; a general engineering-contract
+file is not required or supplied by bootstrap.
 
 ## Project status and evidence
 

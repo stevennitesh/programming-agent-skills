@@ -175,12 +175,12 @@ _Avoid_: pack manual, copied route map
   Its conditional [skill-authoring reference](../../skills/astra/writing-for-agents/references/skill-authoring.md)
   covers discovery and packaging. The custom version remains the legacy pack's
   source, not the authoring method selected for this repository.
-- Shared engineering judgment belongs to
-  [the repository-owned contract](../../docs/agents/engineering-contract.md).
-  Specialized workflow vocabulary remains with the skill or decision that
-  defines it; the contract does not require the legacy vocabulary catalog.
-  Project-specific domain language and decisions remain with routed domain
-  records.
+- Shared engineering judgment previously lived in
+  [the archived repository contract](../../.archive/docs/agents/engineering-contract.md).
+  Current project constraints belong to `AGENTS.md` and their specific owners;
+  specialized workflow vocabulary remains with the skill or decision that defines
+  it. Project-specific domain language and decisions remain with routed domain
+  records. The archived contract does not govern current work.
 - Delegated implementation handoff language and worker evidence Returns belong
   to `$implement` and its disclosed reference. Concurrent-lane preparation and
   cleanup are shared mechanics. Parallel delivery scheduling, concurrency

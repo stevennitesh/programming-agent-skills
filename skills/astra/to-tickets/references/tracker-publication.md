@@ -34,14 +34,17 @@ Refresh affected tracker state before writing when intervening activity can occu
 or use supported conditional writes against the inspected version. Reconcile
 relevant drift instead of overwriting it.
 
-Reuse matching items and create only missing work. Record each returned identity
-and read it back before depending on it for later relationships. Where readiness
-exists, keep new or materially revised work non-ready until its body and required
-relationships are verified.
+Reuse matching items and create only missing work. Record returned identities and
+bind relationships to confirmed targets. Choose individual or batched writes and
+verification to suit the tracker and repository policy; no universal per-item
+round-trip sequence is required. Honor required read-backs, and resolve uncertain
+identities before dependent writes. Where readiness exists, keep new or materially
+revised work non-ready until its body and required relationships are verified.
 
 Use the configured native relationship representation when one exists; do not
 replace required parent/dependency links with prose. Mark only work whose
-decisions, permissions, and blockers are actually resolved as actionable.
+decisions, permissions, and predecessor-result conditions are actually satisfied
+as actionable; a closed blocker alone does not prove its required outcome exists.
 Human-only readiness does not authorize an agent to take over a human decision or
 action.
 
@@ -49,6 +52,10 @@ After publication, independently verify affected bodies, relationships, readines
 and ownership. Derive the actual starting set from that verified graph rather
 than assuming planned writes succeeded. Preserve the source-to-published identity
 mapping needed for later repair or delivery.
+
+Keep source and parent references accessible to the intended implementer. Read the
+published ticket with that context and verify that its scope, acceptance, and
+dependency handoffs remain usable without the original conversation.
 
 For version-controlled local tickets, identify the canonical checkout containing
 the published graph. Publication does not imply a Git commit, and worker lane

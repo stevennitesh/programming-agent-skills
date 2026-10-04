@@ -16,10 +16,11 @@ Trace a disputed obligation to accepted behavior, repository policy, or a necess
 supported guarantee. Distinguish an unnecessary mechanism from an accepted
 guarantee whose revision belongs to its owner.
 
-A smell is a hypothesis. Check whether domain distinctions, independent lifetimes,
-external contracts, migration needs, or other current requirements explain it.
-Reject disproved claims, speculative hardening, unrelated cleanup, and preferences
-for a different but equally valid design.
+Findings must survive relevant contrary evidence, including domain distinctions,
+external contracts, or migration needs that justify the current design. Reject
+disproved claims, speculative hardening, unrelated cleanup, and preferences for a
+different but equally valid design. An unchanged line can be the causal location
+of a regression activated by the candidate; explain that connection.
 
 A maintainability finding need not cause a runtime failure, but it must demonstrate
 a concrete cost such as caller burden, duplicated policy, change amplification,
@@ -28,8 +29,9 @@ or avoidable operational complexity.
 Use one finding per independently actionable obligation and combine duplicate
 symptoms when one correction addresses the same cause. Preserve stable finding IDs
 when tracking remediation. Identify the reviewed location, trigger, evidence,
-impact, and necessary correction or proof. Do not prescribe a larger redesign when
-a smaller correction satisfies the obligation.
+impact, and necessary correction or proof. Keep corrections proportionate.
+Recommend a broader repair when its demonstrated benefits justify the additional
+scope and cost.
 
 ## Priority and blocking
 

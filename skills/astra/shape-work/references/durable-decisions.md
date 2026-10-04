@@ -1,56 +1,57 @@
 # Durable decisions
 
-Read when a specification or domain update is useful. Capture decisions for a
-future reader, not a transcript of the conversation.
+Use when producing a specification, domain update, or decision record. Capture
+what future readers need to preserve the agreed result; choose the format and
+level of detail for its consumers.
 
 ## Choose the owner
 
-Follow repository guidance for specifications, domain records, and decision
-records when present. Prefer an existing owner. When no authoritative destination
-is available or writable, keep a local draft or state the proposed destination
-rather than silently changing repository conventions.
+Follow repository conventions and reuse an existing useful owner. When no location
+is established, choose a proportionate home within the authorized scope. Let the
+content and its consumers determine the structure. If the intended destination is
+unavailable, keep an accessible draft and report that limit.
 
-For domain meaning or ADR rationale, use
-[Domain modeling](domain-modeling.md). For replacing or retiring competing current
-documents, use [Document reconciliation](document-reconciliation.md).
+For domain definitions or ADR rationale, use
+[Domain meaning and decision records](domain-modeling.md). For conflicting or
+displaced current sources, use [Document reconciliation](document-reconciliation.md).
 
-## Preserve the contract, not the process
+## Make the specification useful
 
-Capture only what future work needs to preserve the accepted result:
+A requested specification is a deliverable, not merely an outline or interview
+transcript. Capture the goal and relevant users or workflow, scope and exclusions,
+agreed features and behavior, consequential constraints, acceptance, and material
+uncertainty as applicable. Include concrete scenarios or rationale where their
+omission would let an implementer satisfy the words but miss the intended result.
 
-- intended outcome and relevant purpose;
-- scope and consequential constraints;
-- settled behavior and accepted meaning;
-- acceptance that distinguishes material failure; and
-- material uncertainty or unresolved owner-held decisions.
+Distinguish accepted decisions, recommendations, assumptions, and unresolved
+choices. Do not promote a suggested mechanism or unanswered proposal into a
+requirement. Link maintained domain and decision owners rather than copying them.
+A small example, schema, or state table can carry meaning more precisely than prose.
 
-Keep proposed implementation mechanisms distinct from accepted requirements.
-Preserve rationale only when it can change later decisions. Link existing owners
-instead of copying their contents.
+Read the result as a future implementer: the intended outcome and evidence should
+be recoverable without guessing product policy. Mark readiness honestly when a
+consequential decision remains open.
 
-A small schema, example, or code pointer can express a settled rule when it is
-more precise than prose. Do not freeze speculative file lists, implementation
-sequences, test ownership, model settings, worker state, or orchestration mechanics
-into the durable contract.
+## Keep planning adaptable
 
-When coordinated delivery also needs a plan, keep accepted commitments distinct
-from the adaptable delivery approach. Execution workflows own worker assignments,
-custody, checkpoints, repair accounting, and run state.
+Shaping may establish product priorities, stages, and dependencies that affect the
+accepted outcome. A delivery outline can help explain feasibility or order of
+work; distinguish accepted sequencing constraints from a suggested approach.
 
-Read the result as a fresh implementer. They should be able to recover the intended
-outcome and acceptance without inventing consequential policy.
+The execution lead owns implementation sequencing, assignments, checkpoints, and
+run state, using cost-aware-coding when selected. Those decisions may adapt as
+evidence changes. Ordinary planning does not require that workflow.
 
-## Publish only within authority
+Keep speculative file lists, model settings, worker state, and orchestration
+mechanics out of the durable product contract. A plan can live alongside the spec
+or in the same document if their roles remain clear; separate files are optional.
 
-A requested local specification or domain update may be written under repository
-rules. External tracker or publication effects require authority for that target.
+## Persist within authority
 
-Reuse an existing matching artifact when possible. Do not overwrite ambiguously
-owned or divergent content merely to create a canonical-looking document.
+Write the requested local artifact under repository rules. External tracker or
+publication effects need authority for that target. Preserve divergently owned
+content and unrelated work; inspect actual state before retrying an uncertain
+write, and verify consequential persisted content at its intended destination.
 
-After an authorized write, read back the intended content and identity when the
-effect is consequential. If creation or update has an uncertain result, inspect
-actual state before retrying.
-
-Publication does not imply ticketing, readiness, implementation, delegation,
-commit, push, or deployment authority.
+A saved record does not itself establish acceptance, readiness, or permission for
+implementation, ticketing, delegation, commit, push, or deployment.

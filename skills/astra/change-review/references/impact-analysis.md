@@ -1,36 +1,20 @@
 # Impact analysis
 
-Read when the user asks for blast radius or when candidate safety depends on a
-downstream, lifecycle, library, storage, wire-format, or cross-system assumption
-that the selected diff and direct callers cannot establish.
+Read when the user asks for blast radius or when consequential assumptions extend
+beyond the selected diff and direct callers.
 
-## Identify the load-bearing assumptions
+The result identifies affected behavior and consumers, the assumptions on which
+compatibility or safety depends, and evidence sufficient to judge them. Follow
+representations and ownership boundaries as needed; a symbol search alone may
+miss persisted formats, generated configuration, external consumers, or lifecycle
+interactions. Keep the analysis tied to the candidate and supported workflows.
 
-Start from the changed behavior and name the small number of facts that must remain
-true for the change to be safe. Do not produce a speculative inventory merely
-because many things are reachable.
+Choose evidence suited to the claim: contracts, exact source, a traced argument,
+focused checks, or running-product evidence. There is no required sequence or
+default full-system audit. Reuse valid evidence and stop when it settles the
+material obligation; a substitute proves only the properties it preserves.
 
-Trace beyond symbol search where meaning can cross representations or ownership:
-pinned dependency behavior and local patches, generated configuration, persisted
-or wire formats, cross-language consumers, feature flags, lifecycle or teardown
-ordering, shared state, and other boundaries that can preserve or destroy the
-assumption.
-
-## Prove proportionally
-
-Take each consequential assumption to the strongest evidence that is useful for
-the decision:
-
-1. applicable contract or exact source;
-2. a traced argument that rules out the bad path;
-3. a focused runnable check through the real mechanism; or
-4. running-product evidence when only the deployed behavior can establish it.
-
-Higher-cost proof is not automatically better. Stop when the evidence can decide
-the relevant review obligation.
-
-Report confirmed risks, assumptions that were checked and cleared, and any
-load-bearing fact that remains unproved. Convert only supported candidate-caused
-problems into findings under
+Report confirmed risks, consequential assumptions checked and cleared, and facts
+that remain unresolved. Admit candidate-caused problems under
 [Finding standards](finding-standards.md); an unproved assumption may instead be a
 coverage limit.

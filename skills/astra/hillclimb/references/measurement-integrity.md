@@ -1,6 +1,7 @@
 # Measurement integrity
 
-Read when variation, repeated tuning, or tradeoffs could change the keep decision.
+Read when variation, repeated tuning, proxy measurements, harness changes, or
+tradeoffs could change the keep decision.
 Use the smallest method that makes the comparison trustworthy; no universal sample
 count, significance threshold, or benchmark framework is required.
 
@@ -17,6 +18,10 @@ If work moves to another process or later stage, include the downstream cost whe
 the requested outcome requires it. A faster first response does not establish
 faster task completion. Account for material secondary costs such as memory growth,
 retry amplification, or quality loss.
+
+Cheap or proxy measurements can screen candidates and guide the search. Confirm
+on the representative workload before retaining a result claimed to improve that
+workload; a proxy-only gain supports only the narrower observation.
 
 ## Distinguish signal from environmental drift
 
@@ -48,6 +53,11 @@ evaluation cases or a held-out workload from iterative selection. Once tuning us
 that evaluation result, it becomes development evidence; obtain new independent
 confirmation or narrow the claim.
 
+Respect established frozen or held-out evaluation boundaries and their authority
+requirements. Do not consume reserved final evaluation as routine tuning feedback;
+use development measurements for the loop and run final evaluation only within
+existing authorization.
+
 A deliberately optimized fixed workload is valid when that is the requested
 objective. Do not generalize the result to other inputs merely by collecting more
 samples of the same narrow case.
@@ -59,7 +69,10 @@ trusting a flat score.
 
 If the harness, workload, or scoring method changes materially, rerun both the
 baseline and candidate under the revised method. Do not compare numbers produced
-under incompatible rulers.
+under incompatible rulers. Verify that the repair restores intended measurement
+or improves its reliability without changing accepted success criteria. Attribute
+score changes caused by the correction to measurement, and assess system gains
+only from the corrected comparison.
 
 Preserve earlier measurements as observations under their original conditions,
 not as evidence for the revised comparison.

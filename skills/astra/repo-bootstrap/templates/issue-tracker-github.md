@@ -3,7 +3,12 @@
 Issues and specifications live in GitHub Issues for this repository's configured
 project. Use this guide for tracker-backed work.
 
-## Configuration
+## Configuration defaults for setup
+
+Adapt these starting values to the repository's chosen policy and supported tools.
+Record the exact project and selected settings in the adopted guide; existing
+repository choices take precedence. Keep the representation below consistent
+with those settings.
 
 **PRs as a request surface:** no.
 
@@ -15,11 +20,11 @@ project. Use this guide for tracker-backed work.
 
 ## Operations
 
-Resolve the exact project and target type before acting. Prefer an available
-GitHub connector; otherwise use the installed CLI or documented API. Check
-current operation support and a read-back method before mutation.
+Resolve the exact project and target type before acting. Choose an available
+connector, CLI, or documented API that supports the configured operation and
+read-back, subject to the environment's tool rules.
 
-Read the issue body, comments, labels, state, assignee, and relevant relationships.
+Read the issue content, state, and relationships needed for the intended decision.
 Publish, comment, label, claim, or close only within the authorized task. The
 configured closure policy applies when the consuming workflow has established
 completion. It does not start work or authorize closure by itself.
@@ -28,8 +33,12 @@ completion. It does not start work or authorize closure by itself.
 
 - Content lives in issue bodies and comments.
 - Category and state use [the label mapping](triage-labels.md).
-- Parent, child, and blocking links use the configured native relationships.
+- Parent, child, and blocking links use the selected representation; these
+  defaults use native relationships.
 - An active claim uses the assignee when the workflow requires claiming.
+
+An assignee identifies an account; the executing workflow establishes any
+required run or actor ownership before dispatch.
 
 Preserve the relationship representation during an operation. A closed blocker
 does not establish readiness if other dependencies remain unresolved.

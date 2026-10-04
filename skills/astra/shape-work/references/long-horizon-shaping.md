@@ -1,42 +1,32 @@
 # Long-horizon shaping
 
-Read when the destination is settled but the consequential decision space is too
-large, dependent, or uncertain to settle reliably in one shaping pass or context.
+Use when many dependent decisions or multiple sessions make it difficult to retain
+the shared goal, settled choices, and meaningful unknowns. Choose a discussion
+outline, notes, decision map, or another useful method.
 
-This reference owns the low-resolution decision map. It does not require a tracker,
-one decision per session, or a fixed workflow for resolving each question.
+## Preserve continuity
 
-## Keep one destination and four unresolved states
+Keep enough context to recover the goal, settled decisions and rationale,
+consequential open questions, dependencies, and exclusions. Distinguish a question
+that can be answered now from one waiting on evidence or an earlier decision.
+Keep an uncertain area recognizable without inventing its detailed questions.
 
-State the destination: what must be true when shaping is complete.
+For example, a decision map can group ready questions, blocked questions, areas
+not yet specified, and excluded work. These are optional labels, not required
+states or a workflow. Use a durable record only when future sessions or decision
+owners need it; a tracker and a separate planning document are optional.
 
-Maintain only the decision context needed to advance toward it:
+## Advance what changes the next decision
 
-- **frontier:** a consequential question is precise and its prerequisites are
-  settled, so it can be decided now;
-- **blocked:** the question is precise but depends on unresolved evidence,
-  authority, or another decision;
-- **not yet specified:** an in-scope area of uncertainty is known, but the
-  question itself cannot yet be stated precisely without guessing; and
-- **out of scope:** the matter is deliberately outside this destination.
+Explore or resolve what materially improves alignment or unlocks dependent work.
+Do not turn areas that are not yet understood into premature tickets or a fixed
+implementation sequence. Use research, design, or a prototype when the deciding
+evidence needs that work.
 
-Keep settled decisions separately with enough rationale to prevent reopening them.
-Do not turn "not yet specified" areas into premature tickets or invented questions.
+Update the retained context when new answers change it enough to affect later
+work. Preserve settled decisions unless new evidence or user direction calls for
+revision. Let the agent choose question order and pacing within those dependencies.
 
-## Advance the visible frontier
-
-Resolve frontier decisions that materially unlock blocked work or make uncertain
-areas precise. Use the main skill's existing research, prototype, domain, or
-architecture routes when their evidence is actually needed.
-
-After each material decision, recompute the map: newly precise uncertainty can
-move onto the frontier or become blocked; invalidated questions can disappear;
-newly excluded work moves out of scope. Preserve dependency direction instead of
-asking questions whose premises are still unsettled.
-
-Persist the map only when later sessions or decision owners would otherwise lose
-the current destination, settled decisions, or unresolved-state distinctions.
-
-Finish this branch when implementation can proceed without inventing a
-consequential decision. If evidence or authority prevents that, return the exact
-blocked questions and what would make them decidable.
+Finish when the requested shaping result is usable without inventing consequential
+policy. If evidence or authority prevents that, identify the remaining decisions
+and what would make them answerable; keep the draft's unsettled status clear.
