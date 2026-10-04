@@ -21,6 +21,11 @@ override matching profile keys; one-off setup/check arrays append to the profile
 `--timeout` overrides the profile timeout. Do not put credentials in command
 arguments or printed output; those are retained in command evidence.
 
+Environment names follow host case rules: Windows treats case variants as the
+same key, while POSIX keeps them distinct. Keys may not overlap across `env`,
+`inputs`, and `outputs`, or replace the helper's `LANE_WORKTREE` and `LANE_RUNTIME`
+variables under those rules.
+
 Arguments and profile values support the literal tokens `@worktree@`,
 `@runtime_root@`, `@temp_root@`, `@cache_root@`, `@pytest_basetemp@`, and
 `@pytest_cache@`. This is simple token replacement, not shell interpolation.
