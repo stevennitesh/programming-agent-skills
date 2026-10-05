@@ -3,7 +3,7 @@
 <p align="center"><strong>Give your coding agent the context and methods the work needs.</strong></p>
 
 <p align="center">
-  18 focused skills, built primarily for GPT 6 Astra in Codex.<br>
+  20 focused skills, built primarily for GPT 6 Astra in Codex.<br>
   Ordinary coding stays direct; specialist workflows activate only when the task needs them.
 </p>
 
@@ -141,6 +141,8 @@ matches. You can also invoke an automatic skill explicitly.
 | Implement concurrently with separate ownership and clear dependencies | [$parallel-implement](skills/astra/parallel-implement/SKILL.md) | Request explicitly |
 | Route GPT 6 work to reduce Astra lead-token churn while preserving acceptance | [$cost-aware-coding](skills/astra/cost-aware-coding/SKILL.md) | Request explicitly |
 | Resolve an active Git merge or rebase conflict | [$resolving-merge-conflicts](skills/astra/resolving-merge-conflicts/SKILL.md) | Automatic when relevant |
+| Assess branches and worktrees, integrate worthwhile work when requested, and clean up safely | [$git-cleanup](skills/astra/git-cleanup/SKILL.md) | Automatic when relevant |
+| Make a project's portfolio artifacts coherent, understandable, and supported by evidence | [$portfolio-presentation](skills/astra/portfolio-presentation/SKILL.md) | Automatic when relevant |
 | Establish repository agent guidance or migrate its setup | [$repo-bootstrap](skills/astra/repo-bootstrap/SKILL.md) | Request explicitly |
 | Write or audit reusable agent guidance, a consequential assignment, or a handoff | [$writing-for-agents](skills/astra/writing-for-agents/SKILL.md) | Automatic when relevant |
 | Maintain scattered, stale, conflicting, or missing repository context and durable memory | [$context-hygiene](skills/astra/context-hygiene/SKILL.md) | Automatic when relevant |

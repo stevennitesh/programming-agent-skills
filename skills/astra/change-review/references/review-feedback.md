@@ -6,6 +6,9 @@ and wants them assessed, answered, or applied to a fixed candidate.
 Treat each feedback item as a technical claim or proposed correction, not as
 authority over accepted behavior.
 
+For feedback on a GitHub PR where thread coverage or resolution state matters,
+read [GitHub review threads](github-review-threads.md).
+
 ## Reconcile each item
 
 Bind the feedback to the actual candidate and identify the obligation, failure
