@@ -48,6 +48,8 @@ Load a specialist reference only when its trigger is present:
   [Comparison and empirical evidence](references/comparison-and-empirical.md).
 - Quantities, benchmarks, or quantitative methods:
   [Quantitative evidence](references/quantitative.md).
+- Understanding a dataset or reconciling its documentation with local files:
+  [Dataset orientation](references/dataset-orientation.md).
 - What was available, known, published, or effective at a cutoff:
   [Historical evidence](references/historical.md).
 - Legal/policy meaning or non-public evidence:
@@ -100,8 +102,9 @@ clear. Deliver a requested durable artifact; otherwise return findings inline.
 No fixed report template or permanent research record is required. A
 recommendation does not itself authorize adoption or implementation.
 
-Research evaluates existing evidence. When a decisive claim requires a new
-observation, identify that missing observation; use
+Research evaluates existing evidence, including inspection and descriptive
+profiling of existing data. When a decisive claim requires a new experiment,
+identify the missing observation; use
 [prototype](../prototype/SKILL.md) only when an experiment is authorized.
 [shape-work](../shape-work/SKILL.md) owns unsettled product meaning and
 [codebase-design](../codebase-design/SKILL.md) owns unresolved architecture or

@@ -1,6 +1,6 @@
 # Astra skills pack design brief
 
-Current direction, reconciled 2026-10-03. The pack is built primarily for
+Current direction, reconciled 2026-10-05. The pack is built primarily for
 **GPT 6 Astra**. Optional cost-aware execution routes implementation to GPT 6.1 Sol
 and bounded work, including large-context retrieval and bulk writing, to GPT 6 Luna.
 This document owns design rationale and composition for `skills/astra/`;
@@ -69,6 +69,8 @@ review evidence. A selected workflow may require more within its own scope.
 | Visual codebase mapping and baseline improvement discovery, hard bugs, or measured optimization | [Audit codebase](../../skills/astra/audit-codebase/SKILL.md), [diagnosing bugs](../../skills/astra/diagnosing-bugs/SKILL.md), and [hillclimb](../../skills/astra/hillclimb/SKILL.md) |
 | Evidence gathering and guided procedures | [Research](../../skills/astra/research/SKILL.md) and [wizard](../../skills/astra/wizard/SKILL.md) |
 | Active Git conflicts | [Resolving merge conflicts](../../skills/astra/resolving-merge-conflicts/SKILL.md) |
+| Branch and worktree disposition, requested retained-work integration, and cleanup | [Git cleanup](../../skills/astra/git-cleanup/SKILL.md) |
+| Evidence-backed project presentation for external readers | [Portfolio presentation](../../skills/astra/portfolio-presentation/SKILL.md) |
 
 Choose a skill by the decision or effect it owns, not merely by the artifact being
 edited. Shape-work owns product alignment, domain meaning, and durable capture of
@@ -111,7 +113,22 @@ dispatch, shares durable inputs by reference, and isolates mutable outputs. The
 coordinator may use supported host-managed worktrees or the bundled helper while
 preserving each lifecycle owner's integration and cleanup contract.
 
-The managed pack currently contains 18 skills. Their metadata owns invocation
+Git-cleanup owns branch and worktree disposition, including requested integration
+of worthwhile retained work. It preserves active ownership, uses evidence suited
+to rewritten history, and verifies authorized cleanup through the actual lifecycle
+owner. Parallel-implement still owns its lanes, and resolving-merge-conflicts owns
+active conflict resolution. Routine commits and pushes need no cleanup workflow.
+Portfolio-presentation owns a coherent, evidence-backed reading experience across
+the requested project artifacts. Analysis and evaluation contracts stay with the
+project; the agent chooses narrative, visuals, tools, and organization. Finished
+prose targets a domain-aware newcomer with roughly equal parts ASD-STE100
+Simplified Technical English and domain language. The skill owns how that
+STE-informed blend and pstack's unslop principles support concrete, natural
+writing. Isolated wording edits, new research, and general website construction
+remain outside its scope. Both skills are automatically selectable for matching
+requests.
+
+The managed pack currently contains 20 skills. Their metadata owns invocation
 behavior; the README lists explicit-only workflows. Continuation handoffs belong
 to writing-for-agents, with execution-specific state added by the relevant workflow.
 Ordinary implementation uses the accepted assignment and applicable repository
