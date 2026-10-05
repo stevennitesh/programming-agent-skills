@@ -1,7 +1,7 @@
 # Measurement integrity
 
 Read when variation, repeated tuning, proxy measurements, harness changes, or
-tradeoffs could change the keep decision.
+tradeoffs could change the keep decision, or when retaining regression thresholds.
 Use the smallest method that makes the comparison trustworthy; no universal sample
 count, significance threshold, or benchmark framework is required.
 
@@ -76,3 +76,15 @@ only from the corrected comparison.
 
 Preserve earlier measurements as observations under their original conditions,
 not as evidence for the revised comparison.
+
+## Keep regression protection representative
+
+Bind a retained threshold to a confirmed baseline and its relevant conditions.
+Tighten it only after a confirmed improvement; account for noise rather than making
+one unusually good run the permanent threshold. A noisy metric may warrant periodic
+comparisons instead of a hard CI gate.
+
+When accepted behavior or relevant workload or runtime conditions change, reassess
+the check using the comparison rules above. Repair or retire a misleading proxy
+while preserving the underlying correctness and quality obligations; do not loosen
+a valid check merely to make a regression pass.

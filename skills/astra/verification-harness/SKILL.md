@@ -60,7 +60,10 @@ Preserve these properties without requiring separate commands or a fixed sequenc
 - **Drive and observe:** use stable supported controls and capture the action,
   decisive result, and material side effects. A screenshot, successful tool
   response, or exit code alone is insufficient when a transition or effect is
-  what must be established.
+  what must be established. For a cached or asynchronous interface, initial
+  rendering may not establish correctness. Where acceptance requires it, exercise
+  a relevant state change and verify that the interface reaches the expected
+  authoritative state.
 - **Isolation and cleanup:** keep mutable fixtures and outputs within authorized
   resources, protecting unrelated sessions, data, processes, and external state.
   Remove only resources the run created or explicitly owns. Never kill by broad
