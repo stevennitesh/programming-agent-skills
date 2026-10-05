@@ -57,7 +57,7 @@ repair.
 
 Read [Measurement integrity](references/measurement-integrity.md) when variation,
 adaptive search, proxy measurements, harness changes, or multi-objective tradeoffs
-could change the keep decision.
+could change the keep decision, or when setting or revising regression thresholds.
 
 If the workload or measurement method changes materially, rerun the relevant
 baseline and retained candidate under the new method. Results measured under the
@@ -109,6 +109,12 @@ If final confirmation fails, fall back to the last candidate that still meets
 acceptance under the valid method, or the baseline if none does. Do not report
 earlier isolated wins as the final result. If restoration would risk unrelated
 work, preserve and clearly identify the unresolved state and remaining work.
+
+When later changes could plausibly erase a material confirmed gain, retain or add
+proportionate regression protection at the repository's existing test or benchmark
+owner. Preserve the representative workload, required output, and baseline
+conditions. Choose a check whose reliability and maintenance cost justify keeping
+it; a saved fixture and repeatable benchmark command may be sufficient.
 
 Clean up only experiment-owned changes: leave the supported candidate and
 intentionally retained measurement support while preserving unrelated user work.
