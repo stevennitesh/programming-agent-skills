@@ -39,7 +39,19 @@ automatically selectable skills, the request is shown in ordinary language.
 should be retired; do not change anything.` selects context-hygiene's memory
 branch and finishes with findings. A requested memory cleanup uses the runtime's
 supported update path and distinguishes submission from active consolidation.
+
+`Review these agent conversations and tool logs for recurring causes of wasted
+work, mistaken completion, and missing context. Recommend supported improvements.`
+selects the [session-retrospective branch](../../skills/astra/context-hygiene/references/session-retrospective.md).
+The agent chooses relevant evidence and investigation methods, challenges the
+initial explanation when warranted, and routes useful corrections to their owners.
+A failed attempt can coexist with a successful task; no change or an unresolved
+cause can be the right conclusion. An analysis request does not authorize its
+proposed fixes or memory writes.
+
 `Summarize this chat so I can resume tomorrow` remains a continuation handoff.
+`Fix this application's intermittent import failure` remains diagnosis or
+implementation; ordinary product logs alone do not select a session retrospective.
 
 Discovering one stale command during a coding task can justify focused context
 assessment within scope; it does not initiate an unrelated repository or memory

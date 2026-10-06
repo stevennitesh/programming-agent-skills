@@ -1,6 +1,6 @@
 ---
 name: context-hygiene
-description: Maintain repository guidance and durable memory when context is scattered, stale, conflicting, or missing. Exclude initial setup, isolated wording edits, and live-thread summarization.
+description: Maintain repository guidance and durable memory, or analyze agent sessions and harness issues for reusable improvements. Exclude initial setup, isolated wording edits, and routine summaries.
 ---
 
 # Context hygiene
@@ -11,15 +11,17 @@ accumulating temporary task state. Choose the investigation, organization,
 consolidation, and verification suited to the problem.
 
 This skill can be selected when a concrete context problem is relevant to the
-active task. That does not expand the task into an unrelated repository audit or
-a global memory sweep. A missing preferred document alone is not a context gap.
+active task or a session retrospective is requested. Selection does not expand
+the task into an unrelated repository audit or global memory sweep. A missing
+preferred document alone is not a context gap.
 
 ## Scope and authority
 
-Establish the repository or memory surface and the requested result. An inspection
-or read-only request returns findings and recommendations. Apply already-authorized
-cleanup without another approval cycle; ask only when consequential meaning or
-authority remains unresolved, and continue independent work within scope.
+Establish the requested repository, memory surface, or session evidence and result.
+An inspection or read-only request returns findings and recommendations. Apply
+already-authorized cleanup without another approval cycle; ask only when
+consequential meaning or authority remains unresolved, and continue independent
+work within scope.
 Memory writes require an explicit user request covering the memory change and
 the runtime's supported update mechanism.
 
@@ -49,6 +51,9 @@ meaning and retrieval path survive at the chosen owner.
   guidance, unclear ownership, conflicting instructions, stale commands, or missing
   repository knowledge. This skill owns ongoing maintenance, including authorized
   edits across the affected context surface.
+- [Session retrospectives](references/session-retrospective.md): analyze selected
+  agent conversations, tool logs, and harness issues for supported patterns,
+  reusable corrections, and their maintained owners.
 - [Managed memory](references/managed-memory.md): review a selected memory store or
   extract supported durable lessons from selected work; separate active recall
   from temporary state and history, and use supported update mechanisms.
