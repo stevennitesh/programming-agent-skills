@@ -45,12 +45,23 @@ result can be descriptive, negative, or inconclusive. Use the existing analysis
 and its limits; this presentation work does not require new statistical tests or
 reopening an evaluation.
 
-## Write for a domain-aware newcomer
+For findings that inform a decision, explain who could use them, which choice
+they support, and how material uncertainty or constraints affect that use. Keep
+recommendations conditional on the evidence; model performance alone does not
+establish the outcomes of acting on its predictions.
+
+## Write for the intended reader
 
 For the finished reader-facing product, aim for roughly 50% ASD-STE100 Simplified
-Technical English and 50% precise domain language. Assume the reader knows the
-domain but is new to this project. Use this as a balance of explanation and
-terminology, not a word-count quota or alternating sentence pattern.
+Technical English and 50% precise domain language. Use this as a balance of
+explanation and terminology, not a word-count quota or alternating sentence
+pattern. Default to a reader who knows the domain but is new to this project;
+adapt the explanation to the intended audience from the request.
+
+Domain familiarity does not imply statistical or machine-learning familiarity.
+Explain consequential metrics in terms of the question they answer and what the
+reader can infer from them. Retain technical precision and make supporting detail
+available where it helps the reader assess the result.
 
 Use the controlled-language approach of
 [ASD-STE100](https://www.asd-ste100.org/about_STE.html) for explanations: clear
@@ -92,8 +103,11 @@ everywhere or relabeling a chart whose underlying quantity differs.
 
 Use visuals that help the audience assess the result. Give them interpretable
 labels, comparisons, and nearby explanations; select axes, scales, and emphasis
-that preserve the finding's meaning. Prefer existing evidence-generation paths
-when regenerating an artifact. Updating a renderer within scope does not authorize
+that preserve the finding's meaning. Supply meaningful text alternatives for
+consequential visuals and use additional cues when colour carries distinctions.
+Choose descriptions, labels, patterns, or tables that convey the relevant finding
+for the surface and audience. Prefer existing evidence-generation paths when
+regenerating an artifact. Updating a renderer within scope does not authorize
 retuning a model or reopening a held-out evaluation to obtain a better story.
 
 Provide a practical path to inspect the demonstrated work when relevant, using
@@ -102,16 +116,23 @@ executed, and independently reproduced evidence. Missing reproducibility should
 be visible, not replaced by an unrelated demo or new infrastructure. Keep private
 inputs and credentials out of public examples and rendered artifacts.
 
+For GitHub-hosted data science presentations, read
+[GitHub data science artifacts](references/github-data-science.md) for notebook
+viewer constraints and access to the supporting evidence.
+
 ## Verify the reader's experience
 
 Inspect the requested rendered surfaces with the available preview or renderer.
 Check the consequential reading path, chart/text agreement, legibility, links,
-and layout at the relevant presentation sizes. Read the finished prose as someone
-familiar with the domain but new to the project: it should preserve useful domain
-detail and read naturally without unexplained local jargon or generic filler.
+and layout at the relevant presentation sizes. Judge whether the intended reader
+can identify the question, the author's contribution, the main finding, its
+consequential limits, and where to inspect supporting evidence across that reading
+path. Use available reader feedback when it helps resolve a consequential doubt.
+The prose should preserve useful domain detail and read naturally without
+unexplained local jargon or generic filler.
 Source text or a successful build alone cannot establish how the result appears.
-Fix presentation defects within
-scope and report any surface that could not be inspected.
+Fix presentation defects within scope and report any surface that could not be
+inspected.
 
 Deliver the requested artifacts and a concise account of changes, checked
 surfaces, and material evidence or rendering limits. Keep the result honest about
