@@ -1,6 +1,6 @@
 # Astra skills pack design brief
 
-Current direction, reconciled 2026-10-05. The pack is built primarily for
+Current direction, reconciled 2026-10-06. The pack is built primarily for
 **GPT 6 Astra**. Optional cost-aware execution routes implementation to GPT 6.1 Sol
 and bounded work, including large-context retrieval and bulk writing, to GPT 6 Luna.
 This document owns design rationale and composition for `skills/astra/`;
@@ -56,7 +56,7 @@ review evidence. A selected workflow may require more within its own scope.
 | --- | --- |
 | Local commands, facts, conditional pointers | Repository `AGENTS.md`, `CONTEXT.md`, and `docs/agents/` |
 | Initial repository guidance and requested setup migrations | [Repo bootstrap](../../skills/astra/repo-bootstrap/SKILL.md) |
-| Ongoing repository context and durable memory maintenance | [Context hygiene](../../skills/astra/context-hygiene/SKILL.md) |
+| Ongoing repository context, durable memory, and requested agent-session retrospectives | [Context hygiene](../../skills/astra/context-hygiene/SKILL.md) |
 | Selected instruction artifacts, skills, prompts, and handoffs | [Writing for agents](../../skills/astra/writing-for-agents/SKILL.md) |
 | User alignment, specifications, domain meaning, and durable decision capture | [Shape work](../../skills/astra/shape-work/SKILL.md), including affected document reconciliation |
 | Code reuse, ownership, simplification, integration, and retirement decisions; empirical feasibility | [Codebase design](../../skills/astra/codebase-design/SKILL.md) for the design decision and [prototype](../../skills/astra/prototype/SKILL.md) for a needed new observation |
@@ -145,10 +145,16 @@ checks do not establish improved agent performance, and ordinary edits need no
 behavioral evaluation campaign.
 
 Context-hygiene can be selected when scattered, stale, conflicting, or missing
-context affects the active task. It chooses investigation and consolidation
-methods within that scope. Repository guidance may own accepted requirements;
-managed memory supplies recall, with temporary state kept in task records or
-history and durable lessons kept conditional on their evidence and applicability.
+context affects the active task or an agent-session retrospective is requested.
+It chooses investigation and consolidation methods within that scope. A
+conditional session reference steers toward supported causes, proportionate
+corrections, and verified effects while leaving evidence selection, methods,
+depth, and judgment to the agent. The initial explanation may be challenged;
+no durable change or an unresolved cause can be a valid result. Correct harness
+mechanisms at their owners when prose does not address the cause. Repository
+guidance may own accepted requirements; managed memory supplies recall, with
+temporary state kept in task records or history and durable lessons kept
+conditional on their evidence and applicability.
 Memory writes require an explicit request and the runtime's supported mechanism.
 Read-only audits finish with findings; cleanup distinguishes verified changes
 from pending memory updates. Selection does not initiate unrelated context sweeps.

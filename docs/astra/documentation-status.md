@@ -6,6 +6,24 @@ referenced research/synthesis; it is not an audit of every historical packet or
 external project. The [design brief](design-brief.md) owns current direction. Do
 not treat this inventory as an execution backlog.
 
+## Session retrospectives and judgment, 2026-10-06
+
+Context-hygiene now includes a conditional
+[session-retrospective reference](../../skills/astra/context-hygiene/references/session-retrospective.md)
+for selected conversations, tool logs, and harness issues. The discovery text,
+selection examples, README, context ownership table, and design brief reflect
+the extension; the managed skill inventory and invocation policy are unchanged.
+
+The method combines improvement-oriented reflection with source attribution,
+historical provenance, and causal uncertainty. It steers toward useful corrections
+and truthful completion while leaving evidence, methods, depth, and judgment to
+the agent. No change can be the correct result. Routine summaries and ordinary
+application debugging retain their existing owners; memory updates still require
+an explicit request and the supported mechanism. The
+[comparison and proposal](../research/context-hygiene-session-retrospective-2026-10-06.md)
+remains evidence of the design process, not an execution authority. These changes
+do not establish improved model performance.
+
 ## Context maintenance and memory ownership, 2026-10-03
 
 Context-hygiene now owns ongoing repository guidance maintenance and durable

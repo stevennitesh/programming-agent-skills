@@ -12,7 +12,7 @@ general engineering-contract document.
 | Working commands and repository constraints | [AGENTS.md](AGENTS.md) |
 | Skill design, composition, and migration direction | [Astra design brief](docs/astra/design-brief.md) |
 | Initial guidance and requested setup migrations | [Repo bootstrap](skills/astra/repo-bootstrap/SKILL.md) |
-| Ongoing repository context and durable memory maintenance | [Context hygiene](skills/astra/context-hygiene/SKILL.md) |
+| Ongoing repository context, durable memory, and requested agent-session retrospectives | [Context hygiene](skills/astra/context-hygiene/SKILL.md) |
 | Selected agent-instruction artifacts | [Writing for agents](skills/astra/writing-for-agents/SKILL.md) |
 | Current work and conditional runbooks | [Plans index](docs/plans/README.md) |
 | Domain meaning and decision history | [Domain route](docs/agents/domain.md), then relevant ADRs |

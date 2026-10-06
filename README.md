@@ -145,7 +145,7 @@ matches. You can also invoke an automatic skill explicitly.
 | Make a project's portfolio artifacts coherent, understandable, and supported by evidence | [$portfolio-presentation](skills/astra/portfolio-presentation/SKILL.md) | Automatic when relevant |
 | Establish repository agent guidance or migrate its setup | [$repo-bootstrap](skills/astra/repo-bootstrap/SKILL.md) | Request explicitly |
 | Write or audit reusable agent guidance, a consequential assignment, or a handoff | [$writing-for-agents](skills/astra/writing-for-agents/SKILL.md) | Automatic when relevant |
-| Maintain scattered, stale, conflicting, or missing repository context and durable memory | [$context-hygiene](skills/astra/context-hygiene/SKILL.md) | Automatic when relevant |
+| Maintain repository context and durable memory, or analyze agent sessions for reusable context and harness improvements | [$context-hygiene](skills/astra/context-hygiene/SKILL.md) | Automatic when relevant |
 | Guide a private human step through the terminal and safely hand control back | [$wizard](skills/astra/wizard/SKILL.md) | Request explicitly |
 
 For one positive request and one realistic near-miss for every skill, see
