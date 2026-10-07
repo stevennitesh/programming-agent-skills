@@ -486,6 +486,34 @@ def test_gitlinks_can_be_mapped_and_track_source_changes(tmp_path: Path, initial
     assert atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]["freshness"]["beta"] == "changed"
 
 
+@pytest.mark.parametrize("change", ["content", "executable"])
+def test_gitlink_file_changes_invalidate_source_identity(tmp_path: Path, change: str) -> None:
+    if change == "executable" and os.name == "nt":
+        pytest.skip("POSIX executable bits are unavailable on Windows")
+    make_repo(tmp_path)
+    oid = subprocess.run(["git", "rev-parse", "HEAD"], cwd=tmp_path, check=True, capture_output=True, text=True).stdout.strip()
+    path = "vendor/dep"
+    target = tmp_path / path
+    target.parent.mkdir()
+    target.write_text("dependency placeholder", encoding="utf-8")
+    subprocess.run(["git", "update-index", "--add", "--cacheinfo", f"160000,{oid},{path}"], cwd=tmp_path, check=True)
+    mapping = map_manifest(tmp_path)
+    mapping["subsystems"][1]["owned_paths"].append(path)
+    publish(tmp_path, "render-report", mapping)
+    before = atlas.inventory(repo_root=tmp_path)
+    packet = identity(tmp_path, [path])
+    if change == "content":
+        target.write_text("changed placeholder", encoding="utf-8")
+    else:
+        target.chmod(target.stat().st_mode | 0o111)
+    after = atlas.inventory(repo_root=tmp_path)
+    assert before["tracked_entries"] == after["tracked_entries"]
+    assert before["identity"]["tracked_content_sha256"] != after["identity"]["tracked_content_sha256"]
+    assert identity(tmp_path, [path]) != packet
+    atlas.refresh_report(repo_root=tmp_path, report=report(tmp_path))
+    assert atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]["freshness"] == {"alpha": "fresh", "beta": "changed"}
+
+
 @pytest.mark.parametrize("materialization", ["absent", "plain file", "symlink"])
 def test_tracked_symlink_entries_do_not_require_the_target(tmp_path: Path, materialization: str) -> None:
     make_repo(tmp_path)

@@ -69,6 +69,7 @@ paths; a new map
 needs an unconflicted index.
 Gitlinks bind the recorded
 submodule commit and, when initialized, its observed checkout and tracked content.
+An unexpected regular file at a gitlink path binds its bytes and executable bits.
 Missing tracked files remain represented by their index entry and absence;
 symlinks bind their link target without following it. These identities do not
 establish that unavailable dependency behavior was inspected. State that coverage

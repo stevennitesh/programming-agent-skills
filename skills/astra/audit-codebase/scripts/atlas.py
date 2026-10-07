@@ -197,6 +197,12 @@ def _source_digest(root: Path, path: str, entries: dict[str, dict[str, str]]) ->
             "materialization": "directory" if target.is_dir() else "file" if target.is_file() else "missing",
             "checkout": checkout,
         }
+        if payload["materialization"] == "file":
+            try:
+                payload["content_sha256"] = _digest(target.read_bytes())
+                payload["executable_bits"] = target.stat().st_mode & 0o111
+            except OSError as exc:
+                raise ReportError(f"cannot read gitlink file: {path}: {exc}") from exc
     else:
         try:
             is_link = target.is_symlink()
