@@ -69,8 +69,8 @@ review evidence. A selected workflow may require more within its own scope.
 | Visual codebase mapping and baseline improvement discovery, hard bugs, or measured optimization | [Audit codebase](../../skills/astra/audit-codebase/SKILL.md), [diagnosing bugs](../../skills/astra/diagnosing-bugs/SKILL.md), and [hillclimb](../../skills/astra/hillclimb/SKILL.md) |
 | Evidence gathering and guided procedures | [Research](../../skills/astra/research/SKILL.md) and [wizard](../../skills/astra/wizard/SKILL.md) |
 | Active Git conflicts | [Resolving merge conflicts](../../skills/astra/resolving-merge-conflicts/SKILL.md) |
-| Branch and worktree disposition, requested retained-work integration, and cleanup | [Git cleanup](../../skills/astra/git-cleanup/SKILL.md) |
-| Evidence-backed project presentation for external readers | [Portfolio presentation](../../skills/astra/portfolio-presentation/SKILL.md) |
+| Branch and worktree disposition, requested retained-work integration, and cleanup | [Git cleanup](../../skills/astra/git-cleanup/SKILL.md), only when explicitly requested |
+| Evidence-backed project presentation for external readers | [Portfolio presentation](../../skills/astra/portfolio-presentation/SKILL.md), only when explicitly requested |
 
 Choose a skill by the decision or effect it owns, not merely by the artifact being
 edited. Shape-work owns product alignment, domain meaning, and durable capture of
@@ -125,8 +125,7 @@ prose targets a domain-aware newcomer with roughly equal parts ASD-STE100
 Simplified Technical English and domain language. The skill owns how that
 STE-informed blend and pstack's unslop principles support concrete, natural
 writing. Isolated wording edits, new research, and general website construction
-remain outside its scope. Both skills are automatically selectable for matching
-requests.
+remain outside its scope. Both skills require an explicit request.
 
 The managed pack currently contains 20 skills. Their metadata owns invocation
 behavior; the README lists explicit-only workflows. Continuation handoffs belong
