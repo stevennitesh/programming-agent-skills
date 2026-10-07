@@ -5,7 +5,7 @@ continuing an existing current-format workbench. An explicitly requested brief o
 text-only assessment may stay in chat; a no-write assessment creates no report.
 
 The helper is [atlas.py](../scripts/atlas.py). Use its current `--help` and
-subcommand help for exact CLI syntax. The helper writes report/state format 2 and
+subcommand help for exact CLI syntax. The helper writes report/state format 3 and
 accepts manifest format 1. Start a new map for older reports; do not migrate or
 continue older report schemas.
 
@@ -60,6 +60,23 @@ proof seams, and owned paths.
 
 Every tracked path belongs to one subsystem or one evidenced exclusion. Shared
 infrastructure still needs one structural owner and named consumers.
+
+Inventory exposes Git entry modes and object IDs; content identities bind index
+modes and object IDs, observed executable bits, and materialization as well as
+working content. Staged blob changes count as source changes even if working bytes
+are restored. Scoped identities reject index conflicts only among their requested
+paths; a new map
+needs an unconflicted index.
+Gitlinks bind the recorded
+submodule commit and, when initialized, its observed checkout and tracked content.
+An unexpected regular file at a gitlink path binds its bytes and executable bits.
+Empty deinitialized directories are supported; populated gitlink directories
+without checkout metadata are rejected rather than reported as fresh.
+Missing tracked files remain represented by their index entry and absence;
+symlinks bind their link target without following it. These identities do not
+establish that unavailable dependency behavior was inspected. State that coverage
+limit; the helper does not initialize submodules or materialize missing files.
+Gitlink checkouts must resolve beneath the requested repository root.
 
 Show the map and stop for user selection unless the request already selects an
 audit scope or delegates that selection. For a whole-repository audit, continue
@@ -140,9 +157,11 @@ The rendered workbench should provide:
 
 Coverage accounts for all mapped subsystems, separating current completed and
 non-applicable lenses from evidence gaps, changed source, and unaudited scope.
-Candidate analysis freshness follows its own complete source packet, including
-other affected subsystems. Keep stale judgments visible as prior evidence;
-reanalyze before using a stale recommendation for the next action.
+Candidate freshness follows both its originating audit and its analysis source
+packet, including evidence outside mapped ownership. Keep stale judgments visible
+as prior evidence; renew a stale audit and reanalyze before using its recommendation
+for the next action. Candidate warnings and copyable commands distinguish renewing
+the originating audit from reanalyzing stale analysis evidence.
 
 Open the report through the host's supported HTML preview and inspect the actual
 reading path, map links, filters, copyable selections, labels, and layout. Check

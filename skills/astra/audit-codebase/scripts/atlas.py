@@ -15,7 +15,7 @@ from html import escape, unescape
 from pathlib import Path, PurePosixPath
 from typing import Any, NoReturn, Sequence
 
-REPORT_VERSION, STATE_VERSION = 2, 2
+REPORT_VERSION, STATE_VERSION = 3, 3
 RESPONSE_VERSION, MANIFEST_VERSION = 1, 1
 _ID = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
 _RUN = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]*")
@@ -164,14 +164,76 @@ def _git(root: Path, *args: str) -> str:
         raise ReportError(f"git {' '.join(args)} failed") from exc
 
 
+def _index_entries(root: Path, paths: Sequence[str] = ()) -> dict[str, dict[str, str]]:
+    entries = {}
+    for record in _git(root, "--literal-pathspecs", "ls-files", "--stage", "-z", "--", *paths).split("\0"):
+        if not record:
+            continue
+        metadata, path = record.split("\t", 1)
+        mode, object_id, stage = metadata.split()
+        if stage != "0":
+            raise ReportError(f"source index has an unresolved entry: {path}")
+        entries[path.replace("\\", "/")] = {"mode": mode, "object_id": object_id}
+    return entries
+
+
+def _source_digest(root: Path, path: str, entries: dict[str, dict[str, str]]) -> bytes:
+    target = root / path
+    entry = entries.get(path)
+    mode = entry["mode"] if entry else "untracked"
+    if entry and entry["mode"] == "160000":
+        resolved = target.resolve()
+        if resolved == root or not resolved.is_relative_to(root):
+            raise ReportError(f"gitlink checkout is outside repository: {path}")
+        if target.is_symlink() or getattr(target, "is_junction", lambda: False)():
+            raise ReportError(f"gitlink checkout is redirected: {path}")
+        checkout = None
+        if (target / ".git").exists():
+            if Path(_git(target, "rev-parse", "--show-toplevel")).resolve() != resolved:
+                raise ReportError(f"gitlink checkout does not own its worktree: {path}")
+            checkout = inventory(repo_root=target)["identity"]
+        elif target.is_dir():
+            try:
+                if any(target.iterdir()):
+                    raise ReportError(f"gitlink directory is not a checkout: {path}")
+            except OSError as exc:
+                raise ReportError(f"cannot inspect gitlink directory: {path}: {exc}") from exc
+        payload = {
+            "mode": mode, "kind": "gitlink",
+            "materialization": "directory" if target.is_dir() else "file" if target.is_file() else "missing",
+            "checkout": checkout,
+        }
+        if payload["materialization"] == "file":
+            try:
+                payload["content_sha256"] = _digest(target.read_bytes())
+                payload["executable_bits"] = target.stat().st_mode & 0o111
+            except OSError as exc:
+                raise ReportError(f"cannot read gitlink file: {path}: {exc}") from exc
+    else:
+        try:
+            is_link = target.is_symlink()
+            content = os.fsencode(os.readlink(target)) if is_link else target.read_bytes()
+            payload = {"mode": mode, "kind": "symlink" if is_link else "file", "content_sha256": _digest(content)}
+            if not is_link:
+                payload["executable_bits"] = target.stat().st_mode & 0o111
+        except FileNotFoundError as exc:
+            if not entry:
+                raise ReportError(f"source path does not exist: {path}") from exc
+            payload = {"mode": mode, "kind": "missing"}
+        except OSError as exc:
+            raise ReportError(f"cannot read source path: {path}: {exc}") from exc
+    if entry:
+        payload["object_id"] = entry["object_id"]
+    return hashlib.sha256(_canonical(payload)).digest()
+
+
 def inventory(*, repo_root: Path) -> dict[str, Any]:
     root = repo_root.resolve()
-    paths = sorted(
-        p.replace("\\", "/") for p in _git(root, "ls-files", "-z").split("\0") if p
-    )
+    entries = _index_entries(root)
+    paths = sorted(entries)
     h = hashlib.sha256()
     for p in paths:
-        h.update(p.encode() + b"\0" + hashlib.sha256((root / p).read_bytes()).digest())
+        h.update(p.encode() + b"\0" + _source_digest(root, p, entries))
     return {
         "response_version": RESPONSE_VERSION,
         "identity": {
@@ -180,6 +242,7 @@ def inventory(*, repo_root: Path) -> dict[str, Any]:
             "tracked_content_sha256": h.hexdigest(),
         },
         "tracked_paths": paths,
+        "tracked_entries": entries,
     }
 
 
@@ -188,11 +251,10 @@ def source_identity(*, repo_root: Path, paths: Sequence[str]) -> dict[str, Any]:
     normalized = sorted({_rel(p, "path") for p in paths})
     if not normalized:
         raise ReportError("source-identity requires paths")
+    entries = _index_entries(root, normalized)
     h = hashlib.sha256()
     for p in normalized:
-        if not (root / p).is_file():
-            raise ReportError(f"source path does not exist: {p}")
-        h.update(p.encode() + b"\0" + hashlib.sha256((root / p).read_bytes()).digest())
+        h.update(p.encode() + b"\0" + _source_digest(root, p, entries))
     return {
         "response_version": RESPONSE_VERSION,
         "paths": normalized,
@@ -752,10 +814,14 @@ def _refresh_observation(state: dict[str, Any], root: Path) -> None:
         for sub in state["subsystems"]
     }
     state["candidate_freshness"] = {
-        candidate["id"]: _source_freshness(
-            root,
-            candidate.get("analysis", {}).get("source_identity")
-            or sub["audit"]["source_identity"],
+        candidate["id"]: (
+            "changed"
+            if state["freshness"][sub["id"]] == "changed"
+            else _source_freshness(
+                root,
+                candidate.get("analysis", {}).get("source_identity")
+                or sub["audit"]["source_identity"],
+            )
         )
         for sub in state["subsystems"]
         for candidate in sub.get("audit", {}).get("candidates", [])
@@ -875,9 +941,11 @@ def _comparison_html(comparison: dict[str, Any], candidate_id: str) -> str:
     )
 
 
-def _candidate_html(x: dict[str, Any], run_id: str, freshness: str) -> str:
+def _candidate_html(x: dict[str, Any], run_id: str, freshness: str, audit_id: str, audit_freshness: str) -> str:
     analysis = x.get("analysis")
     changed = freshness == "changed"
+    audit_changed = audit_freshness == "changed"
+    freshness_cause = "audit" if audit_changed else "analysis" if changed else "none"
     search = " ".join([x["title"], x["primary_class"], x["strength"], x["problem"], x["direction"], *x["affected_scope"]])
     analysis_html = ""
     if analysis:
@@ -893,7 +961,11 @@ def _candidate_html(x: dict[str, Any], run_id: str, freshness: str) -> str:
 <dt>Evidence limits</dt><dd>{escape(analysis["evidence_limits"]) or '<span class="muted">None</span>'}</dd>
 <dt>Blocking question</dt><dd>{escape(analysis["question"]) or '<span class="muted">None</span>'}</dd>
 </dl><div class="option-grid">{options}</div></div>'''
-    command = f"$audit-codebase analyze candidate {x['id']} in atlas run {run_id}"
+    command = (
+        f"$audit-codebase audit subsystem {audit_id} in atlas run {run_id}"
+        if audit_changed else f"$audit-codebase analyze candidate {x['id']} in atlas run {run_id}"
+    )
+    command_label = "Copy audit command" if audit_changed else "Copy analyze command"
     next_action = ""
     if not changed and x["state"] == "analyzed":
         next_action = (
@@ -910,17 +982,18 @@ def _candidate_html(x: dict[str, Any], run_id: str, freshness: str) -> str:
         f'<button class="copy" data-copy="{escape(next_action, quote=True)}">Copy next-action handoff</button>'
         if next_action else ""
     )
-    evidence_owner = "Analysis" if analysis else "Audit"
+    evidence_owner = "Audit" if audit_changed or not analysis else "Analysis"
     freshness_badge = _badge(freshness, f'{evidence_owner} source {freshness}')
-    warning = (
-        '<p class="stale-warning">Prior evidence is retained. Reanalyze this candidate before using its recommendation.</p>'
-        if changed else ""
-    )
+    warning = ""
+    if audit_changed:
+        warning = '<p class="stale-warning">Originating audit evidence changed. Renew the subsystem audit, then analyze this candidate again. Prior evidence is retained.</p>'
+    elif changed:
+        warning = '<p class="stale-warning">Analysis evidence changed. Reanalyze this candidate before using its recommendation. Prior evidence is retained.</p>'
     comparison = (analysis or {}).get("comparison") or x.get("comparison")
     visual = _comparison_html(comparison, x["id"]) if comparison else ""
     state_badge = _badge("changed", f'{x["state"]} (prior)') if changed else _badge(x["state"])
     return f'''<article class="card candidate" data-filter-card data-state="{escape(x["state"])}"
-data-freshness="{freshness}" data-search="{escape(search, quote=True)}" id="candidate-{escape(x["id"])}">
+data-freshness="{freshness}" data-freshness-cause="{freshness_cause}" data-search="{escape(search, quote=True)}" id="candidate-{escape(x["id"])}">
 <div class="strength">{_badge(x["strength"], x["strength"].title())}</div><h3>{escape(x["title"])}</h3>
 <div class="badges">{state_badge}{_badge(x["primary_class"])}{freshness_badge}</div>{warning}
 <div class="compare"><div><h4>Current problem</h4><p>{escape(x["problem"])}</p></div>
@@ -929,7 +1002,7 @@ data-freshness="{freshness}" data-search="{escape(search, quote=True)}" id="cand
 <dt>Findings</dt><dd>{escape(", ".join(x["finding_ids"]))}</dd><dt>Risks</dt><dd>{_list(x["risks"])}</dd>
 <dt>Required proof</dt><dd>{_list(x["required_proof"])}</dd></dl>
 <details class="evidence"><summary>Evidence</summary>{_list(x["evidence"])}</details>{analysis_html}
-<div class="command"><button class="copy" data-copy="{escape(command, quote=True)}">Copy analyze command</button>{next_button}</div></article>'''
+<div class="command"><button class="copy" data-copy="{escape(command, quote=True)}">{command_label}</button>{next_button}</div></article>'''
 
 
 def _coverage_counts(state: dict[str, Any]) -> dict[str, dict[str, int]]:
@@ -975,6 +1048,7 @@ def _render(state: dict[str, Any]) -> bytes:
     changed = [x for x in subsystems if state["freshness"].get(x["id"]) == "changed"]
     findings = [x for sub in audited for x in sub["audit"]["findings"]] + state["systemic_findings"]
     candidates = [x for sub in audited for x in sub["audit"]["candidates"]]
+    candidate_owners = {x["id"]: sub["id"] for sub in audited for x in sub["audit"]["candidates"]}
     gap_count = sum(1 for sub in audited if state["freshness"][sub["id"]] == "fresh" for lens in sub["audit"]["lenses"] if lens["state"] == "evidence gap")
     current_audits = sum(state["freshness"][sub["id"]] == "fresh" for sub in audited)
     changed_candidates = sum(value == "changed" for value in state["candidate_freshness"].values())
@@ -999,7 +1073,10 @@ def _render(state: dict[str, Any]) -> bytes:
             audits.append(f'''<article class="panel" id="audit-{escape(sub["id"])}"><div class="section-head"><div><h2>{escape(sub["name"])}</h2><p>{escape(trace["summary"])}</p></div><div class="badges">{_badge(audit["coverage"])}{_badge(fresh,"Audit source "+fresh)}{_badge("evidence-gap",f"{sum(1 for x in audit['lenses'] if x['state']=='evidence gap')} gaps")}</div></div><div class="table-scroll"><table class="lens-table"><thead><tr><th>Lens</th><th>Coverage</th><th>Reason</th><th>Evidence</th></tr></thead><tbody>{lens_html}</tbody></table></div><details class="evidence"><summary>Source trace</summary><dl class="kv"><dt>Entry points</dt><dd>{_list(trace["entry_points"])}</dd><dt>Callers</dt><dd>{_list(trace["callers"])}</dd><dt>Dependencies</dt><dd>{_list(trace["dependencies"])}</dd><dt>Interfaces</dt><dd>{_list(trace["interfaces"])}</dd><dt>Proof seams</dt><dd>{_list(trace["proof_seams"])}</dd><dt>Representative flows</dt><dd>{_list(trace["representative_flows"])}</dd><dt>History signals</dt><dd>{_list(trace["history_signals"])}</dd><dt>Evidence limits</dt><dd>{escape(audit["evidence_limits"]) or '<span class="muted">None</span>'}</dd></dl></details><p><strong>Audit recommendation:</strong> {escape(audit["recommendation"])}</p></article>''')
     systems_index="".join(f'<section id="system-{escape(system["id"])}"><h3>{escape(system["name"])}</h3><div class="grid">{"".join(cards[sub["id"]] for sub in subsystems if sub["system_id"]==system["id"])}</div></section>' for system in state["systems"])
     candidates=sorted(candidates,key=lambda x:({"strong":0,"worth exploring":1,"speculative":2}[x["strength"]],x["title"]))
-    candidate_html="".join(_candidate_html(x,state["run_id"],state["candidate_freshness"][x["id"]]) for x in candidates)
+    candidate_html="".join(
+        _candidate_html(x, state["run_id"], state["candidate_freshness"][x["id"]], candidate_owners[x["id"]], state["freshness"][candidate_owners[x["id"]]])
+        for x in candidates
+    )
     finding_html="".join(_finding_html(x) for x in findings)
     excluded="".join(f'<li><code>{escape(x["path"])}</code>: {escape(x["reason"])}</li>' for x in state["excluded"]) or '<li class="muted">None</li>'
     history="".join(f'<li>{escape(x["operation"])} · {escape(x["selection"])}</li>' for x in state["history"])
