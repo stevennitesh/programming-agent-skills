@@ -66,7 +66,8 @@ tools, and other tasks.
 ## Models and hosts
 
 The skills were developed primarily for GPT 6 Astra and are intended for other
-capable coding models. The current managed pack lives in `skills/astra/`.
+capable coding models, including Sol 6.1, Opus 5.5, Fable 5.1, and Sonnet 5.5.
+The current managed pack lives in `skills/astra/`.
 
 The managed integration targets Codex. Hosts differ in how they load skills,
 select them automatically, and provide tools or subagents. Other hosts would
@@ -176,8 +177,8 @@ matches. You can also invoke an automatic skill explicitly.
 | Implement concurrently with separate ownership and clear dependencies | [$parallel-implement](skills/astra/parallel-implement/SKILL.md) | Request explicitly |
 | Assign work to GPT 6 models while the lead retains decisions and review | [$cost-aware-coding](skills/astra/cost-aware-coding/SKILL.md) | Request explicitly |
 | Resolve an active Git merge or rebase conflict | [$resolving-merge-conflicts](skills/astra/resolving-merge-conflicts/SKILL.md) | Automatic when relevant |
-| Assess branches and worktrees, integrate worthwhile work when requested, and clean up safely | [$git-cleanup](skills/astra/git-cleanup/SKILL.md) | Automatic when relevant |
-| Make a project's portfolio artifacts coherent, understandable, and supported by evidence | [$portfolio-presentation](skills/astra/portfolio-presentation/SKILL.md) | Automatic when relevant |
+| Assess branches and worktrees, integrate worthwhile work when requested, and clean up safely | [$git-cleanup](skills/astra/git-cleanup/SKILL.md) | Request explicitly |
+| Make a project's portfolio artifacts coherent, understandable, and supported by evidence | [$portfolio-presentation](skills/astra/portfolio-presentation/SKILL.md) | Request explicitly |
 | Establish repository agent guidance or migrate its setup | [$repo-bootstrap](skills/astra/repo-bootstrap/SKILL.md) | Request explicitly |
 | Write or audit reusable agent guidance, a consequential assignment, or a handoff | [$writing-for-agents](skills/astra/writing-for-agents/SKILL.md) | Automatic when relevant |
 | Maintain repository context and durable memory, or analyze agent sessions for reusable context and harness improvements | [$context-hygiene](skills/astra/context-hygiene/SKILL.md) | Automatic when relevant |
