@@ -202,6 +202,8 @@ def _source_digest(root: Path, path: str, entries: dict[str, dict[str, str]]) ->
             is_link = target.is_symlink()
             content = os.fsencode(os.readlink(target)) if is_link else target.read_bytes()
             payload = {"mode": mode, "kind": "symlink" if is_link else "file", "content_sha256": _digest(content)}
+            if not is_link:
+                payload["executable_bits"] = target.stat().st_mode & 0o111
         except FileNotFoundError as exc:
             if not entry:
                 raise ReportError(f"source path does not exist: {path}") from exc
@@ -1032,6 +1034,7 @@ def _render(state: dict[str, Any]) -> bytes:
     changed = [x for x in subsystems if state["freshness"].get(x["id"]) == "changed"]
     findings = [x for sub in audited for x in sub["audit"]["findings"]] + state["systemic_findings"]
     candidates = [x for sub in audited for x in sub["audit"]["candidates"]]
+    candidate_owners = {x["id"]: sub["id"] for sub in audited for x in sub["audit"]["candidates"]}
     gap_count = sum(1 for sub in audited if state["freshness"][sub["id"]] == "fresh" for lens in sub["audit"]["lenses"] if lens["state"] == "evidence gap")
     current_audits = sum(state["freshness"][sub["id"]] == "fresh" for sub in audited)
     changed_candidates = sum(value == "changed" for value in state["candidate_freshness"].values())
@@ -1057,8 +1060,8 @@ def _render(state: dict[str, Any]) -> bytes:
     systems_index="".join(f'<section id="system-{escape(system["id"])}"><h3>{escape(system["name"])}</h3><div class="grid">{"".join(cards[sub["id"]] for sub in subsystems if sub["system_id"]==system["id"])}</div></section>' for system in state["systems"])
     candidates=sorted(candidates,key=lambda x:({"strong":0,"worth exploring":1,"speculative":2}[x["strength"]],x["title"]))
     candidate_html="".join(
-        _candidate_html(x, state["run_id"], state["candidate_freshness"][x["id"]], sub["id"], state["freshness"][sub["id"]])
-        for sub in audited for x in sub["audit"]["candidates"]
+        _candidate_html(x, state["run_id"], state["candidate_freshness"][x["id"]], candidate_owners[x["id"]], state["freshness"][candidate_owners[x["id"]]])
+        for x in candidates
     )
     finding_html="".join(_finding_html(x) for x in findings)
     excluded="".join(f'<li><code>{escape(x["path"])}</code>: {escape(x["reason"])}</li>' for x in state["excluded"]) or '<li class="muted">None</li>'

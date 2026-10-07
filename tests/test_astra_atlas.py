@@ -4,6 +4,7 @@ from __future__ import annotations
 import hashlib
 import importlib.util
 import json
+import os
 import subprocess
 import sys
 from html.parser import HTMLParser
@@ -534,6 +535,47 @@ def test_mode_only_changes_invalidate_map_and_source_identity(tmp_path: Path) ->
     assert identity(tmp_path, ["src/a.py"]) != before
     atlas.refresh_report(repo_root=tmp_path, report=report(tmp_path))
     assert atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]["freshness"] == {"alpha": "changed", "beta": "fresh"}
+
+
+@pytest.mark.skipif(os.name == "nt", reason="POSIX executable bits are unavailable on Windows")
+def test_unstaged_executable_bits_invalidate_content_identity(tmp_path: Path) -> None:
+    make_repo(tmp_path)
+    before = atlas.inventory(repo_root=tmp_path)
+    packet = identity(tmp_path, ["src/a.py"])
+    target = tmp_path / "src/a.py"
+    target.chmod(target.stat().st_mode | 0o100)
+    after = atlas.inventory(repo_root=tmp_path)
+    assert before["tracked_entries"] == after["tracked_entries"]
+    assert before["identity"]["commit"] == after["identity"]["commit"]
+    assert before["identity"]["tree"] == after["identity"]["tree"]
+    assert before["identity"]["tracked_content_sha256"] != after["identity"]["tracked_content_sha256"]
+    assert identity(tmp_path, ["src/a.py"]) != packet
+
+
+def test_candidates_sort_by_strength_and_keep_their_audit_owner(tmp_path: Path) -> None:
+    make_repo(tmp_path)
+    publish(tmp_path, "render-report", map_manifest(tmp_path))
+    alpha = audit_manifest(tmp_path, report(tmp_path))
+    alpha["candidates"][0].update(id="alpha-spec", title="A speculative lead", strength="speculative")
+    publish(tmp_path, "audit-subsystem", alpha)
+    beta = audit_manifest(tmp_path, report(tmp_path))
+    beta.update(subsystem_id="beta", source_identity=identity(tmp_path, ["src/b.py"]))
+    beta["findings"][0].update(id="beta-defect", affected_scope=["beta"])
+    for lens in beta["lenses"]:
+        lens["finding_ids"] = ["beta-defect"] if lens["finding_ids"] else []
+    worth, strong = candidate(), candidate()
+    worth.update(id="beta-worth", title="B worth exploring", strength="worth exploring", finding_ids=["beta-defect"], affected_scope=["beta"])
+    strong.update(id="beta-strong", title="C strongest", finding_ids=["beta-defect"], affected_scope=["beta"])
+    beta["candidates"] = [worth, strong]
+    publish(tmp_path, "audit-subsystem", beta)
+    (tmp_path / "src/a.py").write_text("changed alpha evidence", encoding="utf-8")
+    atlas.refresh_report(repo_root=tmp_path, report=report(tmp_path))
+    text = report(tmp_path).read_text(encoding="utf-8")
+    assert [card["id"] for card in elements(text, "data-freshness-cause")] == ["candidate-beta-strong", "candidate-beta-worth", "candidate-alpha-spec"]
+    alpha_card = text.split('id="candidate-alpha-spec"', 1)[1].split('</article>', 1)[0]
+    beta_card = text.split('id="candidate-beta-strong"', 1)[1].split('</article>', 1)[0]
+    assert [button["data-copy"] for button in elements(alpha_card, "data-copy")] == ['$audit-codebase audit subsystem alpha in atlas run run-1']
+    assert [button["data-copy"] for button in elements(beta_card, "data-copy")] == ['$audit-codebase analyze candidate beta-strong in atlas run run-1']
 
 
 def test_scoped_identity_ignores_unrelated_unmerged_entries(tmp_path: Path) -> None:

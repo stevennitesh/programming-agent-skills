@@ -61,9 +61,10 @@ proof seams, and owned paths.
 Every tracked path belongs to one subsystem or one evidenced exclusion. Shared
 infrastructure still needs one structural owner and named consumers.
 
-Inventory exposes Git entry modes and object IDs; content identities bind modes
-and observed materialization as well as content. Scoped identities reject index
-conflicts only among their requested paths; a new map needs an unconflicted index.
+Inventory exposes Git entry modes and object IDs; content identities bind index
+modes, observed executable bits, and materialization as well as content. Scoped
+identities reject index conflicts only among their requested paths; a new map
+needs an unconflicted index.
 Gitlinks bind the recorded
 submodule commit and, when initialized, its observed checkout and tracked content.
 Missing tracked files remain represented by their index entry and absence;
