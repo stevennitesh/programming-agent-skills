@@ -314,9 +314,10 @@ def test_current_format_only_and_tamper_detection(tmp_path: Path) -> None:
     assert f'audit-codebase-report-version" content="{atlas.REPORT_VERSION}"' in raw
     assert "https://" not in raw and "http://" not in raw
     assert "cdn" not in raw.lower() and "mermaid" not in raw.lower()
-    rpt.write_text(raw.replace(f'audit-codebase-report-version" content="{atlas.REPORT_VERSION}"', 'audit-codebase-report-version" content="1"'), encoding="utf-8")
-    with pytest.raises(atlas.ReportError, match="report version"):
-        atlas.inspect_report(repo_root=tmp_path, report=rpt)
+    for old_version in (1, 2):
+        rpt.write_text(raw.replace(f'audit-codebase-report-version" content="{atlas.REPORT_VERSION}"', f'audit-codebase-report-version" content="{old_version}"'), encoding="utf-8")
+        with pytest.raises(atlas.ReportError, match="report version"):
+            atlas.inspect_report(repo_root=tmp_path, report=rpt)
     rpt.write_text(raw.replace("Architecture map", "Changed architecture", 1), encoding="utf-8")
     with pytest.raises(atlas.ReportError, match="canonical"):
         atlas.inspect_report(repo_root=tmp_path, report=rpt)
@@ -409,6 +410,7 @@ def test_analysis_freshness_tracks_its_own_evidence_and_preserves_judgment(tmp_p
     card = elements(text, "id", "candidate-alpha-fix")[0]
     assert card["data-state"] == "analyzed"
     assert card["data-freshness"] == "changed"
+    assert card["data-freshness-cause"] == "analysis"
     assert not any(button["data-copy"].startswith("Use analyzed audit candidate") for button in elements(text, "data-copy"))
     assert any(button["data-copy"].startswith("$audit-codebase analyze candidate alpha-fix") for button in elements(text, "data-copy"))
 
@@ -436,6 +438,11 @@ def test_analysis_keeps_originating_audit_evidence_bound(tmp_path: Path) -> None
     assert after["candidate_freshness"] == {"alpha-fix": "changed"}
     assert before["subsystems"][0]["audit"]["candidates"][0]["analysis"] == after["subsystems"][0]["audit"]["candidates"][0]["analysis"]
     assert not any(button["data-copy"].startswith("Use analyzed audit candidate") for button in elements(report(tmp_path).read_text(encoding="utf-8"), "data-copy"))
+    card = elements(report(tmp_path).read_text(encoding="utf-8"), "id", "candidate-alpha-fix")[0]
+    assert card["data-freshness-cause"] == "audit"
+    commands = [button["data-copy"] for button in elements(report(tmp_path).read_text(encoding="utf-8"), "data-copy")]
+    assert '$audit-codebase audit subsystem alpha in atlas run run-1' in commands
+    assert not any(command.startswith('$audit-codebase analyze candidate alpha-fix') for command in commands)
 
     publish(tmp_path, "analyze-candidate", analysis_manifest(tmp_path, report(tmp_path)))
     assert atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]["candidate_freshness"] == {"alpha-fix": "changed"}
@@ -512,6 +519,64 @@ def test_missing_tracked_entries_can_be_mapped_and_restoration_changes_identity(
     assert atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]["freshness"]["beta"] == "changed"
     with pytest.raises(atlas.ReportError, match="source path does not exist"):
         identity(tmp_path, ["never-tracked.txt"])
+
+
+def test_mode_only_changes_invalidate_map_and_source_identity(tmp_path: Path) -> None:
+    make_repo(tmp_path)
+    mapping = map_manifest(tmp_path)
+    publish(tmp_path, "render-report", mapping)
+    before = identity(tmp_path, ["src/a.py"])
+    subprocess.run(["git", "update-index", "--chmod=+x", "src/a.py"], cwd=tmp_path, check=True)
+    current = atlas.inventory(repo_root=tmp_path)["identity"]
+    assert mapping["observation_identity"]["commit"] == current["commit"]
+    assert mapping["observation_identity"]["tree"] == current["tree"]
+    assert mapping["observation_identity"]["tracked_content_sha256"] != current["tracked_content_sha256"]
+    assert identity(tmp_path, ["src/a.py"]) != before
+    atlas.refresh_report(repo_root=tmp_path, report=report(tmp_path))
+    assert atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]["freshness"] == {"alpha": "changed", "beta": "fresh"}
+
+
+def test_scoped_identity_ignores_unrelated_unmerged_entries(tmp_path: Path) -> None:
+    make_repo(tmp_path)
+    publish(tmp_path, "render-report", map_manifest(tmp_path))
+    audit = audit_manifest(tmp_path, report(tmp_path))
+    audit.update(source_identity=identity(tmp_path, ["src/a.py", "tests/test_a.py"]), findings=[], candidates=[])
+    for lens in audit["lenses"]:
+        lens["finding_ids"] = []
+    publish(tmp_path, "audit-subsystem", audit)
+    blob = subprocess.run(["git", "rev-parse", "HEAD:src/b.py"], cwd=tmp_path, check=True, capture_output=True, text=True).stdout.strip()
+    subprocess.run(["git", "update-index", "--force-remove", "--", "src/b.py"], cwd=tmp_path, check=True)
+    stages = ''.join(f'100644 {blob} {stage}\tsrc/b.py\n' for stage in (1, 2, 3))
+    subprocess.run(["git", "update-index", "--index-info"], input=stages.encode(), cwd=tmp_path, check=True)
+    assert identity(tmp_path, ["src/a.py", "tests/test_a.py"]) == audit["source_identity"]
+    with pytest.raises(atlas.ReportError, match="unresolved entry: src/b.py"):
+        atlas.inventory(repo_root=tmp_path)
+    with pytest.raises(atlas.ReportError, match="unresolved entry: src/b.py"):
+        identity(tmp_path, ["src/b.py"])
+    atlas.refresh_report(repo_root=tmp_path, report=report(tmp_path))
+    assert atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]["freshness"] == {"alpha": "fresh", "beta": "changed"}
+    audit["expected_report_sha256"] = sha(report(tmp_path))
+    publish(tmp_path, "audit-subsystem", audit)
+
+
+def test_gitlink_parent_redirect_cannot_bind_an_external_checkout(tmp_path: Path) -> None:
+    root, external = tmp_path / "repo", tmp_path / "external"
+    root.mkdir()
+    external.mkdir()
+    checkout = external / "dep"
+    checkout.mkdir()
+    make_repo(root)
+    make_repo(checkout)
+    try:
+        (root / "vendor").symlink_to(external, target_is_directory=True)
+    except OSError as exc:
+        pytest.skip(f"directory symlink creation unavailable: {exc}")
+    oid = subprocess.run(["git", "rev-parse", "HEAD"], cwd=checkout, check=True, capture_output=True, text=True).stdout.strip()
+    subprocess.run(["git", "update-index", "--add", "--cacheinfo", f"160000,{oid},vendor/dep"], cwd=root, check=True)
+    with pytest.raises(atlas.ReportError, match="outside repository"):
+        atlas.inventory(repo_root=root)
+    with pytest.raises(atlas.ReportError, match="outside repository"):
+        identity(root, ["vendor/dep"])
 
 
 def test_optional_comparisons_are_safe_and_analysis_can_refine_them(tmp_path: Path) -> None:
