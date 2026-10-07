@@ -193,7 +193,7 @@ def _source_digest(root: Path, path: str, entries: dict[str, dict[str, str]]) ->
                 raise ReportError(f"gitlink checkout does not own its worktree: {path}")
             checkout = inventory(repo_root=target)["identity"]
         payload = {
-            "mode": mode, "kind": "gitlink", "object_id": entry["object_id"],
+            "mode": mode, "kind": "gitlink",
             "materialization": "directory" if target.is_dir() else "file" if target.is_file() else "missing",
             "checkout": checkout,
         }
@@ -207,9 +207,11 @@ def _source_digest(root: Path, path: str, entries: dict[str, dict[str, str]]) ->
         except FileNotFoundError as exc:
             if not entry:
                 raise ReportError(f"source path does not exist: {path}") from exc
-            payload = {"mode": mode, "kind": "missing", "object_id": entry["object_id"]}
+            payload = {"mode": mode, "kind": "missing"}
         except OSError as exc:
             raise ReportError(f"cannot read source path: {path}: {exc}") from exc
+    if entry:
+        payload["object_id"] = entry["object_id"]
     return hashlib.sha256(_canonical(payload)).digest()
 
 

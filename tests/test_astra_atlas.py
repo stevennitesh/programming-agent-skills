@@ -537,6 +537,37 @@ def test_mode_only_changes_invalidate_map_and_source_identity(tmp_path: Path) ->
     assert atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]["freshness"] == {"alpha": "changed", "beta": "fresh"}
 
 
+@pytest.mark.parametrize("mode", ["100644", "120000"])
+def test_staged_blob_changes_invalidate_restored_working_content(tmp_path: Path, mode: str) -> None:
+    make_repo(tmp_path)
+    path = "src/a.py" if mode == "100644" else "dependency-link"
+    target = tmp_path / path
+    if mode == "120000":
+        target.write_bytes(b"original-target")
+        original_blob = subprocess.run(["git", "hash-object", "-w", "--stdin"], input=target.read_bytes(), cwd=tmp_path, check=True, capture_output=True).stdout.decode().strip()
+        subprocess.run(["git", "update-index", "--add", "--cacheinfo", f"{mode},{original_blob},{path}"], cwd=tmp_path, check=True)
+    original_content = target.read_bytes()
+    mapping = map_manifest(tmp_path)
+    if mode == "120000":
+        mapping["subsystems"][1]["owned_paths"].append(path)
+    publish(tmp_path, "render-report", mapping)
+    before = atlas.inventory(repo_root=tmp_path)
+    packet = identity(tmp_path, [path])
+    staged_blob = subprocess.run(["git", "hash-object", "-w", "--stdin"], input=b"changed staged content", cwd=tmp_path, check=True, capture_output=True).stdout.decode().strip()
+    subprocess.run(["git", "update-index", "--cacheinfo", f"{mode},{staged_blob},{path}"], cwd=tmp_path, check=True)
+    after = atlas.inventory(repo_root=tmp_path)
+    assert target.read_bytes() == original_content
+    assert before["tracked_entries"][path]["mode"] == after["tracked_entries"][path]["mode"]
+    assert before["tracked_entries"][path]["object_id"] != after["tracked_entries"][path]["object_id"]
+    assert before["identity"]["commit"] == after["identity"]["commit"]
+    assert before["identity"]["tree"] == after["identity"]["tree"]
+    assert before["identity"]["tracked_content_sha256"] != after["identity"]["tracked_content_sha256"]
+    assert identity(tmp_path, [path]) != packet
+    atlas.refresh_report(repo_root=tmp_path, report=report(tmp_path))
+    owner = "alpha" if mode == "100644" else "beta"
+    assert atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]["freshness"][owner] == "changed"
+
+
 @pytest.mark.skipif(os.name == "nt", reason="POSIX executable bits are unavailable on Windows")
 def test_unstaged_executable_bits_invalidate_content_identity(tmp_path: Path) -> None:
     make_repo(tmp_path)
