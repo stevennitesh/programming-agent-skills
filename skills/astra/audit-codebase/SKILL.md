@@ -1,41 +1,40 @@
 ---
 name: audit-codebase
-description: Map or audit existing code for evidence-backed baseline defects and worthwhile improvements. Exclude pending-diff review and implementation.
+description: Discover evidence-backed codebase improvements using a visual map and scoped audits. Exclude pending-diff review and implementation.
 ---
 
 # Audit codebase
 
-Investigate the current codebase for demonstrated defects and worthwhile
-improvements, or build a visual atlas for guided exploration. Match the depth and
-result to the requested investigation.
+Discover worthwhile improvements to correctness, reliability, architecture,
+simplicity, maintainability, developer workflows, and data or resource use.
+Use a visual atlas to identify meaningful systems, investigate demonstrated costs,
+and present useful improvement candidates. Choose the mapping granularity,
+investigation methods, and recommendations within the requested scope.
 
 Audit is read-only with respect to product behavior. The managed HTML report and
 invocation-owned temporary files are the only default writes. Findings and
 candidates do not authorize implementation, tracker publication, merge, release,
 deployment, or changes to accepted product meaning.
 
-## 1. Choose direct discovery, focused audit, or visual atlas
+## 1. Establish the map and requested scope
 
-For improvement discovery, ranked opportunities, or a whole-codebase audit without
-a requested map, investigate promising areas autonomously and return a bounded
-set of supported recommendations. Follow the strongest leads rather than reviewing
-every file. Selecting where to investigate does not authorize implementation.
-
-For a user-selected subsystem, flow, or concrete baseline problem, perform a
-focused audit and return concise findings unless the user asks to preserve it in
-an atlas.
-
-For a requested map, maintained report, or guided subsystem exploration, use
-[Visual atlas](references/atlas.md). The atlas owns the interactive workflow:
+For codebase improvement or exploration, create or update the HTML workbench
+using [Visual atlas](references/atlas.md). Its default guided workflow is:
 
 ```text
 Map repository → user selects subsystem → Audit subsystem
               → user selects candidate → Analyze candidate
 ```
 
-Within the atlas workflow, do not choose the user's next subsystem or candidate.
-The report may expose
-evidence-backed qualitative strength and coverage to support that choice.
+Honor an already-selected subsystem, flow, candidate, or whole-repository audit
+without asking the user to select it again. If the user delegates scope selection,
+choose promising areas within that authority and continue the requested audit or
+analysis. Otherwise show the map and leave the next selection to the user.
+Recommend areas using evidence, current coverage, and real change pressure.
+
+An expressly requested brief or text-only assessment may stay in chat. An explicit
+no-write request does not create a report. Investigate the selected scope and
+return supported findings with material coverage limits.
 
 ## 2. Find demonstrated costs
 
@@ -47,6 +46,10 @@ demonstrate the claimed cost and its affected set.
 
 Judge the current design against supported behavior and real change pressure, not
 hypothetical extensibility.
+
+Recent churn, repeated fixes, reverts, and changes that repeatedly span owners can
+help prioritize investigation when they reveal a current burden. Use history when
+it can test that explanation; activity alone does not establish a problem.
 
 Use [Quality questions](references/quality-questions.md) only for dimensions that
 can expose a meaningful defect, avoidable cost, justified complexity, or evidence
@@ -97,9 +100,10 @@ single top recommendation.
 
 ## 4. Analyze candidates within the requested scope
 
-For direct discovery, analyze promising candidates far enough to support the
-recommendation and its priority. For a focused audit, stay within its selected
-scope. In atlas mode, analyze only the candidate the user selects.
+Analyze candidates within the user's selected or delegated analysis scope, or stay
+within the scope of a requested brief assessment. Follow implicated callers and
+shared owners far enough to judge the cause and affected set; this does not select
+unrelated areas for another audit.
 
 Reinspect the candidate's current source, implicated subsystems, causal owner,
 callers, constraints, findings, and proof seams.
@@ -119,27 +123,20 @@ start implementation.
 
 ## 5. Return the decision surface
 
-For direct discovery, return at most five distinct opportunities by default,
-ranked in the order worth addressing; use fewer when evidence supports fewer.
-For each, give a specific title and category, affected actor or workflow, trigger,
-current problem, source paths and line numbers, and decisive evidence. Recommend
-the smallest useful change with expected benefit, rough effort (Small / Medium /
-Large), main tradeoff or risk, and a brief priority rationale. Rank by practical
-impact and frequency, implementation and maintenance cost, regression risk, and
-confidence. Evidence strength and implementation priority are different judgments.
-State material coverage limits and do not split one underlying problem to fill
-the list. This shortlist limit does not cap atlas findings or require ranking a map.
-
-For a focused audit, return the strongest findings, retained complexity, evidence
-gaps, and useful candidates without padding.
-
-For atlas work, update the managed report and return its path plus the currently
-selectable subsystem or candidate IDs. The HTML is a read-only decision surface:
+Update the managed report and show it through the host's available HTML preview.
+Inspect navigation, selection handoffs, legibility, and progress meaning at useful
+presentation sizes. Return its path and selectable subsystem or candidate IDs;
+report a preview limitation when the surface cannot be opened or inspected.
+The HTML is a read-only decision surface:
 its local controls may navigate, filter, and copy the next explicit invocation,
 but they never mutate the repository or start another workflow.
 
-Complete when direct discovery returns its supported shortlist and coverage
-limits (including an empty shortlist when warranted), the requested focused scope
-is judged, or the requested atlas operation—Map, Audit one selected subsystem, or
-Analyze one selected candidate—is published against current source with the next
-selection left to the user.
+For a requested brief assessment, return the strongest supported findings,
+retained complexity, evidence gaps, and useful directions without padding. Give
+decisive source references, expected benefit, material tradeoffs, required proof,
+and coverage limits. Prioritize by practical impact, frequency, cost, risk, and
+confidence when ranking is requested. Evidence strength and priority differ.
+
+Complete when the requested Map, Audit, or Analyze scope is published against
+current source and its decision surface is checked, or the requested brief scope
+is judged. Leave further selection to the user unless already supplied or delegated.

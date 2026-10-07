@@ -169,7 +169,7 @@ matches. You can also invoke an automatic skill explicitly.
 | Create or improve reusable tools for agents to exercise and verify product interfaces | [$verification-harness](skills/astra/verification-harness/SKILL.md) | Request explicitly |
 | Research a question or compare options using sources | [$research](skills/astra/research/SKILL.md) | Automatic when relevant |
 | Find the root cause of a difficult bug | [$diagnosing-bugs](skills/astra/diagnosing-bugs/SKILL.md) | Automatic when relevant |
-| Discover ranked improvements, audit subsystems, or explore a visual codebase atlas | [$audit-codebase](skills/astra/audit-codebase/SKILL.md) | Request explicitly |
+| Discover codebase improvements through an HTML map and scoped audits | [$audit-codebase](skills/astra/audit-codebase/SKILL.md) | Request explicitly |
 | Optimize a measurable outcome through experiments | [$hillclimb](skills/astra/hillclimb/SKILL.md) | Request explicitly |
 | Review a code change for correctness and maintainability | [$change-review](skills/astra/change-review/SKILL.md) | Automatic when relevant |
 | Assess intake or clean up a requested backlog using current evidence | [$triage](skills/astra/triage/SKILL.md) | Request explicitly |

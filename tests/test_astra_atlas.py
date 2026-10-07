@@ -6,6 +6,7 @@ import importlib.util
 import json
 import subprocess
 import sys
+from html.parser import HTMLParser
 from pathlib import Path
 
 import pytest
@@ -192,6 +193,29 @@ def publish(root: Path, objective: str, manifest: dict[str, object]) -> dict[str
     )
 
 
+def elements(text: str, attribute: str, value: str | None = None) -> list[dict[str, str]]:
+    class Reader(HTMLParser):
+        def handle_starttag(self, tag, attributes):
+            attrs = dict(attributes)
+            if attribute in attrs and (value is None or attrs[attribute] == value):
+                found.append(attrs)
+
+    found = []
+    Reader().feed(text)
+    return found
+
+
+def comparison(caption: str = "Move validation behind its owner") -> dict[str, object]:
+    return {
+        "caption": caption,
+        "before": {
+            "nodes": [{"id": "caller", "label": "Caller coordinates policy"}, {"id": "check", "label": "Separate check"}],
+            "edges": [{"from": "caller", "to": "check", "label": "coordinates"}],
+        },
+        "after": {"nodes": [{"id": "owner", "label": "Owner hides validation policy"}], "edges": []},
+    }
+
+
 def test_map_renders_visual_workbench(tmp_path: Path) -> None:
     make_repo(tmp_path)
     publish(tmp_path, "render-report", map_manifest(tmp_path))
@@ -287,9 +311,12 @@ def test_current_format_only_and_tamper_detection(tmp_path: Path) -> None:
     publish(tmp_path, "render-report", map_manifest(tmp_path))
     rpt = report(tmp_path)
     raw = rpt.read_text(encoding="utf-8")
-    assert 'audit-codebase-report-version" content="1"' in raw
+    assert f'audit-codebase-report-version" content="{atlas.REPORT_VERSION}"' in raw
     assert "https://" not in raw and "http://" not in raw
     assert "cdn" not in raw.lower() and "mermaid" not in raw.lower()
+    rpt.write_text(raw.replace(f'audit-codebase-report-version" content="{atlas.REPORT_VERSION}"', 'audit-codebase-report-version" content="1"'), encoding="utf-8")
+    with pytest.raises(atlas.ReportError, match="report version"):
+        atlas.inspect_report(repo_root=tmp_path, report=rpt)
     rpt.write_text(raw.replace("Architecture map", "Changed architecture", 1), encoding="utf-8")
     with pytest.raises(atlas.ReportError, match="canonical"):
         atlas.inspect_report(repo_root=tmp_path, report=rpt)
@@ -326,3 +353,111 @@ def test_writer_lock_preserves_report(tmp_path: Path) -> None:
             manifest=manifest,
         )
     assert rpt.read_bytes() == before
+
+
+@pytest.mark.parametrize("lens_state", ["complete", "not applicable", "evidence gap"])
+def test_coverage_accounts_for_unaudited_and_changed_scope(tmp_path: Path, lens_state: str) -> None:
+    make_repo(tmp_path)
+    publish(tmp_path, "render-report", map_manifest(tmp_path))
+    manifest = audit_manifest(tmp_path, report(tmp_path))
+    for lens in manifest["lenses"]:
+        if lens["class"] == "performance":
+            lens.update(state=lens_state, evidence=["Measured representative work"] if lens_state == "complete" else [])
+    publish(tmp_path, "audit-subsystem", manifest)
+    row = elements(report(tmp_path).read_text(encoding="utf-8"), "data-lens", "performance")[0]
+    assert row["data-total"] == "2"
+    assert row["data-not-audited"] == "1"
+    assert row[f'data-{lens_state.replace(" ", "-")}'] == "1"
+    assert sum(int(row[f'data-{name}']) for name in ("complete", "not-applicable", "evidence-gap", "changed", "not-audited")) == 2
+
+    (tmp_path / "src/a.py").write_text("VALUE=8\n", encoding="utf-8")
+    atlas.refresh_report(repo_root=tmp_path, report=report(tmp_path))
+    row = elements(report(tmp_path).read_text(encoding="utf-8"), "data-lens", "performance")[0]
+    assert row["data-changed"] == "1"
+    assert row["data-complete"] == row["data-not-applicable"] == row["data-evidence-gap"] == "0"
+    assert row["data-not-audited"] == "1"
+
+
+@pytest.mark.parametrize("changed_path", ["src/b.py", "analysis-context.txt"])
+def test_analysis_freshness_tracks_its_own_evidence_and_preserves_judgment(tmp_path: Path, changed_path: str) -> None:
+    make_repo(tmp_path)
+    publish(tmp_path, "render-report", map_manifest(tmp_path))
+    audit = audit_manifest(tmp_path, report(tmp_path))
+    audit["source_identity"] = identity(tmp_path, ["src/a.py", "tests/test_a.py"])
+    publish(tmp_path, "audit-subsystem", audit)
+    (tmp_path / "analysis-context.txt").write_text("original constraint", encoding="utf-8")
+    analysis = analysis_manifest(tmp_path, report(tmp_path))
+    analysis["source_identity"] = identity(tmp_path, ["src/a.py", "src/b.py", "tests/test_a.py", "analysis-context.txt"])
+    publish(tmp_path, "analyze-candidate", analysis)
+    before = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]
+    assert before["candidate_freshness"] == {"alpha-fix": "fresh"}
+
+    (tmp_path / changed_path).write_text("changed evidence", encoding="utf-8")
+    if changed_path == "src/b.py":
+        beta = audit_manifest(tmp_path, report(tmp_path))
+        beta.update(subsystem_id="beta", source_identity=identity(tmp_path, ["src/b.py"]), findings=[], candidates=[])
+        for lens in beta["lenses"]:
+            lens["finding_ids"] = []
+        publish(tmp_path, "audit-subsystem", beta)
+    else:
+        atlas.refresh_report(repo_root=tmp_path, report=report(tmp_path))
+    after = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]
+    assert after["freshness"] == {"alpha": "fresh", "beta": "fresh"}
+    assert after["candidate_freshness"] == {"alpha-fix": "changed"}
+    assert before["subsystems"][0]["audit"]["candidates"][0]["analysis"] == after["subsystems"][0]["audit"]["candidates"][0]["analysis"]
+    text = report(tmp_path).read_text(encoding="utf-8")
+    card = elements(text, "id", "candidate-alpha-fix")[0]
+    assert card["data-state"] == "analyzed"
+    assert card["data-freshness"] == "changed"
+    assert not any(button["data-copy"].startswith("Use analyzed audit candidate") for button in elements(text, "data-copy"))
+    assert any(button["data-copy"].startswith("$audit-codebase analyze candidate alpha-fix") for button in elements(text, "data-copy"))
+
+    updated = analysis_manifest(tmp_path, report(tmp_path))
+    updated["source_identity"] = identity(tmp_path, analysis["source_identity"]["paths"])
+    publish(tmp_path, "analyze-candidate", updated)
+    state = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]
+    assert state["candidate_freshness"] == {"alpha-fix": "fresh"}
+    assert any(button["data-copy"].startswith("Use analyzed audit candidate") for button in elements(report(tmp_path).read_text(encoding="utf-8"), "data-copy"))
+
+
+def test_optional_comparisons_are_safe_and_analysis_can_refine_them(tmp_path: Path) -> None:
+    make_repo(tmp_path)
+    publish(tmp_path, "render-report", map_manifest(tmp_path))
+    audit = audit_manifest(tmp_path, report(tmp_path))
+    audit["candidates"][0]["comparison"] = comparison('Candidate <script>alert("x")</script>')
+    audit["candidates"][0]["comparison"]["before"]["nodes"][0]["label"] = '<img src=x onerror="alert(1)">'
+    audit["candidates"][0]["comparison"]["before"]["edges"][0]["label"] = '</text><script>alert(2)</script>'
+    publish(tmp_path, "audit-subsystem", audit)
+    text = report(tmp_path).read_text(encoding="utf-8")
+    assert '<script>alert("x")</script>' not in text
+    assert '<img src=x onerror="alert(1)">' not in text
+    assert '</text><script>alert(2)</script>' not in text
+    assert 'Candidate &lt;script&gt;' in text
+    assert len(elements(text, "role", "img")) == 9  # Six coverage bars, map, two comparison diagrams.
+    assert len(elements(text, "marker-end")) == 2  # Map dependency and before diagram relationship.
+
+    analysis = analysis_manifest(tmp_path, report(tmp_path))
+    analysis["comparison"] = comparison("Refined data flow")
+    publish(tmp_path, "analyze-candidate", analysis)
+    visible = report(tmp_path).read_text(encoding="utf-8").split('<script id="audit-codebase-state"', 1)[0]
+    assert "Refined data flow" in visible
+    assert "Candidate &lt;script&gt;" not in visible
+
+
+@pytest.mark.parametrize("invalid", ["unknown endpoint", "duplicate node", "no nodes"])
+def test_comparison_relationship_errors_preserve_the_report(tmp_path: Path, invalid: str) -> None:
+    make_repo(tmp_path)
+    publish(tmp_path, "render-report", map_manifest(tmp_path))
+    before = report(tmp_path).read_bytes()
+    audit = audit_manifest(tmp_path, report(tmp_path))
+    audit["candidates"][0]["comparison"] = comparison()
+    graph = audit["candidates"][0]["comparison"]["before"]
+    if invalid == "unknown endpoint":
+        graph["edges"][0]["to"] = "missing"
+    elif invalid == "duplicate node":
+        graph["nodes"].append(dict(graph["nodes"][0]))
+    else:
+        graph["nodes"] = []
+    with pytest.raises(atlas.ReportError):
+        publish(tmp_path, "audit-subsystem", audit)
+    assert report(tmp_path).read_bytes() == before
