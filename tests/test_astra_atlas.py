@@ -514,6 +514,32 @@ def test_gitlink_file_changes_invalidate_source_identity(tmp_path: Path, change:
     assert atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]["freshness"] == {"alpha": "fresh", "beta": "changed"}
 
 
+def test_gitlink_directory_requires_a_checkout_when_populated(tmp_path: Path) -> None:
+    make_repo(tmp_path)
+    oid = subprocess.run(["git", "rev-parse", "HEAD"], cwd=tmp_path, check=True, capture_output=True, text=True).stdout.strip()
+    path = "vendor/dep"
+    target = tmp_path / path
+    target.mkdir(parents=True)
+    subprocess.run(["git", "update-index", "--add", "--cacheinfo", f"160000,{oid},{path}"], cwd=tmp_path, check=True)
+    mapping = map_manifest(tmp_path)
+    mapping["subsystems"][1]["owned_paths"].append(path)
+    publish(tmp_path, "render-report", mapping)
+    packet = identity(tmp_path, [path])
+    placeholder = target / "dependency.py"
+    placeholder.write_text("VALUE=1\n", encoding="utf-8")
+    with pytest.raises(atlas.ReportError, match="gitlink directory is not a checkout: vendor/dep"):
+        atlas.inventory(repo_root=tmp_path)
+    with pytest.raises(atlas.ReportError, match="gitlink directory is not a checkout: vendor/dep"):
+        identity(tmp_path, [path])
+    atlas.refresh_report(repo_root=tmp_path, report=report(tmp_path))
+    assert atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]["freshness"] == {"alpha": "fresh", "beta": "changed"}
+    assert placeholder.read_text(encoding="utf-8") == "VALUE=1\n"
+    placeholder.unlink()
+    assert identity(tmp_path, [path]) == packet
+    atlas.refresh_report(repo_root=tmp_path, report=report(tmp_path))
+    assert atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]["freshness"]["beta"] == "fresh"
+
+
 @pytest.mark.parametrize("materialization", ["absent", "plain file", "symlink"])
 def test_tracked_symlink_entries_do_not_require_the_target(tmp_path: Path, materialization: str) -> None:
     make_repo(tmp_path)

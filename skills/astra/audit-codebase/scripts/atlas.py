@@ -192,6 +192,12 @@ def _source_digest(root: Path, path: str, entries: dict[str, dict[str, str]]) ->
             if Path(_git(target, "rev-parse", "--show-toplevel")).resolve() != resolved:
                 raise ReportError(f"gitlink checkout does not own its worktree: {path}")
             checkout = inventory(repo_root=target)["identity"]
+        elif target.is_dir():
+            try:
+                if any(target.iterdir()):
+                    raise ReportError(f"gitlink directory is not a checkout: {path}")
+            except OSError as exc:
+                raise ReportError(f"cannot inspect gitlink directory: {path}: {exc}") from exc
         payload = {
             "mode": mode, "kind": "gitlink",
             "materialization": "directory" if target.is_dir() else "file" if target.is_file() else "missing",
