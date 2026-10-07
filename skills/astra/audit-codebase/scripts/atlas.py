@@ -164,14 +164,50 @@ def _git(root: Path, *args: str) -> str:
         raise ReportError(f"git {' '.join(args)} failed") from exc
 
 
+def _index_entries(root: Path) -> dict[str, dict[str, str]]:
+    entries = {}
+    for record in _git(root, "ls-files", "--stage", "-z").split("\0"):
+        if not record:
+            continue
+        metadata, path = record.split("\t", 1)
+        mode, object_id, stage = metadata.split()
+        if stage != "0":
+            raise ReportError(f"source index has an unresolved entry: {path}")
+        entries[path.replace("\\", "/")] = {"mode": mode, "object_id": object_id}
+    return entries
+
+
+def _source_bytes(root: Path, path: str, entries: dict[str, dict[str, str]]) -> bytes:
+    target = root / path
+    entry = entries.get(path)
+    if entry and entry["mode"] == "160000":
+        checkout = None
+        if (target / ".git").exists():
+            if target.is_symlink() or getattr(target, "is_junction", lambda: False)():
+                raise ReportError(f"gitlink checkout is redirected: {path}")
+            if Path(_git(target, "rev-parse", "--show-toplevel")).resolve() != target.resolve():
+                raise ReportError(f"gitlink checkout does not own its worktree: {path}")
+            checkout = inventory(repo_root=target)["identity"]
+        return _canonical({"gitlink": entry["object_id"], "checkout": checkout})
+    try:
+        if target.is_symlink():
+            return os.fsencode(os.readlink(target))
+        return target.read_bytes()
+    except FileNotFoundError as exc:
+        if entry:
+            return _canonical({"missing_tracked_entry": entry})
+        raise ReportError(f"source path does not exist: {path}") from exc
+    except OSError as exc:
+        raise ReportError(f"cannot read source path: {path}: {exc}") from exc
+
+
 def inventory(*, repo_root: Path) -> dict[str, Any]:
     root = repo_root.resolve()
-    paths = sorted(
-        p.replace("\\", "/") for p in _git(root, "ls-files", "-z").split("\0") if p
-    )
+    entries = _index_entries(root)
+    paths = sorted(entries)
     h = hashlib.sha256()
     for p in paths:
-        h.update(p.encode() + b"\0" + hashlib.sha256((root / p).read_bytes()).digest())
+        h.update(p.encode() + b"\0" + hashlib.sha256(_source_bytes(root, p, entries)).digest())
     return {
         "response_version": RESPONSE_VERSION,
         "identity": {
@@ -180,6 +216,7 @@ def inventory(*, repo_root: Path) -> dict[str, Any]:
             "tracked_content_sha256": h.hexdigest(),
         },
         "tracked_paths": paths,
+        "tracked_entries": entries,
     }
 
 
@@ -188,11 +225,10 @@ def source_identity(*, repo_root: Path, paths: Sequence[str]) -> dict[str, Any]:
     normalized = sorted({_rel(p, "path") for p in paths})
     if not normalized:
         raise ReportError("source-identity requires paths")
+    entries = _index_entries(root)
     h = hashlib.sha256()
     for p in normalized:
-        if not (root / p).is_file():
-            raise ReportError(f"source path does not exist: {p}")
-        h.update(p.encode() + b"\0" + hashlib.sha256((root / p).read_bytes()).digest())
+        h.update(p.encode() + b"\0" + hashlib.sha256(_source_bytes(root, p, entries)).digest())
     return {
         "response_version": RESPONSE_VERSION,
         "paths": normalized,
@@ -752,10 +788,14 @@ def _refresh_observation(state: dict[str, Any], root: Path) -> None:
         for sub in state["subsystems"]
     }
     state["candidate_freshness"] = {
-        candidate["id"]: _source_freshness(
-            root,
-            candidate.get("analysis", {}).get("source_identity")
-            or sub["audit"]["source_identity"],
+        candidate["id"]: (
+            "changed"
+            if state["freshness"][sub["id"]] == "changed"
+            else _source_freshness(
+                root,
+                candidate.get("analysis", {}).get("source_identity")
+                or sub["audit"]["source_identity"],
+            )
         )
         for sub in state["subsystems"]
         for candidate in sub.get("audit", {}).get("candidates", [])

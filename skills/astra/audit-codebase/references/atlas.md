@@ -61,6 +61,13 @@ proof seams, and owned paths.
 Every tracked path belongs to one subsystem or one evidenced exclusion. Shared
 infrastructure still needs one structural owner and named consumers.
 
+Inventory exposes Git entry modes and object IDs. Gitlinks bind the recorded
+submodule commit and, when initialized, its observed checkout and tracked content.
+Missing tracked files remain represented by their index entry and absence;
+symlinks bind their link target without following it. These identities do not
+establish that unavailable dependency behavior was inspected. State that coverage
+limit; the helper does not initialize submodules or materialize missing files.
+
 Show the map and stop for user selection unless the request already selects an
 audit scope or delegates that selection. For a whole-repository audit, continue
 through the mapped subsystems and make coverage limits visible. A mapped subsystem
@@ -140,9 +147,10 @@ The rendered workbench should provide:
 
 Coverage accounts for all mapped subsystems, separating current completed and
 non-applicable lenses from evidence gaps, changed source, and unaudited scope.
-Candidate analysis freshness follows its own complete source packet, including
-other affected subsystems. Keep stale judgments visible as prior evidence;
-reanalyze before using a stale recommendation for the next action.
+Candidate freshness follows both its originating audit and its analysis source
+packet, including evidence outside mapped ownership. Keep stale judgments visible
+as prior evidence; renew a stale audit and reanalyze before using its recommendation
+for the next action.
 
 Open the report through the host's supported HTML preview and inspect the actual
 reading path, map links, filters, copyable selections, labels, and layout. Check

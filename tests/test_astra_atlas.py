@@ -420,6 +420,100 @@ def test_analysis_freshness_tracks_its_own_evidence_and_preserves_judgment(tmp_p
     assert any(button["data-copy"].startswith("Use analyzed audit candidate") for button in elements(report(tmp_path).read_text(encoding="utf-8"), "data-copy"))
 
 
+def test_analysis_keeps_originating_audit_evidence_bound(tmp_path: Path) -> None:
+    make_repo(tmp_path)
+    publish(tmp_path, "render-report", map_manifest(tmp_path))
+    evidence = tmp_path / "audit-context.txt"
+    evidence.write_text("original constraint", encoding="utf-8")
+    audit = audit_manifest(tmp_path, report(tmp_path))
+    audit["source_identity"] = identity(tmp_path, ["src/a.py", "src/b.py", "tests/test_a.py", "audit-context.txt"])
+    publish(tmp_path, "audit-subsystem", audit)
+    publish(tmp_path, "analyze-candidate", analysis_manifest(tmp_path, report(tmp_path)))
+    before = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]
+    evidence.write_text("changed constraint", encoding="utf-8")
+    atlas.refresh_report(repo_root=tmp_path, report=report(tmp_path))
+    after = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]
+    assert after["candidate_freshness"] == {"alpha-fix": "changed"}
+    assert before["subsystems"][0]["audit"]["candidates"][0]["analysis"] == after["subsystems"][0]["audit"]["candidates"][0]["analysis"]
+    assert not any(button["data-copy"].startswith("Use analyzed audit candidate") for button in elements(report(tmp_path).read_text(encoding="utf-8"), "data-copy"))
+
+    publish(tmp_path, "analyze-candidate", analysis_manifest(tmp_path, report(tmp_path)))
+    assert atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]["candidate_freshness"] == {"alpha-fix": "changed"}
+    audit["expected_report_sha256"] = sha(report(tmp_path))
+    audit["source_identity"] = identity(tmp_path, audit["source_identity"]["paths"])
+    publish(tmp_path, "audit-subsystem", audit)
+    publish(tmp_path, "analyze-candidate", analysis_manifest(tmp_path, report(tmp_path)))
+    assert atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]["candidate_freshness"] == {"alpha-fix": "fresh"}
+    assert any(button["data-copy"].startswith("Use analyzed audit candidate") for button in elements(report(tmp_path).read_text(encoding="utf-8"), "data-copy"))
+
+
+@pytest.mark.parametrize("initialized", [False, True])
+def test_gitlinks_can_be_mapped_and_track_source_changes(tmp_path: Path, initialized: bool) -> None:
+    make_repo(tmp_path)
+    oid = subprocess.run(["git", "rev-parse", "HEAD"], cwd=tmp_path, check=True, capture_output=True, text=True).stdout.strip()
+    path = "vendor/dep"
+    if initialized:
+        checkout = tmp_path / path
+        checkout.mkdir(parents=True)
+        make_repo(checkout)
+        oid = subprocess.run(["git", "rev-parse", "HEAD"], cwd=checkout, check=True, capture_output=True, text=True).stdout.strip()
+    subprocess.run(["git", "update-index", "--add", "--cacheinfo", f"160000,{oid},{path}"], cwd=tmp_path, check=True)
+    subprocess.run(["git", "commit", "-m", "gitlink"], cwd=tmp_path, check=True, capture_output=True)
+    inventory = atlas.inventory(repo_root=tmp_path)
+    assert inventory["tracked_entries"][path] == {"mode": "160000", "object_id": oid}
+    mapping = map_manifest(tmp_path)
+    mapping["subsystems"][1]["owned_paths"].append(path)
+    publish(tmp_path, "render-report", mapping)
+    before = identity(tmp_path, [path])
+    if initialized:
+        (tmp_path / path / "untracked.txt").write_text("outside tracked coverage", encoding="utf-8")
+        assert identity(tmp_path, [path]) == before
+        (tmp_path / path / "src/a.py").write_text("changed dependency", encoding="utf-8")
+    else:
+        changed_oid = subprocess.run(["git", "rev-parse", "HEAD"], cwd=tmp_path, check=True, capture_output=True, text=True).stdout.strip()
+        subprocess.run(["git", "update-index", "--cacheinfo", f"160000,{changed_oid},{path}"], cwd=tmp_path, check=True)
+    assert identity(tmp_path, [path]) != before
+    assert atlas.inventory(repo_root=tmp_path)["identity"]["tracked_content_sha256"] != inventory["identity"]["tracked_content_sha256"]
+    atlas.refresh_report(repo_root=tmp_path, report=report(tmp_path))
+    assert atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]["freshness"]["beta"] == "changed"
+
+
+@pytest.mark.parametrize("materialization", ["absent", "plain file", "symlink"])
+def test_tracked_symlink_entries_do_not_require_the_target(tmp_path: Path, materialization: str) -> None:
+    make_repo(tmp_path)
+    path = tmp_path / "dependency-link"
+    target = "missing-target"
+    oid = subprocess.run(["git", "hash-object", "-w", "--stdin"], input=target, cwd=tmp_path, check=True, capture_output=True, text=True).stdout.strip()
+    subprocess.run(["git", "update-index", "--add", "--cacheinfo", f"120000,{oid},{path.name}"], cwd=tmp_path, check=True)
+    if materialization == "plain file":
+        path.write_text(target, encoding="utf-8")
+    elif materialization == "symlink":
+        try:
+            path.symlink_to(target)
+        except OSError as exc:
+            pytest.skip(f"symlink creation unavailable: {exc}")
+    mapping = map_manifest(tmp_path)
+    mapping["subsystems"][1]["owned_paths"].append(path.name)
+    publish(tmp_path, "render-report", mapping)
+    before = identity(tmp_path, [path.name])
+    (tmp_path / target).write_text("not dereferenced", encoding="utf-8")
+    assert identity(tmp_path, [path.name]) == before
+
+
+def test_missing_tracked_entries_can_be_mapped_and_restoration_changes_identity(tmp_path: Path) -> None:
+    make_repo(tmp_path)
+    (tmp_path / "src/b.py").unlink()
+    mapping = map_manifest(tmp_path)
+    publish(tmp_path, "render-report", mapping)
+    before = identity(tmp_path, ["src/b.py"])
+    (tmp_path / "src/b.py").write_text("VALUE=2\n", encoding="utf-8")
+    assert identity(tmp_path, ["src/b.py"]) != before
+    atlas.refresh_report(repo_root=tmp_path, report=report(tmp_path))
+    assert atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]["freshness"]["beta"] == "changed"
+    with pytest.raises(atlas.ReportError, match="source path does not exist"):
+        identity(tmp_path, ["never-tracked.txt"])
+
+
 def test_optional_comparisons_are_safe_and_analysis_can_refine_them(tmp_path: Path) -> None:
     make_repo(tmp_path)
     publish(tmp_path, "render-report", map_manifest(tmp_path))
