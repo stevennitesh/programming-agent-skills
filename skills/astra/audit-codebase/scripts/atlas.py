@@ -9,12 +9,14 @@ import os
 import re
 import subprocess
 import tempfile
+import textwrap
 from datetime import datetime, timezone
 from html import escape, unescape
 from pathlib import Path, PurePosixPath
 from typing import Any, NoReturn, Sequence
 
-REPORT_VERSION, STATE_VERSION, RESPONSE_VERSION, MANIFEST_VERSION = 1, 1, 1, 1
+REPORT_VERSION, STATE_VERSION = 2, 2
+RESPONSE_VERSION, MANIFEST_VERSION = 1, 1
 _ID = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
 _RUN = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]*")
 _SHA = re.compile(r"[0-9a-f]{64}")
@@ -37,32 +39,36 @@ _STYLE = r"""
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:linear-gradient(180deg,#071019,#09131e 42%,#071019);color:var(--text);font:14px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}button,input,select{font:inherit}button{cursor:pointer}code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;overflow-wrap:anywhere}
 .shell{display:grid;grid-template-columns:248px minmax(0,1fr);min-height:100vh}.sidebar{position:sticky;top:0;height:100vh;padding:24px 18px;border-right:1px solid var(--border);background:rgba(7,16,25,.96);overflow:auto}.brand{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);font-weight:800;margin-bottom:22px}.sidebar nav{display:grid;gap:6px}.sidebar nav a{display:block;padding:8px 10px;border-radius:8px;color:var(--muted)}.sidebar nav a:hover{background:var(--panel2);color:var(--text);text-decoration:none}.sidebar .minor{margin-top:22px;padding-top:18px;border-top:1px solid var(--border);font-size:12px;color:var(--muted)}
-.content{width:min(1500px,100%);padding:32px clamp(20px,4vw,54px) 64px}.hero{display:flex;gap:24px;align-items:flex-start;justify-content:space-between;margin-bottom:24px}.hero h1{font-size:clamp(28px,4vw,44px);line-height:1.05;margin:0 0 8px;letter-spacing:-.035em}.hero p{margin:0;color:var(--muted);max-width:780px}.hero-meta{text-align:right;font-size:12px;color:var(--muted)}
-.metrics{display:grid;grid-template-columns:repeat(6,minmax(110px,1fr));gap:10px;margin:22px 0 28px}.metric{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--border);border-radius:12px;padding:14px}.metric strong{display:block;font-size:24px;line-height:1.1}.metric span{color:var(--muted);font-size:12px}
+.content{min-width:0;width:min(1500px,100%);padding:32px clamp(20px,4vw,54px) 64px}.hero{display:flex;gap:24px;align-items:flex-start;justify-content:space-between;margin-bottom:24px}.hero h1{font-size:clamp(28px,4vw,44px);line-height:1.05;margin:0 0 8px;letter-spacing:-.035em}.hero p{margin:0;color:var(--muted);max-width:780px}.hero-meta{text-align:right;font-size:12px;color:var(--muted)}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin:22px 0 28px}.metric{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--border);border-radius:12px;padding:14px}.metric strong{display:block;font-size:24px;line-height:1.1}.metric span{color:var(--muted);font-size:12px}
 .section{margin:34px 0}.section-head{display:flex;align-items:end;justify-content:space-between;gap:18px;margin-bottom:14px}.section h2{font-size:21px;margin:0}.section-head p{margin:0;color:var(--muted)}.panel{background:rgba(13,24,36,.9);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);padding:18px}
 .toolbar{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px}.toolbar input,.toolbar select{background:#07131f;color:var(--text);border:1px solid var(--border);border-radius:9px;padding:9px 11px}.toolbar input{min-width:260px;flex:1}
 .architecture{overflow:auto;padding:10px}.architecture svg{display:block;min-width:760px}.architecture .sys-label{fill:#8ea8bd;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}.architecture .edge{stroke:#3a5a73;stroke-width:1.5;fill:none;opacity:.85}.architecture .node rect{fill:#102235;stroke:#31516a;stroke-width:1.4;rx:12}.architecture .node.audited rect{stroke:#2f9e7b}.architecture .node.changed rect{stroke:#c17a2b;stroke-width:2}.architecture .node text.name{fill:#edf7ff;font-size:14px;font-weight:750}.architecture .node text.meta{fill:#93a8ba;font-size:11px}.architecture .node:hover rect{stroke:#67e8f9}
 .legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin-top:10px}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}.dot.mapped{background:#60a5fa}.dot.audited{background:#34d399}.dot.changed{background:#fbbf24}
-.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(310px,1fr))}.card{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--border);border-radius:13px;padding:16px;min-width:0}.card h3{margin:0 0 5px;font-size:17px}.card h4{margin:18px 0 8px;font-size:14px}.card p{margin:7px 0}.muted{color:var(--muted)}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(310px,100%),1fr))}.card{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--border);border-radius:13px;padding:16px;min-width:0;overflow-wrap:anywhere}.card h3{margin:0 0 5px;font-size:17px}.card h4{margin:18px 0 8px;font-size:14px}.card p{margin:7px 0}.muted{color:var(--muted)}
 .badges{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0 12px}.badge{display:inline-flex;align-items:center;border:1px solid var(--border);border-radius:999px;padding:2px 8px;font-size:11px;font-weight:700}.badge.audited,.badge.complete,.badge.strong,.badge.analyzed,.badge.fresh{color:var(--green);border-color:#216c58}.badge.changed,.badge.evidence-gap,.badge.blocked,.badge.worth-exploring{color:var(--amber);border-color:#805e1b}.badge.defect,.badge.p1,.badge.p0{color:var(--red);border-color:#7d3040}.badge.mapped,.badge.opportunity,.badge.speculative,.badge.presented{color:var(--blue);border-color:#315b8c}.badge.retained-complexity,.badge.not-applicable,.badge.disproved{color:var(--muted)}
-.kv{display:grid;grid-template-columns:110px minmax(0,1fr);gap:6px 12px;margin:12px 0}.kv dt{color:var(--muted);font-weight:650}.kv dd{margin:0;overflow-wrap:anywhere}ul.compact{margin:6px 0;padding-left:18px}
-.command{display:flex;gap:8px;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}.copy{border:1px solid #2b6370;color:#b9f5ff;background:#0a2a31;border-radius:8px;padding:7px 9px}.copy:hover{background:#0e3741}
-.coverage-row{display:grid;grid-template-columns:140px 1fr 72px;gap:10px;align-items:center;margin:9px 0}.bar{height:8px;background:#132535;border-radius:999px;overflow:hidden}.bar>span{display:block;height:100%;background:linear-gradient(90deg,#34d399,#67e8f9)}
-.lens-table{width:100%;border-collapse:collapse}.lens-table th,.lens-table td{padding:8px;text-align:left;vertical-align:top;border-bottom:1px solid var(--border)}.lens-table th{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+.kv{display:grid;grid-template-columns:140px minmax(0,1fr);gap:6px 12px;margin:12px 0}.kv dt{color:var(--muted);font-weight:650}.kv dd{margin:0;overflow-wrap:anywhere}ul.compact{margin:6px 0;padding-left:18px}
+.command{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}.copy{border:1px solid #2b6370;color:#b9f5ff;background:#0a2a31;border-radius:8px;padding:7px 9px}.copy:hover{background:#0e3741}
+.coverage-row{display:grid;grid-template-columns:140px minmax(0,1fr) 72px;gap:10px;align-items:center;margin:9px 0}.bar{display:flex;height:8px;background:#132535;border-radius:999px;overflow:hidden}.bar>span{display:block;height:100%}.bar .complete{background:#34d399}.bar .not-applicable{background:#93a8ba}.bar .evidence-gap{background:#fbbf24}.bar .changed{background:#fb7185}.bar .not-audited{background:#284158}.coverage-detail{color:var(--muted);font-size:12px;margin-top:5px}.stale-warning{padding:10px;border-left:3px solid var(--amber);background:#332711}.comparison{margin:18px 0}.comparison figcaption{font-weight:650}.diagram{overflow:auto}.diagram svg{display:block;max-width:none}.diagram rect{fill:#102235;stroke:#31516a}.diagram text{fill:#e8f0f7;font-size:12px}
+.table-scroll{overflow:auto}.lens-table{width:100%;border-collapse:collapse}.lens-table th,.lens-table td{padding:8px;text-align:left;vertical-align:top;border-bottom:1px solid var(--border)}.lens-table th{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.06em}
 .finding{border-left:3px solid #31516a}.finding.defect{border-left-color:var(--red)}.finding.opportunity{border-left-color:var(--blue)}.finding.gap{border-left-color:var(--amber)}.finding.retained-complexity{border-left-color:#64748b}
-.candidate{position:relative}.strength{position:absolute;top:14px;right:14px}.compare{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}.compare>div{background:#0a1622;border:1px solid var(--border);border-radius:10px;padding:12px}.compare h4{margin:0 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}.option-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}.option{background:#0a1622;border:1px solid var(--border);border-radius:10px;padding:12px}.option h5{margin:0 0 6px;font-size:14px}
+.candidate{position:relative}.strength{position:absolute;top:14px;right:14px}.compare{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}.compare>div{min-width:0;background:#0a1622;border:1px solid var(--border);border-radius:10px;padding:12px}.compare h4{margin:0 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}.option-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr));gap:10px}.option{background:#0a1622;border:1px solid var(--border);border-radius:10px;padding:12px}.option h5{margin:0 0 6px;font-size:14px}
 details{border-top:1px solid var(--border);margin-top:12px;padding-top:10px}summary{cursor:pointer;color:#bfd1df;font-weight:650}.evidence{font-size:12px;color:#c5d3de}.history{margin:0;padding-left:20px}.history li{margin:5px 0;color:var(--muted)}.hidden{display:none!important}footer{margin-top:42px;padding-top:20px;border-top:1px solid var(--border);color:var(--muted);font-size:12px}
-@media(max-width:1050px){.shell{grid-template-columns:1fr}.sidebar{position:relative;height:auto;border-right:0;border-bottom:1px solid var(--border)}.sidebar nav{grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}.metrics{grid-template-columns:repeat(3,1fr)}}@media(max-width:650px){.content{padding:22px 14px 50px}.hero{display:block}.hero-meta{text-align:left;margin-top:10px}.metrics{grid-template-columns:repeat(2,1fr)}.compare{grid-template-columns:1fr}.coverage-row{grid-template-columns:110px 1fr 55px}.kv{grid-template-columns:1fr}.strength{position:static;margin-bottom:8px}}
+@media(max-width:1050px){.shell{grid-template-columns:1fr}.sidebar{position:relative;height:auto;border-right:0;border-bottom:1px solid var(--border)}.sidebar nav{grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}.metrics{grid-template-columns:repeat(3,1fr)}}@media(max-width:650px){.content{padding:22px 14px 50px}.hero{display:block}.hero-meta{text-align:left;margin-top:10px}.metrics{grid-template-columns:repeat(2,1fr)}.compare{grid-template-columns:1fr}.coverage-row{grid-template-columns:minmax(0,1fr) auto;gap:6px;margin:14px 0}.coverage-row>div{grid-column:1/-1;grid-row:2}.coverage-row>span:last-child{grid-column:2;grid-row:1}.kv{grid-template-columns:1fr}.strength{position:static;margin-bottom:8px}}
 """
 _SCRIPT = r"""
 (function(){
   const q=document.getElementById('search'), state=document.getElementById('state-filter');
   const apply=()=>{const needle=(q&&q.value||'').toLowerCase().trim(), wanted=state&&state.value||'all';
     document.querySelectorAll('[data-filter-card]').forEach(el=>{const hay=(el.getAttribute('data-search')||'').toLowerCase(), st=el.getAttribute('data-state')||'';
-      el.classList.toggle('hidden',(!!needle&&!hay.includes(needle))||(wanted!=='all'&&st!==wanted));});};
+      el.classList.toggle('hidden',(!!needle&&!hay.includes(needle))||(wanted!=='all'&&(wanted==='changed'?el.getAttribute('data-freshness')!=='changed':st!==wanted)));});};
   if(q)q.addEventListener('input',apply);if(state)state.addEventListener('change',apply);
+  document.querySelectorAll('a[href^="#"]').forEach(link=>link.addEventListener('click',()=>{
+    const target=document.getElementById((link.getAttribute('href')||'').slice(1));
+    if(target&&target.matches('[data-filter-card]')&&target.classList.contains('hidden')){
+      if(q)q.value='';if(state)state.value='all';apply();}}));
   document.querySelectorAll('[data-copy]').forEach(button=>button.addEventListener('click',async()=>{const value=button.getAttribute('data-copy')||'';
-    try{if(navigator.clipboard&&navigator.clipboard.writeText)await navigator.clipboard.writeText(value);else{const t=document.createElement('textarea');t.value=value;t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();document.execCommand('copy');t.remove();}
+    try{if(navigator.clipboard&&navigator.clipboard.writeText)await navigator.clipboard.writeText(value);else{const t=document.createElement('textarea');t.value=value;t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();let copied=false;try{copied=document.execCommand('copy');}finally{t.remove();}if(!copied)throw new Error('Clipboard unavailable');}
       const old=button.textContent;button.textContent='Copied';setTimeout(()=>button.textContent=old,1200);}catch(_){window.prompt('Copy this command',value);}}));
 })();
 """
@@ -475,20 +481,55 @@ def _finding(value: object, label: str) -> dict[str, Any]:
     return result
 
 
+def _diagram(value: object, label: str) -> dict[str, Any]:
+    diagram = _obj(value, label)
+    _strict(diagram, {"nodes", "edges"}, set(), label)
+    if not isinstance(diagram["nodes"], list) or not diagram["nodes"]:
+        raise ReportError(f"{label} needs at least one node")
+    nodes = []
+    for raw in diagram["nodes"]:
+        node = _obj(raw, f"{label} node")
+        _strict(node, {"id", "label"}, set(), f"{label} node")
+        nodes.append({"id": _id(node["id"], "node id"), "label": _text(node["label"], "node label")})
+    ids = [node["id"] for node in nodes]
+    if len(ids) != len(set(ids)):
+        raise ReportError(f"{label} has duplicate node ids")
+    if not isinstance(diagram["edges"], list):
+        raise ReportError(f"{label} edges must be a list")
+    edges = []
+    for raw in diagram["edges"]:
+        edge = _obj(raw, f"{label} edge")
+        _strict(edge, {"from", "to", "label"}, set(), f"{label} edge")
+        if edge["from"] not in ids or edge["to"] not in ids:
+            raise ReportError(f"{label} edge names unknown node")
+        edges.append({"from": edge["from"], "to": edge["to"], "label": _text(edge["label"], "edge label", empty=True)})
+    return {"nodes": nodes, "edges": edges}
+
+
+def _comparison(value: object) -> dict[str, Any]:
+    comparison = _obj(value, "comparison")
+    _strict(comparison, {"caption", "before", "after"}, set(), "comparison")
+    return {
+        "caption": _text(comparison["caption"], "comparison caption"),
+        "before": _diagram(comparison["before"], "before diagram"),
+        "after": _diagram(comparison["after"], "after diagram"),
+    }
+
+
 def _candidate(value: object, label: str) -> dict[str, Any]:
     x = _obj(value, label)
     fields = {
         "id", "title", "primary_class", "strength", "finding_ids", "affected_scope",
         "problem", "evidence", "direction", "benefit", "risks", "required_proof",
     }
-    _strict(x, fields, set(), label)
+    _strict(x, fields, {"comparison"}, label)
     primary = _text(x["primary_class"], "primary class")
     strength = _text(x["strength"], "candidate strength")
     if primary not in _LENSES:
         raise ReportError("unsupported candidate class")
     if strength not in {"strong", "worth exploring", "speculative"}:
         raise ReportError("candidate strength must be strong, worth exploring, or speculative")
-    return {
+    result = {
         "id": _id(x["id"], "candidate id"),
         "title": _text(x["title"], "title"),
         "primary_class": primary,
@@ -503,6 +544,9 @@ def _candidate(value: object, label: str) -> dict[str, Any]:
         "required_proof": _texts(x["required_proof"], "required proof", empty=False),
         "state": "presented",
     }
+    if "comparison" in x:
+        result["comparison"] = _comparison(x["comparison"])
+    return result
 
 
 def _audit(raw: dict[str, Any]) -> dict[str, Any]:
@@ -616,7 +660,7 @@ def _analysis(raw: dict[str, Any]) -> dict[str, Any]:
         "proof",
         "evidence_limits",
     }
-    _strict(raw, fields, set(), "analysis manifest")
+    _strict(raw, fields, {"comparison"}, "analysis manifest")
     if raw["version"] != MANIFEST_VERSION:
         raise ReportError(f"analysis manifest requires version {MANIFEST_VERSION}")
     expected = _text(raw["expected_report_sha256"], "expected report sha")
@@ -645,7 +689,7 @@ def _analysis(raw: dict[str, Any]) -> dict[str, Any]:
                 "tradeoffs": _texts(x["tradeoffs"], "option tradeoffs"),
             }
         )
-    return {
+    result = {
         "expected_report_sha256": expected,
         "candidate_id": _id(raw["candidate_id"], "candidate id"),
         "state": state,
@@ -662,6 +706,9 @@ def _analysis(raw: dict[str, Any]) -> dict[str, Any]:
         "proof": _texts(raw["proof"], "proof", empty=False),
         "evidence_limits": _text(raw["evidence_limits"], "evidence limits", empty=True),
     }
+    if "comparison" in raw:
+        result["comparison"] = _comparison(raw["comparison"])
+    return result
 
 
 def _source_packet(value: object, label: str) -> dict[str, Any]:
@@ -703,6 +750,15 @@ def _refresh_observation(state: dict[str, Any], root: Path) -> None:
             root, sub.get("audit", {}).get("source_identity") or sub["map_source"]
         )
         for sub in state["subsystems"]
+    }
+    state["candidate_freshness"] = {
+        candidate["id"]: _source_freshness(
+            root,
+            candidate.get("analysis", {}).get("source_identity")
+            or sub["audit"]["source_identity"],
+        )
+        for sub in state["subsystems"]
+        for candidate in sub.get("audit", {}).get("candidates", [])
     }
     state["observed_at"] = _now()
 
@@ -767,30 +823,150 @@ def _finding_html(x: dict[str, Any]) -> str:
     return f'''<article class="card finding {escape(x["kind"].replace(" ","-"))}" data-filter-card data-state="{escape(x["kind"])}" data-search="{escape(search,quote=True)}" id="finding-{escape(x["id"])}"><h3>{escape(x["title"])}</h3><div class="badges">{_badge(x["kind"])}{_badge(x["primary_class"])}</div><p>{escape(x["impact"])}</p><dl class="kv"><dt>Causal owner</dt><dd>{escape(x["causal_owner"])}</dd><dt>Affected</dt><dd>{escape(", ".join(x["affected_scope"]))}</dd><dt>Direction</dt><dd>{escape(x["direction"])}</dd><dt>Confidence</dt><dd>{escape(x["confidence"])}</dd></dl><details class="evidence"><summary>Evidence and proof</summary><dl class="kv"><dt>Expectation</dt><dd>{escape(x["expectation"]) or '<span class="muted">None</span>'}</dd><dt>Locations</dt><dd>{_list(x["locations"])}</dd><dt>Evidence</dt><dd>{_list(x["evidence"])}</dd><dt>Proof</dt><dd>{_list(x["proof"])}</dd>{extras}</dl></details></article>'''
 
 
-def _candidate_html(x: dict[str, Any], run_id: str) -> str:
+def _diagram_svg(diagram: dict[str, Any], label: str, marker: str) -> str:
+    labels = {node["id"]: textwrap.wrap(node["label"], width=22) for node in diagram["nodes"]}
+    edge_labels = [textwrap.wrap(edge["label"], width=28) for edge in diagram["edges"]]
+    lanes = []
+    cursor = 20
+    for lines in edge_labels:
+        lanes.append(cursor)
+        cursor += max(28, 16 * len(lines) + 12)
+    node_y = max(74, cursor + 24)
+    node_height = max(60, 24 + 18 * max(len(lines) for lines in labels.values()))
+    width = max(340, 30 + 210 * len(diagram["nodes"]))
+    height = node_y + node_height + 26
+    positions = {node["id"]: 30 + index * 210 for index, node in enumerate(diagram["nodes"])}
+    parts = []
+    for edge, lines, lane in zip(diagram["edges"], edge_labels, lanes):
+        start, end = positions[edge["from"]] + 90, positions[edge["to"]] + 90
+        if start == end:
+            start, end = start - 35, end + 35
+        middle = (start + end) // 2
+        peak = lane + max(0, len(lines) - 1) * 16 + 8
+        control_y = round((peak - node_y * .25) / .75)
+        parts.append(
+            f'<path d="M{start},{node_y} C{start},{control_y} {end},{control_y} {end},{node_y}" fill="none" '
+            f'stroke="#67e8f9" marker-end="url(#{marker})"><title>{escape(edge["label"])}</title></path>'
+        )
+        for row, line in enumerate(lines):
+            parts.append(f'<text x="{middle}" y="{lane+row*16}" text-anchor="middle">{escape(line)}</text>')
+    for node in diagram["nodes"]:
+        x = positions[node["id"]]
+        parts.append(f'<rect x="{x}" y="{node_y}" width="180" height="{node_height}" rx="10"/>')
+        for row, line in enumerate(labels[node["id"]]):
+            parts.append(f'<text x="{x+90}" y="{node_y+24+row*18}" text-anchor="middle">{escape(line)}</text>')
+    return (
+        f'<svg width="{width}" height="{height}" viewBox="0 0 {width} {height}" '
+        f'role="img" aria-label="{escape(label, quote=True)}">'
+        f'<title>{escape(label)}</title><defs><marker id="{marker}" markerWidth="8" markerHeight="8" '
+        'refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#67e8f9"/></marker></defs>'
+        + "".join(parts) + '</svg>'
+    )
+
+
+def _comparison_html(comparison: dict[str, Any], candidate_id: str) -> str:
+    caption = comparison["caption"]
+    before = _diagram_svg(comparison["before"], f'Before: {caption}', f'{candidate_id}-before-arrow')
+    after = _diagram_svg(comparison["after"], f'Proposed: {caption}', f'{candidate_id}-after-arrow')
+    return (
+        f'<figure class="comparison"><figcaption>{escape(caption)}</figcaption><div class="compare">'
+        f'<div><h4>Before</h4><div class="diagram">{before}</div></div>'
+        f'<div><h4>Proposed</h4><div class="diagram">{after}</div></div></div></figure>'
+    )
+
+
+def _candidate_html(x: dict[str, Any], run_id: str, freshness: str) -> str:
     analysis = x.get("analysis")
+    changed = freshness == "changed"
     search = " ".join([x["title"], x["primary_class"], x["strength"], x["problem"], x["direction"], *x["affected_scope"]])
     analysis_html = ""
     if analysis:
-        options = "".join(f'<article class="option"><h5>{escape(o["name"])}</h5><p>{escape(o["description"])}</p><strong>Trade-offs</strong>{_list(o["tradeoffs"])}</article>' for o in analysis["options"])
-        analysis_html = f'''<div class="panel" style="margin-top:12px"><h4>Analysis</h4><p>{escape(analysis["summary"])}</p><dl class="kv"><dt>Cause</dt><dd>{escape(analysis["cause"])}</dd><dt>Recommendation</dt><dd>{escape(analysis["recommendation"]) or '<span class="muted">None</span>'}</dd><dt>Trade-offs</dt><dd>{_list(analysis["tradeoffs"])}</dd><dt>Proof</dt><dd>{_list(analysis["proof"])}</dd><dt>Evidence limits</dt><dd>{escape(analysis["evidence_limits"]) or '<span class="muted">None</span>'}</dd><dt>Blocking question</dt><dd>{escape(analysis["question"]) or '<span class="muted">None</span>'}</dd></dl><div class="option-grid">{options}</div></div>'''
+        options = "".join(
+            f'<article class="option"><h5>{escape(o["name"])}</h5><p>{escape(o["description"])}</p>'
+            f'<strong>Trade-offs</strong>{_list(o["tradeoffs"])}</article>' for o in analysis["options"]
+        )
+        heading = "Prior analysis: source changed" if changed else "Analysis"
+        analysis_html = f'''<div class="panel" style="margin-top:12px"><h4>{heading}</h4>
+<p>{escape(analysis["summary"])}</p><dl class="kv"><dt>Cause</dt><dd>{escape(analysis["cause"])}</dd>
+<dt>Recommendation</dt><dd>{escape(analysis["recommendation"]) or '<span class="muted">None</span>'}</dd>
+<dt>Trade-offs</dt><dd>{_list(analysis["tradeoffs"])}</dd><dt>Proof</dt><dd>{_list(analysis["proof"])}</dd>
+<dt>Evidence limits</dt><dd>{escape(analysis["evidence_limits"]) or '<span class="muted">None</span>'}</dd>
+<dt>Blocking question</dt><dd>{escape(analysis["question"]) or '<span class="muted">None</span>'}</dd>
+</dl><div class="option-grid">{options}</div></div>'''
     command = f"$audit-codebase analyze candidate {x['id']} in atlas run {run_id}"
-    next_action = (
-        f"Use analyzed audit candidate {x['id']} from atlas run {run_id}. "
-        "Help me choose the appropriate next owner among direct implementation, "
-        "$codebase-design, $prototype, or $to-tickets. Do not start the next workflow yet."
-        if x["state"] == "analyzed"
-        else (
+    next_action = ""
+    if not changed and x["state"] == "analyzed":
+        next_action = (
+            f"Use analyzed audit candidate {x['id']} from atlas run {run_id}. "
+            "Help me choose the appropriate next owner among direct implementation, "
+            "$codebase-design, $prototype, or $to-tickets. Do not start the next workflow yet."
+        )
+    elif not changed and x["state"] == "blocked":
+        next_action = (
             f"Use blocked audit candidate {x['id']} from atlas run {run_id}. "
             "Help me resolve the exact blocker without starting implementation."
-            if x["state"] == "blocked" else ""
         )
-    )
     next_button = (
-        f'<button class="copy" data-copy="{escape(next_action,quote=True)}">Copy next-action handoff</button>'
+        f'<button class="copy" data-copy="{escape(next_action, quote=True)}">Copy next-action handoff</button>'
         if next_action else ""
     )
-    return f'''<article class="card candidate" data-filter-card data-state="{escape(x["state"])}" data-search="{escape(search,quote=True)}" id="candidate-{escape(x["id"])}"><div class="strength">{_badge(x["strength"],x["strength"].title())}</div><h3>{escape(x["title"])}</h3><div class="badges">{_badge(x["state"])}{_badge(x["primary_class"])}</div><div class="compare"><div><h4>Current problem</h4><p>{escape(x["problem"])}</p></div><div><h4>Direction</h4><p>{escape(x["direction"])}</p><p class="muted">{escape(x["benefit"])}</p></div></div><dl class="kv"><dt>Affects</dt><dd>{escape(", ".join(x["affected_scope"]))}</dd><dt>Findings</dt><dd>{escape(", ".join(x["finding_ids"]))}</dd><dt>Risks</dt><dd>{_list(x["risks"])}</dd><dt>Required proof</dt><dd>{_list(x["required_proof"])}</dd></dl><details class="evidence"><summary>Evidence</summary>{_list(x["evidence"])}</details>{analysis_html}<div class="command"><button class="copy" data-copy="{escape(command,quote=True)}">Copy analyze command</button>{next_button}</div></article>'''
+    evidence_owner = "Analysis" if analysis else "Audit"
+    freshness_badge = _badge(freshness, f'{evidence_owner} source {freshness}')
+    warning = (
+        '<p class="stale-warning">Prior evidence is retained. Reanalyze this candidate before using its recommendation.</p>'
+        if changed else ""
+    )
+    comparison = (analysis or {}).get("comparison") or x.get("comparison")
+    visual = _comparison_html(comparison, x["id"]) if comparison else ""
+    state_badge = _badge("changed", f'{x["state"]} (prior)') if changed else _badge(x["state"])
+    return f'''<article class="card candidate" data-filter-card data-state="{escape(x["state"])}"
+data-freshness="{freshness}" data-search="{escape(search, quote=True)}" id="candidate-{escape(x["id"])}">
+<div class="strength">{_badge(x["strength"], x["strength"].title())}</div><h3>{escape(x["title"])}</h3>
+<div class="badges">{state_badge}{_badge(x["primary_class"])}{freshness_badge}</div>{warning}
+<div class="compare"><div><h4>Current problem</h4><p>{escape(x["problem"])}</p></div>
+<div><h4>Direction</h4><p>{escape(x["direction"])}</p><p class="muted">{escape(x["benefit"])}</p></div></div>
+{visual}<dl class="kv"><dt>Affects</dt><dd>{escape(", ".join(x["affected_scope"]))}</dd>
+<dt>Findings</dt><dd>{escape(", ".join(x["finding_ids"]))}</dd><dt>Risks</dt><dd>{_list(x["risks"])}</dd>
+<dt>Required proof</dt><dd>{_list(x["required_proof"])}</dd></dl>
+<details class="evidence"><summary>Evidence</summary>{_list(x["evidence"])}</details>{analysis_html}
+<div class="command"><button class="copy" data-copy="{escape(command, quote=True)}">Copy analyze command</button>{next_button}</div></article>'''
+
+
+def _coverage_counts(state: dict[str, Any]) -> dict[str, dict[str, int]]:
+    coverage = {}
+    for lens in _LENSES:
+        counts = {name: 0 for name in ("complete", "not applicable", "evidence gap", "changed", "not audited")}
+        for sub in state["subsystems"]:
+            if "audit" not in sub:
+                status = "not audited"
+            elif state["freshness"][sub["id"]] == "changed":
+                status = "changed"
+            else:
+                status = next(row["state"] for row in sub["audit"]["lenses"] if row["class"] == lens)
+            counts[status] += 1
+        coverage[lens] = counts
+    return coverage
+
+
+def _coverage_rows(state: dict[str, Any]) -> list[str]:
+    rows = []
+    total = len(state["subsystems"])
+    for lens, counts in _coverage_counts(state).items():
+        resolved = counts["complete"] + counts["not applicable"]
+        detail = " · ".join(f'{count} {name}' for name, count in counts.items())
+        segments = "".join(
+            f'<span class="{name.replace(" ", "-")}" style="width:{count*100/total if total else 0:.2f}%" '
+            f'title="{count} {name}"></span>' for name, count in counts.items()
+        )
+        attributes = " ".join(f'data-{name.replace(" ", "-")}="{count}"' for name, count in counts.items())
+        rows.append(
+            f'<div class="coverage-row" data-lens="{lens}" data-total="{total}" {attributes}>'
+            f'<span>{escape(lens.title())}</span><div><div class="bar" role="img" '
+            f'aria-label="{escape(detail, quote=True)}">{segments}</div>'
+            f'<div class="coverage-detail">{escape(detail)}</div></div>'
+            f'<span title="Current complete or not applicable / all mapped subsystems">{resolved}/{total}</span></div>'
+        )
+    return rows
 
 
 def _render(state: dict[str, Any]) -> bytes:
@@ -799,14 +975,12 @@ def _render(state: dict[str, Any]) -> bytes:
     changed = [x for x in subsystems if state["freshness"].get(x["id"]) == "changed"]
     findings = [x for sub in audited for x in sub["audit"]["findings"]] + state["systemic_findings"]
     candidates = [x for sub in audited for x in sub["audit"]["candidates"]]
-    gap_count = sum(1 for sub in audited for lens in sub["audit"]["lenses"] if lens["state"] == "evidence gap")
-    metrics = [("Subsystems",len(subsystems)),("Audited",len(audited)),("Mapped",len(subsystems)-len(audited)),("Source changed",len(changed)),("Findings",len(findings)),("Candidates",len(candidates))]
+    gap_count = sum(1 for sub in audited if state["freshness"][sub["id"]] == "fresh" for lens in sub["audit"]["lenses"] if lens["state"] == "evidence gap")
+    current_audits = sum(state["freshness"][sub["id"]] == "fresh" for sub in audited)
+    changed_candidates = sum(value == "changed" for value in state["candidate_freshness"].values())
+    metrics = [("Subsystems",len(subsystems)),("Current audits",current_audits),("Not audited",len(subsystems)-len(audited)),("Changed subsystems",len(changed)),("Findings",len(findings)),("Candidates",len(candidates)),("Changed candidates",changed_candidates)]
     metric_html = "".join(f'<div class="metric"><strong>{v}</strong><span>{escape(k)}</span></div>' for k,v in metrics)
-    lens_rows = []
-    for lens in _LENSES:
-        done = sum(1 for sub in audited for row in sub["audit"]["lenses"] if row["class"]==lens and row["state"]=="complete")
-        total=len(audited); pct=int(round(done*100/total)) if total else 0
-        lens_rows.append(f'<div class="coverage-row"><span>{escape(lens.title())}</span><div class="bar"><span style="width:{pct}%"></span></div><span>{done}/{total}</span></div>')
+    lens_rows = _coverage_rows(state)
     cards={}
     audits=[]
     for sub in subsystems:
@@ -818,20 +992,20 @@ def _render(state: dict[str, Any]) -> bytes:
         search=" ".join([sub["name"],sub["purpose"],sub["ownership"],sub["system_id"],*deps])
         command=f"$audit-codebase audit subsystem {sub['id']} in atlas run {state['run_id']}"
         dep_detail="".join(f'<li><a href="#subsystem-{escape(d["id"])}">{escape(d["id"])}</a>: {escape("; ".join(d["evidence"]))}</li>' for d in sub["dependencies"]) or '<li class="muted">None recorded</li>'
-        cards[sub["id"]]=f'''<article class="card" id="subsystem-{escape(sub["id"])}" data-filter-card data-state="{escape(sub["state"])}" data-search="{escape(search,quote=True)}"><h3>{escape(sub["name"])}</h3><div class="badges">{_badge(sub["state"])}{_badge("changed" if fresh=="changed" else "fresh","Source changed" if fresh=="changed" else "Source fresh")}{_badge(sub["system_id"])}</div><p>{escape(sub["purpose"])}</p><dl class="kv"><dt>Ownership</dt><dd>{escape(sub["ownership"])}</dd><dt>Dependencies</dt><dd>{escape(", ".join(deps)) if deps else '<span class="muted">None</span>'}</dd><dt>Audit result</dt><dd>{fc} findings · {cc} candidates</dd></dl><details class="evidence"><summary>Architecture evidence</summary><dl class="kv"><dt>Authority</dt><dd>{_list(sub["authority"])}</dd><dt>Callers</dt><dd>{_list(sub["callers"])}</dd><dt>Dependencies</dt><dd><ul class="compact">{dep_detail}</ul></dd><dt>Interfaces</dt><dd>{_list(sub["interfaces"])}</dd><dt>Proof seams</dt><dd>{_list(sub["proof_seams"])}</dd><dt>Owned paths</dt><dd>{_list(sub["owned_paths"])}</dd><dt>Exclusions</dt><dd>{_list(sub["exclusions"])}</dd></dl></details><div class="command"><button class="copy" data-copy="{escape(command,quote=True)}">Copy audit command</button></div></article>'''
+        cards[sub["id"]]=f'''<article class="card" id="subsystem-{escape(sub["id"])}" data-filter-card data-state="{escape(sub["state"])}" data-freshness="{fresh}" data-search="{escape(search,quote=True)}"><h3>{escape(sub["name"])}</h3><div class="badges">{_badge(sub["state"])}{_badge("changed" if fresh=="changed" else "fresh","Source changed" if fresh=="changed" else "Source fresh")}{_badge(sub["system_id"])}</div><p>{escape(sub["purpose"])}</p><dl class="kv"><dt>Ownership</dt><dd>{escape(sub["ownership"])}</dd><dt>Dependencies</dt><dd>{escape(", ".join(deps)) if deps else '<span class="muted">None</span>'}</dd><dt>Audit result</dt><dd>{fc} findings · {cc} candidates</dd></dl><details class="evidence"><summary>Architecture evidence</summary><dl class="kv"><dt>Authority</dt><dd>{_list(sub["authority"])}</dd><dt>Callers</dt><dd>{_list(sub["callers"])}</dd><dt>Dependencies</dt><dd><ul class="compact">{dep_detail}</ul></dd><dt>Interfaces</dt><dd>{_list(sub["interfaces"])}</dd><dt>Proof seams</dt><dd>{_list(sub["proof_seams"])}</dd><dt>Owned paths</dt><dd>{_list(sub["owned_paths"])}</dd><dt>Exclusions</dt><dd>{_list(sub["exclusions"])}</dd></dl></details><div class="command"><button class="copy" data-copy="{escape(command,quote=True)}">Copy audit command</button></div></article>'''
         if audit:
             trace=audit["source_trace"]
             lens_html="".join(f'<tr><td>{escape(row["class"])}</td><td>{_badge(row["state"])}</td><td>{escape(row["reason"])}</td><td>{_list(row["evidence"])}</td></tr>' for row in audit["lenses"])
-            audits.append(f'''<article class="panel" id="audit-{escape(sub["id"])}"><div class="section-head"><div><h2>{escape(sub["name"])}</h2><p>{escape(trace["summary"])}</p></div><div class="badges">{_badge(audit["coverage"])}{_badge("evidence-gap",f"{sum(1 for x in audit['lenses'] if x['state']=='evidence gap')} gaps")}</div></div><table class="lens-table"><thead><tr><th>Lens</th><th>Coverage</th><th>Reason</th><th>Evidence</th></tr></thead><tbody>{lens_html}</tbody></table><details class="evidence"><summary>Source trace</summary><dl class="kv"><dt>Entry points</dt><dd>{_list(trace["entry_points"])}</dd><dt>Callers</dt><dd>{_list(trace["callers"])}</dd><dt>Dependencies</dt><dd>{_list(trace["dependencies"])}</dd><dt>Interfaces</dt><dd>{_list(trace["interfaces"])}</dd><dt>Proof seams</dt><dd>{_list(trace["proof_seams"])}</dd><dt>Representative flows</dt><dd>{_list(trace["representative_flows"])}</dd><dt>History signals</dt><dd>{_list(trace["history_signals"])}</dd><dt>Evidence limits</dt><dd>{escape(audit["evidence_limits"]) or '<span class="muted">None</span>'}</dd></dl></details><p><strong>Audit recommendation:</strong> {escape(audit["recommendation"])}</p></article>''')
+            audits.append(f'''<article class="panel" id="audit-{escape(sub["id"])}"><div class="section-head"><div><h2>{escape(sub["name"])}</h2><p>{escape(trace["summary"])}</p></div><div class="badges">{_badge(audit["coverage"])}{_badge(fresh,"Audit source "+fresh)}{_badge("evidence-gap",f"{sum(1 for x in audit['lenses'] if x['state']=='evidence gap')} gaps")}</div></div><div class="table-scroll"><table class="lens-table"><thead><tr><th>Lens</th><th>Coverage</th><th>Reason</th><th>Evidence</th></tr></thead><tbody>{lens_html}</tbody></table></div><details class="evidence"><summary>Source trace</summary><dl class="kv"><dt>Entry points</dt><dd>{_list(trace["entry_points"])}</dd><dt>Callers</dt><dd>{_list(trace["callers"])}</dd><dt>Dependencies</dt><dd>{_list(trace["dependencies"])}</dd><dt>Interfaces</dt><dd>{_list(trace["interfaces"])}</dd><dt>Proof seams</dt><dd>{_list(trace["proof_seams"])}</dd><dt>Representative flows</dt><dd>{_list(trace["representative_flows"])}</dd><dt>History signals</dt><dd>{_list(trace["history_signals"])}</dd><dt>Evidence limits</dt><dd>{escape(audit["evidence_limits"]) or '<span class="muted">None</span>'}</dd></dl></details><p><strong>Audit recommendation:</strong> {escape(audit["recommendation"])}</p></article>''')
     systems_index="".join(f'<section id="system-{escape(system["id"])}"><h3>{escape(system["name"])}</h3><div class="grid">{"".join(cards[sub["id"]] for sub in subsystems if sub["system_id"]==system["id"])}</div></section>' for system in state["systems"])
     candidates=sorted(candidates,key=lambda x:({"strong":0,"worth exploring":1,"speculative":2}[x["strength"]],x["title"]))
-    candidate_html="".join(_candidate_html(x,state["run_id"]) for x in candidates)
+    candidate_html="".join(_candidate_html(x,state["run_id"],state["candidate_freshness"][x["id"]]) for x in candidates)
     finding_html="".join(_finding_html(x) for x in findings)
     excluded="".join(f'<li><code>{escape(x["path"])}</code>: {escape(x["reason"])}</li>' for x in state["excluded"]) or '<li class="muted">None</li>'
     history="".join(f'<li>{escape(x["operation"])} · {escape(x["selection"])}</li>' for x in state["history"])
     nav_systems="".join(f'<a href="#system-{escape(s["id"])}">{escape(s["name"])}</a>' for s in state["systems"])
     raw=_canonical(state); embedded=raw.decode().replace("<","\\u003c").replace(">","\\u003e").replace("&","\\u0026")
-    html=f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="audit-codebase-report-version" content="{REPORT_VERSION}"><title>{escape(state["title"])}</title><style>{_STYLE}</style></head><body><div class="shell"><aside class="sidebar"><div class="brand">Audit atlas</div><nav><a href="#overview">Overview</a><a href="#architecture">Architecture</a><a href="#subsystems">Subsystems</a><a href="#audits">Audits</a><a href="#findings">Findings</a><a href="#candidates">Candidates</a><a href="#evidence">Evidence</a><a href="#history">History</a>{nav_systems}</nav><div class="minor">Run <code>{escape(state["run_id"])}</code><br>Observed {escape(state["observed_at"])}</div></aside><main class="content"><header class="hero" id="overview"><div><h1>{escape(state["title"])}</h1><p>Visual architecture map and evidence-backed improvement workbench. Select a subsystem to audit, then a candidate to analyze.</p></div><div class="hero-meta">Commit <code>{escape(identity["commit"][:12])}</code><br>Tree <code>{escape(identity["tree"][:12])}</code></div></header><div class="metrics">{metric_html}</div><section class="section"><div class="section-head"><div><h2>Coverage</h2><p>{escape(state["coverage"])}</p></div><div class="badges">{_badge("evidence-gap",f"{gap_count} evidence gaps")}</div></div><div class="panel">{"".join(lens_rows)}</div></section><section class="section" id="architecture"><div class="section-head"><div><h2>Architecture map</h2><p>Dependencies are directional. Click a subsystem to inspect it.</p></div></div><div class="panel architecture">{_architecture_svg(state)}<div class="legend"><span><i class="dot mapped"></i>mapped</span><span><i class="dot audited"></i>audited</span><span><i class="dot changed"></i>source changed</span></div></div></section><section class="section" id="subsystems"><div class="section-head"><div><h2>Subsystem explorer</h2><p>Search the map, then copy the exact drill-down command.</p></div></div><div class="toolbar"><input id="search" type="search" placeholder="Search subsystems, findings, candidates..."><select id="state-filter"><option value="all">All states</option><option value="mapped">Mapped</option><option value="audited">Audited</option><option value="presented">Candidate: presented</option><option value="analyzed">Candidate: analyzed</option><option value="blocked">Candidate: blocked</option></select></div>{systems_index}</section><section class="section" id="audits"><div class="section-head"><div><h2>Audited subsystems</h2><p>Meaning first; source trace and evidence stay expandable.</p></div></div>{"".join(audits) or '<div class="panel muted">Audit a mapped subsystem to populate this section.</div>'}</section><section class="section" id="findings"><div class="section-head"><div><h2>Findings</h2><p>Defects, opportunities, retained complexity, and explicit evidence gaps.</p></div></div><div class="grid">{finding_html or '<div class="panel muted">No admitted findings yet.</div>'}</div></section><section class="section" id="candidates"><div class="section-head"><div><h2>Improvement candidates</h2><p>Qualitative strength, not a numeric architecture score. Select one to analyze.</p></div></div><div class="grid">{candidate_html or '<div class="panel muted">Audit a subsystem to produce selectable candidates.</div>'}</div></section><section class="section" id="evidence"><div class="section-head"><div><h2>Evidence and provenance</h2><p>Forensic detail is preserved without dominating the decision view.</p></div></div><div class="panel"><dl class="kv"><dt>Tracked content</dt><dd><code>{escape(identity["tracked_content_sha256"])}</code></dd><dt>Evidence limits</dt><dd>{escape(state["evidence_limits"]) or '<span class="muted">None</span>'}</dd><dt>Excluded paths</dt><dd><ul class="compact">{excluded}</ul></dd></dl></div></section><section class="section" id="history"><div class="section-head"><div><h2>History</h2><p>Map, audit, and analysis updates.</p></div></div><div class="panel"><ol class="history">{history}</ol></div></section><footer>Audit-codebase workbench format {REPORT_VERSION}. Read-only HTML; copy commands return control to ChatGPT.</footer></main></div><script id="audit-codebase-state" type="application/json" data-sha256="{_digest(raw)}">{embedded}</script><script>{_SCRIPT}</script></body></html>'''
+    html=f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="audit-codebase-report-version" content="{REPORT_VERSION}"><title>{escape(state["title"])}</title><style>{_STYLE}</style></head><body><div class="shell"><aside class="sidebar"><div class="brand">Audit atlas</div><nav><a href="#overview">Overview</a><a href="#architecture">Architecture</a><a href="#subsystems">Subsystems</a><a href="#audits">Audits</a><a href="#findings">Findings</a><a href="#candidates">Candidates</a><a href="#evidence">Evidence</a><a href="#history">History</a>{nav_systems}</nav><div class="minor">Run <code>{escape(state["run_id"])}</code><br>Observed {escape(state["observed_at"])}</div></aside><main class="content"><header class="hero" id="overview"><div><h1>{escape(state["title"])}</h1><p>Visual architecture map and evidence-backed improvement workbench. Select a subsystem to audit, then a candidate to analyze.</p></div><div class="hero-meta">Commit <code>{escape(identity["commit"][:12])}</code><br>Tree <code>{escape(identity["tree"][:12])}</code></div></header><div class="metrics">{metric_html}</div><section class="section"><div class="section-head"><div><h2>Audit coverage</h2><p>All mapped subsystems; current complete and non-applicable assessments count as resolved.</p><p class="muted">{escape(state["coverage"])}</p></div><div class="badges">{_badge("evidence-gap",f"{gap_count} evidence gaps")}</div></div><div class="panel">{"".join(lens_rows)}</div></section><section class="section" id="architecture"><div class="section-head"><div><h2>Architecture map</h2><p>Dependencies are directional. Click a subsystem to inspect it.</p></div></div><div class="panel architecture">{_architecture_svg(state)}<div class="legend"><span><i class="dot mapped"></i>mapped</span><span><i class="dot audited"></i>audited</span><span><i class="dot changed"></i>source changed</span></div></div></section><section class="section" id="subsystems"><div class="section-head"><div><h2>Subsystem explorer</h2><p>Search the map, then copy the exact drill-down command.</p></div></div><div class="toolbar"><input id="search" type="search" placeholder="Search subsystems, findings, candidates..."><select id="state-filter"><option value="all">All states</option><option value="mapped">Mapped</option><option value="audited">Audited</option><option value="presented">Candidate: presented</option><option value="analyzed">Candidate: analyzed</option><option value="blocked">Candidate: blocked</option><option value="disproved">Candidate: disproved</option><option value="changed">Source changed</option></select></div>{systems_index}</section><section class="section" id="audits"><div class="section-head"><div><h2>Audit records</h2><p>Meaning first; source trace and evidence stay expandable.</p></div></div>{"".join(audits) or '<div class="panel muted">Audit a mapped subsystem to populate this section.</div>'}</section><section class="section" id="findings"><div class="section-head"><div><h2>Findings</h2><p>Defects, opportunities, retained complexity, and explicit evidence gaps.</p></div></div><div class="grid">{finding_html or '<div class="panel muted">No admitted findings yet.</div>'}</div></section><section class="section" id="candidates"><div class="section-head"><div><h2>Improvement candidates</h2><p>Qualitative strength, not a numeric architecture score. Select one to analyze.</p></div></div><div class="grid">{candidate_html or '<div class="panel muted">Audit a subsystem to produce selectable candidates.</div>'}</div></section><section class="section" id="evidence"><div class="section-head"><div><h2>Evidence and provenance</h2><p>Forensic detail is preserved without dominating the decision view.</p></div></div><div class="panel"><dl class="kv"><dt>Tracked content</dt><dd><code>{escape(identity["tracked_content_sha256"])}</code></dd><dt>Evidence limits</dt><dd>{escape(state["evidence_limits"]) or '<span class="muted">None</span>'}</dd><dt>Excluded paths</dt><dd><ul class="compact">{excluded}</ul></dd></dl></div></section><section class="section" id="history"><div class="section-head"><div><h2>History</h2><p>Map, audit, and analysis updates.</p></div></div><div class="panel"><ol class="history">{history}</ol></div></section><footer>Audit-codebase workbench format {REPORT_VERSION}. Read-only HTML; copy commands return control to the agent.</footer></main></div><script id="audit-codebase-state" type="application/json" data-sha256="{_digest(raw)}">{embedded}</script><script>{_SCRIPT}</script></body></html>'''
     return html.encode()
 
 
@@ -855,7 +1029,19 @@ def _validate_state(state: dict[str, Any]) -> None:
             _lenses(sub["audit"].get("lenses"))
             fids += [x.get("id") for x in sub["audit"].get("findings",[])]
             cids += [x.get("id") for x in sub["audit"].get("candidates",[])]
+            for candidate in sub["audit"].get("candidates", []):
+                if "comparison" in candidate:
+                    _comparison(candidate["comparison"])
+                if "analysis" in candidate:
+                    _source_packet(candidate["analysis"].get("source_identity"), "analysis source")
+                    if "comparison" in candidate["analysis"]:
+                        _comparison(candidate["analysis"]["comparison"])
     if len(fids)!=len(set(fids)) or len(cids)!=len(set(cids)): raise ReportError("duplicate finding or candidate ids")
+    candidate_freshness = _obj(state.get("candidate_freshness"), "candidate freshness")
+    if set(candidate_freshness) != set(cids):
+        raise ReportError("freshness must cover every candidate")
+    if any(value not in {"fresh", "changed"} for value in candidate_freshness.values()):
+        raise ReportError("invalid candidate freshness")
 
 
 def _load(root: Path, report: Path) -> tuple[bytes, dict[str, Any]]:

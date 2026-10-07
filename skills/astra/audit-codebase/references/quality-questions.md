@@ -31,6 +31,23 @@ changes? Use real change history when it can test that explanation. Cycles, long
 call chains, and similar syntax are leads only; show the actual coordination or
 change burden before reporting a problem.
 
+Would a smaller caller-facing interface hide meaningful policy and complexity,
+so callers need less knowledge? A deeper module can improve locality and proof
+without adding another abstraction layer. Compare the burden across the owner and
+its callers; deleting a shallow wrapper is useful only when it removes complexity
+rather than dispersing required decisions. Shared syntax alone does not justify
+coupling different policies through one abstraction.
+
+Do independent paths enforce conflicting rules or claim the same authority? Trace
+the concrete disagreement and its consequence. If a recommendation conflicts
+with an accepted decision, name that decision and the evidence for revisiting it;
+do not silently replace its meaning or reopen it for a hypothetical benefit.
+
+Look for hand-synchronized registries, caller imports of implementation internals,
+or competing implementation paths when they cause missed updates, leaked policy,
+or behavior drift. Compatibility paths and different semantics can justify separate
+implementations; establish the actual burden before proposing consolidation.
+
 ## Domain and valid state
 
 Do names, units, representations, states, and relationships preserve accepted
@@ -39,6 +56,10 @@ its invariants through supported entry paths?
 
 Can ordinary representations express invalid combinations that callers must
 repeatedly repair? Distinguish accepted meaning from accidental current behavior.
+
+When several stores or components appear to own the same state, trace writers,
+synchronization, and read expectations. Multiple representations can be legitimate;
+the improvement case needs an actual inconsistency or avoidable coordination cost.
 
 ## Failure, trust, lifecycle, and resources
 
@@ -86,6 +107,18 @@ Require concrete ambiguity, coordination, or change burden before suggesting
 naming, type, control-flow, comment, or test-structure cleanup.
 
 ## Performance and operation
+
+Is the expensive result consumed by the supported workflow? Can filtering earlier
+avoid unnecessary work, or can equivalent repeated work be avoided while preserving
+required outputs? Establish whether the work is needed before choosing how to
+make it faster.
+
+Where is data read, copied, decoded, transformed, materialized, or retained? Follow
+representative data paths to expose repeated work, unnecessary copies, oversized
+intermediates, and poor locality. Consider existing capabilities, batching,
+streaming, reuse, or caching when supported by the actual workload. Preserve
+ordering, freshness, ownership, scientific meaning, and evaluation boundaries;
+less work is useful only when it produces the same required result.
 
 Support performance or resource-cost claims with an attributable trace,
 representative measurement, or deterministic work count. Compare equivalent work

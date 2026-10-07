@@ -81,8 +81,14 @@ those obligations through implementation without a mandatory cleanup phase or
 unrelated repository sweep. Research investigates substantive questions through
 inspected sources and critical synthesis, including credible counterevidence;
 prototype obtains new evidence for a bounded uncertainty, adapting and repeating
-experiments when needed to answer it. Audit-codebase judges baseline
-code; change-review judges a fixed change candidate. Verification-harness creates
+experiments when needed to answer it. Audit-codebase discovers evidence-backed
+codebase improvements through an HTML map and scoped audits. Guided exploration
+leaves selection to the user; already-selected whole-repository scopes or delegated
+selection proceed within that authority. Coverage and source freshness support
+further selection; investigation, abstraction choices, simplification, and measured
+optimization remain matters of agent judgment. Explicit brief or no-write
+assessments can stay in chat.
+Change-review judges a fixed change candidate. Verification-harness creates
 or improves reusable repository tooling for agents to exercise and verify real
 UI, command, and agent interfaces. It reduces repeated setup and fragile
 interactions while preserving target identity, meaningful evidence, and resource

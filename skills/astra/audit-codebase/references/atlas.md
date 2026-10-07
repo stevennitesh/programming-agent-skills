@@ -1,12 +1,13 @@
 # Visual atlas
 
-Use for a requested map, maintained report, guided subsystem exploration, or
-continuing an existing current-format audit workbench. Direct improvement
-discovery follows the main skill without requiring an atlas.
+Use by default for codebase improvement, mapping, and guided exploration, or when
+continuing an existing current-format workbench. An explicitly requested brief or
+text-only assessment may stay in chat; a no-write assessment creates no report.
 
 The helper is [atlas.py](../scripts/atlas.py). Use its current `--help` and
-subcommand help for exact CLI syntax. The current format is authoritative; do not
-migrate or continue older report schemas.
+subcommand help for exact CLI syntax. The helper writes report/state format 2 and
+accepts manifest format 1. Start a new map for older reports; do not migrate or
+continue older report schemas.
 
 ## Purpose
 
@@ -60,7 +61,10 @@ proof seams, and owned paths.
 Every tracked path belongs to one subsystem or one evidenced exclusion. Shared
 infrastructure still needs one structural owner and named consumers.
 
-Publish the map and stop for user selection. A mapped subsystem is not audited.
+Show the map and stop for user selection unless the request already selects an
+audit scope or delegates that selection. For a whole-repository audit, continue
+through the mapped subsystems and make coverage limits visible. A mapped subsystem
+is not audited.
 
 ## Audit one selected subsystem
 
@@ -85,7 +89,9 @@ candidate must point to at least one admitted defect or opportunity. Give each
 candidate one qualitative strength: `strong`, `worth exploring`, or
 `speculative`.
 
-Publish the updated report and stop for user selection.
+Publish the updated report. Continue through an already-selected or delegated
+audit scope; otherwise stop for user selection. An audit request alone does not
+select candidates for deeper analysis.
 
 ## Analyze one selected candidate
 
@@ -102,7 +108,17 @@ Analysis may end as:
 For an analyzed candidate, compare the materially relevant alternatives and record
 their tradeoffs, recommendation, proof, and evidence limits.
 
-Publish and stop. Analysis never creates tickets or starts implementation.
+When a visual makes the change easier to judge, supply an optional `comparison`
+on the candidate or analysis: `caption`, `before`, and `after`. Each side contains
+`nodes` with `id` and `label`, and `edges` with `from`, `to`, and `label`. Use
+responsibility or data-flow diagrams to explain what moves, what callers retain,
+and where data is read or transformed. Proposed structure is a hypothesis, not an
+implemented result. The helper renders these records as escaped inline SVG;
+raw HTML or scripts are not accepted. An analysis comparison refines an earlier
+candidate comparison when present. No diagram quota is required.
+
+Publish the analysis and continue only within the requested analysis scope.
+Analysis never creates tickets or starts implementation.
 
 ## Visual contract
 
@@ -122,6 +138,17 @@ The rendered workbench should provide:
 - copyable explicit commands to Audit a subsystem or Analyze a candidate;
 - provenance, exclusions, and history in lower-priority sections.
 
+Coverage accounts for all mapped subsystems, separating current completed and
+non-applicable lenses from evidence gaps, changed source, and unaudited scope.
+Candidate analysis freshness follows its own complete source packet, including
+other affected subsystems. Keep stale judgments visible as prior evidence;
+reanalyze before using a stale recommendation for the next action.
+
+Open the report through the host's supported HTML preview and inspect the actual
+reading path, map links, filters, copyable selections, labels, and layout. Check
+that progress and freshness mean what the user sees. Report unavailable preview
+or clipboard capabilities without treating source or build checks as UI proof.
+
 Local JavaScript may only navigate, filter, or copy text. It does not invoke
 commands or mutate state.
 
@@ -130,7 +157,8 @@ commands or mutate state.
 Map binds the current tracked repository identity. Audit and Analyze bind the
 current source packets needed for their selected scope.
 
-The report may refresh freshness markers without revalidating semantic judgment.
+Refresh stored observations before presenting a resumed workbench. Freshness
+markers can update without revalidating semantic judgment.
 A changed source badge means the prior judgment may be stale; it does not erase or
 silently renew that judgment.
 
