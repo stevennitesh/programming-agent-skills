@@ -17,7 +17,7 @@ from pathlib import Path, PurePosixPath
 from typing import Any, NoReturn, Sequence
 
 REPORT_VERSION, STATE_VERSION = 4, 4
-RESPONSE_VERSION, MANIFEST_VERSION = 1, 1
+RESPONSE_VERSION, MANIFEST_VERSION = 2, 1
 _ID = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
 _RUN = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]*")
 _SHA = re.compile(r"[0-9a-f]{64}")
@@ -353,6 +353,18 @@ def _subsystem(value: object, label: str) -> dict[str, Any]:
     }
 
 
+def _exclusions(value: object) -> list[dict[str, str]]:
+    if not isinstance(value, list):
+        raise ReportError("excluded must be a list")
+    excluded = []
+    for i, raw in enumerate(value):
+        item = _obj(raw, f"excluded[{i}]")
+        _strict(item, {"path", "reason"}, set(), f"excluded[{i}]")
+        excluded.append({"path": _rel(item["path"], "excluded path"),
+                         "reason": _text(item["reason"], "excluded reason")})
+    return excluded
+
+
 def _map(raw: dict[str, Any], root: Path) -> dict[str, Any]:
     fields = {
         "version",
@@ -391,18 +403,7 @@ def _map(raw: dict[str, Any], root: Path) -> dict[str, Any]:
             raise ReportError(f"unknown system for {sub['id']}")
         if any(d["id"] not in sids for d in sub["dependencies"]):
             raise ReportError(f"unknown dependency for {sub['id']}")
-    if not isinstance(raw["excluded"], list):
-        raise ReportError("excluded must be a list")
-    excluded = []
-    for i, v in enumerate(raw["excluded"]):
-        x = _obj(v, f"excluded[{i}]")
-        _strict(x, {"path", "reason"}, set(), f"excluded[{i}]")
-        excluded.append(
-            {
-                "path": _rel(x["path"], "excluded path"),
-                "reason": _text(x["reason"], "excluded reason"),
-            }
-        )
+    excluded = _exclusions(raw["excluded"])
     observed = inventory(repo_root=root)
     tracked = set(observed["tracked_paths"])
     owners = {}
@@ -1204,6 +1205,28 @@ def _work_badges(work: dict[str, Any]) -> str:
     return badges
 
 
+def _candidate_commands(x: dict[str, Any], run_id: str, freshness: str, work: dict[str, Any]) -> tuple[str, str]:
+    changed = freshness == "changed"
+    command = (
+        f"$audit-codebase inspect candidate {x['id']} in atlas run {run_id}"
+        if changed or work["status"] in {"verified", "deferred", "historical", "disproved"}
+        else f"$audit-codebase analyze candidate {x['id']} in atlas run {run_id}"
+    )
+    next_action = ""
+    if not changed and x["state"] == "analyzed" and work["status"] not in {"verified", "deferred"}:
+        next_action = (
+            f"Use analyzed audit candidate {x['id']} from atlas run {run_id}. "
+            "Help me choose the appropriate next owner among direct implementation, "
+            "$codebase-design, $prototype, or $to-tickets. Do not start the next workflow yet."
+        )
+    elif not changed and x["state"] == "blocked" and work["status"] not in {"verified", "deferred"}:
+        next_action = (
+            f"Use blocked audit candidate {x['id']} from atlas run {run_id}. "
+            "Help me resolve the exact blocker without starting implementation."
+        )
+    return command, next_action
+
+
 def _candidate_html(x: dict[str, Any], run_id: str, freshness: str, audit_id: str, audit_freshness: str, work: dict[str, Any]) -> str:
     analysis = x.get("analysis")
     changed = freshness == "changed"
@@ -1224,24 +1247,8 @@ def _candidate_html(x: dict[str, Any], run_id: str, freshness: str, audit_id: st
 <dt>Evidence limits</dt><dd>{escape(analysis["evidence_limits"]) or '<span class="muted">None</span>'}</dd>
 <dt>Blocking question</dt><dd>{escape(analysis["question"]) or '<span class="muted">None</span>'}</dd>
 </dl><div class="option-grid">{options}</div></div>'''
-    command = (
-        f"$audit-codebase inspect candidate {x['id']} in atlas run {run_id}"
-        if changed or work["status"] in {"verified", "deferred", "historical", "disproved"}
-        else f"$audit-codebase analyze candidate {x['id']} in atlas run {run_id}"
-    )
+    command, next_action = _candidate_commands(x, run_id, freshness, work)
     command_label = "Copy inspect command" if " inspect candidate " in command else "Copy analyze command"
-    next_action = ""
-    if not changed and x["state"] == "analyzed" and work["status"] not in {"verified", "deferred"}:
-        next_action = (
-            f"Use analyzed audit candidate {x['id']} from atlas run {run_id}. "
-            "Help me choose the appropriate next owner among direct implementation, "
-            "$codebase-design, $prototype, or $to-tickets. Do not start the next workflow yet."
-        )
-    elif not changed and x["state"] == "blocked" and work["status"] not in {"verified", "deferred"}:
-        next_action = (
-            f"Use blocked audit candidate {x['id']} from atlas run {run_id}. "
-            "Help me resolve the exact blocker without starting implementation."
-        )
     next_button = (
         f'<button class="copy" data-copy="{escape(next_action, quote=True)}">Copy next-action handoff</button>'
         if next_action else ""
@@ -1576,7 +1583,7 @@ def _reconcile(raw: dict[str, Any], state: dict[str, Any], root: Path) -> dict[s
             raise ReportError("retirements must name distinct current subsystems")
         retirements[sid] = {"replacement_ids": _texts(value["replacement_ids"], "replacement ids"), "reason": _text(value["reason"], "retirement reason")}
         definitions.pop(sid, None)
-    excluded = list(raw.get("excluded", state["excluded"]))
+    excluded = _exclusions(raw.get("excluded", state["excluded"]))
     tracked = set(inventory(repo_root=root)["tracked_paths"])
     changes = []
     changed_paths = set()
@@ -2164,15 +2171,21 @@ def check_report(*, repo_root: Path, report: Path) -> dict[str, Any]:
     if len(ids) != len(set(ids)) or set(references) - set(ids):
         raise ReportError("report has duplicate ids or unresolved anchors", stage="check-report")
     candidates, findings = _catalog(state)
-    valid = {f"$audit-codebase audit subsystem {sub['id']} in atlas run {state['run_id']}" for sub in state["subsystems"]}
-    valid |= {f"$audit-codebase inspect finding {fid} in atlas run {state['run_id']}" for fid in findings}
+    required = {f"$audit-codebase audit subsystem {sub['id']} in atlas run {state['run_id']}" for sub in state["subsystems"]}
+    required |= {f"$audit-codebase inspect finding {fid} in atlas run {state['run_id']}" for fid, item in findings.items() if item["historical"]}
     for cid, item in candidates.items():
-        valid |= {f"$audit-codebase {action} candidate {cid} in atlas run {state['run_id']}" for action in ("analyze", "inspect")}
-        if item["record"]["state"] in {"analyzed", "blocked"} and not item["historical"] and state["candidate_freshness"].get(cid) == "fresh" and _work_status(state, {"kind": "candidate", "id": cid})["status"] not in {"verified", "deferred"}:
-            prefix = f"Use {item['record']['state']} audit candidate {cid} from atlas run {state['run_id']}. "
-            valid.update(command for command in commands if command.startswith(prefix))
-    if set(commands) - valid:
+        if item["historical"]:
+            required.add(f"$audit-codebase inspect candidate {cid} in atlas run {state['run_id']}")
+        else:
+            command, next_action = _candidate_commands(item["record"], state["run_id"], state["candidate_freshness"][cid],
+                                                      _work_status(state, {"kind": "candidate", "id": cid}))
+            required.add(command)
+            if next_action:
+                required.add(next_action)
+    if set(commands) - required:
         raise ReportError("report has an invalid selection command", stage="check-report")
+    if required - set(commands):
+        raise ReportError("report is missing a required selection command", stage="check-report")
     _refresh_observation(state, repo_root.resolve())
     drift = state["map_drift"]
     return {"response_version": RESPONSE_VERSION, "valid": True, "report_sha256": _digest(data),

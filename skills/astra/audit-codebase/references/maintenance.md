@@ -9,6 +9,9 @@ ownership, changed conclusions, adequate proof, and the requested delivery scope
 `status` returns counts and bounded work rows. `inspect` defaults to the same
 compact view and adds relevant evidence when a subsystem, candidate, or finding
 is selected. Both observe current source without writing the report.
+Helper responses use `response_version: 2`; manifests remain version 1 and
+report/state use format 4. Compact inspection omits the complete `state` field;
+request `inspect --full` when it is needed.
 For a copied `$audit-codebase inspect candidate ...` or `inspect finding ...`
 selection, resolve its run and stable ID through filtered inspection. Report the
 relevant changes and outcomes and judge what reassessment, if any, remains needed.

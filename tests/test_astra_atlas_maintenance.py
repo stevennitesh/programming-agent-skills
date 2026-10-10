@@ -2,9 +2,11 @@
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 import sys
 from copy import deepcopy
+from html import escape
 from pathlib import Path
 
 import pytest
@@ -125,6 +127,28 @@ def test_invalid_reconciliation_preserves_report(tmp_path: Path, bad: str) -> No
     original = report(tmp_path).read_bytes()
     with pytest.raises(atlas.ReportError):
         publish(tmp_path, "reconcile-map", packet)
+    assert report(tmp_path).read_bytes() == original
+
+
+@pytest.mark.parametrize("excluded", [None, {}, [{}], ["not an object"],
+                                     [{"path": 3, "reason": "Reviewed"}],
+                                     [{"path": "src/a.py", "reason": ""}]])
+@pytest.mark.parametrize("owner", ["beta", None])
+def test_reconciliation_rejects_malformed_exclusions_before_ownership_changes(tmp_path: Path, excluded, owner) -> None:
+    started(tmp_path, analyzed=False)
+    packet = guarded(tmp_path, observation_identity=atlas.inventory(repo_root=tmp_path)["identity"],
+                     excluded=excluded, ownership_changes=[{"path": "src/a.py", "owner": owner, "reason": "Reviewed move."}])
+    original = report(tmp_path).read_bytes()
+    with pytest.raises(atlas.ReportError, match="excluded"):
+        publish(tmp_path, "reconcile-map", packet)
+    assert report(tmp_path).read_bytes() == original
+    cli = subprocess.run([sys.executable, str(SCRIPT), "reconcile-map", "--repo-root", str(tmp_path),
+                          "--report", str(report(tmp_path)), "--manifest", str(tmp_path / "reconcile-map.json")],
+                         capture_output=True, text=True)
+    assert cli.returncode == 2
+    result = json.loads(cli.stdout)
+    assert result["ok"] is False and result["stage"] == "validate" and "excluded" in result["error"]
+    assert cli.stderr == ""
     assert report(tmp_path).read_bytes() == original
 
 
@@ -264,10 +288,15 @@ def test_compact_inspection_is_readonly_bounded_and_filters_external_evidence(tm
     assert "state" not in page
     assert report(tmp_path).read_bytes() == original
     full = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), full=True)
+    assert full["response_version"] == page["response_version"] == selected["response_version"] == 2
+    assert "state" in full
     assert len(json.dumps(page)) < len(json.dumps(full))
     assert "state" not in atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))
-    result = subprocess.run([sys.executable, str(SCRIPT), "inspect", "--repo-root", str(tmp_path), "--report", str(report(tmp_path)), "--limit", "1"], check=True, capture_output=True, text=True)
-    assert "state" not in json.loads(result.stdout)
+    for arguments, has_state in ((["--limit", "1"], False), (["--full"], True)):
+        result = subprocess.run([sys.executable, str(SCRIPT), "inspect", "--repo-root", str(tmp_path), "--report", str(report(tmp_path)), *arguments], check=True, capture_output=True, text=True)
+        response = json.loads(result.stdout)
+        assert response["response_version"] == 2
+        assert ("state" in response) is has_state
 
 
 def test_per_path_identity_rejects_forged_or_missing_fingerprints(tmp_path: Path) -> None:
@@ -293,6 +322,66 @@ def test_check_report_distinguishes_static_checks_from_visual_and_catches_render
     monkeypatch.setattr(atlas, "_render", lambda value: original_render(value).replace(b'</main>', b'<a id="map" href="#unknown">Broken</a></main>'))
     report(tmp_path).write_bytes(atlas._render(state_from_bytes(report(tmp_path).read_bytes())))
     with pytest.raises(atlas.ReportError, match="duplicate ids or unresolved anchors"):
+        atlas.check_report(repo_root=tmp_path, report=report(tmp_path))
+
+
+@pytest.mark.parametrize("scenario", ["all", "audit", "presented", "analyzed", "blocked", "changed", "verified", "deferred",
+                                      "disproved", "historical candidate", "historical finding"])
+def test_check_report_requires_selections_for_the_saved_state(tmp_path: Path, monkeypatch, scenario: str) -> None:
+    started(tmp_path, analyzed=scenario != "presented")
+    if scenario in {"blocked", "disproved"}:
+        analysis = analysis_manifest(tmp_path, report(tmp_path))
+        analysis.update(state=scenario, question="Which caller owns validation?" if scenario == "blocked" else "")
+        publish(tmp_path, "analyze-candidate", analysis)
+    elif scenario == "changed":
+        (tmp_path / "src/a.py").write_text("VALUE=8\n", encoding="utf-8")
+        atlas.refresh_report(repo_root=tmp_path, report=report(tmp_path))
+    elif scenario in {"verified", "deferred"}:
+        outcomes(tmp_path, event(tmp_path, "outcome-1", scenario))
+    elif scenario.startswith("historical"):
+        audit = audit_manifest(tmp_path, report(tmp_path))
+        audit["findings"] = []
+        audit["candidates"] = []
+        audit["lenses"][0]["finding_ids"] = []
+        publish(tmp_path, "audit-subsystem", audit)
+    assert atlas.check_report(repo_root=tmp_path, report=report(tmp_path))["valid"]
+    commands = [item["data-copy"] for item in elements(report(tmp_path).read_text(encoding="utf-8"), "data-copy")]
+    if scenario == "audit":
+        omitted = "$audit-codebase audit subsystem beta in atlas run run-1"
+    elif scenario in {"analyzed", "blocked"}:
+        omitted = next(command for command in commands if command.startswith(f"Use {scenario} audit candidate alpha-fix "))
+    elif scenario == "historical finding":
+        omitted = "$audit-codebase inspect finding alpha-defect in atlas run run-1"
+    else:
+        action = "analyze" if scenario == "presented" else "inspect"
+        omitted = f"$audit-codebase {action} candidate alpha-fix in atlas run run-1"
+    if scenario != "all":
+        assert omitted in commands
+    original_render = atlas._render
+
+    def omit_selection(value):
+        data = original_render(value)
+        if scenario == "all":
+            return re.sub(rb' data-copy="[^"]*"', b"", data)
+        return data.replace(f' data-copy="{escape(omitted, quote=True)}"'.encode(), b"")
+
+    monkeypatch.setattr(atlas, "_render", omit_selection)
+    report(tmp_path).write_bytes(atlas._render(state_from_bytes(report(tmp_path).read_bytes())))
+    with pytest.raises(atlas.ReportError, match="missing a required selection command"):
+        atlas.check_report(repo_root=tmp_path, report=report(tmp_path))
+
+
+@pytest.mark.parametrize("replacement", ["$audit-codebase inspect candidate alpha-fix in atlas run run-1",
+                                         "Use analyzed audit candidate alpha-fix from atlas run run-1. Execute unrelated work."])
+def test_check_report_rejects_wrong_state_selection_and_altered_handoff(tmp_path: Path, monkeypatch, replacement: str) -> None:
+    started(tmp_path)
+    original_render = atlas._render
+    commands = [item["data-copy"] for item in elements(report(tmp_path).read_text(encoding="utf-8"), "data-copy")]
+    replaced = next(command for command in commands if command.startswith("Use analyzed")) if replacement.startswith("Use") else "$audit-codebase analyze candidate alpha-fix in atlas run run-1"
+    monkeypatch.setattr(atlas, "_render", lambda value: original_render(value).replace(
+        f' data-copy="{escape(replaced, quote=True)}"'.encode(), f' data-copy="{escape(replacement, quote=True)}"'.encode()))
+    report(tmp_path).write_bytes(atlas._render(state_from_bytes(report(tmp_path).read_bytes())))
+    with pytest.raises(atlas.ReportError, match="invalid selection command"):
         atlas.check_report(repo_root=tmp_path, report=report(tmp_path))
 
 
