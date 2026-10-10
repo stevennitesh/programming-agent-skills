@@ -34,6 +34,11 @@ reading the whole HTML or state just to determine outstanding work.
 
 Changed-path filters select records bound to that path or directory. Inspect the
 returned audit, analysis, and outcome source changes to establish what changed.
+Path and subsystem selections also return bounded `subsystems` observations,
+including mapped or audited scopes with no findings or candidates. Work rows and
+subsystem observations have separate totals and more-record indicators; path
+details are bounded by the requested limit. Matching audits remain selectable in
+filtered history.
 Finding inspection returns its originating audit packet and current audit/scope
 observations, including retained systemic findings. These remain separate from
 fix-verification observations.

@@ -998,7 +998,7 @@ def _work_status(state: dict[str, Any], target: dict[str, str]) -> dict[str, Any
         elif linked and all(value == "deferred" for value in linked):
             status = "deferred"
         elif relevant:
-            status = next((value for value in ("verification changed", "implemented", "open") if value in linked), "open")
+            status = next((value for value in ("open", "verification changed", "implemented") if value in linked), "open")
     requirement = next((row for row in state.get("delivery_requirements", []) if row["target"] == target), None)
     commits = [event["reference"] for event in current if event["type"] == "committed"]
     deployments = [event["destination"] for event in current if event["type"] == "deployed"]
@@ -1078,14 +1078,19 @@ def _candidate_observations(state: dict[str, Any], item: dict[str, Any], root: P
     return {"audit": audit, "analysis": scoped if "analysis" in item["record"] else None, "scope": scoped}
 
 
-def _finding_observations(state: dict[str, Any], item: dict[str, Any], root: Path,
-                          revisions: dict[int, tuple[dict[str, Any], dict[str, Any]]]) -> dict[str, Any]:
+def _finding_scope_observation(state: dict[str, Any], item: dict[str, Any], observed: dict[str, Any],
+                               revisions: dict[int, tuple[dict[str, Any], dict[str, Any]]]) -> dict[str, Any]:
     packet = item["audit_source"]
-    observed = state["source_changes"][item["origin"]] if not item["historical"] else _packet_observation(root, packet)
     scoped = _scope_observation(observed, packet, _required_paths(state, item["record"]))
     scope = set(item["record"]["affected_scope"]) | {item["origin"]}
     owners = scope | _current_scope(state, sorted(scope))
-    return {"audit": observed, "scope": _structure_observation(scoped, sorted(owners), item["audit_index"], revisions)}
+    return _structure_observation(scoped, sorted(owners), item["audit_index"], revisions)
+
+
+def _finding_observations(state: dict[str, Any], item: dict[str, Any], root: Path,
+                          revisions: dict[int, tuple[dict[str, Any], dict[str, Any]]]) -> dict[str, Any]:
+    observed = state["source_changes"][item["origin"]] if not item["historical"] else _packet_observation(root, item["audit_source"])
+    return {"audit": observed, "scope": _finding_scope_observation(state, item, observed, revisions)}
 
 
 def _refresh_observation(state: dict[str, Any], root: Path) -> None:
@@ -1145,7 +1150,13 @@ def _badge(value: str, label: str | None = None) -> str:
     return f'<span class="badge {escape(cls)}">{escape(label or value)}</span>'
 
 
+def _live_systemic_findings(state: dict[str, Any]) -> list[dict[str, Any]]:
+    active = {sub["id"] for sub in state["subsystems"]}
+    return [finding for finding in state["systemic_findings"] if finding["origin_subsystem_id"] in active]
+
+
 def _architecture_svg(state: dict[str, Any]) -> str:
+    systemic = _live_systemic_findings(state)
     grouped = {s["id"]: [x for x in state["subsystems"] if x["system_id"] == s["id"]] for s in state["systems"]}
     width = max(860, 210 + max((len(v) for v in grouped.values()), default=1) * 230)
     height = max(220, 55 + len(state["systems"]) * 150)
@@ -1158,7 +1169,7 @@ def _architecture_svg(state: dict[str, Any]) -> str:
             positions[sub["id"]] = (x, y)
             audit = sub.get("audit")
             systemic_count = sum(
-                1 for finding in state["systemic_findings"]
+                1 for finding in systemic
                 if sub["id"] in finding["affected_scope"]
             )
             local_count = len(audit["findings"]) if audit else 0
@@ -1186,14 +1197,17 @@ def _architecture_svg(state: dict[str, Any]) -> str:
     return f'<svg viewBox="0 0 {width} {height}" role="img" aria-label="Subsystem dependency map"><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#3a5a73"></path></marker></defs>{"".join(edges)}{"".join(parts)}</svg>'
 
 
-def _finding_html(x: dict[str, Any], work: dict[str, Any] | None = None) -> str:
+def _finding_html(x: dict[str, Any], run_id: str, work: dict[str, Any] | None = None, observation: dict[str, Any] | None = None) -> str:
     extras = "".join(
         f"<dt>{escape(k.replace('_',' ').title())}</dt><dd>{escape(x[k])}</dd>"
         for k in ("severity","scenario","missing_evidence","boundary_reason","reentry","protected_constraint","ceiling","revisit_trigger")
         if k in x
     )
     search = " ".join([x["title"], x["kind"], x["primary_class"], x["impact"], x["direction"], *x["affected_scope"]])
-    return f'''<article class="card finding {escape(x["kind"].replace(" ","-"))}" data-filter-card data-state="{escape(x["kind"])}" data-work-status="{escape(work['status']) if work else ''}" data-outstanding="{str(_outstanding(work)).lower() if work else 'false'}" data-search="{escape(search,quote=True)}" id="finding-{escape(x["id"])}"><h3>{escape(x["title"])}</h3><div class="badges">{_badge(x["kind"])}{_badge(x["primary_class"])}{_work_badges(work) if work else ""}</div><p>{escape(x["impact"])}</p><dl class="kv"><dt>Causal owner</dt><dd>{escape(x["causal_owner"])}</dd><dt>Affected</dt><dd>{escape(", ".join(x["affected_scope"]))}</dd><dt>Direction</dt><dd>{escape(x["direction"])}</dd><dt>Confidence</dt><dd>{escape(x["confidence"])}</dd></dl><details class="evidence"><summary>Evidence and proof</summary><dl class="kv"><dt>Expectation</dt><dd>{escape(x["expectation"]) or '<span class="muted">None</span>'}</dd><dt>Locations</dt><dd>{_list(x["locations"])}</dd><dt>Evidence</dt><dd>{_list(x["evidence"])}</dd><dt>Proof</dt><dd>{_list(x["proof"])}</dd>{extras}</dl></details></article>'''
+    freshness = observation["freshness"] if observation else "fresh"
+    command = f"$audit-codebase inspect finding {x['id']} in atlas run {run_id}"
+    warning = '<p class="stale-warning">Finding evidence or affected ownership changed. Inspect changed inputs before reusing this judgment.</p>' if freshness == "changed" else ""
+    return f'''<article class="card finding {escape(x["kind"].replace(" ","-"))}" data-filter-card data-state="{escape(x["kind"])}" data-freshness="{escape(freshness)}" data-work-status="{escape(work['status']) if work else ''}" data-outstanding="{str(_outstanding(work)).lower() if work else 'false'}" data-search="{escape(search,quote=True)}" id="finding-{escape(x["id"])}"><h3>{escape(x["title"])}</h3><div class="badges">{_badge(x["kind"])}{_badge(x["primary_class"])}{_badge(freshness, 'Finding inputs ' + freshness)}{_work_badges(work) if work else ""}</div>{warning}<p>{escape(x["impact"])}</p><dl class="kv"><dt>Causal owner</dt><dd>{escape(x["causal_owner"])}</dd><dt>Affected</dt><dd>{escape(", ".join(x["affected_scope"]))}</dd><dt>Direction</dt><dd>{escape(x["direction"])}</dd><dt>Confidence</dt><dd>{escape(x["confidence"])}</dd></dl><details class="evidence"><summary>Evidence and proof</summary><dl class="kv"><dt>Expectation</dt><dd>{escape(x["expectation"]) or '<span class="muted">None</span>'}</dd><dt>Locations</dt><dd>{_list(x["locations"])}</dd><dt>Evidence</dt><dd>{_list(x["evidence"])}</dd><dt>Proof</dt><dd>{_list(x["proof"])}</dd>{extras}</dl></details><div class="command"><button class="copy" data-copy="{escape(command, quote=True)}">Copy inspect command</button></div></article>'''
 
 
 def _diagram_svg(diagram: dict[str, Any], label: str, marker: str) -> str:
@@ -1377,6 +1391,7 @@ def _maintenance_html(state: dict[str, Any]) -> str:
         return _list(observation["changed_paths"] + metadata)
 
     candidates, findings = _catalog(state)
+    revisions = _reconciliation_revisions(state)
     drift = state["map_drift"]
     warnings = []
     if drift["needs_reconcile"]:
@@ -1392,6 +1407,12 @@ def _maintenance_html(state: dict[str, Any]) -> str:
     for eid, observation in state["outcome_source_changes"].items():
         if observation["freshness"] == "changed":
             changes.append(f'<li><a href="#outcome-{escape(eid)}">{escape(eid)}</a>: outcome inputs or affected scope changed{_list(observation["changed_paths"])}{escape(observation.get("error", ""))}</li>')
+    for fid, item in findings.items():
+        if item["historical"]:
+            continue
+        observation = _finding_scope_observation(state, item, state["source_changes"][item["origin"]], revisions)
+        if observation["freshness"] == "changed":
+            changes.append(f'<li><a href="#finding-{escape(fid)}">{escape(fid)}</a>: finding inputs or affected scope changed{changed_inputs(observation)}{escape(observation.get("error", ""))}</li>')
     if changes:
         warnings.append('<details class="panel"><summary>Changed inputs and ownership</summary><ul class="compact">' + "".join(changes) + '</ul></details>')
     targets = {(_event["target"]["kind"], _event["target"]["id"]) for _event in state["outcomes"] + state["delivery_requirements"]}
@@ -1425,8 +1446,10 @@ def _render(state: dict[str, Any]) -> bytes:
     identity, subsystems = state["observation_identity"], state["subsystems"]
     audited = [x for x in subsystems if x["state"] == "audited"]
     changed = [x for x in subsystems if state["freshness"].get(x["id"]) == "changed"]
-    active_ids = {sub["id"] for sub in subsystems}
-    findings = [x for sub in audited for x in sub["audit"]["findings"]] + [x for x in state["systemic_findings"] if x["origin_subsystem_id"] in active_ids]
+    systemic = _live_systemic_findings(state)
+    findings = [x for sub in audited for x in sub["audit"]["findings"]] + systemic
+    finding_catalog = _catalog(state)[1]
+    revisions = _reconciliation_revisions(state)
     candidates = [x for sub in audited for x in sub["audit"]["candidates"]]
     candidate_owners = {x["id"]: sub["id"] for sub in audited for x in sub["audit"]["candidates"]}
     gap_count = sum(1 for sub in audited if state["freshness"][sub["id"]] == "fresh" for lens in sub["audit"]["lenses"] if lens["state"] == "evidence gap")
@@ -1441,7 +1464,7 @@ def _render(state: dict[str, Any]) -> bytes:
     audits=[]
     for sub in subsystems:
         audit=sub.get("audit")
-        systemic_count=sum(1 for finding in state["systemic_findings"] if sub["id"] in finding["affected_scope"])
+        systemic_count=sum(1 for finding in systemic if sub["id"] in finding["affected_scope"])
         fc=(len(audit["findings"]) if audit else 0)+systemic_count
         cc=len(audit["candidates"]) if audit else 0
         fresh=state["freshness"].get(sub["id"],"fresh"); deps=[d["id"] for d in sub["dependencies"]]
@@ -1459,7 +1482,8 @@ def _render(state: dict[str, Any]) -> bytes:
         _candidate_html(x, state["run_id"], state["candidate_freshness"][x["id"]], candidate_owners[x["id"]], state["freshness"][candidate_owners[x["id"]]], _work_status(state, {"kind": "candidate", "id": x["id"]}))
         for x in candidates
     )
-    finding_html="".join(_finding_html(x, _work_status(state, {"kind": "finding", "id": x["id"]})) for x in findings)
+    finding_html="".join(_finding_html(x, state["run_id"], _work_status(state, {"kind": "finding", "id": x["id"]}),
+                                     _finding_scope_observation(state, finding_catalog[x["id"]], state["source_changes"][finding_catalog[x["id"]]["origin"]], revisions)) for x in findings)
     excluded="".join(f'<li><code>{escape(x["path"])}</code>: {escape(x["reason"])}</li>' for x in state["excluded"]) or '<li class="muted">None</li>'
     history="".join(f'<li>{escape(x["operation"])} · {escape(x["selection"])}<details data-history-index="{index}"><summary>Stored record</summary><pre class="history-record"></pre></details></li>' for index, x in enumerate(state["history"]))
     maintenance = _maintenance_html(state)
@@ -2034,7 +2058,7 @@ def _reconciliation_revisions(state: dict[str, Any]) -> dict[int, tuple[dict[str
 
 def _inspection_history(state: dict[str, Any], rows: list[dict[str, Any]], *, subsystem: str | None,
                         candidate: str | None, finding: str | None, paths: Sequence[str],
-                        outstanding: bool, detail: bool) -> list[dict[str, Any]]:
+                        outstanding: bool, detail: bool, matched_subsystems: Sequence[str] = ()) -> list[dict[str, Any]]:
     candidates, findings = _catalog(state)
     targets = {(row["target"]["kind"], row["target"]["id"]) for row in rows}
     if candidate:
@@ -2044,7 +2068,7 @@ def _inspection_history(state: dict[str, Any], rows: list[dict[str, Any]], *, su
     for kind, identifier in list(targets):
         if kind == "candidate":
             targets.update(("finding", fid) for fid in candidates[identifier]["record"]["finding_ids"])
-    owners = {subsystem} if subsystem else set()
+    owners = set(matched_subsystems) | ({subsystem} if subsystem else set())
     bound_paths = set()
     for kind, identifier in targets:
         item = (candidates if kind == "candidate" else findings)[identifier]
@@ -2062,6 +2086,7 @@ def _inspection_history(state: dict[str, Any], rows: list[dict[str, Any]], *, su
                 owners.add(replacement)
                 pending.append(replacement)
     identifiers = {identifier for _, identifier in targets}
+    identifiers.update(matched_subsystems)
     if subsystem:
         identifiers.add(subsystem)
     filtered = bool(subsystem or candidate or finding or paths or outstanding)
@@ -2118,6 +2143,25 @@ def _inspection_history(state: dict[str, Any], rows: list[dict[str, Any]], *, su
             entry.pop("superseded", None)
         entries.append(entry)
     return entries
+
+
+def _subsystem_inspection(state: dict[str, Any], sub: dict[str, Any], root: Path, paths: Sequence[str], limit: int,
+                          revisions: dict[int, tuple[dict[str, Any], dict[str, Any]]]) -> dict[str, Any] | None:
+    packet = sub.get("audit", {}).get("source_identity") or sub["map_source"]
+    bound = set(packet["paths"]) | set(sub["owned_paths"])
+    matching = sorted(path for path in bound if not paths or any(path == prefix or path.startswith(prefix.rstrip("/") + "/") for prefix in paths))
+    if paths and not matching:
+        return None
+    historical = sub["id"] not in state["source_changes"]
+    observed = state["source_changes"].get(sub["id"])
+    if observed is None:
+        since = max((index for index, item in enumerate(state["history"]) if item["operation"] == "audit" and item["selection"] == sub["id"]), default=-1)
+        owners = {sub["id"]} | _current_scope(state, [sub["id"]])
+        observed = _structure_observation(_packet_observation(root, packet), sorted(owners), since, revisions)
+    changed = observed["changed_paths"]
+    return {"subsystem_id": sub["id"], "name": sub["name"], "state": sub["state"], "historical": historical,
+            "source_sha256": packet["sha256"], "matching_paths": matching[:limit], "matching_paths_total": len(matching), "matching_paths_has_more": len(matching) > limit,
+            "source_changes": {**observed, "changed_paths": changed[:limit], "changed_paths_total": len(changed), "changed_paths_has_more": len(changed) > limit}}
 
 
 def inspect_report(*, repo_root: Path, report: Path, full: bool = False,
@@ -2196,16 +2240,35 @@ def inspect_report(*, repo_root: Path, report: Path, full: bool = False,
                 if kind == "candidate":
                     row["findings"] = [findings[fid]["record"] for fid in item["record"]["finding_ids"]]
             rows.append(row)
-    result.update(summary=_summary(state), observed_at=state["observed_at"], rows=rows[offset:offset + limit], total=len(rows), offset=offset, limit=limit, has_more=offset + limit < len(rows))
+    subsystem_rows = []
+    if paths or subsystem is not None:
+        selected_owners = None
+        if candidate or finding:
+            item = (candidates if candidate else findings)[candidate or finding]
+            scope = set(item["record"]["affected_scope"]) | set(item["record"].get("analysis", {}).get("affected_scope", [])) | {item["origin"]}
+            selected_owners = scope | _current_scope(state, sorted(scope))
+        for sid, sub in sorted(subs.items()):
+            if subsystem is not None and sid != subsystem:
+                continue
+            if sid not in state["source_changes"] and not (history or subsystem is not None):
+                continue
+            if selected_owners is not None and sid not in selected_owners:
+                continue
+            observed_subsystem = _subsystem_inspection(state, sub, root, paths, limit, revisions)
+            if observed_subsystem is not None:
+                subsystem_rows.append(observed_subsystem)
+    result.update(summary=_summary(state), observed_at=state["observed_at"], rows=rows[offset:offset + limit], total=len(rows), offset=offset, limit=limit, has_more=offset + limit < len(rows),
+                  subsystems=subsystem_rows[offset:offset + limit], subsystems_total=len(subsystem_rows), subsystems_has_more=offset + limit < len(subsystem_rows))
     result["map_drift"] = {key: value[:limit] if isinstance(value, list) else value for key, value in state["map_drift"].items()}
     result["map_drift"]["totals"] = {key: len(value) for key, value in state["map_drift"].items() if isinstance(value, list)}
     result["preview"] = state["preview"]
     if subsystem and detail:
         result["subsystem"] = subs[subsystem]
-        result["source_changes"] = state["source_changes"].get(subsystem)
+        selected_subsystem = _subsystem_inspection(state, subs[subsystem], root, [], limit, revisions)
+        result["source_changes"] = selected_subsystem["source_changes"]
     if history:
         entries = _inspection_history(state, rows, subsystem=subsystem, candidate=candidate, finding=finding,
-                                      paths=paths, outstanding=outstanding, detail=detail)
+                                      paths=paths, outstanding=outstanding, detail=detail, matched_subsystems=[sub["subsystem_id"] for sub in subsystem_rows])
         result.update(history=entries[offset:offset + limit], history_total=len(entries), history_has_more=offset + limit < len(entries))
     return result
 
@@ -2245,6 +2308,9 @@ def check_report(*, repo_root: Path, report: Path) -> dict[str, Any]:
     required_ids |= {f"outcome-{event['id']}" for event in state["outcomes"]}
     navigation |= {f"candidate-{cid}" for cid, change in state["candidate_source_changes"].items() if change["scope"]["freshness"] == "changed"}
     navigation |= {f"outcome-{eid}" for eid, change in state["outcome_source_changes"].items() if change["freshness"] == "changed"}
+    revisions = _reconciliation_revisions(state)
+    navigation |= {f"finding-{fid}" for fid, item in findings.items() if not item["historical"] and
+                   _finding_scope_observation(state, item, state["source_changes"][item["origin"]], revisions)["freshness"] == "changed"}
     for cid, item in candidates.items():
         comparison = item["record"].get("analysis", {}).get("comparison") or item["record"].get("comparison")
         if comparison and not item["historical"]:
@@ -2256,7 +2322,7 @@ def check_report(*, repo_root: Path, report: Path) -> dict[str, Any]:
     if required_ids - set(ids) or navigation - set(references):
         raise ReportError("report is missing required anchors or navigation references", stage="check-report")
     required = {f"$audit-codebase audit subsystem {sub['id']} in atlas run {state['run_id']}" for sub in state["subsystems"]}
-    required |= {f"$audit-codebase inspect finding {fid} in atlas run {state['run_id']}" for fid, item in findings.items() if item["historical"]}
+    required |= {f"$audit-codebase inspect finding {fid} in atlas run {state['run_id']}" for fid in findings}
     for cid, item in candidates.items():
         if item["historical"]:
             required.add(f"$audit-codebase inspect candidate {cid} in atlas run {state['run_id']}")

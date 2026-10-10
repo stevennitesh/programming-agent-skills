@@ -365,6 +365,117 @@ def test_candidate_group_outcomes_do_not_resolve_later_added_findings(tmp_path: 
     assert atlas.check_report(repo_root=tmp_path, report=report(tmp_path))["valid"]
 
 
+def test_candidate_group_implementation_does_not_implement_later_added_findings(tmp_path: Path) -> None:
+    started(tmp_path)
+    outcomes(tmp_path, event(tmp_path, "group-implemented", "implemented"))
+    audit = audit_manifest(tmp_path, report(tmp_path))
+    added = finding()
+    added.update(id="second-defect", title="Another entry still needs work")
+    audit["findings"].append(added)
+    audit["candidates"][0]["finding_ids"].append("second-defect")
+    audit["lenses"][0]["finding_ids"].append("second-defect")
+    publish(tmp_path, "audit-subsystem", audit)
+    assert state(tmp_path)["outcomes"][0]["finding_ids"] == ["alpha-defect"]
+    assert candidate_work(tmp_path)["status"] == "open"
+    current = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), finding="second-defect")["rows"][0]
+    assert current["work"]["status"] == "open"
+    html = report(tmp_path).read_text(encoding="utf-8")
+    assert elements(html, "id", "candidate-alpha-fix")[0]["data-work-status"] == "open"
+    outcomes(tmp_path, event(tmp_path, "second-implemented", "implemented", target_kind="finding", target_id="second-defect"))
+    assert candidate_work(tmp_path)["status"] == "implemented"
+    assert atlas.check_report(repo_root=tmp_path, report=report(tmp_path))["valid"]
+
+
+def test_retired_systemic_findings_stay_historical_in_all_live_counts(tmp_path: Path) -> None:
+    make_repo(tmp_path)
+    publish(tmp_path, "render-report", map_manifest(tmp_path))
+    audit = audit_manifest(tmp_path, report(tmp_path))
+    audit.update(systemic_findings=audit["findings"], findings=[], candidates=[])
+    publish(tmp_path, "audit-subsystem", audit)
+    gamma = deepcopy(map_manifest(tmp_path)["subsystems"][0])
+    gamma.update(id="gamma", name="Replacement validation")
+    reconcile(tmp_path, subsystems=[gamma], retirements=[{"id": "alpha", "replacement_ids": ["gamma"], "reason": "Reviewed boundary."}])
+    html = report(tmp_path).read_text(encoding="utf-8")
+    beta = re.search(r'<article[^>]*id="subsystem-beta".*?</article>', html, re.S).group()
+    assert "0 findings · 0 candidates" in beta
+    assert '<strong>0</strong><span>Findings</span>' in html
+    assert "systemic findings" not in atlas._architecture_svg(state(tmp_path))
+    assert elements(html, "id", "finding-alpha-defect")
+    assert atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), finding="alpha-defect")["rows"][0]["historical"]
+    assert atlas.check_report(repo_root=tmp_path, report=report(tmp_path))["valid"]
+
+
+def test_standalone_systemic_finding_scope_changes_are_visible_and_selectable(tmp_path: Path) -> None:
+    make_repo(tmp_path)
+    publish(tmp_path, "render-report", map_manifest(tmp_path))
+    audit = audit_manifest(tmp_path, report(tmp_path))
+    audit.update(systemic_findings=audit["findings"], findings=[], candidates=[])
+    publish(tmp_path, "audit-subsystem", audit)
+    reconcile(tmp_path, subsystems=[{"id": "beta", "ownership": "Reviewed delivery authority."}])
+    atlas.refresh_report(repo_root=tmp_path, report=report(tmp_path))
+    observed = state(tmp_path)
+    assert observed["freshness"]["alpha"] == "fresh" and observed["candidate_freshness"] == {}
+    html = report(tmp_path).read_text(encoding="utf-8")
+    assert elements(html, "id", "finding-alpha-defect")[0]["data-freshness"] == "changed"
+    assert "beta: ownership changed" in html
+    assert elements(html, "href", "#finding-alpha-defect")
+    assert elements(html, "data-copy", "$audit-codebase inspect finding alpha-defect in atlas run run-1")
+    checked = atlas.check_report(repo_root=tmp_path, report=report(tmp_path))
+    assert checked["finding_freshness"]["alpha-defect"] == "changed"
+    publish(tmp_path, "audit-subsystem", audit_manifest_without_work(tmp_path, systemic=True))
+    assert elements(report(tmp_path).read_text(encoding="utf-8"), "id", "finding-alpha-defect")[0]["data-freshness"] == "fresh"
+
+
+def audit_manifest_without_work(root: Path, *, systemic: bool = False, subsystem: str = "alpha") -> dict:
+    audit = audit_manifest(root, report(root))
+    audit.update(subsystem_id=subsystem, candidates=[])
+    if systemic:
+        audit.update(systemic_findings=audit["findings"], findings=[])
+    else:
+        audit.update(findings=[], systemic_findings=[])
+        audit["lenses"][0]["finding_ids"] = []
+    return audit
+
+
+def test_changed_path_inspection_returns_audits_without_work_records(tmp_path: Path) -> None:
+    make_repo(tmp_path)
+    publish(tmp_path, "render-report", map_manifest(tmp_path))
+    publish(tmp_path, "audit-subsystem", audit_manifest_without_work(tmp_path))
+    saved = report(tmp_path).read_bytes()
+    (tmp_path / "src/a.py").write_text("VALUE=8\n", encoding="utf-8")
+    for inspect in (atlas.inspect_report, atlas.status_report):
+        selected = inspect(repo_root=tmp_path, report=report(tmp_path), changed_paths=["src/a.py"], history=True)
+        assert selected["rows"] == [] and selected["total"] == 0
+        assert selected["subsystems_total"] == 1
+        row = selected["subsystems"][0]
+        assert row["subsystem_id"] == "alpha" and row["state"] == "audited"
+        assert row["matching_paths"] == ["src/a.py"]
+        assert row["source_changes"]["freshness"] == "changed"
+        assert row["source_changes"]["changed_paths"] == ["src/a.py"]
+        assert any(event["operation"] == "audit" and event["selection"] == "alpha" for event in selected["history"])
+    for command in ("inspect", "status"):
+        cli = subprocess.run([sys.executable, str(SCRIPT), command, "--repo-root", str(tmp_path), "--report", str(report(tmp_path)),
+                              "--changed-path", "src/a.py"], check=True, capture_output=True, text=True)
+        assert json.loads(cli.stdout)["subsystems"][0]["source_changes"]["freshness"] == "changed"
+    assert report(tmp_path).read_bytes() == saved
+
+
+def test_matching_subsystem_observations_and_paths_are_bounded_and_paginated(tmp_path: Path) -> None:
+    make_repo(tmp_path)
+    publish(tmp_path, "render-report", map_manifest(tmp_path))
+    for sid in ("alpha", "beta"):
+        publish(tmp_path, "audit-subsystem", audit_manifest_without_work(tmp_path, subsystem=sid))
+    (tmp_path / "src/a.py").write_text("VALUE=8\n", encoding="utf-8")
+    first = atlas.status_report(repo_root=tmp_path, report=report(tmp_path), changed_paths=["src"], limit=1)
+    assert first["subsystems_total"] == 2 and first["subsystems_has_more"]
+    assert [row["subsystem_id"] for row in first["subsystems"]] == ["alpha"]
+    assert first["subsystems"][0]["matching_paths"] == ["src/a.py"]
+    assert first["subsystems"][0]["matching_paths_total"] == 2 and first["subsystems"][0]["matching_paths_has_more"]
+    second = atlas.status_report(repo_root=tmp_path, report=report(tmp_path), changed_paths=["src"], limit=1, offset=1)
+    assert [row["subsystem_id"] for row in second["subsystems"]] == ["beta"]
+    assert second["subsystems_has_more"] is False
+
+
 def test_individual_findings_can_resolve_candidate_without_rewriting_analysis(tmp_path: Path) -> None:
     started(tmp_path)
     audit = audit_manifest(tmp_path, report(tmp_path))
@@ -1114,6 +1225,10 @@ def test_check_report_rejects_missing_retained_map_records(tmp_path: Path) -> No
     reconcile(tmp_path, ownership_changes=[{"path": "tests/test_a.py", "owner": "beta", "reason": "Reviewed proof owner."}])
     invalid = state(tmp_path)
     del invalid["history"][-1]["superseded"]["map"]["subsystems"]
-    report(tmp_path).write_bytes(atlas._render(invalid))
+    payload = atlas._canonical(invalid)
+    encoded = payload.decode("utf-8").replace("<", "\\u003c").replace(">", "\\u003e").replace("&", "\\u0026")
+    block = f'<script id="audit-codebase-state" type="application/json" data-sha256="{atlas._digest(payload)}">{encoded}</script>'
+    damaged = atlas._STATE.sub(lambda _: block, report(tmp_path).read_text(encoding="utf-8"))
+    report(tmp_path).write_text(damaged, encoding="utf-8", newline="\n")
     with pytest.raises(atlas.ReportError, match="retained map subsystems must be a list"):
         atlas.check_report(repo_root=tmp_path, report=report(tmp_path))
