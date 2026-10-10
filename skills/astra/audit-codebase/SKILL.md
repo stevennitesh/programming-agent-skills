@@ -1,6 +1,6 @@
 ---
 name: audit-codebase
-description: Discover evidence-backed codebase improvements using a visual map and scoped audits. Exclude pending-diff review and implementation.
+description: Discover evidence-backed codebase improvements using a visual map and scoped audits. Exclude pending-diff review and unrequested fixes.
 ---
 
 # Audit codebase
@@ -15,6 +15,13 @@ Audit is read-only with respect to product behavior. The managed HTML report and
 invocation-owned temporary files are the only default writes. Findings and
 candidates do not authorize implementation, tracker publication, merge, release,
 deployment, or changes to accepted product meaning.
+
+When the user also authorizes fixes, carry the selected set through the requested
+analysis, implementation, and verification. Choose suitable methods or an already
+selected execution workflow; record the outcomes together using
+[Atlas maintenance](references/maintenance.md). The audit's default write boundary
+does not truncate a combined request. Commit, release, and deployment remain
+subject to the user's actual delivery scope.
 
 ## 1. Establish the map and requested scope
 
@@ -119,7 +126,7 @@ candidate can be judged.
 
 Analysis ends with the supported cause, affected scope, relevant options,
 recommendation or exact blocker, required proof, and evidence limits. It does not
-start implementation.
+authorize implementation by itself.
 
 ## 5. Return the decision surface
 
@@ -127,6 +134,11 @@ Update the managed report and show it through the host's available HTML preview.
 Inspect navigation, selection handoffs, legibility, and progress meaning at useful
 presentation sizes. Return its path and selectable subsystem or candidate IDs;
 report a preview limitation when the surface cannot be opened or inspected.
+For resumed runs, use [Atlas maintenance](references/maintenance.md) to reconcile
+ownership, inspect changed inputs, and retain fix and delivery outcomes without
+rewriting the original evidence. Derive coverage from the helper's records;
+keep uncertainty and proof with the scope they qualify. Reuse passing checks when
+their relevant inputs are unchanged; add a probe when it can settle an open question.
 The HTML is a read-only decision surface:
 its local controls may navigate, filter, and copy the next explicit invocation,
 but they never mutate the repository or start another workflow.
@@ -137,6 +149,8 @@ decisive source references, expected benefit, material tradeoffs, required proof
 and coverage limits. Prioritize by practical impact, frequency, cost, risk, and
 confidence when ranking is requested. Evidence strength and priority differ.
 
-Complete when the requested Map, Audit, or Analyze scope is published against
-current source and its decision surface is checked, or the requested brief scope
-is judged. Leave further selection to the user unless already supplied or delegated.
+Complete when the requested scope is judged and its decision surface is checked,
+or the requested brief assessment is returned. For combined requests, also finish
+the authorized fixes and verification and record their outcomes, making blockers
+and any requested delivery still pending clear. Leave further selection to the
+user unless already supplied or delegated.

@@ -1,0 +1,545 @@
+{
+  "candidate_freshness": {
+    "alpha-fix": "changed"
+  },
+  "candidate_source_changes": {
+    "alpha-fix": {
+      "analysis": {
+        "changed_paths": [],
+        "freshness": "fresh"
+      },
+      "audit": {
+        "changed_paths": [
+          "tests/test_a.py"
+        ],
+        "freshness": "changed",
+        "scope_changed": true
+      },
+      "scope": {
+        "changed_paths": [],
+        "freshness": "fresh"
+      }
+    }
+  },
+  "coverage": "Every tracked path has one owner.",
+  "delivery_requirements": [
+    {
+      "commit": false,
+      "deployments": [],
+      "reason": "Request withdrawn",
+      "target": {
+        "id": "alpha-fix",
+        "kind": "candidate"
+      }
+    }
+  ],
+  "evidence_limits": "Runtime not executed.",
+  "excluded": [],
+  "freshness": {
+    "alpha": "changed",
+    "beta": "fresh"
+  },
+  "history": [
+    {
+      "operation": "map",
+      "selection": "repository"
+    },
+    {
+      "operation": "audit",
+      "selection": "alpha"
+    },
+    {
+      "operation": "analyze",
+      "selection": "alpha-fix"
+    },
+    {
+      "operation": "outcome",
+      "outcome_ids": [],
+      "selection": "delivery requirements",
+      "superseded": {
+        "delivery_requirements": []
+      }
+    },
+    {
+      "operation": "outcome",
+      "outcome_ids": [],
+      "selection": "delivery requirements",
+      "superseded": {
+        "delivery_requirements": [
+          {
+            "commit": true,
+            "deployments": [
+              "local"
+            ],
+            "reason": "Requested",
+            "target": {
+              "id": "alpha-fix",
+              "kind": "candidate"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "operation": "reconcile",
+      "ownership_changes": [
+        {
+          "owner": "beta",
+          "path": "tests/test_a.py",
+          "reason": "Proof ownership moved"
+        }
+      ],
+      "retirements": {},
+      "selection": "repository",
+      "superseded": {
+        "map": {
+          "excluded": [],
+          "map_inventory": {
+            "fingerprints": {
+              "src/a.py": "0e2a11c9ef631e51a4c9362579fedaf4bf6e3df5a677c9c4a686fba79fd68dae",
+              "src/b.py": "01f02622f8a284417ff1d066a35b818aff78fa3f965f806208530a7c24f3c56b",
+              "tests/test_a.py": "d67b9eb2194bdda173523ea4cd253d708565793b04edb474523bdbf5f3d5efbd"
+            },
+            "paths": [
+              "src/a.py",
+              "src/b.py",
+              "tests/test_a.py"
+            ]
+          },
+          "observation_identity": {
+            "commit": "8037c9ca258ba6cfc8a955971ef2f59747d306a5",
+            "tracked_content_sha256": "093d052d3d55073c42032a24358cf6b0966ab303b790c919ccd61297b5cfcdb1",
+            "tree": "7dc014d5b7985aada215467b286ee5accb26777a"
+          },
+          "subsystems": [
+            {
+              "audit_scope": [
+                "src/a.py",
+                "tests/test_a.py"
+              ],
+              "authority": [
+                "CONTEXT.md"
+              ],
+              "callers": [
+                "beta"
+              ],
+              "dependencies": [
+                {
+                  "evidence": [
+                    "alpha imports beta"
+                  ],
+                  "id": "beta"
+                }
+              ],
+              "exclusions": [],
+              "id": "alpha",
+              "interfaces": [
+                "validated identity"
+              ],
+              "map_source": {
+                "fingerprints": {
+                  "src/a.py": "0e2a11c9ef631e51a4c9362579fedaf4bf6e3df5a677c9c4a686fba79fd68dae",
+                  "tests/test_a.py": "d67b9eb2194bdda173523ea4cd253d708565793b04edb474523bdbf5f3d5efbd"
+                },
+                "paths": [
+                  "src/a.py",
+                  "tests/test_a.py"
+                ],
+                "sha256": "46142a7294026ca116f3657cfa005381f0341df2622e027591ffd3bcf12c24b1"
+              },
+              "name": "Alpha",
+              "owned_paths": [
+                "src/a.py",
+                "tests/test_a.py"
+              ],
+              "ownership": "Identity policy",
+              "proof_seams": [
+                "tests/test_a.py"
+              ],
+              "purpose": "Own validation.",
+              "state": "audited",
+              "system_id": "core"
+            },
+            {
+              "authority": [],
+              "callers": [
+                "operators"
+              ],
+              "dependencies": [],
+              "exclusions": [],
+              "id": "beta",
+              "interfaces": [
+                "result"
+              ],
+              "map_source": {
+                "fingerprints": {
+                  "src/b.py": "01f02622f8a284417ff1d066a35b818aff78fa3f965f806208530a7c24f3c56b"
+                },
+                "paths": [
+                  "src/b.py"
+                ],
+                "sha256": "84df81d843eab8c3cd6f447fe488ca9a8564948ab266bc897c0b7fec0b6f6771"
+              },
+              "name": "Beta",
+              "owned_paths": [
+                "src/b.py"
+              ],
+              "ownership": "Delivery",
+              "proof_seams": [],
+              "purpose": "Deliver results.",
+              "state": "mapped",
+              "system_id": "delivery"
+            }
+          ],
+          "systems": [
+            {
+              "id": "core",
+              "name": "Core"
+            },
+            {
+              "id": "delivery",
+              "name": "Delivery"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "map_drift": {
+    "added_paths": [],
+    "missing_owned_paths": [],
+    "needs_reconcile": false,
+    "removed_paths": [],
+    "unowned_paths": []
+  },
+  "map_inventory": {
+    "fingerprints": {
+      "src/a.py": "0e2a11c9ef631e51a4c9362579fedaf4bf6e3df5a677c9c4a686fba79fd68dae",
+      "src/b.py": "01f02622f8a284417ff1d066a35b818aff78fa3f965f806208530a7c24f3c56b",
+      "tests/test_a.py": "d67b9eb2194bdda173523ea4cd253d708565793b04edb474523bdbf5f3d5efbd"
+    },
+    "paths": [
+      "src/a.py",
+      "src/b.py",
+      "tests/test_a.py"
+    ]
+  },
+  "observation_identity": {
+    "commit": "8037c9ca258ba6cfc8a955971ef2f59747d306a5",
+    "tracked_content_sha256": "093d052d3d55073c42032a24358cf6b0966ab303b790c919ccd61297b5cfcdb1",
+    "tree": "7dc014d5b7985aada215467b286ee5accb26777a"
+  },
+  "observed_at": "2026-10-10T05:24:42.081021+00:00",
+  "outcome_freshness": {},
+  "outcome_source_changes": {},
+  "outcomes": [],
+  "preview": [],
+  "retired_subsystems": [],
+  "run_id": "run-1",
+  "source_changes": {
+    "alpha": {
+      "changed_paths": [
+        "tests/test_a.py"
+      ],
+      "freshness": "changed",
+      "scope_changed": true
+    },
+    "beta": {
+      "changed_paths": [],
+      "freshness": "fresh"
+    }
+  },
+  "state_version": 4,
+  "subsystems": [
+    {
+      "audit": {
+        "candidates": [
+          {
+            "affected_scope": [
+              "alpha",
+              "beta"
+            ],
+            "analysis": {
+              "affected_scope": [
+                "alpha",
+                "beta"
+              ],
+              "cause": "Callers coordinate validation.",
+              "evidence_limits": "Exact interface remains implementation-owned.",
+              "options": [
+                {
+                  "description": "Leave coordination in callers.",
+                  "name": "Keep",
+                  "tradeoffs": [
+                    "cost remains"
+                  ]
+                },
+                {
+                  "description": "Move policy to write seam.",
+                  "name": "Smallest",
+                  "tradeoffs": [
+                    "touch two callers"
+                  ]
+                }
+              ],
+              "proof": [
+                "exercise both callers"
+              ],
+              "question": "",
+              "recommendation": "Use the existing write seam as owner.",
+              "source_identity": {
+                "fingerprints": {
+                  "src/a.py": "0e2a11c9ef631e51a4c9362579fedaf4bf6e3df5a677c9c4a686fba79fd68dae",
+                  "src/b.py": "01f02622f8a284417ff1d066a35b818aff78fa3f965f806208530a7c24f3c56b",
+                  "tests/test_a.py": "d67b9eb2194bdda173523ea4cd253d708565793b04edb474523bdbf5f3d5efbd"
+                },
+                "paths": [
+                  "src/a.py",
+                  "src/b.py",
+                  "tests/test_a.py"
+                ],
+                "sha256": "093d052d3d55073c42032a24358cf6b0966ab303b790c919ccd61297b5cfcdb1"
+              },
+              "summary": "One owner can hide policy.",
+              "tradeoffs": [
+                "small migration"
+              ]
+            },
+            "benefit": "One invariant owner.",
+            "direction": "Own policy at the write seam.",
+            "evidence": [
+              "two callers coordinate it"
+            ],
+            "finding_ids": [
+              "alpha-defect"
+            ],
+            "id": "alpha-fix",
+            "primary_class": "design",
+            "problem": "Policy is scattered.",
+            "required_proof": [
+              "both callers reject invalid input"
+            ],
+            "risks": [
+              "format compatibility"
+            ],
+            "state": "analyzed",
+            "strength": "strong",
+            "title": "Centralize validation"
+          }
+        ],
+        "coverage": "All six classes resolved or have explicit gaps.",
+        "evidence_limits": "No production trace.",
+        "findings": [
+          {
+            "affected_scope": [
+              "alpha",
+              "beta"
+            ],
+            "causal_owner": "shared write seam",
+            "confidence": "high",
+            "direction": "Move policy to owner.",
+            "evidence": [
+              "alternate caller bypasses validation"
+            ],
+            "expectation": "All identities are checked.",
+            "id": "alpha-defect",
+            "impact": "Invalid identity crosses boundary.",
+            "kind": "defect",
+            "locations": [
+              "src/a.py"
+            ],
+            "primary_class": "reliability",
+            "proof": [
+              "exercise both callers"
+            ],
+            "scenario": "Alternate caller submits unchecked identity.",
+            "severity": "P1",
+            "title": "Unchecked entry"
+          }
+        ],
+        "lenses": [
+          {
+            "class": "reliability",
+            "evidence": [
+              "reliability evidence"
+            ],
+            "finding_ids": [
+              "alpha-defect"
+            ],
+            "reason": "Inspected current owner.",
+            "state": "complete"
+          },
+          {
+            "class": "domain",
+            "evidence": [
+              "domain evidence"
+            ],
+            "finding_ids": [],
+            "reason": "Inspected current owner.",
+            "state": "complete"
+          },
+          {
+            "class": "design",
+            "evidence": [
+              "design evidence"
+            ],
+            "finding_ids": [],
+            "reason": "Inspected current owner.",
+            "state": "complete"
+          },
+          {
+            "class": "simplification",
+            "evidence": [
+              "simplification evidence"
+            ],
+            "finding_ids": [],
+            "reason": "Inspected current owner.",
+            "state": "complete"
+          },
+          {
+            "class": "coding practice",
+            "evidence": [
+              "coding practice evidence"
+            ],
+            "finding_ids": [],
+            "reason": "Inspected current owner.",
+            "state": "complete"
+          },
+          {
+            "class": "performance",
+            "evidence": [],
+            "finding_ids": [],
+            "reason": "Inspected current owner.",
+            "state": "evidence gap"
+          }
+        ],
+        "recommendation": "User may select alpha-fix.",
+        "source_identity": {
+          "fingerprints": {
+            "src/a.py": "0e2a11c9ef631e51a4c9362579fedaf4bf6e3df5a677c9c4a686fba79fd68dae",
+            "src/b.py": "01f02622f8a284417ff1d066a35b818aff78fa3f965f806208530a7c24f3c56b",
+            "tests/test_a.py": "d67b9eb2194bdda173523ea4cd253d708565793b04edb474523bdbf5f3d5efbd"
+          },
+          "paths": [
+            "src/a.py",
+            "src/b.py",
+            "tests/test_a.py"
+          ],
+          "sha256": "093d052d3d55073c42032a24358cf6b0966ab303b790c919ccd61297b5cfcdb1"
+        },
+        "source_trace": {
+          "callers": [
+            "beta"
+          ],
+          "dependencies": [
+            "beta"
+          ],
+          "entry_points": [
+            "validate"
+          ],
+          "history_signals": [
+            "validation moved twice"
+          ],
+          "interfaces": [
+            "validated identity"
+          ],
+          "proof_seams": [
+            "tests/test_a.py"
+          ],
+          "representative_flows": [
+            "input to write"
+          ],
+          "summary": "Traced both entry paths."
+        }
+      },
+      "audit_scope": [
+        "src/a.py",
+        "tests/test_a.py"
+      ],
+      "authority": [
+        "CONTEXT.md"
+      ],
+      "callers": [
+        "beta"
+      ],
+      "dependencies": [
+        {
+          "evidence": [
+            "alpha imports beta"
+          ],
+          "id": "beta"
+        }
+      ],
+      "exclusions": [],
+      "id": "alpha",
+      "interfaces": [
+        "validated identity"
+      ],
+      "map_source": {
+        "fingerprints": {
+          "src/a.py": "0e2a11c9ef631e51a4c9362579fedaf4bf6e3df5a677c9c4a686fba79fd68dae"
+        },
+        "paths": [
+          "src/a.py"
+        ],
+        "sha256": "1e8f6a4d45149940da81e7e97ee578f1e3d268fc2d55d8594d62041695ba5ead"
+      },
+      "name": "Alpha",
+      "owned_paths": [
+        "src/a.py"
+      ],
+      "ownership": "Identity policy",
+      "proof_seams": [
+        "tests/test_a.py"
+      ],
+      "purpose": "Own validation.",
+      "state": "audited",
+      "system_id": "core"
+    },
+    {
+      "authority": [],
+      "callers": [
+        "operators"
+      ],
+      "dependencies": [],
+      "exclusions": [],
+      "id": "beta",
+      "interfaces": [
+        "result"
+      ],
+      "map_source": {
+        "fingerprints": {
+          "src/b.py": "01f02622f8a284417ff1d066a35b818aff78fa3f965f806208530a7c24f3c56b",
+          "tests/test_a.py": "d67b9eb2194bdda173523ea4cd253d708565793b04edb474523bdbf5f3d5efbd"
+        },
+        "paths": [
+          "src/b.py",
+          "tests/test_a.py"
+        ],
+        "sha256": "9e0d930ddfd89e9fb160c2fc0d9dc74b23fb9ff129e0ac119d3ed8350f2c8ef5"
+      },
+      "name": "Beta",
+      "owned_paths": [
+        "src/b.py",
+        "tests/test_a.py"
+      ],
+      "ownership": "Delivery",
+      "proof_seams": [],
+      "purpose": "Deliver results.",
+      "state": "mapped",
+      "system_id": "delivery"
+    }
+  ],
+  "systemic_findings": [],
+  "systems": [
+    {
+      "id": "core",
+      "name": "Core"
+    },
+    {
+      "id": "delivery",
+      "name": "Delivery"
+    }
+  ],
+  "title": "Architecture atlas"
+}

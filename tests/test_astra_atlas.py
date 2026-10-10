@@ -48,7 +48,7 @@ def report(root: Path) -> Path:
 
 def identity(root: Path, paths: list[str]) -> dict[str, object]:
     packet = atlas.source_identity(repo_root=root, paths=paths)
-    return {"paths": packet["paths"], "sha256": packet["sha256"]}
+    return {key: packet[key] for key in ("paths", "sha256", "fingerprints")}
 
 
 def map_manifest(root: Path) -> dict[str, object]:
@@ -231,7 +231,7 @@ def test_map_renders_visual_workbench(tmp_path: Path) -> None:
         "alpha imports beta",
     ):
         assert value in text
-    state = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]
+    state = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), full=True)["state"]
     assert state["run_id"] == "run-1"
     assert state["freshness"] == {"alpha": "fresh", "beta": "fresh"}
 
@@ -251,7 +251,7 @@ def test_audit_adds_findings_candidates_and_coverage(tmp_path: Path) -> None:
         "Performance",
     ):
         assert value in text
-    state = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]
+    state = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), full=True)["state"]
     alpha = state["subsystems"][0]
     assert alpha["state"] == "audited"
     assert alpha["audit"]["candidates"][0]["strength"] == "strong"
@@ -262,7 +262,7 @@ def test_analyze_updates_only_selected_candidate(tmp_path: Path) -> None:
     publish(tmp_path, "render-report", map_manifest(tmp_path))
     publish(tmp_path, "audit-subsystem", audit_manifest(tmp_path, report(tmp_path)))
     publish(tmp_path, "analyze-candidate", analysis_manifest(tmp_path, report(tmp_path)))
-    state = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]
+    state = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), full=True)["state"]
     cand = state["subsystems"][0]["audit"]["candidates"][0]
     assert cand["state"] == "analyzed"
     assert cand["analysis"]["recommendation"] == "Use the existing write seam as owner."
@@ -277,10 +277,10 @@ def test_refresh_marks_changed_source_without_revalidating(tmp_path: Path) -> No
     make_repo(tmp_path)
     publish(tmp_path, "render-report", map_manifest(tmp_path))
     publish(tmp_path, "audit-subsystem", audit_manifest(tmp_path, report(tmp_path)))
-    before = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]
+    before = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), full=True)["state"]
     (tmp_path / "src/a.py").write_text("VALUE=9\n", encoding="utf-8")
     atlas.refresh_report(repo_root=tmp_path, report=report(tmp_path))
-    after = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]
+    after = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), full=True)["state"]
     assert before["subsystems"][0]["audit"] == after["subsystems"][0]["audit"]
     assert after["freshness"]["alpha"] == "changed"
     assert "Source changed" in report(tmp_path).read_text(encoding="utf-8")
@@ -391,7 +391,7 @@ def test_analysis_freshness_tracks_its_own_evidence_and_preserves_judgment(tmp_p
     analysis = analysis_manifest(tmp_path, report(tmp_path))
     analysis["source_identity"] = identity(tmp_path, ["src/a.py", "src/b.py", "tests/test_a.py", "analysis-context.txt"])
     publish(tmp_path, "analyze-candidate", analysis)
-    before = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]
+    before = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), full=True)["state"]
     assert before["candidate_freshness"] == {"alpha-fix": "fresh"}
 
     (tmp_path / changed_path).write_text("changed evidence", encoding="utf-8")
@@ -403,7 +403,7 @@ def test_analysis_freshness_tracks_its_own_evidence_and_preserves_judgment(tmp_p
         publish(tmp_path, "audit-subsystem", beta)
     else:
         atlas.refresh_report(repo_root=tmp_path, report=report(tmp_path))
-    after = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]
+    after = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), full=True)["state"]
     assert after["freshness"] == {"alpha": "fresh", "beta": "fresh"}
     assert after["candidate_freshness"] == {"alpha-fix": "changed"}
     assert before["subsystems"][0]["audit"]["candidates"][0]["analysis"] == after["subsystems"][0]["audit"]["candidates"][0]["analysis"]
@@ -413,12 +413,12 @@ def test_analysis_freshness_tracks_its_own_evidence_and_preserves_judgment(tmp_p
     assert card["data-freshness"] == "changed"
     assert card["data-freshness-cause"] == "analysis"
     assert not any(button["data-copy"].startswith("Use analyzed audit candidate") for button in elements(text, "data-copy"))
-    assert any(button["data-copy"].startswith("$audit-codebase analyze candidate alpha-fix") for button in elements(text, "data-copy"))
+    assert any(button["data-copy"] == "$audit-codebase inspect candidate alpha-fix in atlas run run-1" for button in elements(text, "data-copy"))
 
     updated = analysis_manifest(tmp_path, report(tmp_path))
     updated["source_identity"] = identity(tmp_path, analysis["source_identity"]["paths"])
     publish(tmp_path, "analyze-candidate", updated)
-    state = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]
+    state = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), full=True)["state"]
     assert state["candidate_freshness"] == {"alpha-fix": "fresh"}
     assert any(button["data-copy"].startswith("Use analyzed audit candidate") for button in elements(report(tmp_path).read_text(encoding="utf-8"), "data-copy"))
 
@@ -432,10 +432,10 @@ def test_analysis_keeps_originating_audit_evidence_bound(tmp_path: Path) -> None
     audit["source_identity"] = identity(tmp_path, ["src/a.py", "src/b.py", "tests/test_a.py", "audit-context.txt"])
     publish(tmp_path, "audit-subsystem", audit)
     publish(tmp_path, "analyze-candidate", analysis_manifest(tmp_path, report(tmp_path)))
-    before = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]
+    before = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), full=True)["state"]
     evidence.write_text("changed constraint", encoding="utf-8")
     atlas.refresh_report(repo_root=tmp_path, report=report(tmp_path))
-    after = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]
+    after = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), full=True)["state"]
     assert after["candidate_freshness"] == {"alpha-fix": "changed"}
     assert before["subsystems"][0]["audit"]["candidates"][0]["analysis"] == after["subsystems"][0]["audit"]["candidates"][0]["analysis"]
     assert not any(button["data-copy"].startswith("Use analyzed audit candidate") for button in elements(report(tmp_path).read_text(encoding="utf-8"), "data-copy"))
@@ -446,12 +446,12 @@ def test_analysis_keeps_originating_audit_evidence_bound(tmp_path: Path) -> None
     assert not any(command.startswith('$audit-codebase analyze candidate alpha-fix') for command in commands)
 
     publish(tmp_path, "analyze-candidate", analysis_manifest(tmp_path, report(tmp_path)))
-    assert atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]["candidate_freshness"] == {"alpha-fix": "changed"}
+    assert atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), full=True)["state"]["candidate_freshness"] == {"alpha-fix": "changed"}
     audit["expected_report_sha256"] = sha(report(tmp_path))
     audit["source_identity"] = identity(tmp_path, audit["source_identity"]["paths"])
     publish(tmp_path, "audit-subsystem", audit)
     publish(tmp_path, "analyze-candidate", analysis_manifest(tmp_path, report(tmp_path)))
-    assert atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]["candidate_freshness"] == {"alpha-fix": "fresh"}
+    assert atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), full=True)["state"]["candidate_freshness"] == {"alpha-fix": "fresh"}
     assert any(button["data-copy"].startswith("Use analyzed audit candidate") for button in elements(report(tmp_path).read_text(encoding="utf-8"), "data-copy"))
 
 
@@ -483,7 +483,7 @@ def test_gitlinks_can_be_mapped_and_track_source_changes(tmp_path: Path, initial
     assert identity(tmp_path, [path]) != before
     assert atlas.inventory(repo_root=tmp_path)["identity"]["tracked_content_sha256"] != inventory["identity"]["tracked_content_sha256"]
     atlas.refresh_report(repo_root=tmp_path, report=report(tmp_path))
-    assert atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]["freshness"]["beta"] == "changed"
+    assert atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), full=True)["state"]["freshness"]["beta"] == "changed"
 
 
 @pytest.mark.parametrize("change", ["content", "executable"])
@@ -511,7 +511,7 @@ def test_gitlink_file_changes_invalidate_source_identity(tmp_path: Path, change:
     assert before["identity"]["tracked_content_sha256"] != after["identity"]["tracked_content_sha256"]
     assert identity(tmp_path, [path]) != packet
     atlas.refresh_report(repo_root=tmp_path, report=report(tmp_path))
-    assert atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]["freshness"] == {"alpha": "fresh", "beta": "changed"}
+    assert atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), full=True)["state"]["freshness"] == {"alpha": "fresh", "beta": "changed"}
 
 
 def test_gitlink_directory_requires_a_checkout_when_populated(tmp_path: Path) -> None:
@@ -532,12 +532,12 @@ def test_gitlink_directory_requires_a_checkout_when_populated(tmp_path: Path) ->
     with pytest.raises(atlas.ReportError, match="gitlink directory is not a checkout: vendor/dep"):
         identity(tmp_path, [path])
     atlas.refresh_report(repo_root=tmp_path, report=report(tmp_path))
-    assert atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]["freshness"] == {"alpha": "fresh", "beta": "changed"}
+    assert atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), full=True)["state"]["freshness"] == {"alpha": "fresh", "beta": "changed"}
     assert placeholder.read_text(encoding="utf-8") == "VALUE=1\n"
     placeholder.unlink()
     assert identity(tmp_path, [path]) == packet
     atlas.refresh_report(repo_root=tmp_path, report=report(tmp_path))
-    assert atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]["freshness"]["beta"] == "fresh"
+    assert atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), full=True)["state"]["freshness"]["beta"] == "fresh"
 
 
 @pytest.mark.parametrize("materialization", ["absent", "plain file", "symlink"])
@@ -571,7 +571,7 @@ def test_missing_tracked_entries_can_be_mapped_and_restoration_changes_identity(
     (tmp_path / "src/b.py").write_text("VALUE=2\n", encoding="utf-8")
     assert identity(tmp_path, ["src/b.py"]) != before
     atlas.refresh_report(repo_root=tmp_path, report=report(tmp_path))
-    assert atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]["freshness"]["beta"] == "changed"
+    assert atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), full=True)["state"]["freshness"]["beta"] == "changed"
     with pytest.raises(atlas.ReportError, match="source path does not exist"):
         identity(tmp_path, ["never-tracked.txt"])
 
@@ -588,7 +588,7 @@ def test_mode_only_changes_invalidate_map_and_source_identity(tmp_path: Path) ->
     assert mapping["observation_identity"]["tracked_content_sha256"] != current["tracked_content_sha256"]
     assert identity(tmp_path, ["src/a.py"]) != before
     atlas.refresh_report(repo_root=tmp_path, report=report(tmp_path))
-    assert atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]["freshness"] == {"alpha": "changed", "beta": "fresh"}
+    assert atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), full=True)["state"]["freshness"] == {"alpha": "changed", "beta": "fresh"}
 
 
 @pytest.mark.parametrize("mode", ["100644", "120000"])
@@ -619,7 +619,7 @@ def test_staged_blob_changes_invalidate_restored_working_content(tmp_path: Path,
     assert identity(tmp_path, [path]) != packet
     atlas.refresh_report(repo_root=tmp_path, report=report(tmp_path))
     owner = "alpha" if mode == "100644" else "beta"
-    assert atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]["freshness"][owner] == "changed"
+    assert atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), full=True)["state"]["freshness"][owner] == "changed"
 
 
 @pytest.mark.skipif(os.name == "nt", reason="POSIX executable bits are unavailable on Windows")
@@ -659,7 +659,7 @@ def test_candidates_sort_by_strength_and_keep_their_audit_owner(tmp_path: Path) 
     assert [card["id"] for card in elements(text, "data-freshness-cause")] == ["candidate-beta-strong", "candidate-beta-worth", "candidate-alpha-spec"]
     alpha_card = text.split('id="candidate-alpha-spec"', 1)[1].split('</article>', 1)[0]
     beta_card = text.split('id="candidate-beta-strong"', 1)[1].split('</article>', 1)[0]
-    assert [button["data-copy"] for button in elements(alpha_card, "data-copy")] == ['$audit-codebase audit subsystem alpha in atlas run run-1']
+    assert [button["data-copy"] for button in elements(alpha_card, "data-copy")] == ['$audit-codebase inspect candidate alpha-spec in atlas run run-1']
     assert [button["data-copy"] for button in elements(beta_card, "data-copy")] == ['$audit-codebase analyze candidate beta-strong in atlas run run-1']
 
 
@@ -681,7 +681,7 @@ def test_scoped_identity_ignores_unrelated_unmerged_entries(tmp_path: Path) -> N
     with pytest.raises(atlas.ReportError, match="unresolved entry: src/b.py"):
         identity(tmp_path, ["src/b.py"])
     atlas.refresh_report(repo_root=tmp_path, report=report(tmp_path))
-    assert atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))["state"]["freshness"] == {"alpha": "fresh", "beta": "changed"}
+    assert atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), full=True)["state"]["freshness"] == {"alpha": "fresh", "beta": "changed"}
     audit["expected_report_sha256"] = sha(report(tmp_path))
     publish(tmp_path, "audit-subsystem", audit)
 
