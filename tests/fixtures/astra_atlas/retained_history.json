@@ -233,6 +233,7 @@
   "outcome_freshness": {},
   "outcome_source_changes": {},
   "outcomes": [],
+  "presentation": {},
   "preview": [],
   "retired_subsystems": [],
   "run_id": "run-1",
@@ -249,7 +250,7 @@
       "freshness": "fresh"
     }
   },
-  "state_version": 4,
+  "state_version": 5,
   "subsystems": [
     {
       "audit": {

@@ -10,7 +10,7 @@ ownership, changed conclusions, adequate proof, and the requested delivery scope
 compact view and adds relevant evidence when a subsystem, candidate, or finding
 is selected. Both observe current source without writing the report.
 Helper responses use `response_version: 2`; manifests remain version 1 and
-report/state use format 4. Compact inspection omits the complete `state` field;
+report/state use format 5. Compact inspection omits the complete `state` field;
 request `inspect --full` when it is needed.
 For a copied `$audit-codebase inspect candidate ...` or `inspect finding ...`
 selection, resolve its run and stable ID through filtered inspection. Report the
@@ -58,8 +58,10 @@ Use `reconcile-map` for additions, deletions, moves, splits, or merges. It retai
 original audits, analyses, findings, source identities, and history; it does not
 reset the run or transfer an old audit's coverage to a new owner.
 
-Every mutation uses a UTF-8 JSON manifest, `--repo-root`, `--report`, and
-`--manifest`. Obtain the current `report_sha256` from inspection. Set
+Map, audit, analysis, reconciliation, and outcome publication use a UTF-8 JSON
+manifest, `--repo-root`, `--report`, and `--manifest`. Use `prepare-audit` for audit
+mechanics rather than assembling them yourself. For other manifests, obtain the
+current `report_sha256` from inspection. Set
 `version: 1` and `expected_report_sha256` to that digest. Use `--validate-only`
 to check without publishing. Successful publication retains writer exclusion,
 atomic replacement, and read-back; inspect state before retrying an uncertain write.
@@ -183,8 +185,24 @@ Its response includes freshness for subsystems, candidates, findings, and outcom
 proof, with observations for changed records. Unchanged observations are omitted;
 use filtered inspection for the relevant evidence or complete history.
 
-Open the HTML when the host supports it. Inspect navigation, filters, selection
-commands, progress labels, and useful screen sizes. `record-preview` accepts the
+Try the host's supported HTML preview once. Queued is pending; opened is not yet
+visually checked. Ordinary content edits need a check of changed content and its
+links and selections; renderer changes also need layout and relevant interaction
+checks at useful window widths. Stop preview recovery when capability is
+unavailable and retain that limitation. Do not improvise servers or repeat tab
+recovery for an ordinary audit.
+
+Record observations directly without preparing a preview manifest:
+
+```text
+python <atlas.py> record-preview --repo-root <repo> --report <report.html> --environment <host> --capability html-preview --unavailable --reason "Host cannot render local HTML" --evidence "Supported preview operation reported unavailable."
+python <atlas.py> record-preview --repo-root <repo> --report <report.html> --environment <host> --capability html-preview --verified --viewed-report-sha256 <actually-viewed-digest> --reason "Changed reading path checked" --evidence "Inspected titles, links, and selections on the viewed revision."
+```
+
+The helper fills the version and current publication guard. Verified observations
+require the actual viewed revision; capturing a digest after a different revision
+was viewed does not establish visual proof. The command records observations; the
+host owns opening and inspecting the preview. `record-preview` also accepts the
 usual guard fields plus `preview` with `environment`, `capability`, `state`,
 `reason`, and nonempty `evidence`. Use `state: "unavailable"` for a host limitation;
 identical records for the same environment/capability are no-ops. Reconsider when
@@ -193,3 +211,18 @@ Use `state: "verified"` with `report_sha256` naming the actual viewed revision.
 The record names that revision before metadata publication; it does not claim
 every later report was visually checked. Prior capability observations remain in
 history when replaced. Repeated mentions are not attempt counts.
+
+## Edit presentation without another audit
+
+```text
+python <atlas.py> edit-presentation --repo-root <repo> --report <report.html> --kind candidate --id <id> --title "Clearer display title"
+python <atlas.py> edit-presentation --repo-root <repo> --report <report.html> --kind candidate --id <id> --clear
+```
+
+Kinds are `candidate`, `finding`, and `subsystem`. Display labels live separately
+from the original records. Their IDs, evidence, analysis, source identities,
+outcomes, and selection commands remain intact; a small presentation event records
+the edit. Inspection includes the original and displayed title. Repeating an edit
+is a no-op; clearing restores the original label. This operation does not change
+diagnosis, scope, classification, or strength. Such judgment changes belong in an
+audit or analysis. Source observations still reflect real changes.

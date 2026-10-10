@@ -93,6 +93,13 @@ authorized fixes, verification, deferral, and requested delivery separately.
 Changed source calls for inspecting the relevant delta; it does not reopen every
 historical finding. Explicit combined analysis-and-fix requests continue through
 their authorized effects, with methods and sufficient proof left to agent judgment.
+The atlas augments user exploration and shows meaningful audit progress. Its
+helper prepares mechanical packet fields, references finding evidence, derives
+counts, and handles cosmetic edits without another audit. Relevant lenses are
+concise coverage prompts; omitted dimensions stay uninspected. Investigation,
+probes, comparisons, and any authorized delegation remain discretionary.
+Publication protections stay enforced in code. Preview and validation effort
+follow the changed surface, with unavailable host capability recorded once.
 Change-review judges a fixed change candidate. Verification-harness creates
 or improves reusable repository tooling for agents to exercise and verify real
 UI, command, and agent interfaces. It reduces repeated setup and fragile
