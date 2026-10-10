@@ -174,6 +174,9 @@ finding outcomes and must collectively cover the candidate's analyzed scope.
 IDs, and copyable selection commands. It reports current ownership coverage and
 freshness separately: a valid report can contain changed evidence or map drift.
 It never claims to have visually inspected the report.
+Its response includes freshness for subsystems, candidates, findings, and outcome
+proof, with observations for changed records. Unchanged observations are omitted;
+use filtered inspection for the relevant evidence or complete history.
 
 Open the HTML when the host supports it. Inspect navigation, filters, selection
 commands, progress labels, and useful screen sizes. `record-preview` accepts the

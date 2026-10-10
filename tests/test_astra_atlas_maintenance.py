@@ -457,6 +457,96 @@ def test_check_report_distinguishes_static_checks_from_visual_and_catches_render
         atlas.check_report(repo_root=tmp_path, report=report(tmp_path))
 
 
+def test_check_report_exposes_analysis_and_verification_changes_without_changing_the_report(tmp_path: Path) -> None:
+    started(tmp_path)
+    (tmp_path / "analysis-input.txt").write_text("Original constraint", encoding="utf-8")
+    (tmp_path / "verification-input.txt").write_text("Passing proof input", encoding="utf-8")
+    paths = ["src/a.py", "src/b.py", "tests/test_a.py"]
+    analysis = analysis_manifest(tmp_path, report(tmp_path))
+    analysis["source_identity"] = identity(tmp_path, paths + ["analysis-input.txt"])
+    publish(tmp_path, "analyze-candidate", analysis)
+    verified = event(tmp_path, "verified-extra", "verified")
+    verified["source_identity"] = identity(tmp_path, paths + ["verification-input.txt"])
+    outcomes(tmp_path, verified)
+    fresh = atlas.check_report(repo_root=tmp_path, report=report(tmp_path))
+    assert fresh["candidate_freshness"] == {"alpha-fix": "fresh"}
+    assert fresh["outcome_freshness"] == {"verified-extra": "fresh"}
+    assert fresh["finding_freshness"] == {"alpha-defect": "fresh"}
+    assert all(fresh[name] == {} for name in ("source_changes", "candidate_source_changes", "outcome_source_changes", "finding_source_changes"))
+    saved = report(tmp_path).read_bytes()
+    (tmp_path / "analysis-input.txt").write_text("Changed constraint", encoding="utf-8")
+    (tmp_path / "verification-input.txt").write_text("Changed proof input", encoding="utf-8")
+    changed = atlas.check_report(repo_root=tmp_path, report=report(tmp_path))
+    assert changed["valid"] and changed["freshness"] == {"alpha": "fresh", "beta": "fresh"}
+    assert changed["candidate_freshness"] == {"alpha-fix": "changed"}
+    assert changed["outcome_freshness"] == {"verified-extra": "changed"}
+    assert changed["candidate_source_changes"]["alpha-fix"]["analysis"]["changed_paths"] == ["analysis-input.txt"]
+    assert changed["outcome_source_changes"]["verified-extra"]["changed_paths"] == ["verification-input.txt"]
+    assert changed["finding_freshness"] == {"alpha-defect": "fresh"}
+    cli = subprocess.run([sys.executable, str(SCRIPT), "check-report", "--repo-root", str(tmp_path), "--report", str(report(tmp_path))],
+                         check=True, capture_output=True, text=True)
+    response = json.loads(cli.stdout)
+    assert response["candidate_source_changes"] == changed["candidate_source_changes"]
+    assert response["outcome_source_changes"] == changed["outcome_source_changes"]
+    assert report(tmp_path).read_bytes() == saved
+
+
+@pytest.mark.parametrize("historical", [False, True])
+@pytest.mark.parametrize("systemic", [False, True])
+def test_finding_scope_observes_affected_owner_structure_at_its_original_audit(tmp_path: Path, historical: bool, systemic: bool) -> None:
+    make_repo(tmp_path)
+    publish(tmp_path, "render-report", map_manifest(tmp_path))
+    audit = audit_manifest(tmp_path, report(tmp_path))
+    if systemic:
+        audit["systemic_findings"], audit["findings"] = audit["findings"], []
+    publish(tmp_path, "audit-subsystem", audit)
+    before = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), finding="alpha-defect")["rows"][0]
+    reconcile(tmp_path, subsystems=[{"id": "beta", "ownership": "Reviewed delivery authority."}])
+    if historical:
+        renewed = audit_manifest(tmp_path, report(tmp_path))
+        renewed.update(findings=[], candidates=[], systemic_findings=[])
+        renewed["lenses"][0]["finding_ids"] = []
+        publish(tmp_path, "audit-subsystem", renewed)
+    saved = report(tmp_path).read_bytes()
+    selected = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), finding="alpha-defect")["rows"][0]
+    assert selected["historical"] is historical
+    assert selected["record"] == before["record"]
+    assert selected["audit_source_identity"] == before["audit_source_identity"]
+    assert selected["source_changes"]["audit"]["freshness"] == "fresh"
+    assert selected["source_changes"]["scope"]["freshness"] == "changed"
+    assert selected["source_changes"]["scope"]["structure_changes"] == {"beta": ["ownership"]}
+    checked = atlas.check_report(repo_root=tmp_path, report=report(tmp_path))
+    assert checked["finding_freshness"] == {"alpha-defect": "changed"}
+    assert checked["finding_source_changes"]["alpha-defect"] == selected["source_changes"]
+    cli = subprocess.run([sys.executable, str(SCRIPT), "inspect", "--repo-root", str(tmp_path), "--report", str(report(tmp_path)),
+                          "--finding", "alpha-defect"], check=True, capture_output=True, text=True)
+    assert json.loads(cli.stdout)["rows"][0]["source_changes"] == selected["source_changes"]
+    assert report(tmp_path).read_bytes() == saved
+
+
+def test_historical_candidate_observes_structure_from_its_original_analysis(tmp_path: Path) -> None:
+    started(tmp_path)
+    original = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), candidate="alpha-fix")["rows"][0]["record"]
+    reconcile(tmp_path, subsystems=[{"id": "beta", "ownership": "Reviewed delivery authority."}])
+    renewed = audit_manifest(tmp_path, report(tmp_path))
+    renewed.update(findings=[], candidates=[])
+    renewed["lenses"][0]["finding_ids"] = []
+    publish(tmp_path, "audit-subsystem", renewed)
+    selected = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), candidate="alpha-fix")["rows"][0]
+    assert selected["historical"] and selected["record"] == original
+    assert selected["source_changes"]["analysis"]["freshness"] == "changed"
+    assert selected["source_changes"]["analysis"]["structure_changes"] == {"beta": ["ownership"]}
+    checked = atlas.check_report(repo_root=tmp_path, report=report(tmp_path))
+    assert checked["candidate_freshness"] == {"alpha-fix": "changed"}
+    assert checked["candidate_source_changes"]["alpha-fix"] == selected["source_changes"]
+    outcomes(tmp_path, delivery_requirements=[{"target": {"kind": "candidate", "id": "alpha-fix"}, "commit": True,
+                                               "deployments": [], "reason": "Requested delivery remains pending."}])
+    for filters in ({"subsystem": "beta"}, {"outstanding": True}, {"history": True}):
+        rows = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), **filters)["rows"]
+        candidate_row = next(row for row in rows if row["target"] == {"kind": "candidate", "id": "alpha-fix"})
+        assert candidate_row["source_changes"] == selected["source_changes"]
+
+
 @pytest.mark.parametrize("scenario", ["all", "audit", "presented", "analyzed", "blocked", "changed", "verified", "deferred",
                                       "disproved", "historical candidate", "historical finding"])
 def test_check_report_requires_selections_for_the_saved_state(tmp_path: Path, monkeypatch, scenario: str) -> None:

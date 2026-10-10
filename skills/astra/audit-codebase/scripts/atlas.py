@@ -863,22 +863,31 @@ def _map_drift(state: dict[str, Any], root: Path) -> dict[str, Any]:
 
 def _catalog(state: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any]]:
     candidates, findings = {}, {}
+    audit_indices, prior_audit_indices, analysis_indices = {}, {}, {}
+    for index, event in enumerate(state["history"]):
+        if event["operation"] == "audit":
+            prior_audit_indices[index] = audit_indices.get(event["selection"], -1)
+            audit_indices[event["selection"]] = index
+        elif event["operation"] == "analyze":
+            analysis_indices.setdefault(event["selection"], []).append(index)
 
-    def add(audit: dict[str, Any], origin: str, historical: bool, systemic: Sequence[dict[str, Any]]) -> None:
+    def add(audit: dict[str, Any], origin: str, historical: bool, systemic: Sequence[dict[str, Any]], audit_index: int, cutoff: int) -> None:
         for item in audit.get("candidates", []):
-            candidates.setdefault(item["id"], {"record": item, "origin": origin, "historical": historical, "audit_source": audit["source_identity"]})
+            analyses = [index for index in analysis_indices.get(item["id"], []) if index < cutoff]
+            analysis_index = analyses[-1] if "analysis" in item and analyses else audit_index
+            candidates.setdefault(item["id"], {"record": item, "origin": origin, "historical": historical, "audit_source": audit["source_identity"], "audit_index": audit_index, "analysis_index": analysis_index})
         for item in audit.get("findings", []) + list(systemic):
-            findings.setdefault(item["id"], {"record": item, "origin": origin, "historical": historical, "audit_source": audit["source_identity"]})
+            findings.setdefault(item["id"], {"record": item, "origin": origin, "historical": historical, "audit_source": audit["source_identity"], "audit_index": audit_index})
 
     active = {sub["id"] for sub in state["subsystems"]}
     for sub in state["subsystems"] + state.get("retired_subsystems", []):
         if "audit" in sub:
             systemic = [item for item in state["systemic_findings"] if item["origin_subsystem_id"] == sub["id"]]
-            add(sub["audit"], sub["id"], sub["id"] not in active, systemic)
-    for event in reversed(state["history"]):
+            add(sub["audit"], sub["id"], sub["id"] not in active, systemic, audit_indices.get(sub["id"], -1), len(state["history"]))
+    for index, event in reversed(list(enumerate(state["history"]))):
         superseded = event.get("superseded", {})
         if "audit" in superseded:
-            add(superseded["audit"], event["selection"], True, superseded.get("systemic_findings", []))
+            add(superseded["audit"], event["selection"], True, superseded.get("systemic_findings", []), prior_audit_indices.get(index, -1), index)
     return candidates, findings
 
 
@@ -1039,27 +1048,51 @@ def _scope_observation(observation: dict[str, Any], packet: dict[str, Any], requ
             "changed_paths": sorted(set(observation["changed_paths"]) | missing)}
 
 
+def _structure_observation(observation: dict[str, Any], owners: Sequence[str], since: int,
+                           revisions: dict[int, tuple[dict[str, Any], dict[str, Any]]]) -> dict[str, Any]:
+    later = sorted(index for index in revisions if index > since)
+    if not later:
+        return observation
+    before, after = revisions[later[0]][0], revisions[later[-1]][1]
+    changes = {}
+    for sid in owners:
+        prior, current = before.get(sid, {}), after.get(sid, {})
+        fields = (set(prior) | set(current)) - {"id", "name", "state"}
+        changed = sorted(field for field in fields if
+                         (sorted(prior.get(field, [])) != sorted(current.get(field, [])) if field == "owned_paths"
+                          else prior.get(field) != current.get(field)))
+        if changed:
+            changes[sid] = changed
+    return {**observation, "freshness": "changed", "structure_changed": True, "structure_changes": changes} if changes else observation
+
+
+def _candidate_observations(state: dict[str, Any], item: dict[str, Any], root: Path,
+                            revisions: dict[int, tuple[dict[str, Any], dict[str, Any]]]) -> dict[str, Any]:
+    if not item["historical"]:
+        return state["candidate_source_changes"][item["record"]["id"]]
+    packet = item["record"].get("analysis", {}).get("source_identity") or item["audit_source"]
+    scoped = _scope_observation(_packet_observation(root, packet), packet, _required_paths(state, item["record"]))
+    scope = set(item["record"]["affected_scope"]) | set(item["record"].get("analysis", {}).get("affected_scope", [])) | {item["origin"]}
+    scoped = _structure_observation(scoped, sorted(scope | _current_scope(state, sorted(scope))), item["analysis_index"], revisions)
+    audit = _structure_observation(_packet_observation(root, item["audit_source"]), [item["origin"]], item["audit_index"], revisions)
+    return {"audit": audit, "analysis": scoped if "analysis" in item["record"] else None, "scope": scoped}
+
+
+def _finding_observations(state: dict[str, Any], item: dict[str, Any], root: Path,
+                          revisions: dict[int, tuple[dict[str, Any], dict[str, Any]]]) -> dict[str, Any]:
+    packet = item["audit_source"]
+    observed = state["source_changes"][item["origin"]] if not item["historical"] else _packet_observation(root, packet)
+    scoped = _scope_observation(observed, packet, _required_paths(state, item["record"]))
+    scope = set(item["record"]["affected_scope"]) | {item["origin"]}
+    owners = scope | _current_scope(state, sorted(scope))
+    return {"audit": observed, "scope": _structure_observation(scoped, sorted(owners), item["audit_index"], revisions)}
+
+
 def _refresh_observation(state: dict[str, Any], root: Path) -> None:
     cache = {}
     revisions = _reconciliation_revisions(state)
     audit_indices = {item["selection"]: index for index, item in enumerate(state["history"]) if item["operation"] == "audit"}
     analysis_indices = {item["selection"]: index for index, item in enumerate(state["history"]) if item["operation"] == "analyze"}
-
-    def observe_structure(observation: dict[str, Any], owners: Sequence[str], since: int) -> dict[str, Any]:
-        later = sorted(index for index in revisions if index > since)
-        if not later:
-            return observation
-        before, after = revisions[later[0]][0], revisions[later[-1]][1]
-        changes = {}
-        for sid in owners:
-            prior, current = before.get(sid, {}), after.get(sid, {})
-            fields = (set(prior) | set(current)) - {"id", "name", "state"}
-            changed = sorted(field for field in fields if
-                             (sorted(prior.get(field, [])) != sorted(current.get(field, [])) if field == "owned_paths"
-                              else prior.get(field) != current.get(field)))
-            if changed:
-                changes[sid] = changed
-        return {**observation, "freshness": "changed", "structure_changed": True, "structure_changes": changes} if changes else observation
 
     def observe(packet: dict[str, Any]) -> dict[str, Any]:
         key = _canonical(packet)
@@ -1070,7 +1103,7 @@ def _refresh_observation(state: dict[str, Any], root: Path) -> None:
     state["source_changes"] = {sub["id"]: observe(sub.get("audit", {}).get("source_identity") or sub["map_source"]) for sub in state["subsystems"]}
     for sub in state["subsystems"]:
         if "audit" in sub:
-            state["source_changes"][sub["id"]] = observe_structure(state["source_changes"][sub["id"]], [sub["id"]], audit_indices.get(sub["id"], -1))
+            state["source_changes"][sub["id"]] = _structure_observation(state["source_changes"][sub["id"]], [sub["id"]], audit_indices.get(sub["id"], -1), revisions)
             scope_change = sorted(set(sub["owned_paths"]) ^ set(sub["audit_scope"]))
             if scope_change:
                 change = dict(state["source_changes"][sub["id"]])
@@ -1085,9 +1118,10 @@ def _refresh_observation(state: dict[str, Any], root: Path) -> None:
         for candidate in sub.get("audit", {}).get("candidates", []):
             packet = candidate.get("analysis", {}).get("source_identity") or sub["audit"]["source_identity"]
             scoped = _scope_observation(observe(packet), packet, _required_paths(state, candidate))
-            owners = _current_scope(state, sorted(set(candidate["affected_scope"]) | set(candidate.get("analysis", {}).get("affected_scope", []))))
+            scope = set(candidate["affected_scope"]) | set(candidate.get("analysis", {}).get("affected_scope", []))
+            owners = scope | _current_scope(state, sorted(scope))
             since = analysis_indices.get(candidate["id"], -1) if "analysis" in candidate else audit_indices.get(sub["id"], -1)
-            scoped = observe_structure(scoped, sorted(owners), since)
+            scoped = _structure_observation(scoped, sorted(owners), since, revisions)
             audit = state["source_changes"][sub["id"]]
             state["candidate_source_changes"][candidate["id"]] = {"audit": audit, "analysis": scoped if "analysis" in candidate else None, "scope": scoped}
             state["candidate_freshness"][candidate["id"]] = "changed" if audit["freshness"] == "changed" else scoped["freshness"]
@@ -2109,6 +2143,7 @@ def inspect_report(*, repo_root: Path, report: Path, full: bool = False,
     root = repo_root.resolve()
     _refresh_observation(state, root)
     candidates, findings = _catalog(state)
+    revisions = _reconciliation_revisions(state)
     subs = {sub["id"]: sub for sub in state["subsystems"] + state["retired_subsystems"]}
     if subsystem is not None and subsystem not in subs:
         raise ReportError(f"unknown subsystem {subsystem}")
@@ -2148,14 +2183,11 @@ def inspect_report(*, repo_root: Path, report: Path, full: bool = False,
             row.update(outcome_observations_total=len(observed_outcomes), outcome_observations_has_more=len(observed_outcomes) > limit)
             if kind == "candidate":
                 row.update(analysis_state=item["record"]["state"], source_changes=state["candidate_source_changes"].get(identifier))
-                if row["source_changes"] is None and (candidate or history):
-                    packet = item["record"].get("analysis", {}).get("source_identity") or item["audit_source"]
-                    scoped = _scope_observation(_packet_observation(root, packet), packet, _required_paths(state, item["record"]))
-                    row["source_changes"] = {"audit": _packet_observation(root, item["audit_source"]), "analysis": scoped if "analysis" in item["record"] else None, "scope": scoped}
+                if row["source_changes"] is None:
+                    row["source_changes"] = _candidate_observations(state, item, root, revisions)
             else:
                 packet = item["audit_source"]
-                observed = state["source_changes"][item["origin"]] if not item["historical"] else _packet_observation(root, packet)
-                row["source_changes"] = {"audit": observed, "scope": _scope_observation(observed, packet, _required_paths(state, item["record"]))}
+                row["source_changes"] = _finding_observations(state, item, root, revisions)
                 if detail and (finding or subsystem):
                     row["audit_source_identity"] = packet
             if detail and (candidate or finding or subsystem):
@@ -2239,11 +2271,21 @@ def check_report(*, repo_root: Path, report: Path) -> dict[str, Any]:
     if required - set(commands):
         raise ReportError("report is missing a required selection command", stage="check-report")
     _refresh_observation(state, repo_root.resolve())
+    revisions = _reconciliation_revisions(state)
+    candidate_changes = {cid: _candidate_observations(state, item, repo_root.resolve(), revisions) for cid, item in candidates.items()}
+    candidate_freshness = {cid: "changed" if change["audit"]["freshness"] == "changed" else change["scope"]["freshness"] for cid, change in candidate_changes.items()}
+    finding_changes = {fid: _finding_observations(state, item, repo_root.resolve(), revisions) for fid, item in findings.items()}
     drift = state["map_drift"]
     return {"response_version": RESPONSE_VERSION, "valid": True, "report_sha256": _digest(data),
             "checks": {"canonical_state": True, "relationships": True, "anchors": True, "ids": True, "selection_commands": True},
             "ownership_current": not drift["needs_reconcile"], "map_drift": drift,
-            "freshness": state["freshness"], "visual_verification": {"performed_by_check_report": False, "records": state["preview"]}}
+            "freshness": state["freshness"], "candidate_freshness": candidate_freshness,
+            "outcome_freshness": state["outcome_freshness"], "finding_freshness": {fid: change["scope"]["freshness"] for fid, change in finding_changes.items()},
+            "source_changes": {sid: change for sid, change in state["source_changes"].items() if change["freshness"] == "changed"},
+            "candidate_source_changes": {cid: change for cid, change in candidate_changes.items() if candidate_freshness[cid] == "changed"},
+            "outcome_source_changes": {eid: change for eid, change in state["outcome_source_changes"].items() if change["freshness"] == "changed"},
+            "finding_source_changes": {fid: change for fid, change in finding_changes.items() if change["scope"]["freshness"] == "changed"},
+            "visual_verification": {"performed_by_check_report": False, "records": state["preview"]}}
 
 
 def _parser() -> argparse.ArgumentParser:
