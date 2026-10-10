@@ -5,7 +5,7 @@ continuing an existing current-format workbench. An explicitly requested brief o
 text-only assessment may stay in chat; a no-write assessment creates no report.
 
 The helper is [atlas.py](../scripts/atlas.py). Use its current `--help` and
-subcommand help for exact CLI syntax. The helper writes report/state format 4 and
+subcommand help for exact CLI syntax. The helper writes report/state format 5 and
 accepts manifest format 1. Only the current report format is supported; create a
 new map for an older report.
 Read [Atlas maintenance](maintenance.md) when resuming a report, reconciling
@@ -34,7 +34,7 @@ The agent owns semantic judgment:
 - system and subsystem boundaries and purpose;
 - ownership, callers, interfaces, dependencies, and proof seams;
 - evidence and counterevidence;
-- six-lens audit dispositions;
+- coverage judgments for the relevant lenses;
 - finding classification and affected scope;
 - candidate grouping, qualitative strength, benefit, risk, and required proof;
 - candidate analysis and recommendation.
@@ -60,8 +60,10 @@ Map records structure, not quality judgment.
 
 Group current tracked source into meaningful systems and subsystems based on
 runtime or domain ownership, not directory shape alone. Each subsystem records
-its purpose, owned behavior, authority, callers, dependency evidence, interfaces,
-proof seams, and owned paths.
+its ID, system, name, purpose, and owned paths. Add ownership, authority, callers,
+dependency evidence, interfaces, and proof seams when they help exploration or the
+selected audit. Start at useful boundaries without preparing exhaustive metadata
+for every subsystem before investigation.
 
 Every tracked path belongs to one subsystem or one evidenced exclusion. Shared
 infrastructure still needs one structural owner and named consumers.
@@ -90,11 +92,12 @@ is not audited.
 
 ## Audit one selected subsystem
 
-Rebuild the selected subsystem's current source trace and inspect the materially
-distinct entry paths, callers, dependencies, interfaces, proof seams, and relevant
-history.
+Use [Audit packet](audit-packet.md) to prepare the selected scope's guard and
+snapshot. Trace enough entry paths, callers, dependencies, interfaces, proof seams,
+and history to settle the actual hypotheses. Put the meaningful trace in a summary;
+structured detail is optional.
 
-Account for these six lenses:
+Use these six lenses as coverage prompts:
 
 - reliability;
 - domain;
@@ -103,8 +106,10 @@ Account for these six lenses:
 - coding practice; and
 - performance.
 
-Each lens ends as `complete`, `evidence gap`, or `not applicable`, with
-evidence or a reason. This ledger is coverage bookkeeping, not a finding quota.
+Record examined lenses as `complete`, `evidence gap`, or `not applicable`.
+Complete assessments cite evidence or finding IDs; gaps and non-applicability
+need a reason. Omitted lenses remain `not inspected`. Neither a full ledger nor
+six essays are prerequisites for publishing a useful scoped audit.
 
 Record findings, systemic findings, and coherent improvement candidates. A
 candidate must point to at least one admitted defect or opportunity. Give each
@@ -127,8 +132,9 @@ Analysis may end as:
 - `blocked`: one exact decision or missing evidence prevents a responsible
   conclusion.
 
-For an analyzed candidate, compare the materially relevant alternatives and record
-their tradeoffs, recommendation, proof, and evidence limits.
+For an analyzed candidate, record a supported recommendation and proof. Compare
+alternatives and add tradeoffs or evidence limits when material; options have no
+minimum count.
 
 When a visual makes the change easier to judge, supply an optional `comparison`
 on the candidate or analysis: `caption`, `before`, and `after`. Each side contains
@@ -156,15 +162,17 @@ The rendered workbench should provide:
 - searchable subsystem/finding/candidate cards;
 - six-lens coverage visualization;
 - findings with expandable evidence;
-- candidates with current problem, direction, affected scope, qualitative
-  strength, risk, required proof, and any completed analysis;
+- candidates linked to their findings, with direction, affected scope, qualitative
+  strength, any material additional context, and completed analysis;
 - copyable explicit commands to Audit a subsystem, Analyze a candidate, or inspect
   changed evidence and recorded outcomes;
 - implementation, verification, deferral, and requested delivery status;
 - provenance, exclusions, and history in lower-priority sections.
 
 Coverage accounts for all mapped subsystems, separating current completed and
-non-applicable lenses from evidence gaps, changed source, and unaudited scope.
+non-applicable lenses from evidence gaps, uninspected lenses, changed source, and
+unaudited scope. Defects, opportunities, retained complexity, and finding gaps have
+separate mechanically derived counts.
 Candidate freshness follows both its originating audit and its analysis source
 packet, including evidence outside mapped ownership. Keep stale judgments visible
 as prior evidence. Inspect changed paths, ownership, and recorded outcomes before
@@ -173,12 +181,17 @@ that supported the original diagnosis; it does not require repeating every
 historical audit. Renew affected evidence before reusing an unverified stale
 recommendation. Coverage freshness and fix verification remain separate.
 
-Open the report through the host's supported HTML preview and inspect the actual
-reading path, map links, filters, copyable selections, labels, and layout. Check
-that progress and freshness mean what the user sees. Report unavailable preview
-or clipboard capabilities without treating source or build checks as UI proof.
+Try the host's supported HTML preview once. A queued tab is pending; an opened
+surface alone does not establish visual verification. For ordinary content
+updates, inspect changed content and the relevant links and selections. For
+renderer changes, also inspect the actual reading path, filters, labels, layout,
+and relevant interactions at useful widths. Report unavailable preview or
+clipboard capabilities without treating source or build checks as UI proof.
 Record an unavailable capability once per environment and reconsider when the host
 or capability changes. Repeated references to a limitation are not failed attempts.
+Use the direct preview-recording operation in [Atlas maintenance](maintenance.md).
+Do not create temporary servers or repeatedly recover tabs for an ordinary audit.
+Use `edit-presentation` to change a displayed title without another audit event.
 
 Local JavaScript may navigate, filter, reveal retained history, or copy text. It
 does not invoke commands or mutate state.

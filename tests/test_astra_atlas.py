@@ -245,7 +245,7 @@ def test_audit_adds_findings_candidates_and_coverage(tmp_path: Path) -> None:
         "Unchecked entry",
         "Centralize validation",
         "Strong",
-        "Current problem",
+        "Policy is scattered.",
         "Required proof",
         "$audit-codebase analyze candidate alpha-fix in atlas run run-1",
         "Performance",
@@ -315,7 +315,7 @@ def test_current_format_only_and_tamper_detection(tmp_path: Path) -> None:
     assert f'audit-codebase-report-version" content="{atlas.REPORT_VERSION}"' in raw
     assert "https://" not in raw and "http://" not in raw
     assert "cdn" not in raw.lower() and "mermaid" not in raw.lower()
-    for old_version in (1, 2):
+    for old_version in (1, 2, 3, 4):
         rpt.write_text(raw.replace(f'audit-codebase-report-version" content="{atlas.REPORT_VERSION}"', f'audit-codebase-report-version" content="{old_version}"'), encoding="utf-8")
         with pytest.raises(atlas.ReportError, match="report version"):
             atlas.inspect_report(repo_root=tmp_path, report=rpt)

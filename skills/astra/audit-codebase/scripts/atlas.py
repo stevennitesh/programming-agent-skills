@@ -16,7 +16,7 @@ from html.parser import HTMLParser
 from pathlib import Path, PurePosixPath
 from typing import Any, NoReturn, Sequence
 
-REPORT_VERSION, STATE_VERSION = 4, 4
+REPORT_VERSION, STATE_VERSION = 5, 5
 RESPONSE_VERSION, MANIFEST_VERSION = 2, 1
 _ID = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
 _RUN = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]*")
@@ -50,12 +50,12 @@ a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}but
 .badges{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0 12px}.badge{display:inline-flex;align-items:center;border:1px solid var(--border);border-radius:999px;padding:2px 8px;font-size:11px;font-weight:700}.badge.audited,.badge.complete,.badge.strong,.badge.analyzed,.badge.fresh{color:var(--green);border-color:#216c58}.badge.changed,.badge.evidence-gap,.badge.blocked,.badge.worth-exploring{color:var(--amber);border-color:#805e1b}.badge.defect,.badge.p1,.badge.p0{color:var(--red);border-color:#7d3040}.badge.mapped,.badge.opportunity,.badge.speculative,.badge.presented{color:var(--blue);border-color:#315b8c}.badge.retained-complexity,.badge.not-applicable,.badge.disproved{color:var(--muted)}
 .kv{display:grid;grid-template-columns:140px minmax(0,1fr);gap:6px 12px;margin:12px 0}.kv dt{color:var(--muted);font-weight:650}.kv dd{margin:0;overflow-wrap:anywhere}ul.compact{margin:6px 0;padding-left:18px}
 .command{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}.copy{border:1px solid #2b6370;color:#b9f5ff;background:#0a2a31;border-radius:8px;padding:7px 9px}.copy:hover{background:#0e3741}
-.coverage-row{display:grid;grid-template-columns:140px minmax(0,1fr) 72px;gap:10px;align-items:center;margin:9px 0}.bar{display:flex;height:8px;background:#132535;border-radius:999px;overflow:hidden}.bar>span{display:block;height:100%}.bar .complete{background:#34d399}.bar .not-applicable{background:#93a8ba}.bar .evidence-gap{background:#fbbf24}.bar .changed{background:#fb7185}.bar .not-audited{background:#284158}.coverage-detail{color:var(--muted);font-size:12px;margin-top:5px}.stale-warning{padding:10px;border-left:3px solid var(--amber);background:#332711}.comparison{margin:18px 0}.comparison figcaption{font-weight:650}.diagram{overflow:auto}.diagram svg{display:block;max-width:none}.diagram rect{fill:#102235;stroke:#31516a}.diagram text{fill:#e8f0f7;font-size:12px}
+.coverage-row{display:grid;grid-template-columns:140px minmax(0,1fr) 72px;gap:10px;align-items:center;margin:9px 0}.bar{display:flex;height:8px;background:#132535;border-radius:999px;overflow:hidden}.bar>span{display:block;height:100%}.bar .complete{background:#34d399}.bar .not-applicable{background:#93a8ba}.bar .evidence-gap{background:#fbbf24}.bar .changed{background:#fb7185}.bar .not-inspected,.bar .not-audited{background:#284158}.coverage-detail{color:var(--muted);font-size:12px;margin-top:5px}.stale-warning{padding:10px;border-left:3px solid var(--amber);background:#332711}.comparison{margin:18px 0}.comparison figcaption{font-weight:650}.diagram{overflow:auto}.diagram svg{display:block;max-width:none}.diagram rect{fill:#102235;stroke:#31516a}.diagram text{fill:#e8f0f7;font-size:12px}
 .table-scroll{overflow:auto}.lens-table{width:100%;border-collapse:collapse}.lens-table th,.lens-table td{padding:8px;text-align:left;vertical-align:top;border-bottom:1px solid var(--border)}.lens-table th{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.06em}
 .finding{border-left:3px solid #31516a}.finding.defect{border-left-color:var(--red)}.finding.opportunity{border-left-color:var(--blue)}.finding.gap{border-left-color:var(--amber)}.finding.retained-complexity{border-left-color:#64748b}
-.candidate{position:relative}.strength{position:absolute;top:14px;right:14px}.compare{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}.compare>div{min-width:0;background:#0a1622;border:1px solid var(--border);border-radius:10px;padding:12px}.compare h4{margin:0 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}.option-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr));gap:10px}.option{background:#0a1622;border:1px solid var(--border);border-radius:10px;padding:12px}.option h5{margin:0 0 6px;font-size:14px}
+.candidate-heading{display:flex;flex-wrap:wrap;align-items:flex-start;gap:8px 14px}.candidate-heading h3{flex:1 1 180px;min-width:0}.strength{flex:0 1 auto;max-width:100%}.strength .badge{white-space:normal}.compare{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}.candidate-direction>div:only-child{grid-column:1/-1}.compare>div{min-width:0;background:#0a1622;border:1px solid var(--border);border-radius:10px;padding:12px}.compare h4{margin:0 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}.option-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr));gap:10px}.option{background:#0a1622;border:1px solid var(--border);border-radius:10px;padding:12px}.option h5{margin:0 0 6px;font-size:14px}
 details{border-top:1px solid var(--border);margin-top:12px;padding-top:10px}summary{cursor:pointer;color:#bfd1df;font-weight:650}.evidence{font-size:12px;color:#c5d3de}.history{margin:0;padding-left:20px}.history li{margin:5px 0;color:var(--muted)}.history-record{white-space:pre-wrap;overflow-wrap:anywhere;max-height:32em;overflow:auto}.badge.verified,.badge.committed,.badge.deployed{color:var(--green);border-color:#216c58}.hidden{display:none!important}footer{margin-top:42px;padding-top:20px;border-top:1px solid var(--border);color:var(--muted);font-size:12px}
-@media(max-width:1050px){.shell{grid-template-columns:1fr}.sidebar{position:relative;height:auto;border-right:0;border-bottom:1px solid var(--border)}.sidebar nav{grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}.metrics{grid-template-columns:repeat(3,1fr)}}@media(max-width:650px){.content{padding:22px 14px 50px}.hero{display:block}.hero-meta{text-align:left;margin-top:10px}.metrics{grid-template-columns:repeat(2,1fr)}.compare{grid-template-columns:1fr}.coverage-row{grid-template-columns:minmax(0,1fr) auto;gap:6px;margin:14px 0}.coverage-row>div{grid-column:1/-1;grid-row:2}.coverage-row>span:last-child{grid-column:2;grid-row:1}.kv{grid-template-columns:1fr}.strength{position:static;margin-bottom:8px}}
+@media(max-width:1050px){.shell{grid-template-columns:1fr}.sidebar{position:relative;height:auto;border-right:0;border-bottom:1px solid var(--border)}.sidebar nav{grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}.metrics{grid-template-columns:repeat(3,1fr)}}@media(max-width:650px){.content{padding:22px 14px 50px}.hero{display:block}.hero-meta{text-align:left;margin-top:10px}.metrics{grid-template-columns:repeat(2,1fr)}.compare{grid-template-columns:1fr}.coverage-row{grid-template-columns:minmax(0,1fr) auto;gap:6px;margin:14px 0}.coverage-row>div{grid-column:1/-1;grid-row:2}.coverage-row>span:last-child{grid-column:2;grid-row:1}.kv{grid-template-columns:1fr}}
 """
 _SCRIPT = r"""
 (function(){
@@ -332,18 +332,19 @@ def _subsystem(value: object, label: str) -> dict[str, Any]:
         "proof_seams",
         "owned_paths",
     }
-    _strict(item, fields, {"exclusions"}, label)
+    core = {"id", "system_id", "name", "purpose", "owned_paths"}
+    _strict(item, core, (fields - core) | {"exclusions"}, label)
     return {
         "id": _id(item["id"], f"{label} id"),
         "system_id": _id(item["system_id"], f"{label} system_id"),
         "name": _text(item["name"], f"{label} name"),
         "purpose": _text(item["purpose"], f"{label} purpose"),
-        "ownership": _text(item["ownership"], f"{label} ownership"),
-        "authority": _texts(item["authority"], f"{label} authority"),
-        "callers": _texts(item["callers"], f"{label} callers"),
-        "dependencies": _dependencies(item["dependencies"], f"{label} dependencies"),
-        "interfaces": _texts(item["interfaces"], f"{label} interfaces"),
-        "proof_seams": _texts(item["proof_seams"], f"{label} proof_seams"),
+        "ownership": _text(item.get("ownership", ""), f"{label} ownership", empty=True),
+        "authority": _texts(item.get("authority", []), f"{label} authority"),
+        "callers": _texts(item.get("callers", []), f"{label} callers"),
+        "dependencies": _dependencies(item.get("dependencies", []), f"{label} dependencies"),
+        "interfaces": _texts(item.get("interfaces", []), f"{label} interfaces"),
+        "proof_seams": _texts(item.get("proof_seams", []), f"{label} proof_seams"),
         "owned_paths": [
             _rel(p, f"{label} owned path")
             for p in _texts(item["owned_paths"], f"{label} owned_paths", empty=False)
@@ -377,7 +378,8 @@ def _map(raw: dict[str, Any], root: Path) -> dict[str, Any]:
         "coverage",
         "evidence_limits",
     }
-    _strict(raw, fields - {"coverage"}, {"coverage"}, "map manifest")
+    optional = {"coverage", "excluded", "evidence_limits"}
+    _strict(raw, fields - optional, optional, "map manifest")
     if raw["version"] != MANIFEST_VERSION:
         raise ReportError(f"map manifest requires version {MANIFEST_VERSION}")
     if raw["expected_report_sha256"] != "absent":
@@ -403,7 +405,7 @@ def _map(raw: dict[str, Any], root: Path) -> dict[str, Any]:
             raise ReportError(f"unknown system for {sub['id']}")
         if any(d["id"] not in sids for d in sub["dependencies"]):
             raise ReportError(f"unknown dependency for {sub['id']}")
-    excluded = _exclusions(raw["excluded"])
+    excluded = _exclusions(raw.get("excluded", []))
     observed = inventory(repo_root=root)
     tracked = set(observed["tracked_paths"])
     owners = {}
@@ -445,7 +447,7 @@ def _map(raw: dict[str, Any], root: Path) -> dict[str, Any]:
         "subsystems": subs,
         "excluded": excluded,
         "coverage": _text(raw.get("coverage", ""), "coverage", empty=True),
-        "evidence_limits": _text(raw["evidence_limits"], "evidence limits", empty=True),
+        "evidence_limits": _text(raw.get("evidence_limits", ""), "evidence limits", empty=True),
         "systemic_findings": [],
         "history": [{"operation": "map", "selection": "repository"}],
         "run_id": "",
@@ -455,6 +457,7 @@ def _map(raw: dict[str, Any], root: Path) -> dict[str, Any]:
         "outcomes": [],
         "delivery_requirements": [],
         "preview": [],
+        "presentation": {},
         "map_inventory": {"paths": observed["tracked_paths"], "fingerprints": observed["fingerprints"]},
     }
     _refresh_observation(state, root)
@@ -469,31 +472,29 @@ def _lenses(value: object) -> list[dict[str, Any]]:
         x = _obj(v, f"lenses[{i}]")
         _strict(
             x,
-            {"class", "state", "evidence", "finding_ids", "reason"},
-            set(),
+            {"class", "state"},
+            {"evidence", "finding_ids", "reason"},
             f"lenses[{i}]",
         )
         name = _text(x["class"], "lens class")
         state = _text(x["state"], "lens state")
         if name not in _LENSES or state not in _LENS_STATES:
             raise ReportError("unsupported lens class or state")
-        evidence = _texts(x["evidence"], "lens evidence")
-        if state == "complete" and not evidence:
+        evidence = _texts(x.get("evidence", []), "lens evidence")
+        finding_ids = [_id(y, "finding id") for y in _texts(x.get("finding_ids", []), "finding ids")]
+        if state == "complete" and not (evidence or finding_ids):
             raise ReportError(f"complete lens {name} requires evidence")
         result.append(
             {
                 "class": name,
                 "state": state,
                 "evidence": evidence,
-                "finding_ids": [
-                    _id(y, "finding id")
-                    for y in _texts(x["finding_ids"], "finding ids")
-                ],
-                "reason": _text(x["reason"], "lens reason"),
+                "finding_ids": finding_ids,
+                "reason": _text(x.get("reason", ""), "lens reason", empty=state == "complete"),
             }
         )
-    if sorted(x["class"] for x in result) != sorted(_LENSES):
-        raise ReportError("lenses must contain all six classes exactly once")
+    if len({x["class"] for x in result}) != len(result):
+        raise ReportError("lenses must not repeat a class")
     return result
 
 
@@ -524,7 +525,8 @@ def _finding(value: object, label: str) -> dict[str, Any]:
         "ceiling",
         "revisit_trigger",
     }
-    _strict(x, fields, kind_fields, label)
+    required = {"id", "kind", "primary_class", "title", "locations", "evidence", "impact", "affected_scope"}
+    _strict(x, required, (fields - required) | kind_fields, label)
     kind = _text(x["kind"], "kind")
     primary = _text(x["primary_class"], "primary class")
     if kind not in _KINDS or primary not in _LENSES:
@@ -534,29 +536,29 @@ def _finding(value: object, label: str) -> dict[str, Any]:
         "kind": kind,
         "primary_class": primary,
         "title": _text(x["title"], "title"),
-        "expectation": _text(x["expectation"], "expectation", empty=True),
+        "expectation": _text(x.get("expectation", ""), "expectation", empty=kind != "defect"),
         "locations": _texts(x["locations"], "locations", empty=False),
         "evidence": _texts(x["evidence"], "evidence", empty=False),
         "impact": _text(x["impact"], "impact"),
-        "causal_owner": _text(x["causal_owner"], "causal owner"),
+        "causal_owner": _text(x.get("causal_owner", ""), "causal owner", empty=True),
         "affected_scope": _texts(x["affected_scope"], "affected scope", empty=False),
-        "direction": _text(x["direction"], "direction"),
-        "proof": _texts(x["proof"], "proof", empty=False),
-        "confidence": _text(x["confidence"], "confidence"),
+        "direction": _text(x.get("direction", ""), "direction", empty=True),
+        "proof": _texts(x.get("proof", []), "proof"),
+        "confidence": _text(x.get("confidence", ""), "confidence", empty=True),
     }
     required_by_kind = {
-        "defect": ("severity", "scenario"),
-        "gap": ("missing_evidence", "boundary_reason", "reentry"),
-        "retained complexity": (
-            "protected_constraint",
-            "ceiling",
-            "revisit_trigger",
-        ),
+        "defect": ("scenario",),
+        "gap": ("missing_evidence",),
+        "retained complexity": ("protected_constraint",),
         "opportunity": (),
     }
     for field in required_by_kind[kind]:
         result[field] = _text(x.get(field), field)
-    unexpected = kind_fields & set(x) - set(required_by_kind[kind])
+    allowed_by_kind = {"defect": {"severity", "scenario"}, "gap": {"missing_evidence", "boundary_reason", "reentry"},
+                       "retained complexity": {"protected_constraint", "ceiling", "revisit_trigger"}, "opportunity": set()}
+    for field in (allowed_by_kind[kind] - set(required_by_kind[kind])) & set(x):
+        result[field] = _text(x[field], field)
+    unexpected = kind_fields & set(x) - allowed_by_kind[kind]
     if unexpected:
         raise ReportError(
             f"{label} has fields not valid for {kind}: {', '.join(sorted(unexpected))}"
@@ -605,7 +607,8 @@ def _candidate(value: object, label: str) -> dict[str, Any]:
         "id", "title", "primary_class", "strength", "finding_ids", "affected_scope",
         "problem", "evidence", "direction", "benefit", "risks", "required_proof",
     }
-    _strict(x, fields, {"comparison"}, label)
+    required = {"id", "title", "primary_class", "strength", "finding_ids", "direction"}
+    _strict(x, required, (fields - required) | {"comparison"}, label)
     primary = _text(x["primary_class"], "primary class")
     strength = _text(x["strength"], "candidate strength")
     if primary not in _LENSES:
@@ -618,13 +621,13 @@ def _candidate(value: object, label: str) -> dict[str, Any]:
         "primary_class": primary,
         "strength": strength,
         "finding_ids": [_id(y, "finding id") for y in _texts(x["finding_ids"], "finding ids", empty=False)],
-        "affected_scope": _texts(x["affected_scope"], "affected scope", empty=False),
-        "problem": _text(x["problem"], "problem"),
-        "evidence": _texts(x["evidence"], "evidence", empty=False),
+        "affected_scope": _texts(x.get("affected_scope", []), "affected scope"),
+        "problem": _text(x.get("problem", ""), "problem", empty=True),
+        "evidence": _texts(x.get("evidence", []), "evidence"),
         "direction": _text(x["direction"], "direction"),
-        "benefit": _text(x["benefit"], "benefit"),
-        "risks": _texts(x["risks"], "risks"),
-        "required_proof": _texts(x["required_proof"], "required proof", empty=False),
+        "benefit": _text(x.get("benefit", ""), "benefit", empty=True),
+        "risks": _texts(x.get("risks", []), "risks"),
+        "required_proof": _texts(x.get("required_proof", []), "required proof"),
         "state": "presented",
     }
     if "comparison" in x:
@@ -647,7 +650,8 @@ def _audit(raw: dict[str, Any]) -> dict[str, Any]:
         "evidence_limits",
         "recommendation",
     }
-    _strict(raw, fields - {"coverage"}, {"coverage"}, "audit manifest")
+    required = {"version", "expected_report_sha256", "subsystem_id", "source_identity", "source_trace"}
+    _strict(raw, required, fields - required, "audit manifest")
     if raw["version"] != MANIFEST_VERSION:
         raise ReportError(f"audit manifest requires version {MANIFEST_VERSION}")
     expected = _text(raw["expected_report_sha256"], "expected report sha")
@@ -664,26 +668,26 @@ def _audit(raw: dict[str, Any]) -> dict[str, Any]:
         "representative_flows",
         "history_signals",
     }
-    _strict(trace, tf, set(), "source trace")
+    _strict(trace, {"summary"}, tf - {"summary"}, "source trace")
     trace = {
-        k: (_text(v, k) if k == "summary" else _texts(v, k)) for k, v in trace.items()
+        k: (_text(trace[k], k) if k == "summary" else _texts(trace.get(k, []), k)) for k in sorted(tf)
     }
     for name in ("findings", "candidates", "systemic_findings"):
-        if not isinstance(raw[name], list):
+        if not isinstance(raw.get(name, []), list):
             raise ReportError(f"{name} must be a list")
-    findings = [_finding(v, f"findings[{i}]") for i, v in enumerate(raw["findings"])]
+    findings = [_finding(v, f"findings[{i}]") for i, v in enumerate(raw.get("findings", []))]
     systemic = [
-        _finding(v, f"systemic[{i}]") for i, v in enumerate(raw["systemic_findings"])
+        _finding(v, f"systemic[{i}]") for i, v in enumerate(raw.get("systemic_findings", []))
     ]
     candidates = [
-        _candidate(v, f"candidates[{i}]") for i, v in enumerate(raw["candidates"])
+        _candidate(v, f"candidates[{i}]") for i, v in enumerate(raw.get("candidates", []))
     ]
     fids = [x["id"] for x in findings + systemic]
     cids = [x["id"] for x in candidates]
     if len(fids) != len(set(fids)) or len(cids) != len(set(cids)):
         raise ReportError("finding and candidate ids must be unique")
     finding_by_id = {x["id"]: x for x in findings + systemic}
-    lenses = _lenses(raw["lenses"])
+    lenses = _lenses(raw.get("lenses", []))
     for lens in lenses:
         for finding_id in lens["finding_ids"]:
             finding = finding_by_id.get(finding_id)
@@ -693,14 +697,6 @@ def _audit(raw: dict[str, Any]) -> dict[str, Any]:
                 raise ReportError(
                     f"lens {lens['class']} names finding from {finding['primary_class']}"
                 )
-    listed_findings = {
-        finding_id for lens in lenses for finding_id in lens["finding_ids"]
-    }
-    omitted_findings = set(finding_by_id) - listed_findings
-    if omitted_findings:
-        raise ReportError(
-            f"admitted findings omitted from lens ledger: {', '.join(sorted(omitted_findings))}"
-        )
     for c in candidates:
         if set(c["finding_ids"]) - set(fids):
             raise ReportError(f"candidate {c['id']} names unknown findings")
@@ -711,6 +707,8 @@ def _audit(raw: dict[str, Any]) -> dict[str, Any]:
             raise ReportError(
                 f"candidate {c['id']} requires a defect or opportunity finding"
             )
+        linked_scope = {sid for fid in c["finding_ids"] for sid in finding_by_id[fid]["affected_scope"]}
+        c["affected_scope"] = sorted(set(c["affected_scope"]) | linked_scope)
     return {
         "expected_report_sha256": expected,
         "subsystem_id": _id(raw["subsystem_id"], "subsystem id"),
@@ -721,8 +719,8 @@ def _audit(raw: dict[str, Any]) -> dict[str, Any]:
         "candidates": candidates,
         "systemic_findings": systemic,
         "coverage": _text(raw.get("coverage", ""), "coverage", empty=True),
-        "evidence_limits": _text(raw["evidence_limits"], "evidence limits", empty=True),
-        "recommendation": _text(raw["recommendation"], "recommendation"),
+        "evidence_limits": _text(raw.get("evidence_limits", ""), "evidence limits", empty=True),
+        "recommendation": _text(raw.get("recommendation", ""), "recommendation", empty=True),
     }
 
 
@@ -743,26 +741,25 @@ def _analysis(raw: dict[str, Any]) -> dict[str, Any]:
         "proof",
         "evidence_limits",
     }
-    _strict(raw, fields, {"comparison"}, "analysis manifest")
+    optional = {"question", "options", "tradeoffs", "evidence_limits"}
+    _strict(raw, fields - optional, optional | {"comparison"}, "analysis manifest")
     if raw["version"] != MANIFEST_VERSION:
         raise ReportError(f"analysis manifest requires version {MANIFEST_VERSION}")
     expected = _text(raw["expected_report_sha256"], "expected report sha")
     if not _SHA.fullmatch(expected):
         raise ReportError("expected report sha must be sha256")
     state = _text(raw["state"], "state")
-    question = _text(raw["question"], "question", empty=True)
+    question = _text(raw.get("question", ""), "question", empty=True)
     if state not in {"analyzed", "disproved", "blocked"}:
         raise ReportError("analysis state must be analyzed, disproved, or blocked")
     if state == "blocked" and not question:
         raise ReportError("blocked analysis requires an exact question")
     if state != "blocked" and question:
         raise ReportError("only blocked analysis may contain a question")
-    if not isinstance(raw["options"], list) or (
-        state == "analyzed" and not raw["options"]
-    ):
-        raise ReportError("analyzed options must not be empty")
+    if not isinstance(raw.get("options", []), list):
+        raise ReportError("options must be a list")
     options = []
-    for i, v in enumerate(raw["options"]):
+    for i, v in enumerate(raw.get("options", [])):
         x = _obj(v, f"options[{i}]")
         _strict(x, {"name", "description", "tradeoffs"}, set(), f"options[{i}]")
         options.append(
@@ -785,9 +782,9 @@ def _analysis(raw: dict[str, Any]) -> dict[str, Any]:
         "recommendation": _text(
             raw["recommendation"], "recommendation", empty=state != "analyzed"
         ),
-        "tradeoffs": _texts(raw["tradeoffs"], "tradeoffs"),
+        "tradeoffs": _texts(raw.get("tradeoffs", []), "tradeoffs"),
         "proof": _texts(raw["proof"], "proof", empty=False),
-        "evidence_limits": _text(raw["evidence_limits"], "evidence limits", empty=True),
+        "evidence_limits": _text(raw.get("evidence_limits", ""), "evidence limits", empty=True),
     }
     if "comparison" in raw:
         result["comparison"] = _comparison(raw["comparison"])
@@ -1167,10 +1164,14 @@ def _architecture_svg(state: dict[str, Any]) -> str:
     systemic_counts = _systemic_counts(state)
     grouped = {s["id"]: [x for x in state["subsystems"] if x["system_id"] == s["id"]] for s in state["systems"]}
     width = max(860, 210 + max((len(v) for v in grouped.values()), default=1) * 230)
-    height = max(220, 55 + len(state["systems"]) * 150)
+    labels = {sub["id"]: textwrap.wrap(_display_title(state, "subsystem", sub["id"], sub["name"]), width=20)
+              for sub in state["subsystems"]}
+    node_height = max(82, 64 + 18 * max((len(lines) for lines in labels.values()), default=1))
+    row_height = node_height + 68
+    height = max(220, 55 + len(state["systems"]) * row_height)
     positions, parts = {}, []
     for row, system in enumerate(state["systems"]):
-        y = 45 + row * 150
+        y = 45 + row * row_height
         parts.append(f'<text class="sys-label" x="20" y="{y+30}">{escape(system["name"])}</text>')
         for col, sub in enumerate(grouped[system["id"]]):
             x = 175 + col * 230
@@ -1186,7 +1187,8 @@ def _architecture_svg(state: dict[str, Any]) -> str:
             )
             fresh = state["freshness"].get(sub["id"], "fresh")
             cls = "changed" if fresh == "changed" else sub["state"]
-            parts.append(f'<a href="#subsystem-{escape(sub["id"])}"><g class="node {escape(cls)}"><rect x="{x}" y="{y}" width="195" height="82"></rect><text class="name" x="{x+14}" y="{y+28}">{escape(sub["name"])}</text><text class="meta" x="{x+14}" y="{y+50}">{escape(meta)}</text><text class="meta" x="{x+14}" y="{y+67}">{escape(fresh)}</text></g></a>')
+            name = "".join(f'<text class="name" x="{x+14}" y="{y+28+index*18}">{escape(line)}</text>' for index, line in enumerate(labels[sub["id"]]))
+            parts.append(f'<a href="#subsystem-{escape(sub["id"])}"><g class="node {escape(cls)}"><title>{escape(_display_title(state, "subsystem", sub["id"], sub["name"]))}</title><rect x="{x}" y="{y}" width="195" height="{node_height}"></rect>{name}<text class="meta" x="{x+14}" y="{y+node_height-32}">{escape(meta)}</text><text class="meta" x="{x+14}" y="{y+node_height-15}">{escape(fresh)}</text></g></a>')
     edges = []
     for sub in state["subsystems"]:
         sx, sy = positions[sub["id"]]
@@ -1194,25 +1196,37 @@ def _architecture_svg(state: dict[str, Any]) -> str:
             if dep["id"] not in positions:
                 continue
             dx, dy = positions[dep["id"]]
-            x1, y1, x2, y2 = sx + 195, sy + 41, dx, dy + 41
+            x1, y1, x2, y2 = sx + 195, sy + node_height // 2, dx, dy + node_height // 2
             if x2 < x1:
-                x1, y1, x2, y2 = sx + 98, sy + 82, dx + 98, dy
+                x1, y1, x2, y2 = sx + 98, sy + node_height, dx + 98, dy
             mid = (x1 + x2) // 2
             edges.append(f'<path class="edge" d="M{x1},{y1} C{mid},{y1} {mid},{y2} {x2},{y2}" marker-end="url(#arrow)"></path>')
     return f'<svg viewBox="0 0 {width} {height}" role="img" aria-label="Subsystem dependency map"><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#3a5a73"></path></marker></defs>{"".join(edges)}{"".join(parts)}</svg>'
 
 
-def _finding_html(x: dict[str, Any], run_id: str, work: dict[str, Any] | None = None, observation: dict[str, Any] | None = None) -> str:
+def _kv(values: Sequence[tuple[str, object]]) -> str:
+    return "".join(f'<dt>{escape(label)}</dt><dd>{_list(value) if isinstance(value, list) else escape(str(value))}</dd>'
+                   for label, value in values if value)
+
+
+def _finding_links(ids: Sequence[str]) -> str:
+    return ", ".join(f'<a href="#finding-{escape(fid, quote=True)}">{escape(fid)}</a>' for fid in ids)
+
+
+def _finding_html(x: dict[str, Any], run_id: str, work: dict[str, Any] | None = None, observation: dict[str, Any] | None = None, title: str | None = None) -> str:
     extras = "".join(
         f"<dt>{escape(k.replace('_',' ').title())}</dt><dd>{escape(x[k])}</dd>"
         for k in ("severity","scenario","missing_evidence","boundary_reason","reentry","protected_constraint","ceiling","revisit_trigger")
         if k in x
     )
-    search = " ".join([x["title"], x["kind"], x["primary_class"], x["impact"], x["direction"], *x["affected_scope"]])
+    title = title or x["title"]
+    search = " ".join([title, x["title"], x["kind"], x["primary_class"], x["impact"], x["direction"], *x["affected_scope"]])
+    details = _kv([("Causal owner", x["causal_owner"]), ("Affected", ", ".join(x["affected_scope"])), ("Direction", x["direction"]), ("Confidence", x["confidence"])])
+    evidence = _kv([("Expectation", x["expectation"]), ("Locations", x["locations"]), ("Evidence", x["evidence"]), ("Proof", x["proof"])]) + extras
     freshness = observation["freshness"] if observation else "fresh"
     command = f"$audit-codebase inspect finding {x['id']} in atlas run {run_id}"
     warning = '<p class="stale-warning">Finding evidence or affected ownership changed. Inspect changed inputs before reusing this judgment.</p>' if freshness == "changed" else ""
-    return f'''<article class="card finding {escape(x["kind"].replace(" ","-"))}" data-filter-card data-state="{escape(x["kind"])}" data-freshness="{escape(freshness)}" data-work-status="{escape(work['status']) if work else ''}" data-outstanding="{str(_outstanding(work)).lower() if work else 'false'}" data-search="{escape(search,quote=True)}" id="finding-{escape(x["id"])}"><h3>{escape(x["title"])}</h3><div class="badges">{_badge(x["kind"])}{_badge(x["primary_class"])}{_badge(freshness, 'Finding inputs ' + freshness)}{_work_badges(work) if work else ""}</div>{warning}<p>{escape(x["impact"])}</p><dl class="kv"><dt>Causal owner</dt><dd>{escape(x["causal_owner"])}</dd><dt>Affected</dt><dd>{escape(", ".join(x["affected_scope"]))}</dd><dt>Direction</dt><dd>{escape(x["direction"])}</dd><dt>Confidence</dt><dd>{escape(x["confidence"])}</dd></dl><details class="evidence"><summary>Evidence and proof</summary><dl class="kv"><dt>Expectation</dt><dd>{escape(x["expectation"]) or '<span class="muted">None</span>'}</dd><dt>Locations</dt><dd>{_list(x["locations"])}</dd><dt>Evidence</dt><dd>{_list(x["evidence"])}</dd><dt>Proof</dt><dd>{_list(x["proof"])}</dd>{extras}</dl></details><div class="command"><button class="copy" data-copy="{escape(command, quote=True)}">Copy inspect command</button></div></article>'''
+    return f'''<article class="card finding {escape(x["kind"].replace(" ","-"))}" data-filter-card data-state="{escape(x["kind"])}" data-freshness="{escape(freshness)}" data-work-status="{escape(work['status']) if work else ''}" data-outstanding="{str(_outstanding(work)).lower() if work else 'false'}" data-search="{escape(search,quote=True)}" id="finding-{escape(x["id"])}"><h3>{escape(title)}</h3><div class="badges">{_badge(x["kind"])}{_badge(x["primary_class"])}{_badge(freshness, 'Finding inputs ' + freshness)}{_work_badges(work) if work else ""}</div>{warning}<p>{escape(x["impact"])}</p><dl class="kv">{details}</dl><details class="evidence"><summary>Evidence and proof</summary><dl class="kv">{evidence}</dl></details><div class="command"><button class="copy" data-copy="{escape(command, quote=True)}">Copy inspect command</button></div></article>'''
 
 
 def _diagram_svg(diagram: dict[str, Any], label: str, marker: str) -> str:
@@ -1304,12 +1318,13 @@ def _candidate_commands(x: dict[str, Any], run_id: str, freshness: str, work: di
     return command, next_action
 
 
-def _candidate_html(x: dict[str, Any], run_id: str, freshness: str, audit_id: str, audit_freshness: str, work: dict[str, Any]) -> str:
+def _candidate_html(x: dict[str, Any], run_id: str, freshness: str, audit_id: str, audit_freshness: str, work: dict[str, Any], title: str | None = None) -> str:
     analysis = x.get("analysis")
     changed = freshness == "changed"
     audit_changed = audit_freshness == "changed"
     freshness_cause = "audit" if audit_changed else "analysis" if changed else "none"
-    search = " ".join([x["title"], x["primary_class"], x["strength"], x["problem"], x["direction"], *x["affected_scope"]])
+    title = title or x["title"]
+    search = " ".join([title, x["title"], x["primary_class"], x["strength"], x["problem"], x["direction"], *x["affected_scope"]])
     analysis_html = ""
     if analysis:
         options = "".join(
@@ -1340,30 +1355,30 @@ def _candidate_html(x: dict[str, Any], run_id: str, freshness: str, audit_id: st
     comparison = (analysis or {}).get("comparison") or x.get("comparison")
     visual = _comparison_html(comparison, x["id"]) if comparison else ""
     state_badge = _badge("changed", f'{x["state"]} (prior)') if changed else _badge(x["state"])
+    problem = f'<div><h4>Additional context</h4><p>{escape(x["problem"])}</p></div>' if x["problem"] else ""
+    details = _kv([("Affects", ", ".join(x["affected_scope"])), ("Risks", x["risks"]), ("Required proof", x["required_proof"])])
+    evidence = f'<details class="evidence"><summary>Additional evidence</summary>{_list(x["evidence"])}</details>' if x["evidence"] else ""
     return f'''<article class="card candidate" data-filter-card data-state="{escape(x["state"])}"
 data-freshness="{freshness}" data-freshness-cause="{freshness_cause}" data-work-status="{escape(work['status'])}" data-outstanding="{str(_outstanding(work)).lower()}" data-search="{escape(search, quote=True)}" id="candidate-{escape(x["id"])}">
-<div class="strength">{_badge(x["strength"], x["strength"].title())}</div><h3>{escape(x["title"])}</h3>
+<div class="candidate-heading"><h3>{escape(title)}</h3><div class="strength">{_badge(x["strength"], x["strength"].title())}</div></div>
 <div class="badges">{state_badge}{_badge(x["primary_class"])}{freshness_badge}{_work_badges(work)}</div>{warning}
-<div class="compare"><div><h4>Current problem</h4><p>{escape(x["problem"])}</p></div>
+<p>Based on findings: {_finding_links(x["finding_ids"])}</p><div class="compare candidate-direction">{problem}
 <div><h4>Direction</h4><p>{escape(x["direction"])}</p><p class="muted">{escape(x["benefit"])}</p></div></div>
-{visual}<dl class="kv"><dt>Affects</dt><dd>{escape(", ".join(x["affected_scope"]))}</dd>
-<dt>Findings</dt><dd>{escape(", ".join(x["finding_ids"]))}</dd><dt>Risks</dt><dd>{_list(x["risks"])}</dd>
-<dt>Required proof</dt><dd>{_list(x["required_proof"])}</dd></dl>
-<details class="evidence"><summary>Evidence</summary>{_list(x["evidence"])}</details>{analysis_html}
+{visual}<dl class="kv">{details}</dl>{evidence}{analysis_html}
 <div class="command"><button class="copy" data-copy="{escape(command, quote=True)}">{command_label}</button>{next_button}</div></article>'''
 
 
 def _coverage_counts(state: dict[str, Any]) -> dict[str, dict[str, int]]:
     coverage = {}
     for lens in _LENSES:
-        counts = {name: 0 for name in ("complete", "not applicable", "evidence gap", "changed", "not audited")}
+        counts = {name: 0 for name in ("complete", "not applicable", "evidence gap", "not inspected", "changed", "not audited")}
         for sub in state["subsystems"]:
             if "audit" not in sub:
                 status = "not audited"
             elif state["freshness"][sub["id"]] == "changed":
                 status = "changed"
             else:
-                status = next(row["state"] for row in sub["audit"]["lenses"] if row["class"] == lens)
+                status = next((row["state"] for row in sub["audit"]["lenses"] if row["class"] == lens), "not inspected")
             counts[status] += 1
         coverage[lens] = counts
     return coverage
@@ -1436,7 +1451,7 @@ def _maintenance_html(state: dict[str, Any]) -> str:
             anchor = f' id="outcome-{escape(event["id"])}"' if event["target"] == target else ""
             origin = "" if anchor else f'<p class="muted"><a href="#outcome-{escape(event["id"])}">Recorded for {escape(event["target"]["kind"])} <code>{escape(event["target"]["id"])}</code></a></p>'
             events.append(f'<li{anchor}><strong>{escape(event["type"])}</strong>: {escape(event["summary"])}{origin}{_list(event["evidence"])}<code>{escape(reference)}</code>' + (f'<p class="muted">Observed source <code>{escape(basis)}</code> · {escape(state["outcome_freshness"][event["id"]])}</p>' if basis else "") + '</li>')
-        cards.append(f'<article class="card" id="work-{kind}-{escape(identifier)}" data-filter-card data-state="outcome" data-work-status="{escape(work["status"])}" data-outstanding="{str(_outstanding(work)).lower()}" data-search="{escape(identifier + " " + entry["record"]["title"], quote=True)}"><h3>{escape(entry["record"]["title"])}</h3><p>{kind} <code>{escape(identifier)}</code></p><div class="badges">{_work_badges(work)}</div><details><summary>Outcome evidence</summary><ul class="compact">{"".join(events)}</ul></details></article>')
+        cards.append(f'<article class="card" id="work-{kind}-{escape(identifier)}" data-filter-card data-state="outcome" data-work-status="{escape(work["status"])}" data-outstanding="{str(_outstanding(work)).lower()}" data-search="{escape(identifier + " " + entry["record"]["title"] + " " + _display_title(state, kind, identifier, entry["record"]["title"]), quote=True)}"><h3>{escape(_display_title(state, kind, identifier, entry["record"]["title"]))}</h3><p>{kind} <code>{escape(identifier)}</code></p><div class="badges">{_work_badges(work)}</div><details><summary>Outcome evidence</summary><ul class="compact">{"".join(events)}</ul></details></article>')
     preview = "".join(f'<li>{escape(record["environment"])} / {escape(record["capability"])}: {escape(record["state"])} — {escape(record["reason"])}' + (f'<p>Visually checked report revision <code>{escape(record["report_sha256"])}</code></p>' if record["state"] == "verified" else "") + '</li>' for record in state["preview"])
     archived = []
     for kind, catalog in (("candidate", candidates), ("finding", findings)):
@@ -1445,7 +1460,7 @@ def _maintenance_html(state: dict[str, Any]) -> str:
                 continue
             work = _work_status(state, {"kind": kind, "id": identifier})
             command = f"$audit-codebase inspect {kind} {identifier} in atlas run {state['run_id']}"
-            archived.append(f'<article class="card" id="{kind}-{escape(identifier)}" data-filter-card data-state="historical" data-work-status="{escape(work["status"])}" data-outstanding="{str(_outstanding(work)).lower()}" data-search="{escape(identifier + " " + entry["record"]["title"], quote=True)}"><h3>{escape(entry["record"]["title"])}</h3><p>Historical {kind} <code>{escape(identifier)}</code> · Original owner <code>{escape(entry["origin"])}</code></p>{_work_badges(work)}<div class="command"><button class="copy" data-copy="{escape(command, quote=True)}">Copy inspect command</button></div></article>')
+            archived.append(f'<article class="card" id="{kind}-{escape(identifier)}" data-filter-card data-state="historical" data-work-status="{escape(work["status"])}" data-outstanding="{str(_outstanding(work)).lower()}" data-search="{escape(identifier + " " + entry["record"]["title"] + " " + _display_title(state, kind, identifier, entry["record"]["title"]), quote=True)}"><h3>{escape(_display_title(state, kind, identifier, entry["record"]["title"]))}</h3><p>Historical {kind} <code>{escape(identifier)}</code> · Original owner <code>{escape(entry["origin"])}</code></p>{_work_badges(work)}<div class="command"><button class="copy" data-copy="{escape(command, quote=True)}">Copy inspect command</button></div></article>')
     history = '<details class="panel"><summary>Historical candidates and findings</summary><div class="grid">' + "".join(archived) + '</div></details>' if archived else ""
     return '<section class="section" id="outcomes"><div class="section-head"><div><h2>Work outcomes and delivery</h2><p>Audit evidence, fix verification, and delivery are separate records. Source changes call for inspection of affected conclusions.</p></div></div>' + "".join(warnings) + '<div class="grid">' + ("".join(cards) or '<div class="panel muted">No work outcomes recorded.</div>') + '</div>' + history + '<details class="panel"><summary>Preview capability and visual verification</summary>' + (_list([]) if not preview else '<ul class="compact">' + preview + '</ul>') + '<p>Static report checks do not establish visual verification.</p></details></section>'
 
@@ -1464,7 +1479,7 @@ def _render(state: dict[str, Any]) -> bytes:
     gap_count = sum(1 for sub in audited if state["freshness"][sub["id"]] == "fresh" for lens in sub["audit"]["lenses"] if lens["state"] == "evidence gap")
     current_audits = sum(state["freshness"][sub["id"]] == "fresh" for sub in audited)
     changed_candidates = sum(value == "changed" for value in state["candidate_freshness"].values())
-    metrics = [("Subsystems",len(subsystems)),("Current audits",current_audits),("Not audited",len(subsystems)-len(audited)),("Changed subsystems",len(changed)),("Findings",len(findings)),("Candidates",len(candidates)),("Changed candidates",changed_candidates)]
+    metrics = [("Subsystems",len(subsystems)),("Current audits",current_audits),("Not audited",len(subsystems)-len(audited)),("Changed subsystems",len(changed)),*[(label, sum(x["kind"] == kind for x in findings)) for kind,label in (("defect","Defects"),("opportunity","Opportunities"),("retained complexity","Retained complexity"),("gap","Finding gaps"))],("Candidates",len(candidates)),("Changed candidates",changed_candidates)]
     summary = _summary(state)
     metrics += [("Previously audited", len(audited)), ("Outstanding candidates", summary["outstanding_candidates"]), ("Fixes verified", summary["verified_candidates"]), ("Deferred candidates", summary["deferred_candidates"]), ("Delivery pending", summary["delivery_pending"])]
     metric_html = "".join(f'<div class="metric"><strong>{v}</strong><span>{escape(k)}</span></div>' for k,v in metrics)
@@ -1477,22 +1492,26 @@ def _render(state: dict[str, Any]) -> bytes:
         fc=(len(audit["findings"]) if audit else 0)+systemic_count
         cc=len(audit["candidates"]) if audit else 0
         fresh=state["freshness"].get(sub["id"],"fresh"); deps=[d["id"] for d in sub["dependencies"]]
-        search=" ".join([sub["name"],sub["purpose"],sub["ownership"],sub["system_id"],*deps])
+        search=" ".join([_display_title(state, "subsystem", sub["id"], sub["name"]),sub["name"],sub["purpose"],sub["ownership"],sub["system_id"],*deps])
         command=f"$audit-codebase audit subsystem {sub['id']} in atlas run {state['run_id']}"
         dep_detail="".join(f'<li><a href="#subsystem-{escape(d["id"])}">{escape(d["id"])}</a>: {escape("; ".join(d["evidence"]))}</li>' for d in sub["dependencies"]) or '<li class="muted">None recorded</li>'
-        cards[sub["id"]]=f'''<article class="card" id="subsystem-{escape(sub["id"])}" data-filter-card data-state="{escape(sub["state"])}" data-freshness="{fresh}" data-search="{escape(search,quote=True)}"><h3>{escape(sub["name"])}</h3><div class="badges">{_badge(sub["state"])}{_badge("changed" if fresh=="changed" else "fresh","Source changed" if fresh=="changed" else "Source fresh")}{_badge(sub["system_id"])}</div><p>{escape(sub["purpose"])}</p><dl class="kv"><dt>Ownership</dt><dd>{escape(sub["ownership"])}</dd><dt>Dependencies</dt><dd>{escape(", ".join(deps)) if deps else '<span class="muted">None</span>'}</dd><dt>Audit result</dt><dd>{fc} findings · {cc} candidates</dd></dl><details class="evidence"><summary>Architecture evidence</summary><dl class="kv"><dt>Authority</dt><dd>{_list(sub["authority"])}</dd><dt>Callers</dt><dd>{_list(sub["callers"])}</dd><dt>Dependencies</dt><dd><ul class="compact">{dep_detail}</ul></dd><dt>Interfaces</dt><dd>{_list(sub["interfaces"])}</dd><dt>Proof seams</dt><dd>{_list(sub["proof_seams"])}</dd><dt>Owned paths</dt><dd>{_list(sub["owned_paths"])}</dd><dt>Exclusions</dt><dd>{_list(sub["exclusions"])}</dd></dl></details><div class="command"><button class="copy" data-copy="{escape(command,quote=True)}">Copy audit command</button></div></article>'''
+        cards[sub["id"]]=f'''<article class="card" id="subsystem-{escape(sub["id"])}" data-filter-card data-state="{escape(sub["state"])}" data-freshness="{fresh}" data-search="{escape(search,quote=True)}"><h3>{escape(_display_title(state, "subsystem", sub["id"], sub["name"]))}</h3><div class="badges">{_badge(sub["state"])}{_badge("changed" if fresh=="changed" else "fresh","Source changed" if fresh=="changed" else "Source fresh")}{_badge(sub["system_id"])}</div><p>{escape(sub["purpose"])}</p><dl class="kv"><dt>Ownership</dt><dd>{escape(sub["ownership"])}</dd><dt>Dependencies</dt><dd>{escape(", ".join(deps)) if deps else '<span class="muted">None</span>'}</dd><dt>Audit result</dt><dd>{fc} findings · {cc} candidates</dd></dl><details class="evidence"><summary>Architecture evidence</summary><dl class="kv"><dt>Authority</dt><dd>{_list(sub["authority"])}</dd><dt>Callers</dt><dd>{_list(sub["callers"])}</dd><dt>Dependencies</dt><dd><ul class="compact">{dep_detail}</ul></dd><dt>Interfaces</dt><dd>{_list(sub["interfaces"])}</dd><dt>Proof seams</dt><dd>{_list(sub["proof_seams"])}</dd><dt>Owned paths</dt><dd>{_list(sub["owned_paths"])}</dd><dt>Exclusions</dt><dd>{_list(sub["exclusions"])}</dd></dl></details><div class="command"><button class="copy" data-copy="{escape(command,quote=True)}">Copy audit command</button></div></article>'''
         if audit:
             trace=audit["source_trace"]
-            lens_html="".join(f'<tr><td>{escape(row["class"])}</td><td>{_badge(row["state"])}</td><td>{escape(row["reason"])}</td><td>{_list(row["evidence"])}</td></tr>' for row in audit["lenses"])
-            audits.append(f'''<article class="panel" id="audit-{escape(sub["id"])}"><div class="section-head"><div><h2>{escape(sub["name"])}</h2><p>{escape(trace["summary"])}</p></div><div class="badges">{_badge("audited", "Previously audited")}{_badge(fresh,"Audit source "+fresh)}{_badge("evidence-gap",f"{sum(1 for x in audit['lenses'] if x['state']=='evidence gap')} gaps")}</div></div><div class="table-scroll"><table class="lens-table"><thead><tr><th>Lens</th><th>Coverage</th><th>Reason</th><th>Evidence</th></tr></thead><tbody>{lens_html}</tbody></table></div><details class="evidence"><summary>Source trace</summary><dl class="kv"><dt>Entry points</dt><dd>{_list(trace["entry_points"])}</dd><dt>Callers</dt><dd>{_list(trace["callers"])}</dd><dt>Dependencies</dt><dd>{_list(trace["dependencies"])}</dd><dt>Interfaces</dt><dd>{_list(trace["interfaces"])}</dd><dt>Proof seams</dt><dd>{_list(trace["proof_seams"])}</dd><dt>Representative flows</dt><dd>{_list(trace["representative_flows"])}</dd><dt>History signals</dt><dd>{_list(trace["history_signals"])}</dd><dt>Evidence limits</dt><dd>{escape(audit["evidence_limits"]) or '<span class="muted">None</span>'}</dd></dl></details><p><strong>Audit recommendation:</strong> {escape(audit["recommendation"])}</p></article>''')
+            lens_html="".join(f'<tr><td>{escape(row["class"])}</td><td>{_badge(row["state"])}</td><td>{escape(row["reason"])}</td><td>{_list(row["evidence"]) if row["evidence"] else ""}{_finding_links(row["finding_ids"])}</td></tr>' for row in audit["lenses"])
+            trace_detail = _kv([(key.replace("_", " ").title(), value) for key, value in trace.items() if key != "summary"] + [("Evidence limits", audit["evidence_limits"])])
+            table = f'<div class="table-scroll"><table class="lens-table"><thead><tr><th>Lens</th><th>Coverage</th><th>Reason</th><th>Evidence</th></tr></thead><tbody>{lens_html}</tbody></table></div>' if lens_html else ""
+            detail = f'<details class="evidence"><summary>Source trace</summary><dl class="kv">{trace_detail}</dl></details>' if trace_detail else ""
+            recommendation = f'<p><strong>Audit recommendation:</strong> {escape(audit["recommendation"])}</p>' if audit["recommendation"] else ""
+            audits.append(f'''<article class="panel" id="audit-{escape(sub["id"])}"><div class="section-head"><div><h2>{escape(_display_title(state, "subsystem", sub["id"], sub["name"]))}</h2><p>{escape(trace["summary"])}</p></div><div class="badges">{_badge("audited", "Previously audited")}{_badge(fresh,"Audit source "+fresh)}</div></div>{table}{detail}{recommendation}</article>''')
     systems_index="".join(f'<section id="system-{escape(system["id"])}"><h3>{escape(system["name"])}</h3><div class="grid">{"".join(cards[sub["id"]] for sub in subsystems if sub["system_id"]==system["id"])}</div></section>' for system in state["systems"])
     candidates=sorted(candidates,key=lambda x:({"strong":0,"worth exploring":1,"speculative":2}[x["strength"]],x["title"]))
     candidate_html="".join(
-        _candidate_html(x, state["run_id"], state["candidate_freshness"][x["id"]], candidate_owners[x["id"]], state["freshness"][candidate_owners[x["id"]]], _work_status(state, {"kind": "candidate", "id": x["id"]}))
+        _candidate_html(x, state["run_id"], state["candidate_freshness"][x["id"]], candidate_owners[x["id"]], state["freshness"][candidate_owners[x["id"]]], _work_status(state, {"kind": "candidate", "id": x["id"]}), _display_title(state, "candidate", x["id"], x["title"]))
         for x in candidates
     )
     finding_html="".join(_finding_html(x, state["run_id"], _work_status(state, {"kind": "finding", "id": x["id"]}),
-                                     _finding_scope_observation(state, finding_catalog[x["id"]], state["source_changes"][finding_catalog[x["id"]]["origin"]], revisions)) for x in findings)
+                                     _finding_scope_observation(state, finding_catalog[x["id"]], state["source_changes"][finding_catalog[x["id"]]["origin"]], revisions), _display_title(state, "finding", x["id"], x["title"])) for x in findings)
     excluded="".join(f'<li><code>{escape(x["path"])}</code>: {escape(x["reason"])}</li>' for x in state["excluded"]) or '<li class="muted">None</li>'
     history="".join(f'<li>{escape(x["operation"])} · {escape(x["selection"])}<details data-history-index="{index}"><summary>Stored record</summary><pre class="history-record"></pre></details></li>' for index, x in enumerate(state["history"]))
     maintenance = _maintenance_html(state)
@@ -1540,7 +1559,7 @@ def _validate_state(state: dict[str, Any]) -> None:
         raise ReportError("freshness must cover every candidate")
     if any(value not in {"fresh", "changed"} for value in candidate_freshness.values()):
         raise ReportError("invalid candidate freshness")
-    required = {"retired_subsystems", "outcomes", "delivery_requirements", "preview", "map_inventory", "map_drift", "source_changes", "candidate_source_changes", "outcome_freshness", "outcome_source_changes"}
+    required = {"retired_subsystems", "outcomes", "delivery_requirements", "preview", "presentation", "map_inventory", "map_drift", "source_changes", "candidate_source_changes", "outcome_freshness", "outcome_source_changes"}
     if required - set(state):
         raise ReportError("report is missing maintained workbench records")
     for name in ("retired_subsystems", "outcomes", "delivery_requirements", "preview", "history"):
@@ -1575,7 +1594,10 @@ def _validate_state(state: dict[str, Any]) -> None:
             packet = {key: audit[key] for key in ("source_identity", "source_trace", "lenses", "findings", "coverage", "evidence_limits", "recommendation")}
             packet.update(version=MANIFEST_VERSION, expected_report_sha256="0" * 64, subsystem_id=sub["id"], systemic_findings=[{key: value for key, value in item.items() if key != "origin_subsystem_id"} for item in state["systemic_findings"] if item["origin_subsystem_id"] == sub["id"]])
             packet["candidates"] = [{key: value for key, value in candidate.items() if key not in {"analysis", "state"}} for candidate in audit["candidates"]]
-            _audit(packet)
+            normalized_audit = _audit(packet)
+            normalized_scopes = {candidate["id"]: candidate["affected_scope"] for candidate in normalized_audit["candidates"]}
+            if any(set(candidate["affected_scope"]) != set(normalized_scopes[candidate["id"]]) for candidate in audit["candidates"]):
+                raise ReportError("stored candidate scope omits linked finding scope")
             _source_packet(audit["source_identity"], "stored audit source")
             if any(set(finding["affected_scope"]) - known for finding in audit["findings"]):
                 raise ReportError("finding names an unknown affected subsystem")
@@ -1611,6 +1633,7 @@ def _validate_state(state: dict[str, Any]) -> None:
         raise ReportError("duplicate delivery requirements")
     for record in state["preview"]:
         _preview_record(record, stored=True)
+    _validate_presentation(state)
     preview_keys = [(record["environment"], record["capability"]) for record in state["preview"]]
     if len(preview_keys) != len(set(preview_keys)):
         raise ReportError("duplicate preview capability records")
@@ -1776,9 +1799,12 @@ def _load(root: Path, report: Path) -> tuple[bytes, dict[str, Any]]:
 def _prepare(
     objective: str, root: Path, report: Path, manifest: Path
 ) -> dict[str, Any]:
+    return _prepare_raw(objective, root, report, _json(manifest, f"{objective} manifest"))
+
+
+def _prepare_raw(objective: str, root: Path, report: Path, raw: dict[str, Any]) -> dict[str, Any]:
     root = root.resolve()
     path = _report_path(root, report, exists=objective != "render-report")
-    raw = _json(manifest, f"{objective} manifest")
     if objective == "render-report":
         if path.exists():
             raise ReportError("render-report refuses existing report")
@@ -1786,7 +1812,7 @@ def _prepare(
         state["run_id"] = path.parent.name
         _refresh_observation(state, root)
         prior = "absent"
-    elif objective in {"reconcile-map", "record-outcome", "record-preview"}:
+    elif objective in {"reconcile-map", "record-outcome", "record-preview", "edit-presentation"}:
         data, state = _load(root, path)
         prior = _digest(data)
         if raw.get("version") != MANIFEST_VERSION or raw.get("expected_report_sha256") != prior:
@@ -1796,6 +1822,21 @@ def _prepare(
             state = _reconcile(raw, state, root)
         elif objective == "record-outcome":
             state = _record_outcomes(raw, state, root)
+        elif objective == "edit-presentation":
+            _strict(raw, {"version", "expected_report_sha256", "kind", "id", "title"}, set(), "presentation edit")
+            kind, identifier = raw["kind"], raw["id"]
+            _presentation_target(state, kind, identifier)
+            title = _text(raw["title"], "display title") if raw["title"] is not None else None
+            labels = state["presentation"].get(kind, {})
+            previous = labels.get(identifier)
+            if title == previous:
+                return {"path": path, "prior": prior, "rendered": data, "report_sha256": prior, "state_sha256": _digest(_canonical(state)), "unchanged": True}
+            if title is None:
+                labels.pop(identifier, None)
+            else:
+                state["presentation"][kind] = labels
+                labels[identifier] = title
+            state["history"].append({"operation": "presentation", "selection": identifier, "kind": kind, "before": previous, "after": title})
         else:
             _strict(raw, {"version", "expected_report_sha256", "preview"}, set(), "preview manifest")
             record = _preview_record(raw["preview"])
@@ -1936,6 +1977,10 @@ def mutate_report(
     validate_only: bool = False,
 ) -> dict[str, Any]:
     p = _prepare(objective, repo_root, report, manifest)
+    return _finish_mutation(p, objective, repo_root, validate_only)
+
+
+def _finish_mutation(p: dict[str, Any], objective: str, repo_root: Path, validate_only: bool) -> dict[str, Any]:
     result = {
         "response_version": RESPONSE_VERSION,
         "objective": objective,
@@ -1951,6 +1996,93 @@ def mutate_report(
         return result
     _publish_prepared(p, repo_root)
     result["published"] = True
+    return result
+
+
+def prepare_audit(*, repo_root: Path, report: Path, subsystem: str,
+                  affected_subsystems: Sequence[str] = (), paths: Sequence[str] = (),
+                  output: Path | None = None) -> dict[str, Any]:
+    """Prepare mechanics before investigation; never replace an agent's judgments."""
+    root = repo_root.resolve()
+    report_path = _report_path(root, report, exists=True)
+    data, state = _load(root, report_path)
+    subsystem = _id(subsystem, "subsystem id")
+    selected = {subsystem, *(_id(sid, "affected subsystem id") for sid in affected_subsystems)}
+    subs = {sub["id"]: sub for sub in state["subsystems"]}
+    if selected - set(subs):
+        raise ReportError("prepare-audit names an unknown or retired subsystem")
+    bound = sorted({p for sid in selected for p in subs[sid]["owned_paths"]} | {_rel(p, "source path") for p in paths})
+    snapshot = source_identity(repo_root=root, paths=bound)
+    packet = {"version": MANIFEST_VERSION, "expected_report_sha256": _digest(data),
+              "subsystem_id": subsystem, "source_identity": {key: snapshot[key] for key in ("paths", "sha256", "fingerprints")},
+              "source_trace": {"summary": ""}, "lenses": [], "findings": [], "candidates": []}
+    destination = output or report_path.with_name(f"audit-{subsystem}.json")
+    if not destination.is_absolute():
+        destination = (report_path.parent if len(destination.parts) == 1 else root) / destination
+    destination = destination.resolve()
+    if destination.parent != report_path.parent or destination.suffix != ".json":
+        raise ReportError("audit packet must be a JSON file in the report directory")
+    try:
+        with destination.open("x", encoding="utf-8", newline="\n") as stream:
+            json.dump(packet, stream, ensure_ascii=False, indent=2)
+            stream.write("\n")
+    except FileExistsError as exc:
+        raise ReportError("audit packet already exists; choose another output to preserve its judgments") from exc
+    return {"response_version": RESPONSE_VERSION, "prepared": True, "published": False,
+            "packet": str(destination), "subsystem_id": subsystem, "report_sha256": _digest(data), "source_paths": bound}
+
+
+def _presentation_target(state: dict[str, Any], kind: object, identifier: object) -> None:
+    kind = _text(kind, "presentation kind")
+    identifier = _id(identifier, "presentation id")
+    if kind == "subsystem":
+        ids = {sub["id"] for sub in state["subsystems"] + state["retired_subsystems"]}
+    elif kind in {"candidate", "finding"}:
+        ids = set(_catalog(state)[0 if kind == "candidate" else 1])
+    else:
+        raise ReportError("presentation kind must be subsystem, candidate, or finding")
+    if identifier not in ids:
+        raise ReportError("presentation edit names an unknown id")
+
+
+def _validate_presentation(state: dict[str, Any]) -> None:
+    presentation = _obj(state["presentation"], "presentation labels")
+    if set(presentation) - {"subsystem", "candidate", "finding"}:
+        raise ReportError("unknown presentation kind")
+    for record in state["history"]:
+        if record.get("operation") == "presentation":
+            _strict(record, {"operation", "selection", "kind", "before", "after"}, set(), "presentation history")
+            _presentation_target(state, record["kind"], record["selection"])
+            for key in ("before", "after"):
+                if record[key] is not None:
+                    _text(record[key], "presentation history title")
+    for kind, entries in presentation.items():
+        for identifier, title in _obj(entries, "presentation entries").items():
+            _presentation_target(state, kind, identifier)
+            _text(title, "display title")
+
+
+def _display_title(state: dict[str, Any], kind: str, identifier: str, original: str) -> str:
+    return state["presentation"].get(kind, {}).get(identifier, original)
+
+
+def edit_presentation(*, repo_root: Path, report: Path, kind: str, identifier: str,
+                      title: str | None, validate_only: bool = False) -> dict[str, Any]:
+    data, _ = _load(repo_root.resolve(), report)
+    raw = {"version": MANIFEST_VERSION, "expected_report_sha256": _digest(data), "kind": kind, "id": identifier, "title": title}
+    return _finish_mutation(_prepare_raw("edit-presentation", repo_root, report, raw), "edit-presentation", repo_root, validate_only)
+
+
+def record_preview(*, repo_root: Path, report: Path, environment: str, capability: str,
+                   state: str, reason: str, evidence: Sequence[str], viewed_report_sha256: str | None = None,
+                   validate_only: bool = False) -> dict[str, Any]:
+    data, _ = _load(repo_root.resolve(), report)
+    preview = {"environment": environment, "capability": capability, "state": state, "reason": reason, "evidence": list(evidence)}
+    if viewed_report_sha256 is not None:
+        preview["report_sha256"] = viewed_report_sha256
+    raw = {"version": MANIFEST_VERSION, "expected_report_sha256": _digest(data), "preview": preview}
+    result = _finish_mutation(_prepare_raw("record-preview", repo_root, report, raw), "record-preview", repo_root, validate_only)
+    result["preview_state"] = state
     return result
 
 
@@ -2018,6 +2150,7 @@ def _summary(state: dict[str, Any]) -> dict[str, Any]:
         "outstanding_findings": sum(_outstanding(work) for work in finding_works),
         "verified_findings": sum(work["status"] == "verified" for work in finding_works),
         "delivery_pending": sum(work["commit_pending"] or bool(work["deployment_pending"]) for work in deliveries),
+        "finding_counts": {kind: sum(not item["historical"] and item["record"]["kind"] == kind for item in findings.values()) for kind in ("defect", "opportunity", "retained complexity", "gap")},
         "coverage": _coverage_counts(state),
     }
 
@@ -2125,7 +2258,12 @@ def _inspection_history(state: dict[str, Any], rows: list[dict[str, Any]], *, su
             affected_owners = {sid for sid in before.keys() | after.keys() if before.get(sid) != after.get(sid)}
         reconciliation = stored["operation"] == "reconcile" and (
             bool(affected_owners & owners) or any(path_matches(change["path"]) for change in stored["ownership_changes"]))
-        if filtered and stored["selection"] not in identifiers and not related & identifiers and not reconciliation:
+        presentation = stored["operation"] == "presentation"
+        selected_label = presentation and ((stored["kind"], stored["selection"]) in targets or
+                                            stored["kind"] == "subsystem" and stored["selection"] in owners)
+        if filtered and presentation and not selected_label:
+            continue
+        if filtered and stored["selection"] not in identifiers and not related & identifiers and not reconciliation and not selected_label:
             continue
         entry = dict(stored)
         if filtered and detail:
@@ -2168,7 +2306,7 @@ def _subsystem_inspection(state: dict[str, Any], sub: dict[str, Any], root: Path
         owners = {sub["id"]} | _current_scope(state, [sub["id"]])
         observed = _structure_observation(_packet_observation(root, packet), sorted(owners), since, revisions)
     changed = observed["changed_paths"]
-    return {"subsystem_id": sub["id"], "name": sub["name"], "state": sub["state"], "historical": historical,
+    return {"subsystem_id": sub["id"], "name": sub["name"], "display_name": _display_title(state, "subsystem", sub["id"], sub["name"]), "state": sub["state"], "historical": historical,
             "source_sha256": packet["sha256"], "matching_paths": matching[:limit], "matching_paths_total": len(matching), "matching_paths_has_more": len(matching) > limit,
             "source_changes": {**observed, "changed_paths": changed[:limit], "changed_paths_total": len(changed), "changed_paths_has_more": len(changed) > limit}}
 
@@ -2230,7 +2368,7 @@ def inspect_report(*, repo_root: Path, report: Path, full: bool = False,
                 continue
             if outstanding and not _outstanding(work):
                 continue
-            row = {"target": target, "title": item["record"]["title"], "subsystem_id": item["origin"], "historical": item["historical"], "work": work}
+            row = {"target": target, "title": item["record"]["title"], "display_title": _display_title(state, kind, identifier, item["record"]["title"]), "subsystem_id": item["origin"], "historical": item["historical"], "work": work}
             observed_outcomes = [event for event in applicable_outcomes if event["id"] in state["outcome_source_changes"] and (not paths or any(bound_path == path or bound_path.startswith(path.rstrip("/") + "/") for path in paths for bound_path in set(event["source_identity"]["paths"]) | set(state["outcome_source_changes"][event["id"]]["changed_paths"])))]
             row["outcome_source_changes"] = {event["id"]: state["outcome_source_changes"][event["id"]] for event in observed_outcomes[:limit]}
             row.update(outcome_observations_total=len(observed_outcomes), outcome_observations_has_more=len(observed_outcomes) > limit)
@@ -2391,11 +2529,36 @@ def _parser() -> argparse.ArgumentParser:
     p = commands.add_parser("refresh")
     p.add_argument("--repo-root", type=Path, required=True)
     p.add_argument("--report", type=Path, required=True)
+    p = commands.add_parser("prepare-audit")
+    p.add_argument("--repo-root", type=Path, required=True)
+    p.add_argument("--report", type=Path, required=True)
+    p.add_argument("--subsystem", required=True)
+    p.add_argument("--affected-subsystem", action="append", default=[], dest="affected_subsystems")
+    p.add_argument("--path", action="append", default=[], dest="paths")
+    p.add_argument("--output", type=Path)
+    p = commands.add_parser("edit-presentation")
+    p.add_argument("--repo-root", type=Path, required=True)
+    p.add_argument("--report", type=Path, required=True)
+    p.add_argument("--kind", choices=("subsystem", "candidate", "finding"), required=True)
+    p.add_argument("--id", required=True)
+    label = p.add_mutually_exclusive_group(required=True)
+    label.add_argument("--title")
+    label.add_argument("--clear", action="store_true")
+    p.add_argument("--validate-only", action="store_true")
     for name in ("render-report", "audit-subsystem", "analyze-candidate", "reconcile-map", "record-outcome", "record-preview"):
         p = commands.add_parser(name)
         p.add_argument("--repo-root", type=Path, required=True)
         p.add_argument("--report", type=Path, required=True)
-        p.add_argument("--manifest", type=Path, required=True)
+        p.add_argument("--manifest", type=Path, required=name != "record-preview")
+        if name == "record-preview":
+            p.add_argument("--environment")
+            p.add_argument("--capability")
+            preview = p.add_mutually_exclusive_group()
+            preview.add_argument("--unavailable", action="store_true")
+            preview.add_argument("--verified", action="store_true")
+            p.add_argument("--reason")
+            p.add_argument("--evidence", action="append", default=[])
+            p.add_argument("--viewed-report-sha256")
         p.add_argument("--validate-only", action="store_true")
     return parser
 
@@ -2415,7 +2578,21 @@ def main(argv: Sequence[str] | None = None) -> int:
             result = check_report(repo_root=a.repo_root, report=a.report)
         elif a.command == "refresh":
             result = refresh_report(repo_root=a.repo_root, report=a.report)
+        elif a.command == "prepare-audit":
+            result = prepare_audit(repo_root=a.repo_root, report=a.report, subsystem=a.subsystem,
+                                   affected_subsystems=a.affected_subsystems, paths=a.paths, output=a.output)
+        elif a.command == "edit-presentation":
+            result = edit_presentation(repo_root=a.repo_root, report=a.report, kind=a.kind, identifier=a.id,
+                                       title=a.title, validate_only=a.validate_only)
+        elif a.command == "record-preview" and a.manifest is None:
+            if not (a.unavailable or a.verified):
+                raise ReportError("record-preview requires --manifest or --unavailable/--verified with observation fields")
+            result = record_preview(repo_root=a.repo_root, report=a.report, environment=a.environment, capability=a.capability,
+                                    state="verified" if a.verified else "unavailable", reason=a.reason, evidence=a.evidence,
+                                    viewed_report_sha256=a.viewed_report_sha256, validate_only=a.validate_only)
         else:
+            if a.command == "record-preview" and any((a.environment, a.capability, a.unavailable, a.verified, a.reason, a.evidence, a.viewed_report_sha256)):
+                raise ReportError("record-preview manifest and direct observation fields cannot be combined")
             result = mutate_report(
                 objective=a.command,
                 repo_root=a.repo_root,

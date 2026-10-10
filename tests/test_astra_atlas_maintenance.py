@@ -398,7 +398,7 @@ def test_retired_systemic_findings_stay_historical_in_all_live_counts(tmp_path: 
     html = report(tmp_path).read_text(encoding="utf-8")
     beta = re.search(r'<article[^>]*id="subsystem-beta".*?</article>', html, re.S).group()
     assert "0 findings · 0 candidates" in beta
-    assert '<strong>0</strong><span>Findings</span>' in html
+    assert '<strong>0</strong><span>Defects</span>' in html
     assert "systemic findings" not in atlas._architecture_svg(state(tmp_path))
     assert elements(html, "id", "finding-alpha-defect")
     assert atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), finding="alpha-defect")["rows"][0]["historical"]
@@ -426,7 +426,7 @@ def test_live_systemic_counts_resolve_retired_affected_owners(tmp_path: Path, ch
     assert "1 findings · 0 candidates" in card
     node = re.search(rf'<a href="#subsystem-{prior}".*?</a>', atlas._architecture_svg(current), re.S).group()
     assert "1 systemic findings" in node
-    assert '<strong>1</strong><span>Findings</span>' in html
+    assert '<strong>1</strong><span>Defects</span>' in html
     assert not atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), finding="alpha-defect")["rows"][0]["historical"]
     assert atlas.check_report(repo_root=tmp_path, report=report(tmp_path))["valid"]
 
@@ -1252,11 +1252,11 @@ def test_finding_inspection_preserves_originating_audit_proof(tmp_path: Path, ki
 
 def test_retained_current_format_history_uses_canonical_map_snapshots(tmp_path: Path) -> None:
     make_repo(tmp_path)
-    # Unchanged state captured from the initial independent supported-API probe.
-    # Its reconciliation predates the derived metadata; it is still format 4.
+    # Current-format fixture retains the original independent probe history.
+    # No runtime adapter or derived reconciliation metadata is required.
     fixture = Path(__file__).parent / "fixtures/astra_atlas/retained_history.json"
     original = json.loads(fixture.read_text(encoding="utf-8"))
-    assert original["state_version"] == atlas.STATE_VERSION == 4
+    assert original["state_version"] == atlas.STATE_VERSION == 5
     assert "affected_subsystems" not in original["history"][-1]
     report(tmp_path).parent.mkdir(parents=True)
     report(tmp_path).write_bytes(atlas._render(original))
