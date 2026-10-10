@@ -88,6 +88,11 @@ selection proceed within that authority. Coverage and source freshness support
 further selection; investigation, abstraction choices, simplification, and measured
 optimization remain matters of agent judgment. Explicit brief or no-write
 assessments can stay in chat.
+Resumed atlases reconcile ownership and retain original evidence while recording
+authorized fixes, verification, deferral, and requested delivery separately.
+Changed source calls for inspecting the relevant delta; it does not reopen every
+historical finding. Explicit combined analysis-and-fix requests continue through
+their authorized effects, with methods and sufficient proof left to agent judgment.
 Change-review judges a fixed change candidate. Verification-harness creates
 or improves reusable repository tooling for agents to exercise and verify real
 UI, command, and agent interfaces. It reduces repeated setup and fragile

@@ -5,9 +5,11 @@ continuing an existing current-format workbench. An explicitly requested brief o
 text-only assessment may stay in chat; a no-write assessment creates no report.
 
 The helper is [atlas.py](../scripts/atlas.py). Use its current `--help` and
-subcommand help for exact CLI syntax. The helper writes report/state format 3 and
-accepts manifest format 1. Start a new map for older reports; do not migrate or
-continue older report schemas.
+subcommand help for exact CLI syntax. The helper writes report/state format 4 and
+accepts manifest format 1. Only the current report format is supported; create a
+new map for an older report.
+Read [Atlas maintenance](maintenance.md) when resuming a report, reconciling
+structural changes, or recording authorized implementation and delivery.
 
 ## Purpose
 
@@ -20,6 +22,7 @@ the user answer, in order:
 4. What did an audit find?
 5. Which improvement candidates are selectable?
 6. What did deeper analysis conclude?
+7. Which fixes are verified, deferred, or awaiting requested delivery?
 
 Forensic evidence remains available behind drill-downs rather than dominating the
 first view.
@@ -43,6 +46,8 @@ The helper owns:
 - schema validation and relationship integrity;
 - candidate and finding IDs supplied by the manifest;
 - source freshness calculation;
+- structural reconciliation and preserved historical identities;
+- separate outcome and delivery records, compact inspection, and static checks;
 - canonical JSON embedding;
 - HTML escaping and deterministic rendering;
 - writer exclusion, atomic publication, and read-back.
@@ -135,7 +140,8 @@ raw HTML or scripts are not accepted. An analysis comparison refines an earlier
 candidate comparison when present. No diagram quota is required.
 
 Publish the analysis and continue only within the requested analysis scope.
-Analysis never creates tickets or starts implementation.
+Analysis alone never creates tickets or starts implementation. A combined request
+continues through its authorized effects and records the results separately.
 
 ## Visual contract
 
@@ -152,34 +158,47 @@ The rendered workbench should provide:
 - findings with expandable evidence;
 - candidates with current problem, direction, affected scope, qualitative
   strength, risk, required proof, and any completed analysis;
-- copyable explicit commands to Audit a subsystem or Analyze a candidate;
+- copyable explicit commands to Audit a subsystem, Analyze a candidate, or inspect
+  changed evidence and recorded outcomes;
+- implementation, verification, deferral, and requested delivery status;
 - provenance, exclusions, and history in lower-priority sections.
 
 Coverage accounts for all mapped subsystems, separating current completed and
 non-applicable lenses from evidence gaps, changed source, and unaudited scope.
 Candidate freshness follows both its originating audit and its analysis source
 packet, including evidence outside mapped ownership. Keep stale judgments visible
-as prior evidence; renew a stale audit and reanalyze before using its recommendation
-for the next action. Candidate warnings and copyable commands distinguish renewing
-the originating audit from reanalyzing stale analysis evidence.
+as prior evidence. Inspect changed paths, ownership, and recorded outcomes before
+deciding which conclusions need reassessment. A verified fix can change the source
+that supported the original diagnosis; it does not require repeating every
+historical audit. Renew affected evidence before reusing an unverified stale
+recommendation. Coverage freshness and fix verification remain separate.
 
 Open the report through the host's supported HTML preview and inspect the actual
 reading path, map links, filters, copyable selections, labels, and layout. Check
 that progress and freshness mean what the user sees. Report unavailable preview
 or clipboard capabilities without treating source or build checks as UI proof.
+Record an unavailable capability once per environment and reconsider when the host
+or capability changes. Repeated references to a limitation are not failed attempts.
 
-Local JavaScript may only navigate, filter, or copy text. It does not invoke
-commands or mutate state.
+Local JavaScript may navigate, filter, reveal retained history, or copy text. It
+does not invoke commands or mutate state.
 
 ## Freshness and publication
 
 Map binds the current tracked repository identity. Audit and Analyze bind the
 current source packets needed for their selected scope.
 
-Refresh stored observations before presenting a resumed workbench. Freshness
-markers can update without revalidating semantic judgment.
+Use compact `status` or filtered `inspect` to observe a resumed workbench without
+writing it; use `refresh` to publish current observations before showing the HTML.
+Check ownership drift separately from the freshness of existing source packets.
+Freshness markers can update without revalidating semantic judgment.
 A changed source badge means the prior judgment may be stale; it does not erase or
 silently renew that judgment.
+Source observations retain per-path fingerprints for changed-path inspection.
+
+Run `check-report` for canonical state, relationship integrity, ownership coverage,
+HTML anchors, IDs, and selection commands. Its static result reports current
+ownership and source changes separately and does not establish visual verification.
 
 After a failed or uncertain write, inspect the current report before retrying.
 Never bypass source identity, report-digest, writer-lock, or read-back checks.
