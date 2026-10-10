@@ -405,6 +405,66 @@ def test_retired_systemic_findings_stay_historical_in_all_live_counts(tmp_path: 
     assert atlas.check_report(repo_root=tmp_path, report=report(tmp_path))["valid"]
 
 
+@pytest.mark.parametrize("chained", [False, True])
+def test_live_systemic_counts_resolve_retired_affected_owners(tmp_path: Path, chained: bool) -> None:
+    started(tmp_path, analyzed=False)
+    audit = audit_manifest(tmp_path, report(tmp_path))
+    audit.update(systemic_findings=audit["findings"], findings=[], candidates=[])
+    publish(tmp_path, "audit-subsystem", audit)
+    original = state(tmp_path)["systemic_findings"][0]
+    prior = "beta"
+    for sid in (["gamma", "delta"] if chained else ["gamma"]):
+        replacement = deepcopy(map_manifest(tmp_path)["subsystems"][1])
+        replacement.update(id=sid, name=f"Delivery {sid}")
+        reconcile(tmp_path, subsystems=[replacement, {"id": "alpha", "dependencies": [{"id": sid, "evidence": ["Reviewed replacement."]}]}],
+                  retirements=[{"id": prior, "replacement_ids": [sid], "reason": "Reviewed affected boundary."}])
+        prior = sid
+    current = state(tmp_path)
+    assert current["systemic_findings"][0] == original
+    html = report(tmp_path).read_text(encoding="utf-8")
+    card = re.search(rf'<article[^>]*id="subsystem-{prior}".*?</article>', html, re.S).group()
+    assert "1 findings · 0 candidates" in card
+    node = re.search(rf'<a href="#subsystem-{prior}".*?</a>', atlas._architecture_svg(current), re.S).group()
+    assert "1 systemic findings" in node
+    assert '<strong>1</strong><span>Findings</span>' in html
+    assert not atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), finding="alpha-defect")["rows"][0]["historical"]
+    assert atlas.check_report(repo_root=tmp_path, report=report(tmp_path))["valid"]
+
+
+@pytest.mark.parametrize("event_kind", ["candidate", "finding"])
+def test_outcome_cards_include_inherited_status_evidence_with_unique_anchors(tmp_path: Path, event_kind: str) -> None:
+    started(tmp_path, analyzed=False)
+    audit = audit_manifest(tmp_path, report(tmp_path))
+    second = finding()
+    second["id"] = "second-defect"
+    audit["findings"].append(second)
+    audit["lenses"][0]["finding_ids"].append("second-defect")
+    audit["candidates"][0]["finding_ids"].append("second-defect")
+    publish(tmp_path, "audit-subsystem", audit)
+    if event_kind == "candidate":
+        events = [event(tmp_path, "group-verified", "verified", summary="Group proof covers both findings.")]
+        inherited_targets = [{"kind": "finding", "id": fid} for fid in ("alpha-defect", "second-defect")]
+    else:
+        events = [event(tmp_path, f"{fid}-verified", "verified", target_kind="finding", target_id=fid,
+                        summary=f"Current proof for {fid}.") for fid in ("alpha-defect", "second-defect")]
+        inherited_targets = [{"kind": "candidate", "id": "alpha-fix"}]
+    outcomes(tmp_path, *events, delivery_requirements=[
+        {"target": target, "commit": True, "deployments": [], "reason": "User requested delivery."} for target in inherited_targets
+    ])
+    html = report(tmp_path).read_text(encoding="utf-8")
+    for target in inherited_targets:
+        identifier = f"work-{target['kind']}-{target['id']}"
+        card = re.search(rf'<article[^>]*id="{identifier}".*?</article>', html, re.S).group()
+        assert elements(card, "data-work-status", "verified")
+        for recorded in events:
+            assert recorded["summary"] in card and recorded["evidence"][0] in card
+            assert elements(card, "href", f"#outcome-{recorded['id']}")
+            assert recorded["source_identity"]["sha256"] in card
+    for recorded in events:
+        assert len(elements(html, "id", f"outcome-{recorded['id']}")) == 1
+    assert atlas.check_report(repo_root=tmp_path, report=report(tmp_path))["valid"]
+
+
 def test_standalone_systemic_finding_scope_changes_are_visible_and_selectable(tmp_path: Path) -> None:
     make_repo(tmp_path)
     publish(tmp_path, "render-report", map_manifest(tmp_path))

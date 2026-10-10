@@ -1155,8 +1155,16 @@ def _live_systemic_findings(state: dict[str, Any]) -> list[dict[str, Any]]:
     return [finding for finding in state["systemic_findings"] if finding["origin_subsystem_id"] in active]
 
 
+def _systemic_counts(state: dict[str, Any]) -> dict[str, int]:
+    counts = {sub["id"]: 0 for sub in state["subsystems"]}
+    for finding in _live_systemic_findings(state):
+        for sid in _current_scope(state, finding["affected_scope"]):
+            counts[sid] += 1
+    return counts
+
+
 def _architecture_svg(state: dict[str, Any]) -> str:
-    systemic = _live_systemic_findings(state)
+    systemic_counts = _systemic_counts(state)
     grouped = {s["id"]: [x for x in state["subsystems"] if x["system_id"] == s["id"]] for s in state["systems"]}
     width = max(860, 210 + max((len(v) for v in grouped.values()), default=1) * 230)
     height = max(220, 55 + len(state["systems"]) * 150)
@@ -1168,10 +1176,7 @@ def _architecture_svg(state: dict[str, Any]) -> str:
             x = 175 + col * 230
             positions[sub["id"]] = (x, y)
             audit = sub.get("audit")
-            systemic_count = sum(
-                1 for finding in systemic
-                if sub["id"] in finding["affected_scope"]
-            )
+            systemic_count = systemic_counts[sub["id"]]
             local_count = len(audit["findings"]) if audit else 0
             candidate_count = len(audit["candidates"]) if audit else 0
             meta = (
@@ -1422,12 +1427,15 @@ def _maintenance_html(state: dict[str, Any]) -> str:
         work = _work_status(state, target)
         entry = (candidates if kind == "candidate" else findings)[identifier]
         events = []
+        applicable_ids = set(work["outcome_ids"])
         for event in state["outcomes"]:
-            if event["target"] != target:
+            if event["id"] not in applicable_ids:
                 continue
             basis = event.get("source_identity", {}).get("sha256", "")
             reference = event.get("reference", "")
-            events.append(f'<li id="outcome-{escape(event["id"])}"><strong>{escape(event["type"])}</strong>: {escape(event["summary"])}{_list(event["evidence"])}<code>{escape(reference)}</code>' + (f'<p class="muted">Observed source <code>{escape(basis)}</code> · {escape(state["outcome_freshness"][event["id"]])}</p>' if basis else "") + '</li>')
+            anchor = f' id="outcome-{escape(event["id"])}"' if event["target"] == target else ""
+            origin = "" if anchor else f'<p class="muted"><a href="#outcome-{escape(event["id"])}">Recorded for {escape(event["target"]["kind"])} <code>{escape(event["target"]["id"])}</code></a></p>'
+            events.append(f'<li{anchor}><strong>{escape(event["type"])}</strong>: {escape(event["summary"])}{origin}{_list(event["evidence"])}<code>{escape(reference)}</code>' + (f'<p class="muted">Observed source <code>{escape(basis)}</code> · {escape(state["outcome_freshness"][event["id"]])}</p>' if basis else "") + '</li>')
         cards.append(f'<article class="card" id="work-{kind}-{escape(identifier)}" data-filter-card data-state="outcome" data-work-status="{escape(work["status"])}" data-outstanding="{str(_outstanding(work)).lower()}" data-search="{escape(identifier + " " + entry["record"]["title"], quote=True)}"><h3>{escape(entry["record"]["title"])}</h3><p>{kind} <code>{escape(identifier)}</code></p><div class="badges">{_work_badges(work)}</div><details><summary>Outcome evidence</summary><ul class="compact">{"".join(events)}</ul></details></article>')
     preview = "".join(f'<li>{escape(record["environment"])} / {escape(record["capability"])}: {escape(record["state"])} — {escape(record["reason"])}' + (f'<p>Visually checked report revision <code>{escape(record["report_sha256"])}</code></p>' if record["state"] == "verified" else "") + '</li>' for record in state["preview"])
     archived = []
@@ -1447,6 +1455,7 @@ def _render(state: dict[str, Any]) -> bytes:
     audited = [x for x in subsystems if x["state"] == "audited"]
     changed = [x for x in subsystems if state["freshness"].get(x["id"]) == "changed"]
     systemic = _live_systemic_findings(state)
+    systemic_counts = _systemic_counts(state)
     findings = [x for sub in audited for x in sub["audit"]["findings"]] + systemic
     finding_catalog = _catalog(state)[1]
     revisions = _reconciliation_revisions(state)
@@ -1464,7 +1473,7 @@ def _render(state: dict[str, Any]) -> bytes:
     audits=[]
     for sub in subsystems:
         audit=sub.get("audit")
-        systemic_count=sum(1 for finding in systemic if sub["id"] in finding["affected_scope"])
+        systemic_count=systemic_counts[sub["id"]]
         fc=(len(audit["findings"]) if audit else 0)+systemic_count
         cc=len(audit["candidates"]) if audit else 0
         fresh=state["freshness"].get(sub["id"],"fresh"); deps=[d["id"] for d in sub["dependencies"]]
