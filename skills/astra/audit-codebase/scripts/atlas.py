@@ -885,20 +885,21 @@ def _catalog(state: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any]]:
 def _target(value: object, state: dict[str, Any]) -> dict[str, str]:
     target = _obj(value, "outcome target")
     _strict(target, {"kind", "id"}, set(), "outcome target")
-    if target["kind"] not in {"candidate", "finding"}:
+    kind = _text(target["kind"], "target kind")
+    if kind not in {"candidate", "finding"}:
         raise ReportError("target kind must be candidate or finding")
     identifier = _id(target["id"], "target id")
-    catalog = _catalog(state)[0 if target["kind"] == "candidate" else 1]
+    catalog = _catalog(state)[0 if kind == "candidate" else 1]
     if identifier not in catalog:
         raise ReportError(f"unknown {target['kind']} {identifier}")
-    return {"kind": target["kind"], "id": identifier}
+    return {"kind": kind, "id": identifier}
 
 
 def _outcome(value: object, state: dict[str, Any], root: Path | None = None) -> dict[str, Any]:
     raw = _obj(value, "outcome")
     optional = {"source_identity", "reference", "destination"} | ({"recorded_at", "finding_ids"} if root is None else set())
     _strict(raw, {"id", "target", "type", "summary", "evidence"}, optional, "outcome")
-    kind = raw["type"]
+    kind = _text(raw["type"], "outcome type")
     if kind not in {"implemented", "verified", "deferred", "committed", "deployed", "reopened"}:
         raise ReportError("unsupported outcome type")
     result = {
@@ -1040,6 +1041,25 @@ def _scope_observation(observation: dict[str, Any], packet: dict[str, Any], requ
 
 def _refresh_observation(state: dict[str, Any], root: Path) -> None:
     cache = {}
+    revisions = _reconciliation_revisions(state)
+    audit_indices = {item["selection"]: index for index, item in enumerate(state["history"]) if item["operation"] == "audit"}
+    analysis_indices = {item["selection"]: index for index, item in enumerate(state["history"]) if item["operation"] == "analyze"}
+
+    def observe_structure(observation: dict[str, Any], owners: Sequence[str], since: int) -> dict[str, Any]:
+        later = sorted(index for index in revisions if index > since)
+        if not later:
+            return observation
+        before, after = revisions[later[0]][0], revisions[later[-1]][1]
+        changes = {}
+        for sid in owners:
+            prior, current = before.get(sid, {}), after.get(sid, {})
+            fields = (set(prior) | set(current)) - {"id", "name", "state"}
+            changed = sorted(field for field in fields if
+                             (sorted(prior.get(field, [])) != sorted(current.get(field, [])) if field == "owned_paths"
+                              else prior.get(field) != current.get(field)))
+            if changed:
+                changes[sid] = changed
+        return {**observation, "freshness": "changed", "structure_changed": True, "structure_changes": changes} if changes else observation
 
     def observe(packet: dict[str, Any]) -> dict[str, Any]:
         key = _canonical(packet)
@@ -1050,6 +1070,7 @@ def _refresh_observation(state: dict[str, Any], root: Path) -> None:
     state["source_changes"] = {sub["id"]: observe(sub.get("audit", {}).get("source_identity") or sub["map_source"]) for sub in state["subsystems"]}
     for sub in state["subsystems"]:
         if "audit" in sub:
+            state["source_changes"][sub["id"]] = observe_structure(state["source_changes"][sub["id"]], [sub["id"]], audit_indices.get(sub["id"], -1))
             scope_change = sorted(set(sub["owned_paths"]) ^ set(sub["audit_scope"]))
             if scope_change:
                 change = dict(state["source_changes"][sub["id"]])
@@ -1064,6 +1085,9 @@ def _refresh_observation(state: dict[str, Any], root: Path) -> None:
         for candidate in sub.get("audit", {}).get("candidates", []):
             packet = candidate.get("analysis", {}).get("source_identity") or sub["audit"]["source_identity"]
             scoped = _scope_observation(observe(packet), packet, _required_paths(state, candidate))
+            owners = _current_scope(state, sorted(set(candidate["affected_scope"]) | set(candidate.get("analysis", {}).get("affected_scope", []))))
+            since = analysis_indices.get(candidate["id"], -1) if "analysis" in candidate else audit_indices.get(sub["id"], -1)
+            scoped = observe_structure(scoped, sorted(owners), since)
             audit = state["source_changes"][sub["id"]]
             state["candidate_source_changes"][candidate["id"]] = {"audit": audit, "analysis": scoped if "analysis" in candidate else None, "scope": scoped}
             state["candidate_freshness"][candidate["id"]] = "changed" if audit["freshness"] == "changed" else scoped["freshness"]
@@ -1209,17 +1233,17 @@ def _candidate_commands(x: dict[str, Any], run_id: str, freshness: str, work: di
     changed = freshness == "changed"
     command = (
         f"$audit-codebase inspect candidate {x['id']} in atlas run {run_id}"
-        if changed or work["status"] in {"verified", "deferred", "historical", "disproved"}
+        if changed or work["status"] in {"implemented", "verification changed", "verified", "deferred", "historical", "disproved"}
         else f"$audit-codebase analyze candidate {x['id']} in atlas run {run_id}"
     )
     next_action = ""
-    if not changed and x["state"] == "analyzed" and work["status"] not in {"verified", "deferred"}:
+    if not changed and x["state"] == "analyzed" and work["status"] == "open":
         next_action = (
             f"Use analyzed audit candidate {x['id']} from atlas run {run_id}. "
             "Help me choose the appropriate next owner among direct implementation, "
             "$codebase-design, $prototype, or $to-tickets. Do not start the next workflow yet."
         )
-    elif not changed and x["state"] == "blocked" and work["status"] not in {"verified", "deferred"}:
+    elif not changed and x["state"] == "blocked" and work["status"] == "open":
         next_action = (
             f"Use blocked audit candidate {x['id']} from atlas run {run_id}. "
             "Help me resolve the exact blocker without starting implementation."
@@ -1314,6 +1338,10 @@ def _coverage_rows(state: dict[str, Any]) -> list[str]:
 
 
 def _maintenance_html(state: dict[str, Any]) -> str:
+    def changed_inputs(observation: dict[str, Any]) -> str:
+        metadata = [f"{sid}: {', '.join(fields)} changed" for sid, fields in sorted(observation.get("structure_changes", {}).items())]
+        return _list(observation["changed_paths"] + metadata)
+
     candidates, findings = _catalog(state)
     drift = state["map_drift"]
     warnings = []
@@ -1322,11 +1350,11 @@ def _maintenance_html(state: dict[str, Any]) -> str:
     changes = []
     for sid, observation in state["source_changes"].items():
         if observation["freshness"] == "changed":
-            changes.append(f'<li><a href="#subsystem-{escape(sid)}">{escape(sid)}</a>: changed paths{_list(observation["changed_paths"])}{escape(observation.get("error", ""))}</li>')
+            changes.append(f'<li><a href="#subsystem-{escape(sid)}">{escape(sid)}</a>: changed inputs{changed_inputs(observation)}{escape(observation.get("error", ""))}</li>')
     for cid, observations in state["candidate_source_changes"].items():
         scoped = observations["scope"]
         if scoped["freshness"] == "changed":
-            changes.append(f'<li><a href="#candidate-{escape(cid)}">{escape(cid)}</a>: candidate inputs or affected scope changed{_list(scoped["changed_paths"])}{escape(scoped.get("error", ""))}</li>')
+            changes.append(f'<li><a href="#candidate-{escape(cid)}">{escape(cid)}</a>: candidate inputs or affected scope changed{changed_inputs(scoped)}{escape(scoped.get("error", ""))}</li>')
     for eid, observation in state["outcome_source_changes"].items():
         if observation["freshness"] == "changed":
             changes.append(f'<li><a href="#outcome-{escape(eid)}">{escape(eid)}</a>: outcome inputs or affected scope changed{_list(observation["changed_paths"])}{escape(observation.get("error", ""))}</li>')
@@ -1539,11 +1567,12 @@ def _validate_state(state: dict[str, Any]) -> None:
 def _preview_record(value: object, *, stored: bool = False) -> dict[str, Any]:
     raw = _obj(value, "preview record")
     _strict(raw, {"environment", "capability", "state", "reason", "evidence"}, {"report_sha256"} | ({"recorded_at"} if stored else set()), "preview record")
-    if raw["state"] not in {"unavailable", "verified"}:
+    preview_state = _text(raw["state"], "preview state")
+    if preview_state not in {"unavailable", "verified"}:
         raise ReportError("preview state must be unavailable or verified")
     result = {key: _text(raw[key], f"preview {key}") for key in ("environment", "capability", "state", "reason")}
     result["evidence"] = _texts(raw["evidence"], "preview evidence", empty=False)
-    if raw["state"] == "verified":
+    if preview_state == "verified":
         digest = _text(raw.get("report_sha256"), "visually checked report digest")
         if not _SHA.fullmatch(digest):
             raise ReportError("visual verification requires the checked report digest")
@@ -1584,6 +1613,9 @@ def _reconcile(raw: dict[str, Any], state: dict[str, Any], root: Path) -> dict[s
         retirements[sid] = {"replacement_ids": _texts(value["replacement_ids"], "replacement ids"), "reason": _text(value["reason"], "retirement reason")}
         definitions.pop(sid, None)
     excluded = _exclusions(raw.get("excluded", state["excluded"]))
+    for sid, definition in definitions.items():
+        definition["owned_paths"] = [_rel(path, f"{sid} owned path") for path in
+                                     _texts(definition.get("owned_paths", []), f"{sid} owned_paths")]
     tracked = set(inventory(repo_root=root)["tracked_paths"])
     changes = []
     changed_paths = set()
@@ -2122,7 +2154,7 @@ def inspect_report(*, repo_root: Path, report: Path, full: bool = False,
                     row["source_changes"] = {"audit": _packet_observation(root, item["audit_source"]), "analysis": scoped if "analysis" in item["record"] else None, "scope": scoped}
             else:
                 packet = item["audit_source"]
-                observed = _packet_observation(root, packet)
+                observed = state["source_changes"][item["origin"]] if not item["historical"] else _packet_observation(root, packet)
                 row["source_changes"] = {"audit": observed, "scope": _scope_observation(observed, packet, _required_paths(state, item["record"]))}
                 if detail and (finding or subsystem):
                     row["audit_source_identity"] = packet
@@ -2171,6 +2203,26 @@ def check_report(*, repo_root: Path, report: Path) -> dict[str, Any]:
     if len(ids) != len(set(ids)) or set(references) - set(ids):
         raise ReportError("report has duplicate ids or unresolved anchors", stage="check-report")
     candidates, findings = _catalog(state)
+    navigation = {"overview", "architecture", "subsystems", "audits", "findings", "candidates", "outcomes", "evidence", "history"}
+    navigation |= {f"system-{system['id']}" for system in state["systems"]}
+    navigation |= {f"subsystem-{sub['id']}" for sub in state["subsystems"]}
+    required_ids = navigation | {"search", "state-filter", "audit-codebase-state", "arrow"}
+    required_ids |= {f"audit-{sub['id']}" for sub in state["subsystems"] if "audit" in sub}
+    required_ids |= {f"candidate-{cid}" for cid in candidates} | {f"finding-{fid}" for fid in findings}
+    required_ids |= {f"work-{item['target']['kind']}-{item['target']['id']}" for item in state["outcomes"] + state["delivery_requirements"]}
+    required_ids |= {f"outcome-{event['id']}" for event in state["outcomes"]}
+    navigation |= {f"candidate-{cid}" for cid, change in state["candidate_source_changes"].items() if change["scope"]["freshness"] == "changed"}
+    navigation |= {f"outcome-{eid}" for eid, change in state["outcome_source_changes"].items() if change["freshness"] == "changed"}
+    for cid, item in candidates.items():
+        comparison = item["record"].get("analysis", {}).get("comparison") or item["record"].get("comparison")
+        if comparison and not item["historical"]:
+            for side in ("before", "after"):
+                marker = f"{cid}-{side}-arrow"
+                required_ids.add(marker)
+                if comparison[side]["edges"]:
+                    navigation.add(marker)
+    if required_ids - set(ids) or navigation - set(references):
+        raise ReportError("report is missing required anchors or navigation references", stage="check-report")
     required = {f"$audit-codebase audit subsystem {sub['id']} in atlas run {state['run_id']}" for sub in state["subsystems"]}
     required |= {f"$audit-codebase inspect finding {fid} in atlas run {state['run_id']}" for fid, item in findings.items() if item["historical"]}
     for cid, item in candidates.items():

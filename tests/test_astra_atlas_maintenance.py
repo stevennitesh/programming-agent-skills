@@ -91,6 +91,72 @@ def test_reconciliation_moves_ownership_without_rewriting_audits_or_history(tmp_
     assert after["candidate_freshness"]["alpha-fix"] == "changed"
 
 
+@pytest.mark.parametrize("patch", [{"ownership": "Validation belongs to the write boundary."},
+                                    {"authority": ["Reviewed write policy"]},
+                                    {"dependencies": []}])
+def test_structural_changes_preserve_evidence_but_invalidate_its_audit_baseline(tmp_path: Path, patch: dict) -> None:
+    before = started(tmp_path)
+    reconcile(tmp_path, subsystems=[{"id": "alpha", **patch}])
+    after = state(tmp_path)
+    assert after["subsystems"][0]["audit"] == before["subsystems"][0]["audit"]
+    assert after["subsystems"][0]["owned_paths"] == before["subsystems"][0]["owned_paths"]
+    assert after["freshness"]["alpha"] == after["candidate_freshness"]["alpha-fix"] == "changed"
+    observation = after["source_changes"]["alpha"]
+    assert observation["changed_paths"] == []
+    assert observation["structure_changes"] == {"alpha": sorted(patch)}
+    assert after["freshness"]["beta"] == "fresh"
+    selected = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), finding="alpha-defect")["rows"][0]
+    assert selected["source_changes"]["audit"]["structure_changed"]
+    assert "alpha: " + next(iter(patch)) + " changed" in report(tmp_path).read_text(encoding="utf-8")
+    atlas.refresh_report(repo_root=tmp_path, report=report(tmp_path))
+    publish(tmp_path, "analyze-candidate", analysis_manifest(tmp_path, report(tmp_path)))
+    assert state(tmp_path)["candidate_freshness"]["alpha-fix"] == "changed"
+    publish(tmp_path, "audit-subsystem", audit_manifest(tmp_path, report(tmp_path)))
+    assert state(tmp_path)["freshness"]["alpha"] == "fresh"
+    assert state(tmp_path)["candidate_freshness"]["alpha-fix"] == "fresh"
+    assert atlas.check_report(repo_root=tmp_path, report=report(tmp_path))["valid"]
+
+
+def test_affected_owner_metadata_changes_require_current_analysis_without_repeating_unaffected_audit(tmp_path: Path) -> None:
+    before = started(tmp_path)
+    outcomes(tmp_path, event(tmp_path, "verified-1", "verified"))
+    reconcile(tmp_path, subsystems=[{"id": "beta", "ownership": "Reviewed delivery ownership."}])
+    after = state(tmp_path)
+    assert after["freshness"]["alpha"] == "fresh"
+    assert after["candidate_freshness"]["alpha-fix"] == "changed"
+    assert after["candidate_source_changes"]["alpha-fix"]["scope"]["structure_changes"] == {"beta": ["ownership"]}
+    assert candidate_work(tmp_path)["status"] == "verified"
+    publish(tmp_path, "analyze-candidate", analysis_manifest(tmp_path, report(tmp_path)))
+    assert state(tmp_path)["candidate_freshness"]["alpha-fix"] == "fresh"
+    assert state(tmp_path)["subsystems"][0]["audit"]["source_identity"] == before["subsystems"][0]["audit"]["source_identity"]
+
+
+def test_restored_structure_and_display_renaming_reuse_the_unchanged_audit(tmp_path: Path) -> None:
+    before = started(tmp_path)
+    reconcile(tmp_path, subsystems=[{"id": "alpha", "ownership": "Changed policy owner."}])
+    assert state(tmp_path)["freshness"]["alpha"] == "changed"
+    reconcile(tmp_path, subsystems=[{"id": "alpha", "ownership": before["subsystems"][0]["ownership"], "name": "Validation"}])
+    after = state(tmp_path)
+    assert after["freshness"]["alpha"] == after["candidate_freshness"]["alpha-fix"] == "fresh"
+    assert after["subsystems"][0]["audit"] == before["subsystems"][0]["audit"]
+
+
+def test_ownership_removed_from_an_affected_owner_changes_analysis_even_when_source_is_unchanged(tmp_path: Path) -> None:
+    started(tmp_path)
+    reconcile(tmp_path, ownership_changes=[{"path": "tests/test_a.py", "owner": "beta", "reason": "Reviewed proof owner."}])
+    publish(tmp_path, "audit-subsystem", audit_manifest(tmp_path, report(tmp_path)))
+    publish(tmp_path, "analyze-candidate", analysis_manifest(tmp_path, report(tmp_path)))
+    assert state(tmp_path)["candidate_freshness"]["alpha-fix"] == "fresh"
+    gamma = deepcopy(map_manifest(tmp_path)["subsystems"][1])
+    gamma.update(id="gamma", name="Proof owner", owned_paths=["tests/test_a.py"])
+    reconcile(tmp_path, subsystems=[gamma], ownership_changes=[{"path": "tests/test_a.py", "owner": "gamma", "reason": "Reviewed proof boundary."}])
+    after = state(tmp_path)
+    assert after["freshness"]["alpha"] == "fresh"
+    assert after["candidate_freshness"]["alpha-fix"] == "changed"
+    assert after["candidate_source_changes"]["alpha-fix"]["scope"]["structure_changes"] == {"beta": ["owned_paths"]}
+    assert atlas.check_report(repo_root=tmp_path, report=report(tmp_path))["valid"]
+
+
 def test_retired_owner_keeps_stable_ids_and_original_evidence_selectable(tmp_path: Path) -> None:
     before = started(tmp_path)
     replacement = deepcopy(map_manifest(tmp_path)["subsystems"][0])
@@ -150,6 +216,72 @@ def test_reconciliation_rejects_malformed_exclusions_before_ownership_changes(tm
     assert result["ok"] is False and result["stage"] == "validate" and "excluded" in result["error"]
     assert cli.stderr == ""
     assert report(tmp_path).read_bytes() == original
+
+
+@pytest.mark.parametrize("field", ["outcome type", "target kind", "preview state"])
+@pytest.mark.parametrize("invalid", [None, [], {}, 3, True, ""])
+def test_maintenance_discriminators_return_structured_validation_errors(tmp_path: Path, field: str, invalid) -> None:
+    started(tmp_path, analyzed=False)
+    if field == "preview state":
+        objective = "record-preview"
+        packet = guarded(tmp_path, preview={"environment": "test", "capability": "HTML", "state": invalid,
+                                           "reason": "Observed capability", "evidence": ["Checked host support"]})
+    else:
+        objective = "record-outcome"
+        record = event(tmp_path, "deferred-1", "deferred")
+        if field == "outcome type":
+            record["type"] = invalid
+        else:
+            record["target"]["kind"] = invalid
+        packet = guarded(tmp_path, events=[record])
+    original = report(tmp_path).read_bytes()
+    with pytest.raises(atlas.ReportError, match=field):
+        publish(tmp_path, objective, packet)
+    cli = subprocess.run([sys.executable, str(SCRIPT), objective, "--repo-root", str(tmp_path), "--report", str(report(tmp_path)),
+                          "--manifest", str(tmp_path / f"{objective}.json")], capture_output=True, text=True)
+    assert cli.returncode == 2 and cli.stderr == ""
+    response = json.loads(cli.stdout)
+    assert response["ok"] is False and response["stage"] == "validate" and field in response["error"]
+    assert report(tmp_path).read_bytes() == original
+
+
+@pytest.mark.parametrize("owned_paths", [None, {}, "src/a.py", [3], ["../escape"]])
+def test_reconciliation_validates_owned_paths_before_applying_changes(tmp_path: Path, owned_paths) -> None:
+    started(tmp_path, analyzed=False)
+    packet = guarded(tmp_path, observation_identity=atlas.inventory(repo_root=tmp_path)["identity"],
+                     subsystems=[{"id": "alpha", "owned_paths": owned_paths}],
+                     ownership_changes=[{"path": "src/a.py", "owner": "beta", "reason": "Reviewed move."}])
+    original = report(tmp_path).read_bytes()
+    with pytest.raises(atlas.ReportError, match="owned"):
+        publish(tmp_path, "reconcile-map", packet)
+    cli = subprocess.run([sys.executable, str(SCRIPT), "reconcile-map", "--repo-root", str(tmp_path), "--report", str(report(tmp_path)),
+                          "--manifest", str(tmp_path / "reconcile-map.json")], capture_output=True, text=True)
+    assert cli.returncode == 2 and cli.stderr == ""
+    response = json.loads(cli.stdout)
+    assert response["ok"] is False and response["stage"] == "validate"
+    assert report(tmp_path).read_bytes() == original
+
+
+@pytest.mark.parametrize("work_status", ["implemented", "verification changed"])
+@pytest.mark.parametrize("analysis_state", ["analyzed", "blocked"])
+def test_fresh_analysis_with_pending_verification_selects_inspection(tmp_path: Path, work_status: str, analysis_state: str) -> None:
+    started(tmp_path)
+    if work_status == "implemented":
+        outcomes(tmp_path, event(tmp_path, "implemented-1", "implemented"))
+    else:
+        outcomes(tmp_path, event(tmp_path, "verified-1", "verified"))
+        (tmp_path / "src/a.py").write_text("VALUE=7\n", encoding="utf-8")
+        publish(tmp_path, "audit-subsystem", audit_manifest(tmp_path, report(tmp_path)))
+    analysis = analysis_manifest(tmp_path, report(tmp_path))
+    analysis.update(state=analysis_state, question="Which caller owns policy?" if analysis_state == "blocked" else "")
+    publish(tmp_path, "analyze-candidate", analysis)
+    assert state(tmp_path)["candidate_freshness"]["alpha-fix"] == "fresh"
+    assert candidate_work(tmp_path)["status"] == work_status
+    commands = {item["data-copy"] for item in elements(report(tmp_path).read_text(encoding="utf-8"), "data-copy")}
+    assert "$audit-codebase inspect candidate alpha-fix in atlas run run-1" in commands
+    assert "$audit-codebase analyze candidate alpha-fix in atlas run run-1" not in commands
+    assert not any(command.startswith("Use ") for command in commands)
+    assert atlas.check_report(repo_root=tmp_path, report=report(tmp_path))["valid"]
 
 
 def test_fix_verification_preserves_stale_analysis_and_tracks_delivery_separately(tmp_path: Path) -> None:
@@ -385,13 +517,42 @@ def test_check_report_rejects_wrong_state_selection_and_altered_handoff(tmp_path
         atlas.check_report(repo_root=tmp_path, report=report(tmp_path))
 
 
+@pytest.mark.parametrize("anchor", ["overview", "system-core", "subsystem-alpha", "audit-alpha", "candidate-alpha-fix",
+                                    "finding-alpha-defect", "work-candidate-alpha-fix", "outcome-verified-1", "search", "arrow"])
+def test_check_report_rejects_missing_record_anchors_even_when_their_links_are_removed(tmp_path: Path, monkeypatch, anchor: str) -> None:
+    started(tmp_path)
+    outcomes(tmp_path, event(tmp_path, "verified-1", "verified"))
+    assert atlas.check_report(repo_root=tmp_path, report=report(tmp_path))["valid"]
+    original_render = atlas._render
+
+    def omit_anchor(value):
+        data = original_render(value)
+        return data.replace(f' id="{anchor}"'.encode(), b"").replace(f' href="#{anchor}"'.encode(), b"").replace(f"url(#{anchor})".encode(), b"none")
+
+    monkeypatch.setattr(atlas, "_render", omit_anchor)
+    report(tmp_path).write_bytes(atlas._render(state_from_bytes(report(tmp_path).read_bytes())))
+    with pytest.raises(atlas.ReportError, match="missing required anchors or navigation references"):
+        atlas.check_report(repo_root=tmp_path, report=report(tmp_path))
+
+
+@pytest.mark.parametrize("anchor", ["system-core", "subsystem-alpha"])
+def test_check_report_requires_navigation_to_existing_records(tmp_path: Path, monkeypatch, anchor: str) -> None:
+    started(tmp_path)
+    original_render = atlas._render
+    monkeypatch.setattr(atlas, "_render", lambda value: original_render(value).replace(f' href="#{anchor}"'.encode(), b""))
+    report(tmp_path).write_bytes(atlas._render(state_from_bytes(report(tmp_path).read_bytes())))
+    with pytest.raises(atlas.ReportError, match="missing required anchors or navigation references"):
+        atlas.check_report(repo_root=tmp_path, report=report(tmp_path))
+
+
 def state_from_bytes(data: bytes) -> dict:
     from html import unescape
     encoded = atlas._STATE.findall(data.decode("utf-8"))[0][1]
     return json.loads(unescape(encoded))
 
 
-def test_preview_limitation_is_once_per_capability_and_visual_proof_is_revision_bound(tmp_path: Path) -> None:
+@pytest.mark.parametrize("preview_state", ["verified", " verified "])
+def test_preview_limitation_is_once_per_capability_and_visual_proof_is_revision_bound(tmp_path: Path, preview_state: str) -> None:
     started(tmp_path)
     preview = {"environment": "Windows desktop", "capability": "HTML preview v1", "state": "unavailable",
                "reason": "Preview surface unavailable", "evidence": ["Host reported no preview capability."]}
@@ -400,10 +561,11 @@ def test_preview_limitation_is_once_per_capability_and_visual_proof_is_revision_
     repeated = publish(tmp_path, "record-preview", guarded(tmp_path, preview=preview))
     assert repeated["unchanged"] and not repeated["published"]
     assert report(tmp_path).read_bytes() == original
-    updated = dict(preview, capability="HTML preview v2", state="verified", reason="Inspected map, filters, navigation, and labels.", report_sha256=sha(report(tmp_path)))
+    updated = dict(preview, capability="HTML preview v2", state=preview_state, reason="Inspected map, filters, navigation, and labels.", report_sha256=sha(report(tmp_path)))
     publish(tmp_path, "record-preview", guarded(tmp_path, preview=updated))
     after = state(tmp_path)
     assert len(after["preview"]) == 2
+    assert after["preview"][1]["state"] == "verified"
     assert after["preview"][1]["report_sha256"] != sha(report(tmp_path))  # It names the viewed revision before recording metadata.
     with pytest.raises(atlas.ReportError, match="current report revision"):
         publish(tmp_path, "record-preview", guarded(tmp_path, preview=updated))

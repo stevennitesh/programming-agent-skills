@@ -37,6 +37,8 @@ returned audit, analysis, and outcome source changes to establish what changed.
 Finding inspection returns its originating audit packet and current audit/scope
 observations, including retained systemic findings. These remain separate from
 fix-verification observations.
+For implemented work or changed verification, copied selections lead to
+inspection. Judge which checks or reassessment remain needed before repeating work.
 Applicable finding-level proof inputs also make their candidate selectable.
 Outcome evidence and its observations return the latest relevant records up to
 the requested limit, with totals and more-record indicators; path-filtered
@@ -95,6 +97,12 @@ same operation. Retired IDs stay reserved, original records remain inspectable,
 and affected scopes resolve through their declared replacements. New owners start
 mapped; retained audits whose ownership changed are marked changed until the
 relevant scope is reassessed.
+Changes to ownership, purpose, authority, callers, dependencies, interfaces, and
+proof seams also affect freshness when source bytes stay unchanged. Inspection
+and the report list changed structural fields separately from changed paths.
+Re-analysis binds the current candidate scope; renewing the originating audit
+requires reassessing that audit scope. Existing history supplies the structural
+baseline, preserving the original evidence and source identities.
 
 ## Record fixes and delivery
 
