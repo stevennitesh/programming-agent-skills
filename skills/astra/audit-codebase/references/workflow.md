@@ -19,6 +19,8 @@ audit or analysis scope. `--path` binds additional proof inputs, including test
 configuration, fixtures, or probe scripts outside the mapped owners. Use
 `--output` for another JSON filename beside the report; preparation never
 overwrites judgments. Blank judgment fields cannot publish.
+Outcome and gap packets bind each target's source separately; additional `--path`
+proof inputs are shared across the selected targets.
 
 Prepare at the source state actually being investigated or verified. If source
 changes during investigation, inspect the delta before preparing a replacement.

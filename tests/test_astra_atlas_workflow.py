@@ -29,6 +29,43 @@ def prepared_audit(root: Path, sid: str, output: str | None = None, append: bool
     return raw
 
 
+def add_gap_finding(root: Path) -> dict:
+    prepared = atlas.prepare_audit(repo_root=root, report=report(root), subsystem="alpha", affected_subsystems=["beta"], append=True)
+    packet = json.loads(Path(prepared["packet"]).read_text(encoding="utf-8"))
+    gap = finding()
+    for key in ("severity", "scenario"):
+        gap.pop(key)
+    gap.update(id="scope-gap", kind="gap", missing_evidence="A runtime trace is needed.")
+    packet.update(findings=[gap], source_trace={"summary": "Inspected the shared uncertainty."})
+    publish(root, "append-findings", packet)
+    return gap
+
+
+def independent_findings(root: Path, *, gaps: bool = False) -> None:
+    mapped(root)
+    for sid, source in (("alpha", "src/a.py"), ("beta", "src/b.py")):
+        packet = prepared_audit(root, sid)
+        packet["findings"][0]["locations"] = [source]
+        if gaps:
+            row = packet["findings"][0]
+            for key in ("severity", "scenario"):
+                row.pop(key)
+            row.update(kind="gap", missing_evidence="A runtime trace is needed.")
+            packet["candidates"] = []
+        publish(root, "audit-subsystem", packet)
+
+
+def test_prepared_audit_cannot_change_its_selected_owner(tmp_path: Path) -> None:
+    mapped(tmp_path)
+    prepared = atlas.prepare_audit(repo_root=tmp_path, report=report(tmp_path), subsystem="alpha", affected_subsystems=["beta"])
+    packet = json.loads(Path(prepared["packet"]).read_text(encoding="utf-8"))
+    packet.update(subsystem_id="beta", source_trace={"summary": "Inspected the packet."})
+    before = report(tmp_path).read_bytes()
+    with pytest.raises(atlas.ReportError, match="conflicts"):
+        publish(tmp_path, "audit-subsystem", packet)
+    assert report(tmp_path).read_bytes() == before
+
+
 def test_batch_rebases_independent_packets_and_retry_has_one_receipt(tmp_path: Path, monkeypatch) -> None:
     mapped(tmp_path)
     packets = [{"operation": "audit-subsystem", "manifest": prepared_audit(tmp_path, sid)} for sid in ("alpha", "beta")]
@@ -95,6 +132,49 @@ def test_analysis_and_outcome_preparation_bind_scope_and_proof_inputs(tmp_path: 
         row.update(summary="Both entries reject invalid input.", evidence=["Focused probe passed."])
     publish(tmp_path, "record-outcome", raw)
     assert atlas.status_report(repo_root=tmp_path, report=report(tmp_path), candidate="alpha-fix")["rows"][0]["work"]["status"] == "verified"
+
+
+@pytest.mark.parametrize("receipts", [False, True])
+def test_prepared_outcomes_bind_only_their_target_and_shared_proof(tmp_path: Path, receipts: bool) -> None:
+    independent_findings(tmp_path)
+    (tmp_path / "shared-proof.txt").write_text("shared setup", encoding="utf-8")
+    check_ids = []
+    if receipts:
+        for sid in ("alpha", "beta"):
+            (tmp_path / f"{sid}-proof.txt").write_text(f"{sid} probe", encoding="utf-8")
+            atlas.verify(repo_root=tmp_path, report=report(tmp_path), identifier=f"{sid}-check", targets=[f"finding:{sid}-defect"],
+                         command=[sys.executable, "-c", "print('passed')"], environment="fixture", paths=[f"{sid}-proof.txt"])
+            check_ids.append(f"{sid}-check")
+    prepared = atlas.prepare_outcomes(repo_root=tmp_path, report=report(tmp_path), targets=["finding:alpha-defect", "finding:beta-defect"],
+                                      outcome_type="verified", paths=["shared-proof.txt"], check_ids=check_ids)
+    packet = json.loads(Path(prepared["packet"]).read_text(encoding="utf-8"))
+    for row, other in zip(packet["events"], ("beta", "alpha")):
+        assert "shared-proof.txt" in row["source_identity"]["paths"]
+        assert f"src/{'b' if other == 'beta' else 'a'}.py" not in row["source_identity"]["paths"]
+        if receipts:
+            assert f"{other}-proof.txt" not in row["source_identity"]["paths"]
+        row.update(summary="Relevant behavior verified.", evidence=row["evidence"] or ["Focused probe passed."])
+    publish(tmp_path, "record-outcome", packet)
+    (tmp_path / "src/b.py").write_text("VALUE=4\n", encoding="utf-8")
+    atlas.refresh_report(repo_root=tmp_path, report=report(tmp_path))
+    alpha = atlas.status_report(repo_root=tmp_path, report=report(tmp_path), finding="alpha-defect")["rows"][0]
+    beta = atlas.status_report(repo_root=tmp_path, report=report(tmp_path), finding="beta-defect")["rows"][0]
+    assert alpha["work"]["status"] == "verified" and beta["work"]["status"] == "verification changed"
+    (tmp_path / "shared-proof.txt").write_text("changed shared setup", encoding="utf-8")
+    atlas.refresh_report(repo_root=tmp_path, report=report(tmp_path))
+    assert atlas.status_report(repo_root=tmp_path, report=report(tmp_path), finding="alpha-defect")["rows"][0]["work"]["status"] == "verification changed"
+
+
+def test_prepared_candidate_outcome_covers_its_linked_finding_scopes(tmp_path: Path) -> None:
+    independent_findings(tmp_path)
+    packet = prepared_audit(tmp_path, "alpha", "wider-alpha.json")
+    packet["findings"][0]["affected_scope"] = ["alpha", "beta"]
+    publish(tmp_path, "audit-subsystem", packet)
+    prepared = atlas.prepare_outcomes(repo_root=tmp_path, report=report(tmp_path), targets=["candidate:alpha-fix"], outcome_type="verified")
+    packet = json.loads(Path(prepared["packet"]).read_text(encoding="utf-8"))
+    packet["events"][0].update(summary="Both affected owners verified.", evidence=["Both probes passed."])
+    assert "src/b.py" in packet["events"][0]["source_identity"]["paths"]
+    publish(tmp_path, "record-outcome", packet)
 
 
 def test_followup_retains_analysis_and_lenses_with_its_own_source(tmp_path: Path) -> None:
@@ -184,6 +264,108 @@ def test_failing_or_source_mutating_check_cannot_establish_verification(tmp_path
     verified["check_ids"] = ["probe"]
     with pytest.raises(atlas.ReportError, match="passing"):
         outcomes(tmp_path, verified)
+
+
+@pytest.mark.parametrize("failure", ["startup", "publication"])
+def test_failed_check_setup_can_retry_the_same_id(tmp_path: Path, monkeypatch, failure: str) -> None:
+    started(tmp_path)
+    original = atlas._publish_prepared
+    command = None
+    if failure == "startup":
+        command = [str(tmp_path / "missing-executable")]
+    else:
+        def fail_publication(prepared, root):
+            raise atlas.ReportError("publication unavailable")
+        monkeypatch.setattr(atlas, "_publish_prepared", fail_publication)
+    with pytest.raises(atlas.ReportError, match="cannot run|publication unavailable"):
+        check(tmp_path, command=command)
+    assert not report(tmp_path).with_name("check-probe.log").exists()
+    assert state(tmp_path)["checks"] == []
+    monkeypatch.setattr(atlas, "_publish_prepared", original)
+    assert check(tmp_path)["passed"]
+
+
+@pytest.mark.parametrize("existing", [True, False])
+def test_failed_check_cleanup_preserves_existing_or_published_logs(tmp_path: Path, monkeypatch, existing: bool) -> None:
+    started(tmp_path)
+    log = report(tmp_path).with_name("check-probe.log")
+    if existing:
+        log.write_bytes(b"Existing evidence")
+        with pytest.raises(atlas.ReportError, match="cannot run"):
+            check(tmp_path)
+        assert log.read_bytes() == b"Existing evidence"
+    else:
+        original = atlas._publish_prepared
+        def lost_response(prepared, root):
+            original(prepared, root)
+            raise atlas.ReportError("response lost after publication")
+        monkeypatch.setattr(atlas, "_publish_prepared", lost_response)
+        with pytest.raises(atlas.ReportError, match="response lost"):
+            check(tmp_path)
+        assert log.is_file() and state(tmp_path)["checks"][0]["log"]["sha256"] == sha(log)
+
+
+@pytest.mark.parametrize("kind", ["lens", "finding"])
+@pytest.mark.parametrize("change", ["ownership", "metadata"])
+def test_gap_freshness_follows_current_ownership_and_reassessment(tmp_path: Path, kind: str, change: str) -> None:
+    started(tmp_path)
+    if kind == "finding":
+        add_gap_finding(tmp_path)
+    selection = {"lenses": ["alpha:performance"]} if kind == "lens" else {"findings": ["scope-gap"]}
+    def close(output: str):
+        prepared = atlas.prepare_gaps(repo_root=tmp_path, report=report(tmp_path), output=Path(output), **selection)
+        packet = json.loads(Path(prepared["packet"]).read_text(encoding="utf-8"))
+        packet["gaps"][0].update(disposition="closed", summary="Trace resolves the question.", evidence=["Relevant trace inspected."])
+        publish(tmp_path, "record-gaps", packet)
+        return packet["gaps"][0]["id"]
+    first = close("first-gap.json")
+    if change == "ownership":
+        (tmp_path / "src/new.py").write_text("VALUE=3\n", encoding="utf-8")
+        subprocess.run(["git", "add", "--", "src/new.py"], cwd=tmp_path, check=True)
+        reconcile(tmp_path, ownership_changes=[{"path": "src/new.py", "owner": "alpha", "reason": "Reviewed new entry."}])
+    else:
+        reconcile(tmp_path, subsystems=[{"id": "alpha", "ownership": "Reviewed new boundary."}])
+    rows = atlas.status_report(repo_root=tmp_path, report=report(tmp_path), subsystem="alpha", gaps=True)["gaps"]
+    row = next(row for row in rows if row["event_id"] == first)
+    assert row["disposition"] == "closed" and row["source_changes"]["freshness"] == "changed"
+    assert row["source_changes"]["structure_changes"]["alpha"]
+    if change == "ownership":
+        assert "src/new.py" in row["source_changes"]["changed_paths"]
+    second = close("second-gap.json")
+    row = next(row for row in atlas.status_report(repo_root=tmp_path, report=report(tmp_path), gaps=True)["gaps"] if row["event_id"] == second)
+    assert row["source_changes"]["freshness"] == "fresh"
+
+
+@pytest.mark.parametrize("retired", [False, True])
+def test_gap_filter_includes_affected_current_owners(tmp_path: Path, retired: bool) -> None:
+    started(tmp_path)
+    gap = add_gap_finding(tmp_path)
+    owner = "beta"
+    if retired:
+        replacement = {key: value for key, value in state(tmp_path)["subsystems"][1].items() if key not in {"state", "map_source"}}
+        replacement.update(id="gamma", name="Gamma")
+        reconcile(tmp_path, subsystems=[replacement, {"id": "alpha", "dependencies": [{"id": "gamma", "evidence": ["Reviewed replacement."]}]}],
+                  retirements=[{"id": "beta", "replacement_ids": ["gamma"], "reason": "New boundary."}])
+        owner = "gamma"
+    selected = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), subsystem=owner, gaps=True)
+    assert {"kind": "finding", "id": gap["id"]} in [row["target"] for row in selected["gaps"]]
+    index = atlas.status_report(repo_root=tmp_path, report=report(tmp_path))["subsystems"]
+    assert next(row for row in index if row["subsystem_id"] == owner)["work_counts"]["gaps"] == 1
+
+
+def test_prepared_gaps_keep_unrelated_targets_fresh(tmp_path: Path) -> None:
+    independent_findings(tmp_path, gaps=True)
+    prepared = atlas.prepare_gaps(repo_root=tmp_path, report=report(tmp_path), findings=["alpha-defect", "beta-defect"])
+    packet = json.loads(Path(prepared["packet"]).read_text(encoding="utf-8"))
+    for row in packet["gaps"]:
+        row.update(summary="More evidence remains needed.", evidence=["Scoped probe inspected."],
+                   remaining_question="What is runtime latency?", revisit_when="A trace is available.")
+    publish(tmp_path, "record-gaps", packet)
+    (tmp_path / "src/b.py").write_text("VALUE=4\n", encoding="utf-8")
+    atlas.refresh_report(repo_root=tmp_path, report=report(tmp_path))
+    alpha = atlas.status_report(repo_root=tmp_path, report=report(tmp_path), finding="alpha-defect", gaps=True)["gaps"][0]
+    beta = atlas.status_report(repo_root=tmp_path, report=report(tmp_path), finding="beta-defect", gaps=True)["gaps"][0]
+    assert alpha["source_changes"]["freshness"] == "fresh" and beta["source_changes"]["freshness"] == "changed"
 
 
 def test_gap_dispositions_do_not_rewrite_audit_or_fix_status(tmp_path: Path) -> None:

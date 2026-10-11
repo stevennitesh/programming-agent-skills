@@ -1119,7 +1119,7 @@ def _outcome_required_paths(state: dict[str, Any], event: dict[str, Any]) -> lis
     target = event["target"]
     item = (candidates if target["kind"] == "candidate" else findings)[target["id"]]
     paths = set(_required_paths(state, item["record"]))
-    for fid in event.get("finding_ids", []):
+    for fid in event.get("finding_ids", item["record"].get("finding_ids", [])):
         paths.update(_required_paths(state, findings[fid]["record"]))
     return sorted(paths)
 
@@ -1227,7 +1227,17 @@ def _refresh_observation(state: dict[str, Any], root: Path) -> None:
     for fid, item in findings.items():
         observed = _structure_observation(observe(item["audit_source"]), [item["origin"]], item["audit_index"], revisions)
         state["finding_source_changes"][fid] = {"audit": observed, "scope": _finding_scope_observation(state, item, observed, revisions)}
-    state["gap_source_changes"] = {row["id"]: observe(row["source_identity"]) for row in state["gap_dispositions"]}
+    gap_indices = {identifier: index for index, entry in enumerate(state["history"]) if entry["operation"] == "gap"
+                   for identifier in entry["gap_ids"]}
+    state["gap_source_changes"] = {}
+    for row in state["gap_dispositions"]:
+        target, packet = row["target"], row["source_identity"]
+        scope = findings[target["id"]]["record"]["affected_scope"] if target["kind"] == "finding" else [target["subsystem_id"]]
+        current = _current_scope(state, scope)
+        required = sorted({p for sub in state["subsystems"] if sub["id"] in current for p in sub["owned_paths"]})
+        observation = _scope_observation(observe(packet), packet, required)
+        state["gap_source_changes"][row["id"]] = _structure_observation(
+            observation, sorted(set(scope) | current), gap_indices.get(row["id"], -1), revisions)
     state["map_drift"] = _map_drift(state, root)
     state["observed_at"] = _now()
 
@@ -2214,36 +2224,50 @@ def verify(*, repo_root: Path, report: Path, identifier: str, targets: Sequence[
     before = _source_packet_view(root, bound)
     content = _content_identity(root, bound)
     ownership = _check_ownership(state, selected)
-    if reuse:
-        previous = next((row for row in state["checks"] if row["id"] == reuse), None)
-        if previous is None or previous["exit_code"] != 0 or previous["source_drift"]:
-            raise ReportError("reuse requires a passing, drift-free receipt")
-        if any(previous[key] != value for key, value in (("targets", selected), ("command", command), ("environment", environment),
-                ("environment_sha256", environment_sha), ("content_identity", content), ("ownership_sha256", ownership))):
-            raise ReportError("verification inputs, ownership, command, or environment changed; run the check")
-        log = previous["log"]
-        log_path = (root / log["path"]).resolve()
-        if not log_path.is_relative_to(root) or not log_path.is_file() or _digest(log_path.read_bytes()) != log["sha256"]:
-            raise ReportError("verification log is missing or changed")
-        code = 0
-    else:
-        log_path = path.with_name(f"check-{identifier}.log")
-        try:
-            with log_path.open("xb") as stream:
-                completed = subprocess.run(command, cwd=root, stdout=stream, stderr=subprocess.STDOUT, check=False)
-            code = completed.returncode
-        except OSError as exc:
-            raise ReportError(f"cannot run verification: {exc}") from exc
-        log = {"path": log_path.relative_to(root).as_posix(), "sha256": _digest(log_path.read_bytes())}
-    after = _source_packet_view(root, bound)
-    receipt = {"id": identifier, "targets": selected, "command": command, "environment": environment, "environment_sha256": environment_sha,
-               "exit_code": code, "log": log, "source_before": before, "source_identity": after, "content_identity": content,
-               "ownership_sha256": ownership, "source_drift": sorted(p for p in bound if before["fingerprints"][p] != after["fingerprints"][p]), "recorded_at": _now()}
-    if reuse:
-        receipt["reused_from"] = reuse
-    raw = {"version": MANIFEST_VERSION, "expected_report_sha256": _digest(data), "check": receipt}
-    result = _finish_mutation(_prepare_raw("record-check", root, path, raw), "record-check", root, False)
-    return {**result, "check": receipt, "passed": code == 0 and not receipt["source_drift"], "reused": bool(reuse)}
+    created_log = False
+    try:
+        if reuse:
+            previous = next((row for row in state["checks"] if row["id"] == reuse), None)
+            if previous is None or previous["exit_code"] != 0 or previous["source_drift"]:
+                raise ReportError("reuse requires a passing, drift-free receipt")
+            if any(previous[key] != value for key, value in (("targets", selected), ("command", command), ("environment", environment),
+                    ("environment_sha256", environment_sha), ("content_identity", content), ("ownership_sha256", ownership))):
+                raise ReportError("verification inputs, ownership, command, or environment changed; run the check")
+            log = previous["log"]
+            log_path = (root / log["path"]).resolve()
+            if not log_path.is_relative_to(root) or not log_path.is_file() or _digest(log_path.read_bytes()) != log["sha256"]:
+                raise ReportError("verification log is missing or changed")
+            code = 0
+        else:
+            log_path = path.with_name(f"check-{identifier}.log")
+            try:
+                with log_path.open("xb") as stream:
+                    created_log = True
+                    completed = subprocess.run(command, cwd=root, stdout=stream, stderr=subprocess.STDOUT, check=False)
+                code = completed.returncode
+            except OSError as exc:
+                raise ReportError(f"cannot run verification: {exc}") from exc
+            log = {"path": log_path.relative_to(root).as_posix(), "sha256": _digest(log_path.read_bytes())}
+        after = _source_packet_view(root, bound)
+        receipt = {"id": identifier, "targets": selected, "command": command, "environment": environment, "environment_sha256": environment_sha,
+                   "exit_code": code, "log": log, "source_before": before, "source_identity": after, "content_identity": content,
+                   "ownership_sha256": ownership, "source_drift": sorted(p for p in bound if before["fingerprints"][p] != after["fingerprints"][p]), "recorded_at": _now()}
+        if reuse:
+            receipt["reused_from"] = reuse
+        raw = {"version": MANIFEST_VERSION, "expected_report_sha256": _digest(data), "check": receipt}
+        result = _finish_mutation(_prepare_raw("record-check", root, path, raw), "record-check", root, False)
+        return {**result, "check": receipt, "passed": code == 0 and not receipt["source_drift"], "reused": bool(reuse)}
+    except Exception:
+        if created_log:
+            try:
+                _, published = _load(root, path)
+            except (OSError, ReportError):
+                pass  # Keep evidence when publication cannot be established.
+            else:
+                log_name = log_path.relative_to(root).as_posix()
+                if not any(row["log"]["path"] == log_name for row in published["checks"]):
+                    log_path.unlink(missing_ok=True)
+        raise
 
 
 def _load(root: Path, report: Path) -> tuple[bytes, dict[str, Any]]:
@@ -2287,7 +2311,7 @@ def _guard_view(operation: str, raw: dict[str, Any], state: dict[str, Any]) -> d
         selected = next((sub for sub in state["subsystems"] if sub["id"] == sid), None)
         if selected is None:
             raise ReportError(f"unknown subsystem {sid}")
-        target = [selected.get("audit"), [f for f in state["systemic_findings"] if f["origin_subsystem_id"] == sid]]
+        target = [sid, selected.get("audit"), [f for f in state["systemic_findings"] if f["origin_subsystem_id"] == sid]]
     elif operation == "record-gaps":
         target = []
         for row in raw.get("gaps", []):
@@ -2692,26 +2716,29 @@ def prepare_outcomes(*, repo_root: Path, report: Path, targets: Sequence[str], o
     checks = {row["id"]: row for row in state["checks"]}
     if check_ids and (outcome_type != "verified" or len(set(check_ids)) != len(check_ids) or set(check_ids) - set(checks)):
         raise ReportError("--check requires known, distinct receipts and verified outcomes")
-    bound = sorted({p for target in selected for p in _outcome_required_paths(state, {"target": target})} | {_rel(p, "proof path") for p in paths} |
-                   {p for check_id in check_ids for p in checks[check_id]["source_identity"]["paths"]})
+    shared_paths = {_rel(p, "proof path") for p in paths}
+    bound = set()
     packet = {"version": MANIFEST_VERSION, "expected_report_sha256": _digest(data), "events": [
         {"id": f"{target['id']}-{outcome_type}-{len(state['outcomes']) + index + 1}", "target": target,
          "type": outcome_type, "summary": "", "evidence": []} for index, target in enumerate(selected)]}
     for event in packet["events"]:
+        event_paths = set(_outcome_required_paths(state, event)) | shared_paths
         if check_ids:
             applicable = [check_id for check_id in check_ids if event["target"] in checks[check_id]["targets"]]
             if not applicable:
                 raise ReportError("selected target has no supplied verification receipt")
             event["check_ids"] = applicable
             event["evidence"] = [f"Check {check_id}: {checks[check_id]['log']['path']}" for check_id in applicable]
+            event_paths.update(p for check_id in applicable for p in checks[check_id]["source_identity"]["paths"])
+        bound.update(event_paths)
         if outcome_type in {"implemented", "verified"}:
-            event["source_identity"] = _source_packet_view(root, bound)
+            event["source_identity"] = _source_packet_view(root, sorted(event_paths))
         if outcome_type in {"committed", "deployed"}:
             event["reference"] = ""
         if outcome_type == "deployed":
             event["destination"] = ""
     packet["prepared"] = _guard_view("record-outcome", packet, state)
-    return _write_packet(root, path, packet, output or Path(f"outcomes-{outcome_type}.json"), targets=selected, source_paths=bound)
+    return _write_packet(root, path, packet, output or Path(f"outcomes-{outcome_type}.json"), targets=selected, source_paths=sorted(bound))
 
 
 def prepare_gaps(*, repo_root: Path, report: Path, findings: Sequence[str] = (), lenses: Sequence[str] = (),
@@ -2727,13 +2754,17 @@ def prepare_gaps(*, repo_root: Path, report: Path, findings: Sequence[str] = (),
         targets.append({"kind": "lens", "subsystem_id": sid, "class": lens})
     if not targets or len({_canonical(target) for target in targets}) != len(targets):
         raise ReportError("prepare-gaps requires distinct gap targets")
-    bound = sorted({p for target in targets for p in _gap_claim(target, state)[2]} | {_rel(p, "proof input") for p in paths})
-    snapshot = _source_packet_view(root, bound)
+    shared_paths = {_rel(p, "proof input") for p in paths}
+    bound = set()
     packet = {"version": MANIFEST_VERSION, "expected_report_sha256": _digest(data), "gaps": [
         {"id": f"gap-{len(state['gap_dispositions']) + index + 1}", "target": target, "disposition": "narrowed",
-         "summary": "", "evidence": [], "remaining_question": "", "revisit_when": "", "source_identity": snapshot} for index, target in enumerate(targets)]}
+         "summary": "", "evidence": [], "remaining_question": "", "revisit_when": ""} for index, target in enumerate(targets)]}
+    for row in packet["gaps"]:
+        row_paths = set(_gap_claim(row["target"], state)[2]) | shared_paths
+        bound.update(row_paths)
+        row["source_identity"] = _source_packet_view(root, sorted(row_paths))
     packet["prepared"] = _guard_view("record-gaps", packet, state)
-    return _write_packet(root, path, packet, output or Path("gaps.json"), targets=targets, source_paths=bound)
+    return _write_packet(root, path, packet, output or Path("gaps.json"), targets=targets, source_paths=sorted(bound))
 
 
 def _presentation_target(state: dict[str, Any], kind: object, identifier: object) -> None:
@@ -3147,7 +3178,7 @@ def inspect_report(*, repo_root: Path, report: Path, full: bool = False,
         gap_rows = [row for row in _gap_rows(state) if
                     (not finding or row["target"] == {"kind": "finding", "id": finding}) and
                     (not subsystem or row["target"].get("subsystem_id") == subsystem or
-                     (row["target"]["kind"] == "finding" and findings[row["target"]["id"]]["origin"] == subsystem))]
+                     (row["target"]["kind"] == "finding" and subsystem in _current_scope(state, findings[row["target"]["id"]]["record"]["affected_scope"])))]
         if not detail:
             gap_rows = [{**{key: value for key, value in row.items() if key != "evidence"},
                          "evidence_count": len(row["evidence"])} for row in gap_rows]
