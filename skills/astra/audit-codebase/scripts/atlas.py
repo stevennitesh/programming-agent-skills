@@ -70,7 +70,8 @@ _SCRIPT = r"""
     cards.forEach(el=>{const hay=(el.getAttribute('data-search')||'').toLowerCase();
       const [dimension,...parts]=wanted.split(':'), value=parts.join(':');
       const attribute={audit:'data-audit-status',analysis:'data-analysis-states',work:'data-work-states',kind:'data-kind',inputs:'data-freshness',gap:'data-gap-status'}[dimension];
-      const matches=wanted==='all'||(wanted==='outstanding'?el.getAttribute('data-outstanding')==='true':wanted==='delivery'?el.getAttribute('data-delivery-pending')==='true':attribute&&(el.getAttribute(attribute)||'').split('|').includes(value));
+      const inputsChanged=el.getAttribute('data-freshness')==='changed'||(el.getAttribute('data-work-states')||'').split('|').includes('verification changed');
+      const matches=wanted==='all'||(dimension==='inputs'?(value==='changed'?inputsChanged:el.getAttribute('data-freshness')==='fresh'&&!inputsChanged):wanted==='outstanding'?el.getAttribute('data-outstanding')==='true':wanted==='delivery'?el.getAttribute('data-delivery-pending')==='true':attribute&&(el.getAttribute(attribute)||'').split('|').includes(value));
       const hidden=(!!needle&&!hay.includes(needle))||(kind!=='all'&&el.getAttribute('data-entity')!==kind)||!matches;
       el.classList.toggle('hidden',hidden);if(!hidden){visible++;if(needle||kind!=='all'||wanted!=='all'){let parent=el.parentElement;while(parent){if(parent.tagName==='DETAILS')parent.open=true;parent=parent.parentElement;}}}});
     document.querySelectorAll('[data-filter-group]').forEach(group=>{group.classList.toggle('hidden',!Array.from(group.querySelectorAll('[data-filter-card]')).some(el=>!el.classList.contains('hidden')));});
@@ -1004,11 +1005,15 @@ def _outcome(value: object, state: dict[str, Any], root: Path | None = None) -> 
             check = checks.get(check_id)
             if check is None or check["exit_code"] != 0 or check["source_drift"] or result["target"] not in check["targets"]:
                 raise ReportError("verified outcome requires a passing, drift-free check for its target")
+            if result["target"]["kind"] == "candidate" and check["candidate_findings"].get(result["target"]["id"]) != sorted(result["finding_ids"]):
+                raise ReportError("verification receipt candidate membership changed; run a relevant check")
             packet = result["source_identity"]
             if any(packet["fingerprints"].get(path) != fingerprint for path, fingerprint in check["source_identity"]["fingerprints"].items()):
                 raise ReportError("verified outcome inputs do not match its receipt; run or carry forward the check")
             if root is not None and check["ownership_sha256"] != _check_ownership(state, check["targets"]):
                 raise ReportError("verified outcome ownership differs from its receipt")
+            if root is not None:
+                _check_log(root, check)
             checked_paths.update(check["source_identity"]["paths"])
         if root is not None and set(_outcome_required_paths(state, result)) - checked_paths:
             raise ReportError("verification receipts omit required bound source")
@@ -2157,14 +2162,57 @@ def _check_ownership(state: dict[str, Any], targets: Sequence[dict[str, str]]) -
                               for sub in state["subsystems"] if sub["id"] in owners]))
 
 
+def _candidate_membership(state: dict[str, Any], targets: Sequence[dict[str, str]]) -> dict[str, list[str]]:
+    candidates, _ = _catalog(state)
+    return {target["id"]: sorted(candidates[target["id"]]["record"]["finding_ids"])
+            for target in targets if target["kind"] == "candidate"}
+
+
+def _check_log(root: Path, check: dict[str, Any]) -> Path:
+    log = check["log"]
+    path = (root / log["path"]).resolve()
+    try:
+        valid = path.is_relative_to(root) and path.is_file() and _digest(path.read_bytes()) == log["sha256"]
+    except OSError:
+        valid = False
+    if not valid:
+        raise ReportError("verification log is missing or changed")
+    return path
+
+
+def _verification_executable(root: Path, command: str) -> str | None:
+    if os.path.dirname(command):
+        return shutil.which(str(root / command))
+    # Resolve each search directory explicitly so caller cwd cannot affect identity.
+    search = os.environ.get("PATH", os.defpath)
+    if os.name == "nt" and "NoDefaultCurrentDirectoryInExePath" not in os.environ:
+        current = shutil.which(str(root / command))
+        if current:
+            return current
+    for entry in search.split(os.pathsep) if search else []:
+        directory = Path(entry.strip('"')) if os.name == "nt" else Path(entry)
+        resolved = shutil.which(str(root / directory / command))
+        if resolved:
+            return resolved
+    return None
+
+
 def _check_record(value: object, state: dict[str, Any]) -> dict[str, Any]:
     row = _obj(value, "verification receipt")
-    _strict(row, {"id", "targets", "command", "environment", "environment_sha256", "exit_code", "log", "source_identity", "source_before", "content_identity", "ownership_sha256", "source_drift", "recorded_at"}, {"reused_from"}, "verification receipt")
+    _strict(row, {"id", "targets", "candidate_findings", "command", "environment", "environment_sha256", "exit_code", "log", "source_identity", "source_before", "content_identity", "ownership_sha256", "source_drift", "recorded_at"}, {"reused_from"}, "verification receipt")
     _id(row["id"], "check id")
     if not isinstance(row["targets"], list) or not row["targets"]:
         raise ReportError("check requires targets")
     for target in row["targets"]:
         _target(target, state)
+    membership = _obj(row["candidate_findings"], "receipt candidate membership")
+    if set(membership) != {target["id"] for target in row["targets"] if target["kind"] == "candidate"}:
+        raise ReportError("receipt candidate membership must match its targets")
+    findings = _catalog(state)[1]
+    for ids in membership.values():
+        ids = _texts(ids, "receipt finding ids", empty=False)
+        if ids != sorted(set(ids)) or set(ids) - set(findings):
+            raise ReportError("invalid receipt finding membership")
     if not isinstance(row["command"], list) or not row["command"] or any(not isinstance(arg, str) or not arg for arg in row["command"]):
         raise ReportError("check command must contain non-empty arguments")
     _text(row["environment"], "check environment")
@@ -2195,6 +2243,9 @@ def _record_check(raw: dict[str, Any], state: dict[str, Any], root: Path) -> Non
     row = _check_record(raw["check"], state)
     if row["id"] in {check["id"] for check in state["checks"]}:
         raise ReportError("check id already exists")
+    if row["candidate_findings"] != _candidate_membership(state, row["targets"]):
+        raise ReportError("verification receipt candidate membership changed")
+    _check_log(root, row)
     required = {p for target in row["targets"] for p in _outcome_required_paths(state, {"target": target})}
     _verify_source_packet(root, row["source_identity"], sorted(required))
     state["checks"].append(row)
@@ -2216,14 +2267,14 @@ def verify(*, repo_root: Path, report: Path, identifier: str, targets: Sequence[
     if not command or any(not isinstance(arg, str) or not arg for arg in command):
         raise ReportError("verify requires a command and non-empty arguments")
     environment = _text(environment, "verification environment")
-    executable_arg = Path(command[0])
-    executable = shutil.which(str(root / executable_arg) if not executable_arg.is_absolute() and len(executable_arg.parts) > 1 else command[0])
+    executable = _verification_executable(root, command[0])
     environment_sha = _digest(_canonical({"environment": dict(os.environ), "platform": sys.platform, "cwd": str(root),
                                          "executable": executable, "executable_sha256": _digest(Path(executable).read_bytes()) if executable and Path(executable).is_file() else None}))
     bound = sorted({p for target in selected for p in _outcome_required_paths(state, {"target": target})} | {_rel(p, "proof input") for p in paths})
     before = _source_packet_view(root, bound)
     content = _content_identity(root, bound)
     ownership = _check_ownership(state, selected)
+    membership = _candidate_membership(state, selected)
     created_log = False
     try:
         if reuse:
@@ -2231,25 +2282,25 @@ def verify(*, repo_root: Path, report: Path, identifier: str, targets: Sequence[
             if previous is None or previous["exit_code"] != 0 or previous["source_drift"]:
                 raise ReportError("reuse requires a passing, drift-free receipt")
             if any(previous[key] != value for key, value in (("targets", selected), ("command", command), ("environment", environment),
-                    ("environment_sha256", environment_sha), ("content_identity", content), ("ownership_sha256", ownership))):
+                    ("candidate_findings", membership), ("environment_sha256", environment_sha), ("content_identity", content), ("ownership_sha256", ownership))):
                 raise ReportError("verification inputs, ownership, command, or environment changed; run the check")
             log = previous["log"]
-            log_path = (root / log["path"]).resolve()
-            if not log_path.is_relative_to(root) or not log_path.is_file() or _digest(log_path.read_bytes()) != log["sha256"]:
-                raise ReportError("verification log is missing or changed")
+            log_path = _check_log(root, previous)
             code = 0
         else:
             log_path = path.with_name(f"check-{identifier}.log")
             try:
                 with log_path.open("xb") as stream:
                     created_log = True
-                    completed = subprocess.run(command, cwd=root, stdout=stream, stderr=subprocess.STDOUT, check=False)
+                    if executable is None:
+                        raise OSError(f"verification executable not found: {command[0]}")
+                    completed = subprocess.run([executable, *command[1:]], cwd=root, stdout=stream, stderr=subprocess.STDOUT, check=False)
                 code = completed.returncode
             except OSError as exc:
                 raise ReportError(f"cannot run verification: {exc}") from exc
             log = {"path": log_path.relative_to(root).as_posix(), "sha256": _digest(log_path.read_bytes())}
         after = _source_packet_view(root, bound)
-        receipt = {"id": identifier, "targets": selected, "command": command, "environment": environment, "environment_sha256": environment_sha,
+        receipt = {"id": identifier, "targets": selected, "candidate_findings": membership, "command": command, "environment": environment, "environment_sha256": environment_sha,
                    "exit_code": code, "log": log, "source_before": before, "source_identity": after, "content_identity": content,
                    "ownership_sha256": ownership, "source_drift": sorted(p for p in bound if before["fingerprints"][p] != after["fingerprints"][p]), "recorded_at": _now()}
         if reuse:
@@ -2331,7 +2382,8 @@ def _guard_view(operation: str, raw: dict[str, Any], state: dict[str, Any]) -> d
             record = catalog[item["id"]]
             linked = [findings[fid] for fid in record["record"].get("finding_ids", [])]
             related = [item] + [{"kind": "finding", "id": fid} for fid in record["record"].get("finding_ids", [])]
-            target.append([record, linked, [event for event in state["outcomes"] if event["target"] in related],
+            effective = {event["id"] for related_target in related for _, event in _target_events(state, related_target)}
+            target.append([record, linked, [event for event in state["outcomes"] if event["id"] in effective],
                            [row for row in state["delivery_requirements"] if row["target"] in related]])
     return {"operation": operation, "context_sha256": _digest(_canonical([state["systems"], context, state["excluded"]])),
             "target_sha256": _digest(_canonical(target))}

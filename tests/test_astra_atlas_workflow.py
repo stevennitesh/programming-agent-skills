@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import subprocess
 import sys
 from copy import deepcopy
@@ -10,7 +11,7 @@ from pathlib import Path
 
 import pytest
 
-from test_astra_atlas import SCRIPT, analysis_manifest, atlas, candidate, elements, finding, publish, report, sha
+from test_astra_atlas import SCRIPT, analysis_manifest, atlas, audit_manifest, candidate, elements, finding, publish, report, sha
 from test_astra_atlas_maintenance import event, outcomes, reconcile, started, state
 from test_astra_atlas_usability import mapped
 
@@ -63,6 +64,18 @@ def test_prepared_audit_cannot_change_its_selected_owner(tmp_path: Path) -> None
     before = report(tmp_path).read_bytes()
     with pytest.raises(atlas.ReportError, match="conflicts"):
         publish(tmp_path, "audit-subsystem", packet)
+    assert report(tmp_path).read_bytes() == before
+
+
+def test_finding_packet_guard_includes_new_candidate_group_events(tmp_path: Path) -> None:
+    started(tmp_path)
+    prepared = atlas.prepare_outcomes(repo_root=tmp_path, report=report(tmp_path), targets=["finding:alpha-defect"], outcome_type="verified")
+    packet = json.loads(Path(prepared["packet"]).read_text(encoding="utf-8"))
+    packet["events"][0].update(summary="Finding verified.", evidence=["Focused probe passed."])
+    outcomes(tmp_path, event(tmp_path, "group-reopened", "reopened"))
+    before = report(tmp_path).read_bytes()
+    with pytest.raises(atlas.ReportError, match="conflicts"):
+        publish(tmp_path, "record-outcome", packet)
     assert report(tmp_path).read_bytes() == before
 
 
@@ -224,6 +237,83 @@ def test_verification_carries_across_index_changes_and_binds_verified_outcome(tm
     assert state(tmp_path)["checks"][0] == tested["check"]
     selected_history = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), candidate="alpha-fix", history=True)["history"]
     assert {entry["check_id"] for entry in selected_history if entry["operation"] == "check"} == {"probe", "carried"}
+
+
+def test_receipts_preserve_original_membership_and_reject_expanded_groups(tmp_path: Path) -> None:
+    started(tmp_path)
+    original = check(tmp_path)["check"]
+    assert original["candidate_findings"] == {"alpha-fix": ["alpha-defect"]}
+    verified = event(tmp_path, "original-verification", "verified", check_ids=["probe"])
+    outcomes(tmp_path, verified)
+    packet = audit_manifest(tmp_path, report(tmp_path))
+    additional = {**finding(), "id": "alpha-additional"}
+    packet["findings"].append(additional)
+    packet["candidates"][0]["finding_ids"].append(additional["id"])
+    publish(tmp_path, "audit-subsystem", packet)
+    with pytest.raises(atlas.ReportError, match="changed"):
+        check(tmp_path, "old-carried", reuse="probe")
+    prepared = atlas.prepare_outcomes(repo_root=tmp_path, report=report(tmp_path), targets=["candidate:alpha-fix"], outcome_type="verified", check_ids=["probe"])
+    packet = json.loads(Path(prepared["packet"]).read_text(encoding="utf-8"))
+    packet["events"][0]["summary"] = "Expanded group verified."
+    with pytest.raises(atlas.ReportError, match="membership changed"):
+        publish(tmp_path, "record-outcome", packet)
+    current = state(tmp_path)
+    assert current["checks"][0] == original and current["outcomes"][0]["finding_ids"] == ["alpha-defect"]
+    assert atlas.status_report(repo_root=tmp_path, report=report(tmp_path), finding="alpha-additional")["rows"][0]["work"]["status"] == "open"
+    check(tmp_path, "expanded")
+    verified["id"] = "expanded-verification"
+    verified["check_ids"] = ["expanded"]
+    outcomes(tmp_path, verified)
+    assert atlas.status_report(repo_root=tmp_path, report=report(tmp_path), finding="alpha-additional")["rows"][0]["work"]["status"] == "verified"
+
+
+@pytest.mark.parametrize("removed", [False, True])
+def test_verified_outcomes_require_unchanged_existing_receipt_logs(tmp_path: Path, removed: bool) -> None:
+    started(tmp_path)
+    receipt = check(tmp_path)["check"]
+    log = tmp_path / receipt["log"]["path"]
+    if removed:
+        log.unlink()
+    else:
+        log.write_text("Changed output", encoding="utf-8")
+    before = report(tmp_path).read_bytes()
+    with pytest.raises(atlas.ReportError, match="log is missing or changed"):
+        outcomes(tmp_path, event(tmp_path, "unsupported-verification", "verified", check_ids=["probe"]))
+    assert report(tmp_path).read_bytes() == before
+    assert state(tmp_path)["checks"][0] == receipt  # Historical inspection remains available.
+
+
+def test_relative_path_verifier_runs_from_repository_and_binds_actual_binary(tmp_path: Path, monkeypatch) -> None:
+    root = tmp_path / "repo"
+    root.mkdir()
+    started(root)
+    caller = tmp_path / "caller"
+    (caller / "bin").mkdir(parents=True)
+    (root / "bin").mkdir()
+    runtime = Path(os.environ["COMSPEC"]) if os.name == "nt" else Path("/bin/sh")
+    name = "probe.exe" if os.name == "nt" else "probe"
+    repo_exe, caller_exe = root / "bin" / name, caller / "bin" / name
+    shutil.copy2(runtime, repo_exe)
+    shutil.copy2(runtime, caller_exe)
+    with caller_exe.open("ab") as stream:
+        stream.write(b"caller verifier")
+    monkeypatch.chdir(caller)
+    monkeypatch.setenv("PATH", "bin" + os.pathsep + os.environ.get("PATH", ""))
+    calls = []
+    original = subprocess.run
+    def observe(args, **kwargs):
+        calls.append(args[0])
+        return original(args, **kwargs)
+    monkeypatch.setattr(atlas.subprocess, "run", observe)
+    command = [name, "/c" if os.name == "nt" else "-c", "echo repo-verifier"]
+    first = check(root, command=command)
+    assert first["passed"] and str(repo_exe) in calls and str(caller_exe) not in calls
+    assert "repo-verifier" in (root / first["check"]["log"]["path"]).read_text(encoding="utf-8")
+    assert check(root, "carried", reuse="probe", command=command)["reused"]
+    with repo_exe.open("ab") as stream:
+        stream.write(b"changed repository verifier")
+    with pytest.raises(atlas.ReportError, match="environment changed"):
+        check(root, "stale-carried", reuse="probe", command=command)
 
 
 @pytest.mark.parametrize("changed", ["content", "proof", "proof-scope", "ownership", "environment", "command", "log"])

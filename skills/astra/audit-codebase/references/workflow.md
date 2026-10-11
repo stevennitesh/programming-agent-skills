@@ -69,8 +69,9 @@ does not choose a test strategy or mark a finding fixed. A failed command or
 source-mutating check is recorded as insufficient proof; the CLI returns nonzero.
 
 Carry-forward creates a new receipt referencing the original. It requires a
-passing, drift-free receipt, unchanged log, command, environment, input paths,
-file contents/kinds/executable bits, and implicated ownership. Index-only or
+passing, drift-free receipt, unchanged candidate membership, log, command,
+environment, input paths, file contents/kinds/executable bits, and implicated
+ownership. Index-only or
 commit-only changes can qualify while their original strict source fingerprints
 remain preserved. Gitlinks retain strict identity checks. The helper refuses
 automatic carry-forward when content, ownership, proof inputs, or environment
@@ -82,8 +83,9 @@ dependencies changed.
 Use `prepare-outcomes --type verified --check <receipt-id>` to bind the receipt's
 proof inputs and evidence references automatically; repeat `--check` as needed.
 Supply the conclusion that the check supports. A verified outcome referencing
-receipts rejects failed checks or mismatched source. Implementation, commit, and
-deployment remain separate outcomes. Direct evidence can still establish an
+receipts rejects failed checks, changed group membership or logs, and mismatched
+source. Implementation, commit, and deployment remain separate outcomes. Direct
+evidence can still establish an
 outcome without using the command wrapper.
 The CLI returns a compact receipt summary. Complete snapshots stay in the report
 and are available through selected inspection with history or `inspect --full`.
