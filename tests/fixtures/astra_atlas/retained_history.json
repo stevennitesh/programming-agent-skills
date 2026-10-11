@@ -250,7 +250,7 @@
       "freshness": "fresh"
     }
   },
-  "state_version": 5,
+  "state_version": 6,
   "subsystems": [
     {
       "audit": {
@@ -542,5 +542,28 @@
       "name": "Delivery"
     }
   ],
-  "title": "Architecture atlas"
+  "title": "Architecture atlas",
+  "source_bindings": {},
+  "batches": [],
+  "checks": [],
+  "gap_dispositions": [],
+  "gap_source_changes": {},
+  "finding_source_changes": {
+    "alpha-defect": {
+      "audit": {
+        "changed_paths": [
+          "tests/test_a.py"
+        ],
+        "freshness": "changed",
+        "scope_changed": true
+      },
+      "scope": {
+        "changed_paths": [
+          "tests/test_a.py"
+        ],
+        "freshness": "changed",
+        "scope_changed": true
+      }
+    }
+  }
 }

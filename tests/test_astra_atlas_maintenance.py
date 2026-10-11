@@ -423,9 +423,9 @@ def test_live_systemic_counts_resolve_retired_affected_owners(tmp_path: Path, ch
     assert current["systemic_findings"][0] == original
     html = report(tmp_path).read_text(encoding="utf-8")
     card = re.search(rf'<article[^>]*id="subsystem-{prior}".*?</article>', html, re.S).group()
-    assert "1 findings · 0 candidates" in card
+    assert "1 finding · 0 candidates" in card
     node = re.search(rf'<a href="#subsystem-{prior}".*?</a>', atlas._architecture_svg(current), re.S).group()
-    assert "1 systemic findings" in node
+    assert "1 systemic finding" in node
     assert '<strong>1</strong><span>Defects</span>' in html
     assert not atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), finding="alpha-defect")["rows"][0]["historical"]
     assert atlas.check_report(repo_root=tmp_path, report=report(tmp_path))["valid"]
@@ -809,7 +809,7 @@ def test_check_report_requires_navigation_to_existing_records(tmp_path: Path, mo
 def state_from_bytes(data: bytes) -> dict:
     from html import unescape
     encoded = atlas._STATE.findall(data.decode("utf-8"))[0][1]
-    return json.loads(unescape(encoded))
+    return atlas._unpack_state(json.loads(unescape(encoded)))
 
 
 @pytest.mark.parametrize("preview_state", ["verified", " verified "])
@@ -1256,7 +1256,7 @@ def test_retained_current_format_history_uses_canonical_map_snapshots(tmp_path: 
     # No runtime adapter or derived reconciliation metadata is required.
     fixture = Path(__file__).parent / "fixtures/astra_atlas/retained_history.json"
     original = json.loads(fixture.read_text(encoding="utf-8"))
-    assert original["state_version"] == atlas.STATE_VERSION == 5
+    assert original["state_version"] == atlas.STATE_VERSION == 6
     assert "affected_subsystems" not in original["history"][-1]
     report(tmp_path).parent.mkdir(parents=True)
     report(tmp_path).write_bytes(atlas._render(original))
@@ -1285,7 +1285,7 @@ def test_check_report_rejects_missing_retained_map_records(tmp_path: Path) -> No
     reconcile(tmp_path, ownership_changes=[{"path": "tests/test_a.py", "owner": "beta", "reason": "Reviewed proof owner."}])
     invalid = state(tmp_path)
     del invalid["history"][-1]["superseded"]["map"]["subsystems"]
-    payload = atlas._canonical(invalid)
+    payload = atlas._canonical(atlas._pack_state(invalid))
     encoded = payload.decode("utf-8").replace("<", "\\u003c").replace(">", "\\u003e").replace("&", "\\u0026")
     block = f'<script id="audit-codebase-state" type="application/json" data-sha256="{atlas._digest(payload)}">{encoded}</script>'
     damaged = atlas._STATE.sub(lambda _: block, report(tmp_path).read_text(encoding="utf-8"))

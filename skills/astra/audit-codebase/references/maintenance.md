@@ -4,13 +4,20 @@ Use when resuming a saved atlas or keeping it accurate as authorized fixes land.
 The helper owns deterministic reconciliation and publication; the agent judges
 ownership, changed conclusions, adequate proof, and the requested delivery scope.
 
+Use [Prepared work and verification](workflow.md) for stage preparation, atomic
+batch publication, narrow follow-up findings, passing-check carry-forward, and
+gap dispositions. These replace repeated mechanics without prescribing the
+investigation. `status --gaps` shows current uncertainty separately from fixes.
+
 ## Inspect the relevant work
 
-`status` returns counts and bounded work rows. `inspect` defaults to the same
+`status` returns counts, a bounded subsystem index, and bounded work rows. Start
+there to find IDs, then filter the selected scope; the index omits evidence and
+source fingerprints. `inspect` defaults to the same
 compact view and adds relevant evidence when a subsystem, candidate, or finding
 is selected. Both observe current source without writing the report.
 Helper responses use `response_version: 2`; manifests remain version 1 and
-report/state use format 5. Compact inspection omits the complete `state` field;
+report/state use format 6. Compact inspection omits the complete `state` field;
 request `inspect --full` when it is needed.
 For a copied `$audit-codebase inspect candidate ...` or `inspect finding ...`
 selection, resolve its run and stable ID through filtered inspection. Report the

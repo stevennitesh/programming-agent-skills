@@ -1,0 +1,6 @@
+interface:
+  display_name: "Test Cleanup"
+  short_description: "Simplify tests while preserving regression protection"
+  default_prompt: "Use $test-cleanup to clean up stale, redundant, or brittle tests in the selected scope while preserving meaningful regression coverage."
+policy:
+  allow_implicit_invocation: false

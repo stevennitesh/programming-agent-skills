@@ -66,6 +66,7 @@ review evidence. A selected workflow may require more within its own scope.
 | Model allocation and execution authority | [Cost-aware coding](../../skills/astra/cost-aware-coding/SKILL.md), only when requested |
 | Concurrent implementation scheduling, custody, and integration | [Parallel implement](../../skills/astra/parallel-implement/SKILL.md), only when requested |
 | Candidate correctness and maintainability assessment | [Change review](../../skills/astra/change-review/SKILL.md); the lead chooses direct, independent, or scoped high-assurance review |
+| Scoped retirement or simplification of stale, redundant, or brittle tests | [Test cleanup](../../skills/astra/test-cleanup/SKILL.md), only when explicitly requested; routine verification and feature test authoring stay with their work |
 | Visual codebase mapping and baseline improvement discovery, hard bugs, or measured optimization | [Audit codebase](../../skills/astra/audit-codebase/SKILL.md), [diagnosing bugs](../../skills/astra/diagnosing-bugs/SKILL.md), and [hillclimb](../../skills/astra/hillclimb/SKILL.md) |
 | Evidence gathering and guided procedures | [Research](../../skills/astra/research/SKILL.md) and [wizard](../../skills/astra/wizard/SKILL.md) |
 | Active Git conflicts | [Resolving merge conflicts](../../skills/astra/resolving-merge-conflicts/SKILL.md) |
@@ -98,6 +99,11 @@ helper prepares mechanical packet fields, references finding evidence, derives
 counts, and handles cosmetic edits without another audit. Relevant lenses are
 concise coverage prompts; omitted dimensions stay uninspected. Investigation,
 probes, comparisons, and any authorized delegation remain discretionary.
+Prepared independent results share one guarded publication; narrow follow-ups
+retain existing analysis. Passing-check receipts can carry across Git-only changes
+when relevant inputs remain equivalent. Gap dispositions stay separate from fix
+and delivery outcomes. Immutable snapshots and evidence are interned inside the
+self-contained report; the pack supports one current format.
 Publication protections stay enforced in code. Preview and validation effort
 follow the changed surface, with unavailable host capability recorded once.
 Change-review judges a fixed change candidate. Verification-harness creates
@@ -145,7 +151,32 @@ STE-informed blend and pstack's unslop principles support concrete, natural
 writing. Isolated wording edits, new research, and general website construction
 remain outside its scope. Both skills require an explicit request.
 
-The managed pack currently contains 20 skills. Their metadata owns invocation
+Test-cleanup owns an explicitly requested test-maintenance workflow. Its central
+decision is which plausible regression a test catches in supported behavior. Agents choose
+what to keep, rewrite, consolidate, or remove, with evidence for retirement and
+preserved distinct failure cases. A cleanup request permits local test edits;
+read-only audits finish with findings. The user's global agent guidance owns a
+brief local completion check of tests added or modified in a work section, removing one-off
+checks with no continuing purpose. Substantive cleanup can be suggested, but does
+not automatically invoke the full skill. Validation and replacement regression
+tests are part of cleanup when needed. The skill does not require a full audit
+for ordinary coding, drop support, change production behavior, or require an audit
+ledger, new framework, mutation campaign, or full-suite rerun after every edit.
+Shared fixture impact and unresolved questions determine broader validation.
+The method is instruction-only because semantic test value is the decision;
+existing repository tools own collection and execution.
+
+This design applies the concise discovery and reduced scaffolding guidance in
+OpenAI's [Astra prompting guide](https://developers.openai.com/api/docs/guides/latest-model#prompting-best-practices)
+and [skills article](https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra),
+alongside Anthropic's [skill authoring guidance](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices),
+[Opus 5.5 prompting guide](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-5-5),
+[Opus 5.5 usage article](https://claude.dev/blog/getting-the-most-out-of-opus-5-5/),
+and [context engineering article](https://claude.dev/blog/the-new-rules-of-context-engineering-for-claude-5-generation-models/).
+These sources support the authoring choices; they do not establish cleanup
+effectiveness or equivalent behavior across models.
+
+The managed pack currently contains 21 skills. Their metadata owns invocation
 behavior; the README lists explicit-only workflows. Continuation handoffs belong
 to writing-for-agents, with execution-specific state added by the relevant workflow.
 Ordinary implementation uses the accepted assignment and applicable repository

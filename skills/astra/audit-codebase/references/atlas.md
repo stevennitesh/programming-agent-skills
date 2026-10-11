@@ -5,9 +5,12 @@ continuing an existing current-format workbench. An explicitly requested brief o
 text-only assessment may stay in chat; a no-write assessment creates no report.
 
 The helper is [atlas.py](../scripts/atlas.py). Use its current `--help` and
-subcommand help for exact CLI syntax. The helper writes report/state format 5 and
+subcommand help for exact CLI syntax. The helper writes report/state format 6 and
 accepts manifest format 1. Only the current report format is supported; create a
 new map for an older report.
+Immutable source snapshots and evidence are stored once by content ID inside the
+self-contained HTML. Inspection and expandable history resolve those references;
+no sidecar database or previous-format adapter is needed.
 Read [Atlas maintenance](maintenance.md) when resuming a report, reconciling
 structural changes, or recording authorized implementation and delivery.
 
@@ -158,7 +161,7 @@ The rendered workbench should provide:
 
 - a top-level coverage/status summary;
 - a visual system/subsystem dependency map;
-- mapped/audited/source-changed state badges;
+- separate, clearly labeled audit coverage, analysis, evidence, and work states;
 - searchable subsystem/finding/candidate cards;
 - six-lens coverage visualization;
 - findings with expandable evidence;
@@ -173,6 +176,17 @@ Coverage accounts for all mapped subsystems, separating current completed and
 non-applicable lenses from evidence gaps, uninspected lenses, changed source, and
 unaudited scope. Defects, opportunities, retained complexity, and finding gaps have
 separate mechanically derived counts.
+Use a consistent color key: blue for recorded inspection or analysis, green for
+verified fixes or closed gaps, amber for changed inputs or unresolved questions,
+red for open defects or failed checks, and neutral colors for other states.
+Unchanged inputs and candidate strength do not imply successful completion.
+Show partial coverage and related work on subsystem cards. Keep labels short,
+group related information, and use spacing and hierarchy rather than explanatory
+prose to make the report readable. Exact layout choices remain discretionary.
+Keep identity, states, and selection commands visible. Put lengthy ownership,
+proposal, analysis, audit, and evidence sections behind collapsed disclosure
+arrows. Expanding one card should not stretch its neighbors. Navigation should
+reveal linked content even when filters or disclosures hide it.
 Candidate freshness follows both its originating audit and its analysis source
 packet, including evidence outside mapped ownership. Keep stale judgments visible
 as prior evidence. Inspect changed paths, ownership, and recorded outcomes before

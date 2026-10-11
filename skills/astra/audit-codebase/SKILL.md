@@ -30,14 +30,17 @@ investigation needs it. For guided exploration, show the map and let the user
 select a subsystem, then a candidate for deeper analysis. Honor an already-selected
 scope, including a whole-repository audit or delegated scope selection, without
 asking the user to select it again.
+For agent reading, start with compact `status` and filter by scope or stable ID.
+Use selected `inspect` for needed evidence; avoid loading the full HTML or state
+into context for routine navigation.
 
-For a selected audit, use `prepare-audit` to create one editable packet with the
-current report guard and source snapshot. Fill in judgments and evidence; the
-helper handles validation and publication. See [Audit packet](references/audit-packet.md)
+Use the helper's preparation command for the selected audit, analysis, or outcome
+to supply the scope, report guard, and source snapshot. Fill in judgments and
+evidence; the helper handles validation and publication. See [Audit packet](references/audit-packet.md)
 for the concise input and optional detail. The ordinary path is:
 
 ```text
-Select scope → prepare packet → investigate → publish → check the result
+Select scope → prepare packets → investigate → publish once → check the result
 ```
 
 An explicit brief or text-only assessment may stay in chat. A no-write request
@@ -107,6 +110,13 @@ Publish a meaningful scope batch when it is ready, or when an intermediate resul
 helps the user's ongoing exploration. Keep source identities, stable IDs, guarded
 publication, and read-back. Use `edit-presentation` for display-title changes;
 wording and layout adjustments do not require another audit event.
+For independent prepared results, use `publish-batch`; the coordinator owns the
+write. Use `append-findings` for a narrow follow-up that should retain existing
+analyses and lens coverage. See [Prepared work and verification](references/workflow.md)
+when collecting results, carrying passing checks across Git-only changes, or
+recording gap dispositions. These operations supply mechanics, not a required
+sequence for every investigation. Keep bespoke probes when they answer a real
+question; do not rebuild packet, publication, or provenance plumbing.
 
 Use [Atlas maintenance](references/maintenance.md) to inspect relevant changes,
 reconcile ownership, and retain fix and delivery outcomes. Changed source prompts

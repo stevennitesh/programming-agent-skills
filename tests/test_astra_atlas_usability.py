@@ -16,6 +16,59 @@ from test_astra_atlas import (
 from test_astra_atlas_maintenance import event, outcomes, reconcile, started, state
 
 
+@pytest.mark.parametrize("status,tone", [("open", "danger"), ("implemented", "warning"),
+                                         ("verified", "success"), ("deferred", "neutral"),
+                                         ("verification changed", "warning")])
+def test_finding_visual_state_follows_outcome_and_verification_inputs(tmp_path: Path, status: str, tone: str) -> None:
+    started(tmp_path)
+    if status != "open":
+        outcome = "verified" if status == "verification changed" else status
+        outcomes(tmp_path, event(tmp_path, "finding-result", outcome, target_kind="finding", target_id="alpha-defect"))
+    if status == "verification changed":
+        (tmp_path / "src/a.py").write_text("VALUE=90\n", encoding="utf-8")
+        atlas.refresh_report(repo_root=tmp_path, report=report(tmp_path))
+    html = report(tmp_path).read_text(encoding="utf-8")
+    card = elements(html, "id", "finding-alpha-defect")[0]
+    assert card["data-state"] == "defect"  # The observation type is preserved after a fix.
+    assert card["data-work-status"] == status
+    assert f"tone-{tone}" in card["class"].split()
+    candidate_card = elements(html, "id", "candidate-alpha-fix")[0]
+    assert candidate_card["data-analysis-states"] == "analyzed"
+    assert candidate_card["data-work-states"] == status
+    assert atlas.check_report(repo_root=tmp_path, report=report(tmp_path))["valid"]
+
+
+def test_partial_coverage_and_cross_scope_work_remain_visible_on_subsystems(tmp_path: Path) -> None:
+    mapped(tmp_path)
+    packet = filled_packet(tmp_path)
+    atlas.mutate_report(objective="audit-subsystem", repo_root=tmp_path, report=report(tmp_path), manifest=packet)
+    html = report(tmp_path).read_text(encoding="utf-8")
+    alpha = elements(html, "id", "subsystem-alpha")[0]
+    beta = elements(html, "id", "subsystem-beta")[0]
+    assert alpha["data-audit-status"] == "partial"
+    assert beta["data-audit-status"] == "not-audited"
+    assert beta["data-work-states"] == "open" and beta["data-outstanding"] == "true"
+    assert len(elements(html, "class", "badge not-inspected tone-neutral")) == 5
+    outcomes(tmp_path, event(tmp_path, "fixed-finding", "verified", target_kind="finding", target_id="alpha-defect"))
+    html = report(tmp_path).read_text(encoding="utf-8")
+    beta = elements(html, "id", "subsystem-beta")[0]
+    assert beta["data-work-states"] == "verified" and beta["data-outstanding"] == "false"
+    assert beta["data-audit-status"] == "not-audited"
+    assert atlas.check_report(repo_root=tmp_path, report=report(tmp_path))["valid"]
+
+
+def test_compact_status_exposes_paginated_map_ids_without_audit_payloads(tmp_path: Path) -> None:
+    mapped(tmp_path)
+    result = atlas.status_report(repo_root=tmp_path, report=report(tmp_path), limit=1)
+    assert result["subsystems_total"] == 2 and result["subsystems_has_more"]
+    sub = result["subsystems"][0]
+    assert sub["subsystem_id"] == "alpha" and sub["audit_status"] == "not-audited"
+    assert "source_identity" not in sub and "audit" not in sub
+    assert "state" not in result and not result["rows"]
+    next_page = atlas.status_report(repo_root=tmp_path, report=report(tmp_path), limit=1, offset=1)
+    assert next_page["subsystems"][0]["subsystem_id"] == "beta"
+
+
 def cli(root: Path, command: str, *args: str) -> tuple[int, dict]:
     result = subprocess.run([sys.executable, str(SCRIPT), command, "--repo-root", str(root),
                              "--report", str(report(root)), *args], capture_output=True, text=True)
@@ -110,7 +163,7 @@ def test_explicit_candidate_scope_cannot_hide_linked_inputs(tmp_path: Path) -> N
 
 
 @pytest.mark.parametrize("change", ["source", "report"])
-def test_prepared_packet_keeps_source_and_report_guards(tmp_path: Path, change: str) -> None:
+def test_prepared_packet_rejects_source_drift_and_preserves_compatible_report_edits(tmp_path: Path, change: str) -> None:
     mapped(tmp_path)
     packet = filled_packet(tmp_path)
     if change == "source":
@@ -118,9 +171,13 @@ def test_prepared_packet_keeps_source_and_report_guards(tmp_path: Path, change: 
     else:
         atlas.edit_presentation(repo_root=tmp_path, report=report(tmp_path), kind="subsystem", identifier="alpha", title="Validation")
     saved = report(tmp_path).read_bytes()
-    with pytest.raises(atlas.ReportError, match="current bound source|expected_report_sha256"):
+    if change == "source":
+        with pytest.raises(atlas.ReportError, match="current bound source"):
+            atlas.mutate_report(objective="audit-subsystem", repo_root=tmp_path, report=report(tmp_path), manifest=packet)
+        assert report(tmp_path).read_bytes() == saved
+    else:
         atlas.mutate_report(objective="audit-subsystem", repo_root=tmp_path, report=report(tmp_path), manifest=packet)
-    assert report(tmp_path).read_bytes() == saved
+        assert state(tmp_path)["presentation"]["subsystem"]["alpha"] == "Validation"
 
 
 @pytest.mark.parametrize("destination", ["src/a.json", ".tmp/audit-codebase/other/audit.json", ".tmp/audit-codebase/run-1/report.html"])
