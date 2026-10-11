@@ -2047,8 +2047,8 @@ def _gap_claim(target: object, state: dict[str, Any]) -> tuple[dict[str, str], d
     if target.get("kind") == "finding":
         selected = _target(target, state)
         item = _catalog(state)[1][selected["id"]]
-        if item["record"]["kind"] != "gap":
-            raise ReportError("gap disposition requires a gap finding")
+        if item["record"]["kind"] != "gap" or item["historical"]:
+            raise ReportError("gap disposition requires a current gap finding")
         return selected, {"record": item["record"], "source_identity": item["audit_source"]}, _required_paths(state, item["record"])
     _strict(target, {"kind", "subsystem_id", "class"}, set(), "lens gap target")
     if target["kind"] != "lens":
@@ -2782,8 +2782,8 @@ def prepare_outcomes(*, repo_root: Path, report: Path, targets: Sequence[str], o
             event["check_ids"] = applicable
             event["evidence"] = [f"Check {check_id}: {checks[check_id]['log']['path']}" for check_id in applicable]
             event_paths.update(p for check_id in applicable for p in checks[check_id]["source_identity"]["paths"])
-        bound.update(event_paths)
-        if outcome_type in {"implemented", "verified"}:
+        if outcome_type in {"implemented", "verified"} or shared_paths:
+            bound.update(event_paths)
             event["source_identity"] = _source_packet_view(root, sorted(event_paths))
         if outcome_type in {"committed", "deployed"}:
             event["reference"] = ""
@@ -2809,7 +2809,7 @@ def prepare_gaps(*, repo_root: Path, report: Path, findings: Sequence[str] = (),
     shared_paths = {_rel(p, "proof input") for p in paths}
     bound = set()
     packet = {"version": MANIFEST_VERSION, "expected_report_sha256": _digest(data), "gaps": [
-        {"id": f"gap-{len(state['gap_dispositions']) + index + 1}", "target": target, "disposition": "narrowed",
+        {"id": f"gap-{_digest(_canonical(target))[:16]}-{len(state['gap_dispositions']) + index + 1}", "target": target, "disposition": "narrowed",
          "summary": "", "evidence": [], "remaining_question": "", "revisit_when": ""} for index, target in enumerate(targets)]}
     for row in packet["gaps"]:
         row_paths = set(_gap_claim(row["target"], state)[2]) | shared_paths
