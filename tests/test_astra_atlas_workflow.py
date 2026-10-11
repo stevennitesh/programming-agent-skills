@@ -481,6 +481,69 @@ def test_receipts_preserve_original_membership_and_reject_expanded_groups(tmp_pa
     assert atlas.status_report(repo_root=tmp_path, report=report(tmp_path), finding="alpha-additional")["rows"][0]["work"]["status"] == "verified"
 
 
+@pytest.mark.parametrize("target_kind", ["candidate", "finding"])
+@pytest.mark.parametrize("field,value", [("proof", ["Both callers reject negative and missing values"]),
+                                         ("expectation", "Both callers reject negative and missing values"),
+                                         ("scenario", "A missing value bypasses validation in the second caller")])
+def test_verification_binds_the_finding_claim_even_when_source_is_unchanged(tmp_path: Path, target_kind: str, field: str, value) -> None:
+    started(tmp_path)
+    target_id = "alpha-fix" if target_kind == "candidate" else "alpha-defect"
+    targets = [f"{target_kind}:{target_id}"]
+    args = dict(repo_root=tmp_path, report=report(tmp_path), targets=targets,
+                command=[sys.executable, "-c", "print('verified')"], environment="fixture")
+    receipt = atlas.verify(identifier="original", **args)["check"]
+    outcomes(tmp_path, event(tmp_path, "original-verified", "verified", target_kind=target_kind,
+                             target_id=target_id, check_ids=["original"]))
+    original_outcome = state(tmp_path)["outcomes"][0]
+    packet = audit_manifest(tmp_path, report(tmp_path))
+    packet["findings"][0][field] = value
+    publish(tmp_path, "audit-subsystem", packet)
+    current = state(tmp_path)
+    assert current["checks"][0] == receipt and current["outcomes"][0] == original_outcome
+    assert current["outcome_source_changes"]["original-verified"]["changed_findings"] == ["alpha-defect"]
+    assert current["outcome_source_changes"]["original-verified"]["changed_paths"] == []
+    selected = atlas.status_report(repo_root=tmp_path, report=report(tmp_path), finding="alpha-defect")["rows"][0]
+    assert selected["work"]["status"] == "verification changed"
+    with pytest.raises(atlas.ReportError, match="changed"):
+        atlas.verify(identifier="stale-carried", reuse="original", **args)
+    prepared = atlas.prepare_outcomes(repo_root=tmp_path, report=report(tmp_path), targets=targets,
+                                      outcome_type="verified", check_ids=["original"], output=Path("stale-outcome.json"))
+    stale = json.loads(Path(prepared["packet"]).read_text(encoding="utf-8"))
+    stale["events"][0]["summary"] = "Attempted to reuse proof of the old claim."
+    with pytest.raises(atlas.ReportError, match="finding claim changed"):
+        publish(tmp_path, "record-outcome", stale)
+    atlas.verify(identifier="revised", **args)
+    prepared = atlas.prepare_outcomes(repo_root=tmp_path, report=report(tmp_path), targets=targets,
+                                      outcome_type="verified", check_ids=["revised"], output=Path("revised-outcome.json"))
+    renewed = json.loads(Path(prepared["packet"]).read_text(encoding="utf-8"))
+    renewed["events"][0]["summary"] = "Checked the revised claim."
+    publish(tmp_path, "record-outcome", renewed)
+    assert atlas.status_report(repo_root=tmp_path, report=report(tmp_path), finding="alpha-defect")["rows"][0]["work"]["status"] == "verified"
+    assert state(tmp_path)["checks"][0] == receipt
+
+
+def test_unchanged_reaudit_and_presentation_edits_preserve_claim_verification(tmp_path: Path) -> None:
+    started(tmp_path)
+    original = check(tmp_path)["check"]
+    outcomes(tmp_path, event(tmp_path, "verified", "verified", check_ids=["probe"]))
+    publish(tmp_path, "audit-subsystem", audit_manifest(tmp_path, report(tmp_path)))
+    atlas.edit_presentation(repo_root=tmp_path, report=report(tmp_path), kind="finding", identifier="alpha-defect", title="Clearer finding label")
+    carried = check(tmp_path, "carried", reuse="probe")
+    assert carried["reused"] and carried["check"]["finding_sha256"] == original["finding_sha256"]
+    assert atlas.status_report(repo_root=tmp_path, report=report(tmp_path), finding="alpha-defect")["rows"][0]["work"]["status"] == "verified"
+
+
+def test_agent_supplied_verification_retains_its_claim_revision(tmp_path: Path) -> None:
+    started(tmp_path)
+    outcomes(tmp_path, event(tmp_path, "verified", "verified"))
+    original = state(tmp_path)["outcomes"][0]
+    packet = audit_manifest(tmp_path, report(tmp_path))
+    packet["findings"][0]["proof"] = ["Additional evidence is required for the revised claim."]
+    publish(tmp_path, "audit-subsystem", packet)
+    assert state(tmp_path)["outcomes"][0] == original
+    assert atlas.status_report(repo_root=tmp_path, report=report(tmp_path), finding="alpha-defect")["rows"][0]["work"]["status"] == "verification changed"
+
+
 @pytest.mark.parametrize("keep_original", [False, True])
 def test_check_history_uses_membership_recorded_when_the_check_ran(tmp_path: Path, keep_original: bool) -> None:
     started(tmp_path)
