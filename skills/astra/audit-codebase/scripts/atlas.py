@@ -930,12 +930,15 @@ def _catalog(state: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any]]:
         elif event["operation"] == "analyze":
             analysis_indices.setdefault(event["selection"], []).append(index)
 
-    def add(audit: dict[str, Any], origin: str, historical: bool, systemic: Sequence[dict[str, Any]], audit_index: int, cutoff: int) -> None:
+    def add(audit: dict[str, Any], origin: str, historical: bool, systemic: Sequence[dict[str, Any]], audit_index: int, cutoff: int,
+            bindings: dict[str, Any]) -> None:
         def source(kind: str, identifier: str) -> tuple[dict[str, Any], int]:
-            binding = state["source_bindings"].get(f"{kind}:{identifier}")
-            if binding and audit_index <= binding["history_index"] < cutoff:
-                return binding["source_identity"], binding["history_index"]
-            return audit["source_identity"], audit_index
+            binding = _obj(bindings.get(f"{kind}:{identifier}"), "record source binding")
+            _strict(binding, {"source_identity", "history_index"}, set(), "record source binding")
+            index = binding["history_index"]
+            if type(index) is not int or not audit_index <= index < cutoff:
+                raise ReportError("record source binding is outside its audit revision")
+            return _obj(binding["source_identity"], "record source identity"), index
 
         for item in audit.get("candidates", []):
             packet, inspected_index = source("candidate", item["id"])
@@ -950,11 +953,12 @@ def _catalog(state: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any]]:
     for sub in state["subsystems"] + state.get("retired_subsystems", []):
         if "audit" in sub:
             systemic = [item for item in state["systemic_findings"] if item["origin_subsystem_id"] == sub["id"]]
-            add(sub["audit"], sub["id"], sub["id"] not in active, systemic, audit_indices.get(sub["id"], -1), len(state["history"]))
+            add(sub["audit"], sub["id"], sub["id"] not in active, systemic, audit_indices.get(sub["id"], -1), len(state["history"]), state["source_bindings"])
     for index, event in reversed(list(enumerate(state["history"]))):
         superseded = event.get("superseded", {})
         if "audit" in superseded:
-            add(superseded["audit"], event["selection"], True, superseded.get("systemic_findings", []), prior_audit_indices.get(index, -1), index)
+            add(superseded["audit"], event["selection"], True, superseded.get("systemic_findings", []), prior_audit_indices.get(index, -1), index,
+                _obj(superseded.get("source_bindings"), "retained source bindings"))
     return candidates, findings
 
 
@@ -1893,6 +1897,16 @@ def _validate_state(state: dict[str, Any]) -> None:
     if len(preview_keys) != len(set(preview_keys)):
         raise ReportError("duplicate preview capability records")
     candidates, findings = _catalog(state)
+    for stored in state["history"]:
+        prior = stored.get("superseded", {})
+        if "audit" in prior:
+            bindings = _obj(prior.get("source_bindings"), "retained source bindings")
+            expected = {f"candidate:{row['id']}" for row in prior["audit"].get("candidates", [])}
+            expected.update(f"finding:{row['id']}" for row in prior["audit"].get("findings", []) + prior.get("systemic_findings", []))
+            if set(bindings) != expected:
+                raise ReportError("retained source bindings must cover the superseded audit records")
+            for binding in bindings.values():
+                _source_packet(binding["source_identity"], "retained record source")
     for key, binding in _obj(state["source_bindings"], "source bindings").items():
         kind, _, identifier = key.partition(":")
         if kind not in {"candidate", "finding"} or identifier not in (candidates if kind == "candidate" else findings):
@@ -2312,7 +2326,11 @@ def verify(*, repo_root: Path, report: Path, identifier: str, targets: Sequence[
                 code = completed.returncode
             except OSError as exc:
                 raise ReportError(f"cannot run verification: {exc}") from exc
-            log = {"path": log_path.relative_to(root).as_posix(), "sha256": _digest(log_path.read_bytes())}
+            try:
+                log_sha = _digest(log_path.read_bytes())
+            except OSError as exc:
+                raise ReportError(f"cannot finalize verification log: {exc}") from exc
+            log = {"path": log_path.relative_to(root).as_posix(), "sha256": log_sha}
         after = _source_packet_view(root, bound)
         receipt = {"id": identifier, "targets": selected, "candidate_findings": membership, "command": command, "environment": environment, "environment_sha256": environment_sha,
                    "exit_code": code, "log": log, "source_before": before, "source_identity": after, "content_identity": content,
@@ -2322,7 +2340,7 @@ def verify(*, repo_root: Path, report: Path, identifier: str, targets: Sequence[
         raw = {"version": MANIFEST_VERSION, "expected_report_sha256": _digest(data), "check": receipt}
         result = _finish_mutation(_prepare_raw("record-check", root, path, raw), "record-check", root, False)
         return {**result, "check": receipt, "passed": code == 0 and not receipt["source_drift"], "reused": bool(reuse)}
-    except Exception:
+    except Exception as exc:
         if created_log:
             try:
                 _, published = _load(root, path)
@@ -2331,7 +2349,11 @@ def verify(*, repo_root: Path, report: Path, identifier: str, targets: Sequence[
             else:
                 log_name = log_path.relative_to(root).as_posix()
                 if not any(row["log"]["path"] == log_name for row in published["checks"]):
-                    log_path.unlink(missing_ok=True)
+                    try:
+                        log_path.unlink(missing_ok=True)
+                    except OSError as cleanup_error:
+                        if isinstance(exc, ReportError):
+                            raise ReportError(f"{exc}; cannot remove unused verification log: {cleanup_error}") from exc
         raise
 
 
@@ -2594,6 +2616,12 @@ def _prepare_raw(objective: str, root: Path, report: Path, raw: dict[str, Any], 
                 for x in state["systemic_findings"]
                 if x.get("origin_subsystem_id") == selected["id"]
             ]
+            previous_bindings = {
+                f"{kind}:{row['id']}": state["source_bindings"][f"{kind}:{row['id']}"]
+                for kind, records in (("candidate", previous_audit.get("candidates", []) if previous_audit else []),
+                                      ("finding", (previous_audit.get("findings", []) if previous_audit else []) + previous_systemic))
+                for row in records
+            }
             state["systemic_findings"] = [
                 x
                 for x in state["systemic_findings"]
@@ -2668,6 +2696,7 @@ def _prepare_raw(objective: str, root: Path, report: Path, raw: dict[str, Any], 
             history["superseded"] = {
                 "audit": previous_audit,
                 "systemic_findings": previous_systemic,
+                "source_bindings": previous_bindings,
             }
         if objective == "analyze-candidate" and previous_analysis is not None:
             history["superseded"] = {"analysis": previous_analysis}
@@ -3033,7 +3062,8 @@ def _inspection_history(state: dict[str, Any], rows: list[dict[str, Any]], *, su
     for kind, identifier in list(targets):
         if kind == "candidate":
             targets.update(("finding", fid) for fid in candidates[identifier]["record"]["finding_ids"])
-    owners = set(matched_subsystems) | ({subsystem} if subsystem else set())
+    selected_subsystems = set(matched_subsystems) | ({subsystem} if subsystem else set())
+    owners = set(selected_subsystems)
     bound_paths = set()
     for kind, identifier in targets:
         item = (candidates if kind == "candidate" else findings)[identifier]
@@ -3050,10 +3080,6 @@ def _inspection_history(state: dict[str, Any], rows: list[dict[str, Any]], *, su
             if replacement not in owners:
                 owners.add(replacement)
                 pending.append(replacement)
-    identifiers = {identifier for _, identifier in targets}
-    identifiers.update(matched_subsystems)
-    if subsystem:
-        identifiers.add(subsystem)
     filtered = bool(subsystem or candidate or finding or paths or outstanding)
 
     def path_matches(path: str) -> bool:
@@ -3067,25 +3093,26 @@ def _inspection_history(state: dict[str, Any], rows: list[dict[str, Any]], *, su
     for index, stored in enumerate(state["history"]):
         prior = stored.get("superseded", {})
         old_findings = prior.get("audit", {}).get("findings", []) + prior.get("systemic_findings", [])
-        revisions = prior.get("audit", {}).get("candidates", []) + old_findings
-        related = {item["id"] for item in revisions}
+        related = {("candidate", item["id"]) for item in prior.get("audit", {}).get("candidates", [])}
+        related.update(("finding", item["id"]) for item in old_findings)
         appended = stored.get("packet", {}) if stored["operation"] == "append" else {}
-        related.update(item["id"] for item in appended.get("findings", []) + appended.get("systemic_findings", []) + appended.get("candidates", []))
+        related.update(("finding", item["id"]) for item in appended.get("findings", []) + appended.get("systemic_findings", []))
+        related.update(("candidate", item["id"]) for item in appended.get("candidates", []))
         checks = [row for row in state["checks"] if row["id"] == stored.get("check_id")]
         for check in checks:
             for target in check["targets"]:
-                related.add(target["id"])
+                related.add((target["kind"], target["id"]))
                 if target["kind"] == "candidate":
-                    related.update(check["candidate_findings"][target["id"]])
+                    related.update(("finding", identifier) for identifier in check["candidate_findings"][target["id"]])
         gap_events = [row for row in state["gap_dispositions"] if row["id"] in stored.get("gap_ids", [])]
         gap_related = any(row["target"].get("subsystem_id") in owners for row in gap_events)
-        related.update(row["target"]["id"] for row in gap_events if row["target"]["kind"] == "finding")
+        related.update(("finding", row["target"]["id"]) for row in gap_events if row["target"]["kind"] == "finding")
         for event in state["outcomes"]:
             if event["id"] in stored.get("outcome_ids", []):
-                related.add(event["target"]["id"])
-                related.update(event.get("finding_ids", []))
+                related.add((event["target"]["kind"], event["target"]["id"]))
+                related.update(("finding", identifier) for identifier in event.get("finding_ids", []))
         requirements = stored.get("delivery_requirements", []) + prior.get("delivery_requirements", [])
-        related.update(row["target"]["id"] for row in requirements)
+        related.update((row["target"]["kind"], row["target"]["id"]) for row in requirements)
         affected_owners = set()
         if index in map_revisions:
             before, after = map_revisions[index]
@@ -3097,27 +3124,29 @@ def _inspection_history(state: dict[str, Any], rows: list[dict[str, Any]], *, su
                                             stored["kind"] == "subsystem" and stored["selection"] in owners)
         if filtered and presentation and not selected_label:
             continue
-        if filtered and stored["selection"] not in identifiers and not related & identifiers and not reconciliation and not selected_label and not gap_related:
+        selection_match = (stored["operation"] == "analyze" and ("candidate", stored["selection"]) in targets) or (
+            stored["operation"] in {"audit", "append"} and stored["selection"] in selected_subsystems)
+        if filtered and not selection_match and not related & targets and not reconciliation and not selected_label and not gap_related:
             continue
         entry = dict(stored)
         if filtered and detail:
             entry.pop("superseded", None)
             if appended:
-                entry["packet"] = {**appended, **{key: [row for row in appended[key] if row["id"] in identifiers]
+                entry["packet"] = {**appended, **{key: [row for row in appended[key] if ("candidate" if key == "candidates" else "finding", row["id"]) in targets]
                                                     for key in ("findings", "systemic_findings", "candidates")}}
             if checks:
                 entry["checks"] = checks
             if gap_events:
-                entry["gap_dispositions"] = [row for row in gap_events if row["target"].get("id") in identifiers or row["target"].get("subsystem_id") in owners]
+                entry["gap_dispositions"] = [row for row in gap_events if (row["target"]["kind"] == "finding" and ("finding", row["target"]["id"]) in targets) or row["target"].get("subsystem_id") in owners]
             revision = next((item for item in prior.get("audit", {}).get("candidates", []) if item["id"] == candidate), None)
             if revision is not None:
-                entry["candidate_revision"] = revision
+                entry["candidate_revision"] = {**revision, "source_identity": prior["source_bindings"][f"candidate:{revision['id']}"]["source_identity"]}
             if "analysis" in prior:
                 entry["prior_analysis"] = prior["analysis"]
             relevant_findings = [item for item in old_findings if ("finding", item["id"]) in targets]
             if relevant_findings:
-                entry["finding_revisions"] = relevant_findings
-                entry["audit_source_identity"] = prior["audit"]["source_identity"]
+                entry["finding_revisions"] = [{**item, "source_identity": prior["source_bindings"][f"finding:{item['id']}"]["source_identity"]}
+                                              for item in relevant_findings]
             if requirements:
                 entry["delivery_requirements"] = [row for row in stored.get("delivery_requirements", []) if (row["target"]["kind"], row["target"]["id"]) in targets]
                 entry["prior_delivery_requirements"] = [row for row in prior.get("delivery_requirements", []) if (row["target"]["kind"], row["target"]["id"]) in targets]

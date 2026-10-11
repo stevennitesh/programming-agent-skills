@@ -320,6 +320,31 @@ def test_independent_outcome_packets_with_same_id_in_separate_namespaces(tmp_pat
         assert atlas.status_report(repo_root=tmp_path, report=report(tmp_path), **{kind: "shared"})["rows"][0]["work"]["status"] == "deferred"
 
 
+@pytest.mark.parametrize("operation", ["check", "outcome", "analyze"])
+def test_history_keeps_candidate_and_finding_namespaces_separate(tmp_path: Path, operation: str) -> None:
+    independent_findings(tmp_path)
+    alpha = prepared_audit(tmp_path, "alpha", "alpha-shared.json")
+    alpha["candidates"][0]["id"] = "shared"
+    publish(tmp_path, "audit-subsystem", alpha)
+    beta = prepared_audit(tmp_path, "beta", "beta-shared.json")
+    beta["findings"][0]["id"] = "shared"
+    beta["candidates"][0]["finding_ids"] = ["shared"]
+    publish(tmp_path, "audit-subsystem", beta)
+    if operation == "check":
+        atlas.verify(repo_root=tmp_path, report=report(tmp_path), identifier="candidate-only", targets=["candidate:shared"],
+                     command=[sys.executable, "-c", "print('passed')"], environment="fixture")
+    elif operation == "outcome":
+        outcomes(tmp_path, event(tmp_path, "candidate-only", "deferred", target_id="shared"))
+    else:
+        packet = analysis_manifest(tmp_path, report(tmp_path))
+        packet["candidate_id"] = "shared"
+        publish(tmp_path, "analyze-candidate", packet)
+    selected = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), candidate="shared", history=True)["history"]
+    unrelated = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), finding="shared", history=True)["history"]
+    assert any(row["operation"] == operation for row in selected)
+    assert not any(row["operation"] == operation for row in unrelated)
+
+
 @pytest.mark.parametrize("collection", ["events", "delivery_requirements", "gaps"])
 @pytest.mark.parametrize("problem", ["object", "missing-target", "non-object-row"])
 def test_malformed_prepared_rows_return_json_without_publishing(tmp_path: Path, collection: str, problem: str) -> None:
@@ -365,6 +390,42 @@ def test_followup_retains_analysis_and_lenses_with_its_own_source(tmp_path: Path
     assert atlas.check_report(repo_root=tmp_path, report=report(tmp_path))["valid"]
     with pytest.raises(atlas.ReportError, match="new"):
         publish(tmp_path, "append-findings", {**raw, "prepared": atlas._guard_view("append-findings", raw, state(tmp_path))})
+
+
+@pytest.mark.parametrize("rebound", [False, True])
+def test_superseded_followups_retain_each_records_original_source_binding(tmp_path: Path, rebound: bool) -> None:
+    started(tmp_path)
+    proof = tmp_path / "append-proof.txt"
+    proof.write_text("append-only evidence", encoding="utf-8")
+    prepared = atlas.prepare_audit(repo_root=tmp_path, report=report(tmp_path), subsystem="alpha", append=True, paths=["append-proof.txt"])
+    packet = json.loads(Path(prepared["packet"]).read_text(encoding="utf-8"))
+    f = {**finding(), "id": "alpha-followup", "affected_scope": ["alpha"]}
+    c = {**candidate(), "id": "alpha-followup-fix", "finding_ids": [f["id"]], "affected_scope": ["alpha"]}
+    packet.update(findings=[f], candidates=[c], source_trace={"summary": "Inspected the follow-up evidence."})
+    publish(tmp_path, "append-findings", packet)
+    original = packet["source_identity"]
+    latest = original
+    if rebound:
+        updated = audit_manifest(tmp_path, report(tmp_path))
+        updated["findings"].append(f)
+        updated["candidates"].append(c)
+        publish(tmp_path, "audit-subsystem", updated)
+        latest = updated["source_identity"]
+    publish(tmp_path, "audit-subsystem", audit_manifest(tmp_path, report(tmp_path)))
+    selected = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), finding=f["id"], history=True)
+    assert selected["rows"][0]["historical"] and selected["rows"][0]["audit_source_identity"] == latest
+    revisions = [revision for row in selected["history"] for revision in row.get("finding_revisions", [])]
+    assert revisions[0]["source_identity"] == original and revisions[-1]["source_identity"] == latest
+    history = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), candidate=c["id"], history=True)["history"]
+    candidate_revisions = [row["candidate_revision"] for row in history if "candidate_revision" in row]
+    assert candidate_revisions[0]["source_identity"] == original and candidate_revisions[-1]["source_identity"] == latest
+    first = next(row["superseded"] for row in state(tmp_path)["history"] if "audit" in row.get("superseded", {}))
+    assert first["source_bindings"][f"finding:{f['id']}"]["source_identity"] == original
+    assert first["source_bindings"][f"candidate:{c['id']}"]["source_identity"] == original
+    proof.write_text("changed append evidence", encoding="utf-8")
+    if not rebound:
+        observation = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), finding=f["id"])["rows"][0]["source_changes"]["scope"]
+        assert observation["freshness"] == "changed" and "append-proof.txt" in observation["changed_paths"]
 
 
 def check(root: Path, identifier: str = "probe", reuse: str | None = None, paths=(), command=None, environment="fixture") -> dict:
@@ -568,6 +629,40 @@ def test_verifier_identity_failures_return_json_and_leave_the_id_retryable(tmp_p
     assert result == 2 and not captured.err
     assert "cannot capture verification executable identity" in json.loads(captured.out)["error"]
     assert report(tmp_path).read_bytes() == before and not report(tmp_path).with_name("check-probe.log").exists()
+    assert check(tmp_path)["passed"]
+
+
+@pytest.mark.parametrize("failure", ["missing", "unreadable", "cleanup-denied"])
+def test_log_finalization_failures_return_json_and_preserve_recovery(tmp_path: Path, monkeypatch, capsys, failure: str) -> None:
+    started(tmp_path)
+    before = report(tmp_path).read_bytes()
+    log = report(tmp_path).with_name("check-probe.log")
+    read, unlink = Path.read_bytes, Path.unlink
+    def unreadable(path):
+        if path == log:
+            raise (FileNotFoundError if failure == "missing" else PermissionError)("Verification log is unavailable.")
+        return read(path)
+    def protected(path, **kwargs):
+        if path == log:
+            raise PermissionError("Unused log cleanup is unavailable.")
+        return unlink(path, **kwargs)
+    with monkeypatch.context() as patch:
+        patch.setattr(Path, "read_bytes", unreadable)
+        if failure == "cleanup-denied":
+            patch.setattr(Path, "unlink", protected)
+        result = atlas.main(["verify", "--repo-root", str(tmp_path), "--report", str(report(tmp_path)),
+                             "--id", "probe", "--target", "candidate:alpha-fix", "--environment", "fixture", "--",
+                             sys.executable, "-c", "print('verified')"])
+    captured = capsys.readouterr()
+    assert result == 2 and not captured.err
+    error = json.loads(captured.out)["error"]
+    assert "cannot finalize verification log" in error
+    assert report(tmp_path).read_bytes() == before and state(tmp_path)["checks"] == []
+    if failure == "cleanup-denied":
+        assert "cannot remove unused verification log" in error and log.is_file()
+        log.unlink()
+    else:
+        assert not log.exists()
     assert check(tmp_path)["passed"]
 
 
