@@ -250,7 +250,7 @@
       "freshness": "fresh"
     }
   },
-  "state_version": 5,
+  "state_version": 6,
   "subsystems": [
     {
       "audit": {
@@ -542,5 +542,61 @@
       "name": "Delivery"
     }
   ],
-  "title": "Architecture atlas"
+  "title": "Architecture atlas",
+  "source_bindings": {
+    "candidate:alpha-fix": {
+      "source_identity": {
+        "fingerprints": {
+          "src/a.py": "0e2a11c9ef631e51a4c9362579fedaf4bf6e3df5a677c9c4a686fba79fd68dae",
+          "src/b.py": "01f02622f8a284417ff1d066a35b818aff78fa3f965f806208530a7c24f3c56b",
+          "tests/test_a.py": "d67b9eb2194bdda173523ea4cd253d708565793b04edb474523bdbf5f3d5efbd"
+        },
+        "paths": [
+          "src/a.py",
+          "src/b.py",
+          "tests/test_a.py"
+        ],
+        "sha256": "093d052d3d55073c42032a24358cf6b0966ab303b790c919ccd61297b5cfcdb1"
+      },
+      "history_index": 1
+    },
+    "finding:alpha-defect": {
+      "source_identity": {
+        "fingerprints": {
+          "src/a.py": "0e2a11c9ef631e51a4c9362579fedaf4bf6e3df5a677c9c4a686fba79fd68dae",
+          "src/b.py": "01f02622f8a284417ff1d066a35b818aff78fa3f965f806208530a7c24f3c56b",
+          "tests/test_a.py": "d67b9eb2194bdda173523ea4cd253d708565793b04edb474523bdbf5f3d5efbd"
+        },
+        "paths": [
+          "src/a.py",
+          "src/b.py",
+          "tests/test_a.py"
+        ],
+        "sha256": "093d052d3d55073c42032a24358cf6b0966ab303b790c919ccd61297b5cfcdb1"
+      },
+      "history_index": 1
+    }
+  },
+  "batches": [],
+  "checks": [],
+  "gap_dispositions": [],
+  "gap_source_changes": {},
+  "finding_source_changes": {
+    "alpha-defect": {
+      "audit": {
+        "changed_paths": [
+          "tests/test_a.py"
+        ],
+        "freshness": "changed",
+        "scope_changed": true
+      },
+      "scope": {
+        "changed_paths": [
+          "tests/test_a.py"
+        ],
+        "freshness": "changed",
+        "scope_changed": true
+      }
+    }
+  }
 }

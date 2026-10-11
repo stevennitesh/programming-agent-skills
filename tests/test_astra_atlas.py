@@ -236,6 +236,20 @@ def test_map_renders_visual_workbench(tmp_path: Path) -> None:
     assert state["freshness"] == {"alpha": "fresh", "beta": "fresh"}
 
 
+def test_refresh_roundtrips_non_alphabetic_subsystem_order(tmp_path: Path) -> None:
+    make_repo(tmp_path)
+    packet = map_manifest(tmp_path)
+    packet["subsystems"].reverse()
+    publish(tmp_path, "render-report", packet)
+    (tmp_path / "src/a.py").write_text("VALUE=4\n", encoding="utf-8")
+    (tmp_path / "src/b.py").write_text("VALUE=5\n", encoding="utf-8")
+    atlas.refresh_report(repo_root=tmp_path, report=report(tmp_path))
+    saved = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), full=True)["state"]
+    assert [sub["id"] for sub in saved["subsystems"]] == ["beta", "alpha"]
+    assert saved["freshness"] == {"alpha": "changed", "beta": "changed"}
+    assert atlas.check_report(repo_root=tmp_path, report=report(tmp_path))["valid"]
+
+
 def test_audit_adds_findings_candidates_and_coverage(tmp_path: Path) -> None:
     make_repo(tmp_path)
     publish(tmp_path, "render-report", map_manifest(tmp_path))
@@ -283,7 +297,8 @@ def test_refresh_marks_changed_source_without_revalidating(tmp_path: Path) -> No
     after = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), full=True)["state"]
     assert before["subsystems"][0]["audit"] == after["subsystems"][0]["audit"]
     assert after["freshness"]["alpha"] == "changed"
-    assert "Source changed" in report(tmp_path).read_text(encoding="utf-8")
+    card = elements(report(tmp_path).read_text(encoding="utf-8"), "id", "subsystem-alpha")[0]
+    assert card["data-freshness"] == "changed"
 
 
 def test_source_and_report_drift_are_rejected(tmp_path: Path) -> None:

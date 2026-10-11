@@ -8,8 +8,8 @@ python <atlas.py> prepare-audit --repo-root <repo> --report <report.html> --subs
 ```
 
 The command writes `audit-<id>.json` beside the report and returns its path.
-It supplies `version`, `expected_report_sha256`, `subsystem_id`, and
-`source_identity`. Existing packets are never overwritten. Use `--output` with a
+It supplies `version`, `expected_report_sha256`, `subsystem_id`, `source_identity`,
+and a semantic publication guard. Existing packets are never overwritten. Use `--output` with a
 new JSON filename when preparing another packet; a bare filename resolves beside
 the report. Add
 `--affected-subsystem <id>` or `--path <path>` for additional implicated source
@@ -67,8 +67,16 @@ python <atlas.py> audit-subsystem --repo-root <repo> --report <report.html> --ma
 python <atlas.py> check-report --repo-root <repo> --report <report.html>
 ```
 
-An empty draft summary cannot publish. Source or report changes reject a stale
-packet. If investigation expands the bound source, prepare a fresh packet and
+An empty draft summary cannot publish. Source drift, ownership changes, and
+same-target publication reject a stale packet. Prepared packets can advance their
+report guard across unrelated publications or display edits when their semantic
+guards still match. Their investigated source snapshots remain unchanged. Raw
+manifests without a prepared guard still require the exact report revision.
+If investigation expands the bound source, prepare a fresh packet and
 inspect those inputs before relying on its snapshot. Reusing judgments requires
 checking that they still apply; capturing a later snapshot alone is not renewed
 evidence. Never bypass guards or silently refresh a completed packet.
+
+For several selected owners, repeat `--subsystem`; each gets a packet from the
+same report revision. Use [Prepared work and verification](workflow.md) for
+coordinator publication, analysis and outcome preparation, and narrow follow-ups.

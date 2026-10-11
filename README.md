@@ -26,7 +26,7 @@
 
 ---
 
-Programming Agent Skills contains 20 workflows that an agent can load for a
+Programming Agent Skills contains 21 workflows that an agent can load for a
 specific task. Each skill describes when to use it, what work it covers, and
 what result to return. The managed installer deploys the pack for Codex.
 
@@ -50,6 +50,9 @@ bounded code change, ask the agent to implement and verify it directly.
 - Review a proposed code change with
   [change-review](skills/astra/change-review/SKILL.md). Get findings that identify
   an affected behavior, supporting evidence, and a correction.
+- Request cleanup of stale, redundant, or brittle tests with
+  [test-cleanup](skills/astra/test-cleanup/SKILL.md). Preserve useful regression
+  protection while removing checks and fixtures that no longer serve it.
 - Maintain repository guidance or analyze conversations and tool logs with
   [context-hygiene](skills/astra/context-hygiene/SKILL.md). Identify recurring
   problems in instructions, tools, or the agent runtime. Recommend or apply
@@ -158,7 +161,7 @@ workflow. **Automatic when relevant** means Codex may select it when your reques
 matches. You can also invoke an automatic skill explicitly.
 
 <details>
-<summary><strong>Full catalog: all 20 skills and their invocation rules</strong></summary>
+<summary><strong>Full catalog: all 21 skills and their invocation rules</strong></summary>
 
 | Your task | Skill | Use |
 | --- | --- | --- |
@@ -172,6 +175,7 @@ matches. You can also invoke an automatic skill explicitly.
 | Discover codebase improvements through an HTML map and scoped audits | [$audit-codebase](skills/astra/audit-codebase/SKILL.md) | Request explicitly |
 | Optimize a measurable outcome through experiments | [$hillclimb](skills/astra/hillclimb/SKILL.md) | Request explicitly |
 | Review a code change for correctness and maintainability | [$change-review](skills/astra/change-review/SKILL.md) | Automatic when relevant |
+| Remove stale or redundant tests and simplify brittle coverage in a selected scope | [$test-cleanup](skills/astra/test-cleanup/SKILL.md) | Request explicitly |
 | Assess intake or clean up a requested backlog using current evidence | [$triage](skills/astra/triage/SKILL.md) | Request explicitly |
 | Turn a spec or sufficiently clear idea into bounded tickets with dependencies | [$to-tickets](skills/astra/to-tickets/SKILL.md) | Request explicitly |
 | Implement concurrently with separate ownership and clear dependencies | [$parallel-implement](skills/astra/parallel-implement/SKILL.md) | Request explicitly |
