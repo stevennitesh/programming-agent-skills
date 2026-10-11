@@ -110,6 +110,35 @@ def test_prepared_reaudit_accepts_unrelated_outcomes(tmp_path: Path) -> None:
     assert state(tmp_path)["outcomes"][0]["id"] == "unrelated-deferred"
 
 
+@pytest.mark.parametrize("target_kind,target_id", [("candidate", "alpha-fix"), ("finding", "alpha-defect")])
+def test_reintroducing_historical_ids_rejects_intervening_target_work(tmp_path: Path, target_kind: str, target_id: str) -> None:
+    started(tmp_path, analyzed=False)
+    cleared = audit_manifest(tmp_path, report(tmp_path))
+    cleared.update(findings=[], candidates=[])
+    for lens in cleared["lenses"]:
+        lens["finding_ids"] = []
+    publish(tmp_path, "audit-subsystem", cleared)
+    packet = prepared_audit(tmp_path, "alpha", "reintroduced-alpha.json")
+    outcomes(tmp_path, event(tmp_path, "historical-deferred", "deferred", target_kind=target_kind, target_id=target_id))
+    before = report(tmp_path).read_bytes()
+    with pytest.raises(atlas.ReportError, match="conflicts"):
+        publish(tmp_path, "audit-subsystem", packet)
+    assert report(tmp_path).read_bytes() == before
+    assert state(tmp_path)["outcomes"][-1]["id"] == "historical-deferred"
+
+
+@pytest.mark.parametrize("assigned,changed", [("implemented", "verified"), ("verified", "implemented")])
+def test_prepared_outcomes_preserve_the_assigned_transition(tmp_path: Path, assigned: str, changed: str) -> None:
+    started(tmp_path)
+    prepared = atlas.prepare_outcomes(repo_root=tmp_path, report=report(tmp_path), targets=["candidate:alpha-fix"], outcome_type=assigned)
+    packet = json.loads(Path(prepared["packet"]).read_text(encoding="utf-8"))
+    packet["events"][0].update(type=changed, summary="Edited the assigned state transition.", evidence=["Focused probe passed."])
+    before = report(tmp_path).read_bytes()
+    with pytest.raises(atlas.ReportError, match="conflicts"):
+        publish(tmp_path, "record-outcome", packet)
+    assert report(tmp_path).read_bytes() == before and state(tmp_path)["outcomes"] == []
+
+
 @pytest.mark.parametrize("operation", ["audit-subsystem", "analyze-candidate", "record-outcome", "record-gaps"])
 @pytest.mark.parametrize("change", ["scope", "snapshot"])
 def test_prepared_packets_preserve_their_assigned_source_identity(tmp_path: Path, operation: str, change: str) -> None:
@@ -664,6 +693,34 @@ def test_verified_outcomes_require_unchanged_existing_receipt_logs(tmp_path: Pat
         outcomes(tmp_path, event(tmp_path, "unsupported-verification", "verified", check_ids=["probe"]))
     assert report(tmp_path).read_bytes() == before
     assert state(tmp_path)["checks"][0] == receipt  # Historical inspection remains available.
+
+
+@pytest.mark.parametrize("removed", [False, True])
+def test_verified_outcomes_observe_receipt_log_integrity_after_publication(tmp_path: Path, removed: bool) -> None:
+    started(tmp_path)
+    receipt = check(tmp_path)["check"]
+    check(tmp_path, "carried", reuse="probe")
+    outcomes(tmp_path, event(tmp_path, "verified", "verified", check_ids=["probe", "carried"]))
+    original = state(tmp_path)["outcomes"][0]
+    log = tmp_path / receipt["log"]["path"]
+    saved_log = log.read_bytes()
+    saved_report = report(tmp_path).read_bytes()
+    if removed:
+        log.unlink()
+    else:
+        log.write_text("Changed proof output", encoding="utf-8")
+    selected = atlas.status_report(repo_root=tmp_path, report=report(tmp_path), candidate="alpha-fix")["rows"][0]
+    assert selected["work"]["status"] == "verification changed"
+    inspected = atlas.check_report(repo_root=tmp_path, report=report(tmp_path))
+    assert inspected["valid"] and inspected["outcome_freshness"]["verified"] == "changed"
+    assert inspected["outcome_source_changes"]["verified"]["changed_checks"] == ["probe", "carried"]
+    assert report(tmp_path).read_bytes() == saved_report
+    atlas.refresh_report(repo_root=tmp_path, report=report(tmp_path))
+    current = state(tmp_path)
+    assert current["checks"][0] == receipt and current["outcomes"][0] == original
+    assert current["outcome_freshness"]["verified"] == "changed"
+    log.write_bytes(saved_log)
+    assert atlas.status_report(repo_root=tmp_path, report=report(tmp_path), candidate="alpha-fix")["rows"][0]["work"]["status"] == "verified"
 
 
 def test_relative_path_verifier_runs_from_repository_and_binds_actual_binary(tmp_path: Path, monkeypatch) -> None:

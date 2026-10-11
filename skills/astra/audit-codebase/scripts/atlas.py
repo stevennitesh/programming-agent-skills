@@ -1253,6 +1253,8 @@ def _refresh_observation(state: dict[str, Any], root: Path) -> None:
             state["candidate_source_changes"][candidate["id"]] = {"audit": audit, "analysis": scoped if "analysis" in candidate else None, "scope": scoped}
             state["candidate_freshness"][candidate["id"]] = "changed" if audit["freshness"] == "changed" else scoped["freshness"]
     state["outcome_source_changes"] = {}
+    checks = {row["id"]: row for row in state["checks"]}
+    log_validity = {}
     for event in state["outcomes"]:
         if "source_identity" not in event:
             continue
@@ -1268,6 +1270,22 @@ def _refresh_observation(state: dict[str, Any], root: Path) -> None:
                 changed = sorted(cid for cid, digest in event["candidate_sha256"].items() if current[cid] != digest)
                 if changed:
                     observation = {**observation, "freshness": "changed", "changed_candidates": changed}
+            changed_checks = []
+            for check_id in event.get("check_ids", []):
+                check = checks[check_id]
+                key = (check["log"]["path"], check["log"]["sha256"])
+                if key not in log_validity:
+                    try:
+                        _check_log(root, check)
+                    except ReportError:
+                        log_validity[key] = False
+                    else:
+                        log_validity[key] = True
+                if not log_validity[key]:
+                    changed_checks.append(check_id)
+            if changed_checks:
+                error = "; ".join(filter(None, [observation.get("error"), "verification log missing or changed"]))
+                observation = {**observation, "freshness": "changed", "changed_checks": changed_checks, "error": error}
         state["outcome_source_changes"][event["id"]] = observation
     state["outcome_freshness"] = {eid: observation["freshness"] for eid, observation in state["outcome_source_changes"].items()}
     state["finding_source_changes"] = {}
@@ -1669,7 +1687,7 @@ def _maintenance_html(state: dict[str, Any]) -> str:
             changes.append(f'<li><a href="#candidate-{escape(cid)}">{escape(cid)}</a>: candidate inputs or affected scope changed{changed_inputs(scoped)}{escape(scoped.get("error", ""))}</li>')
     for eid, observation in state["outcome_source_changes"].items():
         if observation["freshness"] == "changed":
-            changes.append(f'<li><a href="#outcome-{escape(eid)}">{escape(eid)}</a>: outcome inputs, proof contract, or affected scope changed{_list(observation["changed_paths"] + observation.get("changed_findings", []) + observation.get("changed_candidates", []))}{escape(observation.get("error", ""))}</li>')
+            changes.append(f'<li><a href="#outcome-{escape(eid)}">{escape(eid)}</a>: outcome inputs, proof contract, or evidence changed{_list(observation["changed_paths"] + observation.get("changed_findings", []) + observation.get("changed_candidates", []) + observation.get("changed_checks", []))}{escape(observation.get("error", ""))}</li>')
     for fid, item in findings.items():
         if item["historical"]:
             continue
@@ -2276,10 +2294,10 @@ def _candidate_digest_map(value: object, state: dict[str, Any], targets: Sequenc
 
 def _check_log(root: Path, check: dict[str, Any]) -> Path:
     log = check["log"]
-    path = (root / log["path"]).resolve()
     try:
+        path = (root / log["path"]).resolve()
         valid = path.is_relative_to(root) and path.is_file() and _digest(path.read_bytes()) == log["sha256"]
-    except OSError:
+    except (OSError, RuntimeError):
         valid = False
     if not valid:
         raise ReportError("verification log is missing or changed")
@@ -2500,7 +2518,7 @@ def _guard_view(operation: str, raw: dict[str, Any], state: dict[str, Any]) -> d
         target = [sid, selected.get("audit"), [f for f in state["systemic_findings"] if f["origin_subsystem_id"] == sid]]
         if operation == "audit-subsystem":
             related = [{"kind": kind, "id": identifier} for kind, catalog in (("candidate", candidates), ("finding", findings))
-                       for identifier, entry in catalog.items() if entry["origin"] == sid and not entry["historical"]]
+                       for identifier, entry in catalog.items() if entry["origin"] == sid]
             finding_ids = {item["id"] for item in related if item["kind"] == "finding"}
             effective = {event["id"] for item in related for _, event in _target_events(state, item)}
             target += [[event for event in state["outcomes"] if event["id"] in effective],
@@ -2531,6 +2549,9 @@ def _guard_view(operation: str, raw: dict[str, Any], state: dict[str, Any]) -> d
             effective = {event["id"] for related_target in related for _, event in _target_events(state, related_target)}
             target.append([record, linked, [event for event in state["outcomes"] if event["id"] in effective],
                            [row for row in state["delivery_requirements"] if row["target"] in related]])
+        if operation == "record-outcome":
+            target.append({"outcome_types": sorted([{"target": _target(row["target"], state), "type": row.get("type")}
+                                                   for row in raw.get("events", [])], key=_canonical)})
     return {"operation": operation, "context_sha256": _digest(_canonical([state["systems"], context, state["excluded"]])),
             "target_sha256": _digest(_canonical(target)),
             "source_sha256": _digest(_canonical(sorted(_bound_packets(raw), key=_canonical)))}

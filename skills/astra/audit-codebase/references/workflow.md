@@ -39,8 +39,10 @@ publication. The helper validates the whole batch and makes one guarded write,
 then reads it back. `--validate-only` checks without publishing.
 
 Prepared packets retain their investigated source snapshots. Report guards may
-advance only when ownership, selected records, and assigned source identities
-still match. Source drift or a same-target conflict rejects the batch without
+advance only when ownership, selected records and work, assigned outcome types,
+and source identities still match. Full re-audits also guard the owner's retained
+work because historical IDs can be reintroduced. Source drift or a same-target
+conflict rejects the batch without
 partial publication. A raw
 manifest has no compatibility proof and still needs the exact report revision.
 After interruption, retry the same batch ID and packets. An embedded receipt
@@ -87,8 +89,9 @@ dependencies changed.
 Use `prepare-outcomes --type verified --check <receipt-id>` to bind the receipt's
 proof inputs and evidence references automatically; repeat `--check` as needed.
 Supply the conclusion that the check supports. A verified outcome referencing
-receipts rejects failed checks, changed group membership or logs, and mismatched
-source. Implementation, commit, and deployment remain separate outcomes. Direct
+receipts rejects failed checks, changed proof contracts or logs, and mismatched
+source. Inspection also marks verification changed when a referenced log disappears
+or changes. Implementation, commit, and deployment remain separate outcomes. Direct
 evidence can still establish an
 outcome without using the command wrapper.
 The CLI returns a compact receipt summary. Complete snapshots stay in the report
