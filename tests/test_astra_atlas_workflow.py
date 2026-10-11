@@ -190,7 +190,7 @@ def test_prepared_candidate_outcome_covers_its_linked_finding_scopes(tmp_path: P
     publish(tmp_path, "record-outcome", packet)
 
 
-@pytest.mark.parametrize("kind", ["deferred", "reopened", "committed", "deployed"])
+@pytest.mark.parametrize("kind", ["implemented", "verified", "deferred", "reopened", "committed", "deployed"])
 def test_explicit_proof_paths_are_guarded_and_retained_for_all_outcomes(tmp_path: Path, kind: str) -> None:
     started(tmp_path)
     proof = tmp_path / "proof.txt"
@@ -215,7 +215,59 @@ def test_explicit_proof_paths_are_guarded_and_retained_for_all_outcomes(tmp_path
     assert state(tmp_path)["outcomes"][-1]["source_identity"] == row["source_identity"]
     proof.write_text("later proof", encoding="utf-8")
     atlas.refresh_report(repo_root=tmp_path, report=report(tmp_path))
-    assert state(tmp_path)["outcome_freshness"][row["id"]] == "changed"
+    current = state(tmp_path)
+    assert current["outcome_freshness"][row["id"]] == "changed"
+    assert current["freshness"]["alpha"] == "fresh" and current["candidate_freshness"]["alpha-fix"] == "fresh"
+    html = report(tmp_path).read_text(encoding="utf-8")
+    for identifier in ("candidate-alpha-fix", "finding-alpha-defect", "work-candidate-alpha-fix", "subsystem-alpha", "subsystem-beta"):
+        assert elements(html, "id", identifier)[0]["data-outcome-freshness"] == "changed"
+    assert elements(html, "id", "work-candidate-alpha-fix")[0]["data-freshness"] == "changed"
+    assert atlas.status_report(repo_root=tmp_path, report=report(tmp_path), candidate="alpha-fix")["rows"][0]["work"]["outcome_freshness"] == "changed"
+
+
+def test_independent_outcome_packets_with_same_id_in_separate_namespaces(tmp_path: Path) -> None:
+    independent_findings(tmp_path)
+    alpha = prepared_audit(tmp_path, "alpha", "alpha-shared.json")
+    alpha["candidates"][0]["id"] = "shared"
+    publish(tmp_path, "audit-subsystem", alpha)
+    beta = prepared_audit(tmp_path, "beta", "beta-shared.json")
+    beta["findings"][0]["id"] = "shared"
+    beta["candidates"][0]["finding_ids"] = ["shared"]
+    publish(tmp_path, "audit-subsystem", beta)
+    packets = []
+    for kind in ("candidate", "finding"):
+        prepared = atlas.prepare_outcomes(repo_root=tmp_path, report=report(tmp_path), targets=[f"{kind}:shared"],
+                                          outcome_type="deferred", output=Path(f"{kind}-outcome.json"))
+        packet = json.loads(Path(prepared["packet"]).read_text(encoding="utf-8"))
+        packet["events"][0].update(summary="Selected work deferred.", evidence=["Reviewed scope."])
+        packets.append({"operation": "record-outcome", "manifest": packet})
+    atlas.publish_batch(repo_root=tmp_path, report=report(tmp_path), batch_id="namespace-outcomes", packets=packets)
+    assert len(state(tmp_path)["outcomes"]) == 2
+    for kind in ("candidate", "finding"):
+        assert atlas.status_report(repo_root=tmp_path, report=report(tmp_path), **{kind: "shared"})["rows"][0]["work"]["status"] == "deferred"
+
+
+@pytest.mark.parametrize("collection", ["events", "delivery_requirements", "gaps"])
+@pytest.mark.parametrize("problem", ["object", "missing-target", "non-object-row"])
+def test_malformed_prepared_rows_return_json_without_publishing(tmp_path: Path, collection: str, problem: str) -> None:
+    started(tmp_path)
+    operation = "record-gaps" if collection == "gaps" else "record-outcome"
+    if collection == "gaps":
+        prepared = atlas.prepare_gaps(repo_root=tmp_path, report=report(tmp_path), lenses=["alpha:performance"])
+    else:
+        prepared = atlas.prepare_outcomes(repo_root=tmp_path, report=report(tmp_path), targets=["candidate:alpha-fix"], outcome_type="deferred")
+    path = Path(prepared["packet"])
+    packet = json.loads(path.read_text(encoding="utf-8"))
+    packet[collection] = {} if problem == "object" else [{}] if problem == "missing-target" else [None]
+    path.write_text(json.dumps(packet), encoding="utf-8")
+    before = report(tmp_path).read_bytes()
+    result = subprocess.run([sys.executable, str(SCRIPT), operation, "--repo-root", str(tmp_path),
+                             "--report", str(report(tmp_path)), "--manifest", str(path)],
+                            capture_output=True, text=True, encoding="utf-8")
+    assert result.returncode == 2 and not result.stderr, result.stderr
+    response = json.loads(result.stdout)
+    assert response["ok"] is False and collection in response["error"]
+    assert report(tmp_path).read_bytes() == before
 
 
 def test_followup_retains_analysis_and_lenses_with_its_own_source(tmp_path: Path) -> None:

@@ -70,7 +70,7 @@ _SCRIPT = r"""
     cards.forEach(el=>{const hay=(el.getAttribute('data-search')||'').toLowerCase();
       const [dimension,...parts]=wanted.split(':'), value=parts.join(':');
       const attribute={audit:'data-audit-status',analysis:'data-analysis-states',work:'data-work-states',kind:'data-kind',inputs:'data-freshness',gap:'data-gap-status'}[dimension];
-      const inputsChanged=el.getAttribute('data-freshness')==='changed'||(el.getAttribute('data-work-states')||'').split('|').includes('verification changed');
+      const inputsChanged=el.getAttribute('data-freshness')==='changed'||el.getAttribute('data-outcome-freshness')==='changed'||(el.getAttribute('data-work-states')||'').split('|').includes('verification changed');
       const matches=wanted==='all'||(dimension==='inputs'?(value==='changed'?inputsChanged:el.getAttribute('data-freshness')==='fresh'&&!inputsChanged):wanted==='outstanding'?el.getAttribute('data-outstanding')==='true':wanted==='delivery'?el.getAttribute('data-delivery-pending')==='true':attribute&&(el.getAttribute(attribute)||'').split('|').includes(value));
       const hidden=(!!needle&&!hay.includes(needle))||(kind!=='all'&&el.getAttribute('data-entity')!==kind)||!matches;
       el.classList.toggle('hidden',hidden);if(!hidden){visible++;if(needle||kind!=='all'||wanted!=='all'){let parent=el.parentElement;while(parent){if(parent.tagName==='DETAILS')parent.open=true;parent=parent.parentElement;}}}});
@@ -1091,9 +1091,12 @@ def _work_status(state: dict[str, Any], target: dict[str, str]) -> dict[str, Any
     requirement = next((row for row in state.get("delivery_requirements", []) if row["target"] == target), None)
     commits = [event["reference"] for event in current if event["type"] == "committed"]
     deployments = [event["destination"] for event in current if event["type"] == "deployed"]
+    outcome_ids = [relevant[index]["id"] for index in sorted(relevant)]
+    observed = [state["outcome_freshness"][identifier] for identifier in outcome_ids if identifier in state["outcome_freshness"]]
     return {"status": status, "commit_pending": bool(requirement and requirement["commit"] and not commits),
             "deployment_pending": sorted(set(requirement["deployments"]) - set(deployments)) if requirement else [],
-            "commits": commits, "deployments": deployments, "outcome_ids": [relevant[index]["id"] for index in sorted(relevant)]}
+            "commits": commits, "deployments": deployments, "outcome_ids": outcome_ids,
+            "outcome_freshness": "changed" if "changed" in observed else "fresh" if observed else ""}
 
 
 def _current_scope(state: dict[str, Any], ids: Sequence[str]) -> set[str]:
@@ -1310,6 +1313,7 @@ def _subsystem_view(state: dict[str, Any], sub: dict[str, Any]) -> dict[str, Any
                                (counts_by_lens["evidence gap"], "evidence gap" if counts_by_lens["evidence gap"] == 1 else "evidence gaps"), (missing, "uninspected")) if count)
     return {"progress": progress, "label": label, "coverage": coverage, "counts": counts,
             "work_states": sorted({row["status"] for row in all_work}),
+            "outcome_freshness": "changed" if any(row["outcome_freshness"] == "changed" for row in all_work) else "",
             "analysis_states": sorted({item["record"]["state"] for item in related["candidate"]}),
             "outstanding": any(_outstanding(row) for row in all_work) or bool(counts["gaps"]),
             "delivery_pending": bool(counts["delivery"])}
@@ -1401,7 +1405,7 @@ def _finding_html(x: dict[str, Any], run_id: str, work: dict[str, Any] | None = 
     warning = '<p class="stale-warning">Finding evidence or affected ownership changed. Inspect changed inputs before reusing this judgment.</p>' if freshness == "changed" else ""
     tone = _gap_tone(gap) if gap else _work_tone(work, x["kind"]) if work else "neutral"
     badges = _state_row("Type", _badge(x["kind"], x["kind"].capitalize()) + _badge(x["primary_class"]))
-    badges += _state_row("Evidence", _input_badge(freshness, "Finding"))
+    badges += _state_row("Evidence", _input_badge(freshness, "Finding") + (_changed_outcome_badge(work) if work else ""))
     if gap:
         badges += _state_row("Gap", _gap_badge(gap))
     elif work:
@@ -1465,7 +1469,11 @@ def _work_attributes(work: dict[str, Any], gap: dict[str, Any] | None = None) ->
     status = escape(work["status"], quote=True)
     delivery = bool(work["commit_pending"] or work["deployment_pending"])
     outstanding = _outstanding(work) or bool(gap and (gap["disposition"] in {"open", "narrowed"} or (gap.get("source_changes") or {}).get("freshness") == "changed"))
-    return f'data-work-status="{status}" data-work-states="{status}" data-outstanding="{str(outstanding).lower()}" data-delivery-pending="{str(delivery).lower()}"'
+    return f'data-work-status="{status}" data-work-states="{status}" data-outcome-freshness="{work.get("outcome_freshness", "")}" data-outstanding="{str(outstanding).lower()}" data-delivery-pending="{str(delivery).lower()}"'
+
+
+def _changed_outcome_badge(work: dict[str, Any]) -> str:
+    return _input_badge("changed", "Outcome") if work.get("outcome_freshness") == "changed" else ""
 
 
 def _gap_tone(row: dict[str, Any]) -> str:
@@ -1544,7 +1552,7 @@ def _candidate_html(x: dict[str, Any], run_id: str, freshness: str, audit_id: st
         if next_action else ""
     )
     evidence_owner = "Audit" if audit_changed or not analysis else "Analysis"
-    freshness_badge = _input_badge(freshness, evidence_owner)
+    freshness_badge = _input_badge(freshness, evidence_owner) + _changed_outcome_badge(work)
     comparison = (analysis or {}).get("comparison") or x.get("comparison")
     visual = _comparison_html(comparison, x["id"]) if comparison else ""
     analysis_labels = {"presented": "Not analyzed", "analyzed": "Analysis recorded", "blocked": "Analysis blocked", "disproved": "Proposal disproved"}
@@ -1647,7 +1655,9 @@ def _maintenance_html(state: dict[str, Any]) -> str:
             anchor = f' id="outcome-{escape(event["id"])}"' if event["target"] == target else ""
             origin = "" if anchor else f'<p class="muted"><a href="#outcome-{escape(event["id"])}">Recorded for {escape(event["target"]["kind"])} <code>{escape(event["target"]["id"])}</code></a></p>'
             events.append(f'<li{anchor}><strong>{escape(event["type"])}</strong>: {escape(event["summary"])}{origin}{_list(event["evidence"])}<code>{escape(reference)}</code>' + (f'<p class="muted">Observed source <code>{escape(basis)}</code> · {escape(state["outcome_freshness"][event["id"]])}</p>' if basis else "") + '</li>')
-        cards.append(f'<article class="card" id="work-{kind}-{escape(identifier)}" data-filter-card data-entity="outcome" data-state="outcome" {_work_attributes(work)} data-search="{escape(identifier + " " + entry["record"]["title"] + " " + _display_title(state, kind, identifier, entry["record"]["title"]), quote=True)}"><h3>{escape(_display_title(state, kind, identifier, entry["record"]["title"]))}</h3><p class="record-id">{kind.capitalize()} <code>{escape(identifier)}</code></p>{_state_row("Work", _work_badges(work, entry["record"].get("kind", "")))}<details><summary>Outcome evidence</summary><ul class="compact">{"".join(events)}</ul></details></article>')
+        freshness = work["outcome_freshness"]
+        evidence_badge = _state_row("Evidence", _input_badge(freshness, "Outcome")) if freshness else ""
+        cards.append(f'<article class="card" id="work-{kind}-{escape(identifier)}" data-filter-card data-entity="outcome" data-state="outcome" data-freshness="{freshness}" {_work_attributes(work)} data-search="{escape(identifier + " " + entry["record"]["title"] + " " + _display_title(state, kind, identifier, entry["record"]["title"]), quote=True)}"><h3>{escape(_display_title(state, kind, identifier, entry["record"]["title"]))}</h3><p class="record-id">{kind.capitalize()} <code>{escape(identifier)}</code></p>{_state_row("Work", _work_badges(work, entry["record"].get("kind", "")))}{evidence_badge}<details><summary>Outcome evidence</summary><ul class="compact">{"".join(events)}</ul></details></article>')
     preview = "".join(f'<li>{escape(record["environment"])} / {escape(record["capability"])}: {escape(record["state"])} — {escape(record["reason"])}' + (f'<p>Visually checked report revision <code>{escape(record["report_sha256"])}</code></p>' if record["state"] == "verified" else "") + '</li>' for record in state["preview"])
     archived = []
     for kind, catalog in (("candidate", candidates), ("finding", findings)):
@@ -1707,8 +1717,8 @@ def _render(state: dict[str, Any]) -> bytes:
         if view["delivery_pending"]:
             work_summary += " · requested delivery pending"
         badges = _state_row("Audit", _badge(view["progress"], view["label"], tone="info" if audit else "neutral"))
-        badges += _state_row("Evidence", _input_badge(fresh, "Audit" if audit else "Map"))
-        attributes = f'data-audit-status="{view["progress"]}" data-work-states="{escape("|".join(view["work_states"]))}" data-analysis-states="{escape("|".join(view["analysis_states"]))}" data-outstanding="{str(view["outstanding"]).lower()}" data-delivery-pending="{str(view["delivery_pending"]).lower()}"'
+        badges += _state_row("Evidence", _input_badge(fresh, "Audit" if audit else "Map") + _changed_outcome_badge(view))
+        attributes = f'data-audit-status="{view["progress"]}" data-work-states="{escape("|".join(view["work_states"]))}" data-outcome-freshness="{view["outcome_freshness"]}" data-analysis-states="{escape("|".join(view["analysis_states"]))}" data-outstanding="{str(view["outstanding"]).lower()}" data-delivery-pending="{str(view["delivery_pending"]).lower()}"'
         cards[sub["id"]] = f'''<article class="card" id="subsystem-{escape(sub["id"])}" data-filter-card data-entity="subsystem" data-state="{sub["state"]}" data-freshness="{fresh}" {attributes} data-search="{escape(search, quote=True)}">
 <h3>{escape(title)}</h3><p class="record-id">Subsystem <code>{escape(sub["id"])}</code> · {escape(sub["system_id"])}</p>{badges}
 <dl class="kv"><dt>{'Prior coverage' if fresh == 'changed' and audit else 'Coverage'}</dt><dd>{escape(view["coverage"])}</dd>
@@ -2353,6 +2363,13 @@ def _prepare(
     return _prepare_raw(objective, root, report, _json(manifest, f"{objective} manifest"))
 
 
+def _row_targets(raw: dict[str, Any], name: str) -> list[dict[str, Any]]:
+    rows = raw.get(name, [])
+    if not isinstance(rows, list):
+        raise ReportError(f"{name} must be a list")
+    return [_obj(_obj(row, f"{name} row").get("target"), f"{name} target") for row in rows]
+
+
 def _guard_view(operation: str, raw: dict[str, Any], state: dict[str, Any]) -> dict[str, str]:
     context = [{key: value for key, value in sub.items() if key not in {"audit", "state", "map_source", "audit_scope"}}
                for sub in state["subsystems"] + state["retired_subsystems"]]
@@ -2365,14 +2382,14 @@ def _guard_view(operation: str, raw: dict[str, Any], state: dict[str, Any]) -> d
         target = [sid, selected.get("audit"), [f for f in state["systemic_findings"] if f["origin_subsystem_id"] == sid]]
     elif operation == "record-gaps":
         target = []
-        for row in raw.get("gaps", []):
-            selected, claim, _ = _gap_claim(row["target"], state)
+        for selected_target in _row_targets(raw, "gaps"):
+            selected, claim, _ = _gap_claim(selected_target, state)
             target.append([selected, claim, [event for event in state["gap_dispositions"] if event["target"] == selected]])
         if not target:
             raise ReportError("prepared gap publication requires targets")
     else:
-        targets = [{"kind": "candidate", "id": _id(raw.get("candidate_id"), "candidate id")}] if operation == "analyze-candidate" else [
-            row["target"] for row in raw.get("events", []) + raw.get("delivery_requirements", [])]
+        targets = [{"kind": "candidate", "id": _id(raw.get("candidate_id"), "candidate id")}] if operation == "analyze-candidate" else (
+            _row_targets(raw, "events") + _row_targets(raw, "delivery_requirements"))
         if operation not in {"analyze-candidate", "record-outcome"} or not targets:
             raise ReportError("this operation does not support prepared publication")
         target = []
@@ -2771,7 +2788,7 @@ def prepare_outcomes(*, repo_root: Path, report: Path, targets: Sequence[str], o
     shared_paths = {_rel(p, "proof path") for p in paths}
     bound = set()
     packet = {"version": MANIFEST_VERSION, "expected_report_sha256": _digest(data), "events": [
-        {"id": f"{target['id']}-{outcome_type}-{len(state['outcomes']) + index + 1}", "target": target,
+        {"id": f"{target['kind']}-{target['id']}-{outcome_type}-{len(state['outcomes']) + index + 1}", "target": target,
          "type": outcome_type, "summary": "", "evidence": []} for index, target in enumerate(selected)]}
     for event in packet["events"]:
         event_paths = set(_outcome_required_paths(state, event)) | shared_paths
