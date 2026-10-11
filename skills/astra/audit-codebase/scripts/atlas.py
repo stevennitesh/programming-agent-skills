@@ -977,7 +977,7 @@ def _target(value: object, state: dict[str, Any]) -> dict[str, str]:
 
 def _outcome(value: object, state: dict[str, Any], root: Path | None = None) -> dict[str, Any]:
     raw = _obj(value, "outcome")
-    optional = {"source_identity", "reference", "destination", "check_ids"} | ({"recorded_at", "finding_ids", "finding_sha256"} if root is None else set())
+    optional = {"source_identity", "reference", "destination", "check_ids"} | ({"recorded_at", "finding_ids", "finding_sha256", "candidate_sha256"} if root is None else set())
     _strict(raw, {"id", "target", "type", "summary", "evidence"}, optional, "outcome")
     kind = _text(raw["type"], "outcome type")
     if kind not in {"implemented", "verified", "deferred", "committed", "deployed", "reopened"}:
@@ -1000,8 +1000,10 @@ def _outcome(value: object, state: dict[str, Any], root: Path | None = None) -> 
         ids = result.get("finding_ids", [result["target"]["id"]])
         result["finding_sha256"] = (_finding_digest_map(raw.get("finding_sha256"), ids) if root is None
                                     else _finding_digests(state, ids))
-    elif "finding_sha256" in raw:
-        raise ReportError("only verified outcomes bind finding claims")
+        result["candidate_sha256"] = (_candidate_digest_map(raw.get("candidate_sha256"), state, [result["target"]]) if root is None
+                                      else _check_candidate_digests(state, [result["target"]]))
+    elif {"finding_sha256", "candidate_sha256"} & set(raw):
+        raise ReportError("only verified outcomes bind proof contracts")
     if "source_identity" in raw:
         packet = _source_packet(raw["source_identity"], "outcome source")
         result["source_identity"] = _verify_source_packet(root, packet, _outcome_required_paths(state, result)) if root is not None else packet
@@ -1020,6 +1022,14 @@ def _outcome(value: object, state: dict[str, Any], root: Path | None = None) -> 
             claims = _obj(check.get("finding_sha256"), "receipt finding claims")
             if any(claims.get(fid) != digest for fid, digest in result["finding_sha256"].items()):
                 raise ReportError("verification receipt finding claim changed; run a relevant check")
+            candidate_claims = _obj(check.get("candidate_sha256"), "receipt candidate claims")
+            if result["target"]["kind"] == "candidate":
+                if candidate_claims.get(result["target"]["id"]) != result["candidate_sha256"][result["target"]["id"]]:
+                    raise ReportError("verification receipt candidate analysis changed; run a relevant check")
+            elif root is not None:
+                # Narrow proof stays useful for its finding, but cannot verify a revised group contract.
+                result["candidate_sha256"] = {cid: digest for cid, digest in result["candidate_sha256"].items()
+                                              if candidate_claims.get(cid) == digest}
             packet = result["source_identity"]
             if any(packet["fingerprints"].get(path) != fingerprint for path, fingerprint in check["source_identity"]["fingerprints"].items()):
                 raise ReportError("verified outcome inputs do not match its receipt; run or carry forward the check")
@@ -1092,9 +1102,13 @@ def _work_status(state: dict[str, Any], target: dict[str, str]) -> dict[str, Any
         if linked and all(value == "verified" for value in linked):
             status = "verified"
             verified_paths = set()
+            candidate_digest = _candidate_digests(state, [target["id"]])[target["id"]]
             for fid in item["record"]["finding_ids"]:
                 decisions_for_finding = [event for _, event in _target_events(state, {"kind": "finding", "id": fid}) if event["type"] in {"implemented", "verified", "deferred", "reopened"}]
-                verified_paths.update(decisions_for_finding[-1]["source_identity"]["paths"])
+                proof = decisions_for_finding[-1]
+                verified_paths.update(proof["source_identity"]["paths"])
+                if proof["candidate_sha256"].get(target["id"]) != candidate_digest:
+                    status = "verification changed"
             if set(_required_paths(state, item["record"])) - verified_paths:
                 status = "verification changed"
         elif linked and all(value == "deferred" for value in linked):
@@ -1132,7 +1146,8 @@ def _current_scope(state: dict[str, Any], ids: Sequence[str]) -> set[str]:
 def _required_paths(state: dict[str, Any], record: dict[str, Any]) -> list[str]:
     scope = set(record["affected_scope"]) | set(record.get("analysis", {}).get("affected_scope", []))
     owners = _current_scope(state, sorted(scope))
-    return sorted({path for sub in state["subsystems"] if sub["id"] in owners for path in sub["owned_paths"]})
+    return sorted({path for sub in state["subsystems"] if sub["id"] in owners for path in sub["owned_paths"]} |
+                  set(record.get("analysis", {}).get("source_identity", {}).get("paths", [])))
 
 
 def _outcome_required_paths(state: dict[str, Any], event: dict[str, Any]) -> list[str]:
@@ -1248,6 +1263,11 @@ def _refresh_observation(state: dict[str, Any], root: Path) -> None:
             changed = sorted(fid for fid, digest in event["finding_sha256"].items() if current[fid] != digest)
             if changed:
                 observation = {**observation, "freshness": "changed", "changed_findings": changed}
+            if event["target"]["kind"] == "candidate":
+                current = _candidate_digests(state, sorted(event["candidate_sha256"]))
+                changed = sorted(cid for cid, digest in event["candidate_sha256"].items() if current[cid] != digest)
+                if changed:
+                    observation = {**observation, "freshness": "changed", "changed_candidates": changed}
         state["outcome_source_changes"][event["id"]] = observation
     state["outcome_freshness"] = {eid: observation["freshness"] for eid, observation in state["outcome_source_changes"].items()}
     state["finding_source_changes"] = {}
@@ -1649,7 +1669,7 @@ def _maintenance_html(state: dict[str, Any]) -> str:
             changes.append(f'<li><a href="#candidate-{escape(cid)}">{escape(cid)}</a>: candidate inputs or affected scope changed{changed_inputs(scoped)}{escape(scoped.get("error", ""))}</li>')
     for eid, observation in state["outcome_source_changes"].items():
         if observation["freshness"] == "changed":
-            changes.append(f'<li><a href="#outcome-{escape(eid)}">{escape(eid)}</a>: outcome inputs, finding claim, or affected scope changed{_list(observation["changed_paths"] + observation.get("changed_findings", []))}{escape(observation.get("error", ""))}</li>')
+            changes.append(f'<li><a href="#outcome-{escape(eid)}">{escape(eid)}</a>: outcome inputs, proof contract, or affected scope changed{_list(observation["changed_paths"] + observation.get("changed_findings", []) + observation.get("changed_candidates", []))}{escape(observation.get("error", ""))}</li>')
     for fid, item in findings.items():
         if item["historical"]:
             continue
@@ -2225,6 +2245,35 @@ def _check_finding_digests(state: dict[str, Any], targets: Sequence[dict[str, st
     return _finding_digests(state, sorted(ids))
 
 
+def _candidate_digests(state: dict[str, Any], ids: Sequence[str]) -> dict[str, str]:
+    candidates = _catalog(state)[0]
+    result = {}
+    for cid in sorted(set(ids)):
+        record = dict(candidates[cid]["record"])
+        if "analysis" in record:
+            analysis = record["analysis"]
+            record["analysis"] = {key: value for key, value in analysis.items() if key != "source_identity"}
+            record["analysis"]["source_paths"] = sorted(analysis["source_identity"]["paths"])
+        result[cid] = _digest(_canonical(record))
+    return result
+
+
+def _check_candidate_digests(state: dict[str, Any], targets: Sequence[dict[str, str]]) -> dict[str, str]:
+    candidates = _catalog(state)[0]
+    ids = {target["id"] for target in targets if target["kind"] == "candidate"}
+    findings = {target["id"] for target in targets if target["kind"] == "finding"}
+    ids.update(cid for cid, item in candidates.items() if not item["historical"] and findings & set(item["record"]["finding_ids"]))
+    return _candidate_digests(state, sorted(ids))
+
+
+def _candidate_digest_map(value: object, state: dict[str, Any], targets: Sequence[dict[str, str]]) -> dict[str, str]:
+    digests = _obj(value, "verified candidate contracts")
+    required = {target["id"] for target in targets if target["kind"] == "candidate"}
+    if not required <= set(digests) or set(digests) - set(_catalog(state)[0]) or any(not isinstance(digest, str) or not _SHA.fullmatch(digest) for digest in digests.values()):
+        raise ReportError("invalid verified candidate contract digests")
+    return digests
+
+
 def _check_log(root: Path, check: dict[str, Any]) -> Path:
     log = check["log"]
     path = (root / log["path"]).resolve()
@@ -2256,7 +2305,7 @@ def _verification_executable(root: Path, command: str) -> str | None:
 
 def _check_record(value: object, state: dict[str, Any]) -> dict[str, Any]:
     row = _obj(value, "verification receipt")
-    _strict(row, {"id", "targets", "candidate_findings", "finding_sha256", "command", "environment", "environment_sha256", "exit_code", "log", "source_identity", "source_before", "content_identity", "ownership_sha256", "source_drift", "recorded_at"}, {"reused_from"}, "verification receipt")
+    _strict(row, {"id", "targets", "candidate_findings", "finding_sha256", "candidate_sha256", "command", "environment", "environment_sha256", "exit_code", "log", "source_identity", "source_before", "content_identity", "ownership_sha256", "source_drift", "recorded_at"}, {"reused_from"}, "verification receipt")
     _id(row["id"], "check id")
     if not isinstance(row["targets"], list) or not row["targets"]:
         raise ReportError("check requires targets")
@@ -2273,6 +2322,7 @@ def _check_record(value: object, state: dict[str, Any]) -> dict[str, Any]:
     claim_ids = {target["id"] for target in row["targets"] if target["kind"] == "finding"}
     claim_ids.update(fid for ids in membership.values() for fid in ids)
     _finding_digest_map(row["finding_sha256"], sorted(claim_ids))
+    _candidate_digest_map(row["candidate_sha256"], state, row["targets"])
     if not isinstance(row["command"], list) or not row["command"] or any(not isinstance(arg, str) or not arg for arg in row["command"]):
         raise ReportError("check command must contain non-empty arguments")
     _text(row["environment"], "check environment")
@@ -2307,6 +2357,8 @@ def _record_check(raw: dict[str, Any], state: dict[str, Any], root: Path) -> Non
         raise ReportError("verification receipt candidate membership changed")
     if row["finding_sha256"] != _check_finding_digests(state, row["targets"]):
         raise ReportError("verification receipt finding claim changed")
+    if row["candidate_sha256"] != _check_candidate_digests(state, row["targets"]):
+        raise ReportError("verification receipt candidate analysis changed")
     _check_log(root, row)
     required = {p for target in row["targets"] for p in _outcome_required_paths(state, {"target": target})}
     _verify_source_packet(root, row["source_identity"], sorted(required))
@@ -2342,6 +2394,7 @@ def verify(*, repo_root: Path, report: Path, identifier: str, targets: Sequence[
     ownership = _check_ownership(state, selected)
     membership = _candidate_membership(state, selected)
     finding_digests = _check_finding_digests(state, selected)
+    candidate_digests = _check_candidate_digests(state, selected)
     created_log = False
     try:
         if reuse:
@@ -2349,7 +2402,7 @@ def verify(*, repo_root: Path, report: Path, identifier: str, targets: Sequence[
             if previous is None or previous["exit_code"] != 0 or previous["source_drift"]:
                 raise ReportError("reuse requires a passing, drift-free receipt")
             if any(previous[key] != value for key, value in (("targets", selected), ("command", command), ("environment", environment),
-                    ("candidate_findings", membership), ("finding_sha256", finding_digests), ("environment_sha256", environment_sha), ("content_identity", content), ("ownership_sha256", ownership))):
+                    ("candidate_findings", membership), ("finding_sha256", finding_digests), ("candidate_sha256", candidate_digests), ("environment_sha256", environment_sha), ("content_identity", content), ("ownership_sha256", ownership))):
                 raise ReportError("verification inputs, ownership, command, or environment changed; run the check")
             log = previous["log"]
             log_path = _check_log(root, previous)
@@ -2371,7 +2424,7 @@ def verify(*, repo_root: Path, report: Path, identifier: str, targets: Sequence[
                 raise ReportError(f"cannot finalize verification log: {exc}") from exc
             log = {"path": log_path.relative_to(root).as_posix(), "sha256": log_sha}
         after = _source_packet_view(root, bound)
-        receipt = {"id": identifier, "targets": selected, "candidate_findings": membership, "finding_sha256": finding_digests, "command": command, "environment": environment, "environment_sha256": environment_sha,
+        receipt = {"id": identifier, "targets": selected, "candidate_findings": membership, "finding_sha256": finding_digests, "candidate_sha256": candidate_digests, "command": command, "environment": environment, "environment_sha256": environment_sha,
                    "exit_code": code, "log": log, "source_before": before, "source_identity": after, "content_identity": content,
                    "ownership_sha256": ownership, "source_drift": sorted(p for p in bound if before["fingerprints"][p] != after["fingerprints"][p]), "recorded_at": _now()}
         if reuse:

@@ -637,7 +637,7 @@ def test_check_report_exposes_analysis_and_verification_changes_without_changing
     analysis["source_identity"] = identity(tmp_path, paths + ["analysis-input.txt"])
     publish(tmp_path, "analyze-candidate", analysis)
     verified = event(tmp_path, "verified-extra", "verified")
-    verified["source_identity"] = identity(tmp_path, paths + ["verification-input.txt"])
+    verified["source_identity"] = identity(tmp_path, paths + ["analysis-input.txt", "verification-input.txt"])
     outcomes(tmp_path, verified)
     fresh = atlas.check_report(repo_root=tmp_path, report=report(tmp_path))
     assert fresh["candidate_freshness"] == {"alpha-fix": "fresh"}
@@ -652,7 +652,7 @@ def test_check_report_exposes_analysis_and_verification_changes_without_changing
     assert changed["candidate_freshness"] == {"alpha-fix": "changed"}
     assert changed["outcome_freshness"] == {"verified-extra": "changed"}
     assert changed["candidate_source_changes"]["alpha-fix"]["analysis"]["changed_paths"] == ["analysis-input.txt"]
-    assert changed["outcome_source_changes"]["verified-extra"]["changed_paths"] == ["verification-input.txt"]
+    assert changed["outcome_source_changes"]["verified-extra"]["changed_paths"] == ["analysis-input.txt", "verification-input.txt"]
     assert changed["finding_freshness"] == {"alpha-defect": "fresh"}
     cli = subprocess.run([sys.executable, str(SCRIPT), "check-report", "--repo-root", str(tmp_path), "--report", str(report(tmp_path))],
                          check=True, capture_output=True, text=True)

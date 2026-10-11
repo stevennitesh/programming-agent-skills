@@ -176,9 +176,12 @@ Candidate events bind the finding IDs present when recorded. They also apply to
 those findings, including historical IDs. A later finding added to the candidate
 does not inherit old verification. Record narrower finding outcomes for partial
 completion; verify the candidate as a group only when the evidence covers that group.
-The helper captures finding content in receipts and verified outcomes. Revising
-a claim or its required proof changes verification even when source files stay
-unchanged; display-only edits do not. Run a relevant check for the revised claim.
+The helper captures finding content and candidate analysis in receipts and verified
+outcomes. Revising a claim, recommendation, or required proof changes verification
+even when source files stay unchanged; display-only edits do not. Run a relevant
+check for the revised contract. Narrow finding proof stays useful, but old proof
+cannot complete a revised candidate analysis. Candidate checks and outcome packets
+include proof inputs already declared in its analysis.
 Changed verification inputs require inspection, while an original audit changed by
 its verified fix remains historical evidence. Reimplementation or reopening starts
 a new epoch, including narrower work on a bound finding, so old group delivery

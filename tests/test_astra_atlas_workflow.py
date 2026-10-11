@@ -440,6 +440,7 @@ def test_verification_carries_across_index_changes_and_binds_verified_outcome(tm
     assert tested["passed"]
     subprocess.run(["git", "add", "src/a.py"], cwd=tmp_path, check=True)
     subprocess.run(["git", "commit", "-m", "change"], cwd=tmp_path, check=True, capture_output=True)
+    publish(tmp_path, "analyze-candidate", analysis_manifest(tmp_path, report(tmp_path)))
     carried = check(tmp_path, "carried", reuse="probe")
     assert carried["reused"] and carried["check"]["source_identity"] != tested["check"]["source_identity"]
     assert carried["check"]["content_identity"] == tested["check"]["content_identity"]
@@ -527,7 +528,9 @@ def test_unchanged_reaudit_and_presentation_edits_preserve_claim_verification(tm
     original = check(tmp_path)["check"]
     outcomes(tmp_path, event(tmp_path, "verified", "verified", check_ids=["probe"]))
     publish(tmp_path, "audit-subsystem", audit_manifest(tmp_path, report(tmp_path)))
+    publish(tmp_path, "analyze-candidate", analysis_manifest(tmp_path, report(tmp_path)))
     atlas.edit_presentation(repo_root=tmp_path, report=report(tmp_path), kind="finding", identifier="alpha-defect", title="Clearer finding label")
+    atlas.edit_presentation(repo_root=tmp_path, report=report(tmp_path), kind="candidate", identifier="alpha-fix", title="Clearer candidate label")
     carried = check(tmp_path, "carried", reuse="probe")
     assert carried["reused"] and carried["check"]["finding_sha256"] == original["finding_sha256"]
     assert atlas.status_report(repo_root=tmp_path, report=report(tmp_path), finding="alpha-defect")["rows"][0]["work"]["status"] == "verified"
@@ -542,6 +545,88 @@ def test_agent_supplied_verification_retains_its_claim_revision(tmp_path: Path) 
     publish(tmp_path, "audit-subsystem", packet)
     assert state(tmp_path)["outcomes"][0] == original
     assert atlas.status_report(repo_root=tmp_path, report=report(tmp_path), finding="alpha-defect")["rows"][0]["work"]["status"] == "verification changed"
+
+
+@pytest.mark.parametrize("target_kind", ["candidate", "finding"])
+@pytest.mark.parametrize("field,value", [("proof", ["Check both callers and the revised failure path"]),
+                                         ("cause", "The second caller owns the failure path"),
+                                         ("recommendation", "Keep distinct owners and share only input parsing")])
+def test_revised_candidate_analysis_requires_current_group_proof(tmp_path: Path, target_kind: str, field: str, value) -> None:
+    started(tmp_path)
+    target_id = "alpha-fix" if target_kind == "candidate" else "alpha-defect"
+    targets = [f"{target_kind}:{target_id}"]
+    args = dict(repo_root=tmp_path, report=report(tmp_path), targets=targets,
+                command=[sys.executable, "-c", "print('verified')"], environment="fixture")
+    original = atlas.verify(identifier="original", **args)["check"]
+    outcomes(tmp_path, event(tmp_path, "verified", "verified", target_kind=target_kind,
+                             target_id=target_id, check_ids=["original"]))
+    before = state(tmp_path)
+    packet = analysis_manifest(tmp_path, report(tmp_path))
+    packet[field] = value
+    publish(tmp_path, "analyze-candidate", packet)
+    current = state(tmp_path)
+    assert current["checks"][0] == original and current["outcomes"] == before["outcomes"]
+    assert atlas.status_report(repo_root=tmp_path, report=report(tmp_path), candidate="alpha-fix")["rows"][0]["work"]["status"] == "verification changed"
+    with pytest.raises(atlas.ReportError, match="changed"):
+        atlas.verify(identifier="stale-carried", reuse="original", **args)
+    prepared = atlas.prepare_outcomes(repo_root=tmp_path, report=report(tmp_path), targets=targets,
+                                      outcome_type="verified", check_ids=["original"], output=Path("stale-analysis.json"))
+    stale = json.loads(Path(prepared["packet"]).read_text(encoding="utf-8"))
+    stale["events"][0]["summary"] = "Proof predates the revised candidate contract."
+    if target_kind == "candidate":
+        assert current["outcome_source_changes"]["verified"]["changed_candidates"] == ["alpha-fix"]
+        assert current["outcome_source_changes"]["verified"]["changed_paths"] == []
+        with pytest.raises(atlas.ReportError, match="candidate analysis changed"):
+            publish(tmp_path, "record-outcome", stale)
+    else:
+        publish(tmp_path, "record-outcome", stale)
+        assert state(tmp_path)["outcomes"][-1]["candidate_sha256"] == {}
+        assert atlas.status_report(repo_root=tmp_path, report=report(tmp_path), finding="alpha-defect")["rows"][0]["work"]["status"] == "verified"
+        assert atlas.status_report(repo_root=tmp_path, report=report(tmp_path), candidate="alpha-fix")["rows"][0]["work"]["status"] == "verification changed"
+    atlas.verify(identifier="revised", **args)
+    prepared = atlas.prepare_outcomes(repo_root=tmp_path, report=report(tmp_path), targets=targets,
+                                      outcome_type="verified", check_ids=["revised"], output=Path("revised-analysis.json"))
+    renewed = json.loads(Path(prepared["packet"]).read_text(encoding="utf-8"))
+    renewed["events"][0]["summary"] = "Current proof supports the revised candidate analysis."
+    publish(tmp_path, "record-outcome", renewed)
+    assert atlas.status_report(repo_root=tmp_path, report=report(tmp_path), candidate="alpha-fix")["rows"][0]["work"]["status"] == "verified"
+
+
+def test_candidate_verification_binds_declared_analysis_proof_inputs(tmp_path: Path) -> None:
+    started(tmp_path)
+    proof = tmp_path / "analysis-proof.txt"
+    proof.write_text("original probe input", encoding="utf-8")
+    packet = analysis_manifest(tmp_path, report(tmp_path))
+    packet["source_identity"] = identity(tmp_path, ["src/a.py", "src/b.py", "tests/test_a.py", proof.name])
+    publish(tmp_path, "analyze-candidate", packet)
+    first = check(tmp_path)["check"]
+    assert proof.name in first["source_identity"]["paths"]
+    prepared = atlas.prepare_outcomes(repo_root=tmp_path, report=report(tmp_path), targets=["candidate:alpha-fix"],
+                                      outcome_type="verified", check_ids=["probe"])
+    outcome = json.loads(Path(prepared["packet"]).read_text(encoding="utf-8"))
+    assert proof.name in outcome["events"][0]["source_identity"]["paths"]
+    outcome["events"][0]["summary"] = "Proof includes the declared analysis input."
+    publish(tmp_path, "record-outcome", outcome)
+    proof.write_text("changed probe input", encoding="utf-8")
+    with pytest.raises(atlas.ReportError, match="changed"):
+        check(tmp_path, "stale", reuse="probe")
+    assert atlas.status_report(repo_root=tmp_path, report=report(tmp_path), candidate="alpha-fix")["rows"][0]["work"]["status"] == "verification changed"
+    assert state(tmp_path)["checks"][0] == first
+
+
+def test_new_analysis_input_changes_the_contract_even_if_the_receipt_already_bound_its_bytes(tmp_path: Path) -> None:
+    started(tmp_path)
+    proof = tmp_path / "analysis-proof.txt"
+    proof.write_text("probe input", encoding="utf-8")
+    first = check(tmp_path, paths=[proof.name])["check"]
+    packet = analysis_manifest(tmp_path, report(tmp_path))
+    packet["source_identity"] = identity(tmp_path, ["src/a.py", "src/b.py", "tests/test_a.py", proof.name])
+    publish(tmp_path, "analyze-candidate", packet)
+    with pytest.raises(atlas.ReportError, match="changed"):
+        check(tmp_path, "stale", reuse="probe", paths=[proof.name])
+    renewed = check(tmp_path, "renewed")
+    assert renewed["check"]["content_identity"] == first["content_identity"]
+    assert renewed["check"]["candidate_sha256"] != first["candidate_sha256"]
 
 
 @pytest.mark.parametrize("keep_original", [False, True])
