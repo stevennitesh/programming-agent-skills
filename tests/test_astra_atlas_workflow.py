@@ -79,6 +79,37 @@ def test_finding_packet_guard_includes_new_candidate_group_events(tmp_path: Path
     assert report(tmp_path).read_bytes() == before
 
 
+@pytest.mark.parametrize("work", ["outcome", "check", "delivery", "gap"])
+def test_prepared_reaudit_rejects_intervening_target_bound_work(tmp_path: Path, work: str) -> None:
+    started(tmp_path)
+    packet = prepared_audit(tmp_path, "alpha", "revised-alpha.json")
+    packet["findings"][0]["title"] = "A revised defect judgment."
+    if work == "outcome":
+        outcomes(tmp_path, event(tmp_path, "old-record-verified", "verified", target_kind="finding", target_id="alpha-defect"))
+    elif work == "check":
+        check(tmp_path)
+    elif work == "delivery":
+        outcomes(tmp_path, delivery_requirements=[{"target": {"kind": "candidate", "id": "alpha-fix"}, "commit": True,
+                                                 "deployments": [], "reason": "Selected delivery."}])
+    else:
+        prepared = atlas.prepare_gaps(repo_root=tmp_path, report=report(tmp_path), lenses=["alpha:performance"])
+        gap = json.loads(Path(prepared["packet"]).read_text(encoding="utf-8"))
+        gap["gaps"][0].update(disposition="closed", summary="Original uncertainty resolved.", evidence=["Trace reviewed."])
+        publish(tmp_path, "record-gaps", gap)
+    before = report(tmp_path).read_bytes()
+    with pytest.raises(atlas.ReportError, match="conflicts"):
+        publish(tmp_path, "audit-subsystem", packet)
+    assert report(tmp_path).read_bytes() == before
+
+
+def test_prepared_reaudit_accepts_unrelated_outcomes(tmp_path: Path) -> None:
+    independent_findings(tmp_path)
+    packet = prepared_audit(tmp_path, "alpha", "revised-alpha.json")
+    outcomes(tmp_path, event(tmp_path, "unrelated-deferred", "deferred", target_kind="finding", target_id="beta-defect"))
+    publish(tmp_path, "audit-subsystem", packet)
+    assert state(tmp_path)["outcomes"][0]["id"] == "unrelated-deferred"
+
+
 def test_batch_rebases_independent_packets_and_retry_has_one_receipt(tmp_path: Path, monkeypatch) -> None:
     mapped(tmp_path)
     packets = [{"operation": "audit-subsystem", "manifest": prepared_audit(tmp_path, sid)} for sid in ("alpha", "beta")]
@@ -345,6 +376,27 @@ def test_receipts_preserve_original_membership_and_reject_expanded_groups(tmp_pa
     verified["check_ids"] = ["expanded"]
     outcomes(tmp_path, verified)
     assert atlas.status_report(repo_root=tmp_path, report=report(tmp_path), finding="alpha-additional")["rows"][0]["work"]["status"] == "verified"
+
+
+@pytest.mark.parametrize("keep_original", [False, True])
+def test_check_history_uses_membership_recorded_when_the_check_ran(tmp_path: Path, keep_original: bool) -> None:
+    started(tmp_path)
+    original = check(tmp_path)["check"]
+    packet = audit_manifest(tmp_path, report(tmp_path))
+    later = {**finding(), "id": "alpha-later"}
+    packet["findings"] = packet["findings"] + [later] if keep_original else [later]
+    packet["candidates"][0]["finding_ids"] = [row["id"] for row in packet["findings"]]
+    if not keep_original:
+        for lens in packet["lenses"]:
+            lens["finding_ids"] = ["alpha-later" if identifier == "alpha-defect" else identifier for identifier in lens["finding_ids"]]
+    publish(tmp_path, "audit-subsystem", packet)
+    check(tmp_path, "later-probe")
+    def checks_for(identifier: str) -> set[str]:
+        history = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), finding=identifier, history=True)["history"]
+        return {row["check_id"] for row in history if "check_id" in row}
+    assert checks_for("alpha-later") == {"later-probe"}
+    assert checks_for("alpha-defect") == ({"probe", "later-probe"} if keep_original else {"probe"})
+    assert state(tmp_path)["checks"][0] == original
 
 
 @pytest.mark.parametrize("removed", [False, True])

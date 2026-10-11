@@ -2380,6 +2380,17 @@ def _guard_view(operation: str, raw: dict[str, Any], state: dict[str, Any]) -> d
         if selected is None:
             raise ReportError(f"unknown subsystem {sid}")
         target = [sid, selected.get("audit"), [f for f in state["systemic_findings"] if f["origin_subsystem_id"] == sid]]
+        if operation == "audit-subsystem":
+            related = [{"kind": kind, "id": identifier} for kind, catalog in (("candidate", candidates), ("finding", findings))
+                       for identifier, entry in catalog.items() if entry["origin"] == sid and not entry["historical"]]
+            finding_ids = {item["id"] for item in related if item["kind"] == "finding"}
+            effective = {event["id"] for item in related for _, event in _target_events(state, item)}
+            target += [[event for event in state["outcomes"] if event["id"] in effective],
+                       [row for row in state["delivery_requirements"] if row["target"] in related],
+                       [row for row in state["checks"] if any(item in related for item in row["targets"]) or
+                        any(finding_ids & set(ids) for ids in row["candidate_findings"].values())],
+                       [row for row in state["gap_dispositions"] if row["target"] in related or
+                        row["target"].get("subsystem_id") == sid]]
     elif operation == "record-gaps":
         target = []
         for selected_target in _row_targets(raw, "gaps"):
@@ -3060,7 +3071,7 @@ def _inspection_history(state: dict[str, Any], rows: list[dict[str, Any]], *, su
             for target in check["targets"]:
                 related.add(target["id"])
                 if target["kind"] == "candidate":
-                    related.update(candidates[target["id"]]["record"]["finding_ids"])
+                    related.update(check["candidate_findings"][target["id"]])
         gap_events = [row for row in state["gap_dispositions"] if row["id"] in stored.get("gap_ids", [])]
         gap_related = any(row["target"].get("subsystem_id") in owners for row in gap_events)
         related.update(row["target"]["id"] for row in gap_events if row["target"]["kind"] == "finding")

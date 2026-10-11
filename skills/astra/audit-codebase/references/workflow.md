@@ -55,6 +55,8 @@ inspected source. The append operation accepts no replacement lens coverage,
 coverage prose, or audit recommendation. Use a full audit only when reassessing
 that broader scope; it intentionally replaces the current audit and retains its
 previous records in history.
+Keep an ID for the same claim. Give a materially different finding or proposal
+a new ID so previous work outcomes do not apply to it.
 
 ## Capture or carry a check
 
