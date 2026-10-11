@@ -39,8 +39,9 @@ publication. The helper validates the whole batch and makes one guarded write,
 then reads it back. `--validate-only` checks without publishing.
 
 Prepared packets retain their investigated source snapshots. Report guards may
-advance only when ownership and the selected records still match. Source drift
-or a same-target conflict rejects the batch without partial publication. A raw
+advance only when ownership, selected records, and assigned source identities
+still match. Source drift or a same-target conflict rejects the batch without
+partial publication. A raw
 manifest has no compatibility proof and still needs the exact report revision.
 After interruption, retry the same batch ID and packets. An embedded receipt
 confirms prior publication; reusing that ID with changed packets is rejected.

@@ -2277,9 +2277,13 @@ def verify(*, repo_root: Path, report: Path, identifier: str, targets: Sequence[
     if not command or any(not isinstance(arg, str) or not arg for arg in command):
         raise ReportError("verify requires a command and non-empty arguments")
     environment = _text(environment, "verification environment")
-    executable = _verification_executable(root, command[0])
+    try:
+        executable = _verification_executable(root, command[0])
+        executable_sha = _digest(Path(executable).read_bytes()) if executable else None
+    except OSError as exc:
+        raise ReportError(f"cannot capture verification executable identity: {exc}") from exc
     environment_sha = _digest(_canonical({"environment": dict(os.environ), "platform": sys.platform, "cwd": str(root),
-                                         "executable": executable, "executable_sha256": _digest(Path(executable).read_bytes()) if executable and Path(executable).is_file() else None}))
+                                         "executable": executable, "executable_sha256": executable_sha}))
     bound = sorted({p for target in selected for p in _outcome_required_paths(state, {"target": target})} | {_rel(p, "proof input") for p in paths})
     before = _source_packet_view(root, bound)
     content = _content_identity(root, bound)
@@ -2414,7 +2418,8 @@ def _guard_view(operation: str, raw: dict[str, Any], state: dict[str, Any]) -> d
             target.append([record, linked, [event for event in state["outcomes"] if event["id"] in effective],
                            [row for row in state["delivery_requirements"] if row["target"] in related]])
     return {"operation": operation, "context_sha256": _digest(_canonical([state["systems"], context, state["excluded"]])),
-            "target_sha256": _digest(_canonical(target))}
+            "target_sha256": _digest(_canonical(target)),
+            "source_sha256": _digest(_canonical(sorted(_bound_packets(raw), key=_canonical)))}
 
 
 def _publication_guard(operation: str, raw: dict[str, Any], state: dict[str, Any], current: str) -> dict[str, Any]:

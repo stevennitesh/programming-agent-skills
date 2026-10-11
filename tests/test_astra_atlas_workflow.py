@@ -11,7 +11,7 @@ from pathlib import Path
 
 import pytest
 
-from test_astra_atlas import SCRIPT, analysis_manifest, atlas, audit_manifest, candidate, elements, finding, publish, report, sha
+from test_astra_atlas import SCRIPT, analysis_manifest, atlas, audit_manifest, candidate, elements, finding, identity, publish, report, sha
 from test_astra_atlas_maintenance import event, outcomes, reconcile, started, state
 from test_astra_atlas_usability import mapped
 
@@ -108,6 +108,48 @@ def test_prepared_reaudit_accepts_unrelated_outcomes(tmp_path: Path) -> None:
     outcomes(tmp_path, event(tmp_path, "unrelated-deferred", "deferred", target_kind="finding", target_id="beta-defect"))
     publish(tmp_path, "audit-subsystem", packet)
     assert state(tmp_path)["outcomes"][0]["id"] == "unrelated-deferred"
+
+
+@pytest.mark.parametrize("operation", ["audit-subsystem", "analyze-candidate", "record-outcome", "record-gaps"])
+@pytest.mark.parametrize("change", ["scope", "snapshot"])
+def test_prepared_packets_preserve_their_assigned_source_identity(tmp_path: Path, operation: str, change: str) -> None:
+    started(tmp_path, analyzed=False)
+    proof = tmp_path / "proof.txt"
+    proof.write_text("original proof", encoding="utf-8")
+    if operation == "audit-subsystem":
+        packet = prepared_audit(tmp_path, "alpha", "assigned-audit.json")
+        row, removed, changed_path = packet, "src/b.py", tmp_path / "src/a.py"
+    else:
+        if operation == "analyze-candidate":
+            prepared = atlas.prepare_analysis(repo_root=tmp_path, report=report(tmp_path), candidate="alpha-fix", paths=["proof.txt"])
+        elif operation == "record-outcome":
+            prepared = atlas.prepare_outcomes(repo_root=tmp_path, report=report(tmp_path), targets=["candidate:alpha-fix"],
+                                              outcome_type="verified", paths=["proof.txt"])
+        else:
+            prepared = atlas.prepare_gaps(repo_root=tmp_path, report=report(tmp_path), lenses=["alpha:performance"], paths=["proof.txt"])
+        packet = json.loads(Path(prepared["packet"]).read_text(encoding="utf-8"))
+        if operation == "analyze-candidate":
+            judgments = analysis_manifest(tmp_path, report(tmp_path))
+            packet.update({key: judgments[key] for key in ("state", "summary", "cause", "recommendation", "proof")})
+            row = packet
+        elif operation == "record-outcome":
+            row = packet["events"][0]
+            row.update(summary="Selected work verified.", evidence=["Proof reviewed."])
+        else:
+            row = packet["gaps"][0]
+            row.update(summary="Trace remains needed.", evidence=["Probe inspected."], remaining_question="What is runtime latency?",
+                       revisit_when="A trace is available.")
+        removed, changed_path = "proof.txt", proof
+    paths = row["source_identity"]["paths"]
+    if change == "scope":
+        paths = [path for path in paths if path != removed]
+    else:
+        changed_path.write_text("changed inspected input", encoding="utf-8")
+    row["source_identity"] = identity(tmp_path, paths)
+    before = report(tmp_path).read_bytes()
+    with pytest.raises(atlas.ReportError, match="conflicts"):
+        publish(tmp_path, operation, packet)
+    assert report(tmp_path).read_bytes() == before
 
 
 def test_batch_rebases_independent_packets_and_retry_has_one_receipt(tmp_path: Path, monkeypatch) -> None:
@@ -504,6 +546,28 @@ def test_failed_check_setup_can_retry_the_same_id(tmp_path: Path, monkeypatch, f
     assert not report(tmp_path).with_name("check-probe.log").exists()
     assert state(tmp_path)["checks"] == []
     monkeypatch.setattr(atlas, "_publish_prepared", original)
+    assert check(tmp_path)["passed"]
+
+
+@pytest.mark.parametrize("failure", [PermissionError, FileNotFoundError])
+def test_verifier_identity_failures_return_json_and_leave_the_id_retryable(tmp_path: Path, monkeypatch, capsys, failure) -> None:
+    started(tmp_path)
+    before = report(tmp_path).read_bytes()
+    executable = Path(sys.executable).resolve()
+    original = Path.read_bytes
+    def unreadable(path):
+        if path.resolve() == executable:
+            raise failure("Verifier identity is unavailable.")
+        return original(path)
+    with monkeypatch.context() as patch:
+        patch.setattr(Path, "read_bytes", unreadable)
+        result = atlas.main(["verify", "--repo-root", str(tmp_path), "--report", str(report(tmp_path)),
+                             "--id", "probe", "--target", "candidate:alpha-fix", "--environment", "fixture", "--",
+                             sys.executable, "-c", "print('verified')"])
+    captured = capsys.readouterr()
+    assert result == 2 and not captured.err
+    assert "cannot capture verification executable identity" in json.loads(captured.out)["error"]
+    assert report(tmp_path).read_bytes() == before and not report(tmp_path).with_name("check-probe.log").exists()
     assert check(tmp_path)["passed"]
 
 
