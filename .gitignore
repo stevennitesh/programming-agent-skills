@@ -46,6 +46,9 @@ docs/*
 !docs/agents/**
 !docs/astra/
 !docs/astra/**
+!docs/images/
+docs/images/*
+!docs/images/featured.jpg
 !docs/plans/
 !docs/plans/**
 !docs/research/

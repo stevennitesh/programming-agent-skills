@@ -1,164 +1,95 @@
-<h1 align="center">Programming Agent Skills</h1>
+# Programming Agent Skills
 
-<p align="center">
-  Workflows for coding agents: planning changes, research, debugging, code review, and repository maintenance.
-</p>
+**Steven Bangdiwala** · Python tools and 21 task-specific workflows for coding agents
 
-<p align="center">
-  <img src="docs/astra/assets/programming-agent-skills-hero.png" width="960" alt="Programming Agent Skills, illustrated with modules bearing code, graph, and settings icons.">
-</p>
+![Programming Agent Skills: coding workflows, managed installation and recovery](docs/images/featured.jpg)
 
-<p align="center">
-  <a href="https://github.com/stevennitesh/programming-agent-skills/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/stevennitesh/programming-agent-skills/actions/workflows/ci.yml/badge.svg"></a>
-  <a href="https://github.com/stevennitesh/programming-agent-skills/releases/latest"><img alt="Latest tagged release" src="https://img.shields.io/github/v/release/stevennitesh/programming-agent-skills"></a>
-  <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-blue.svg"></a>
-  <img alt="Python 3.11+" src="https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white">
-</p>
+[Implementation and evidence](#engineering-and-evidence) ·
+[Controlled demonstrations](docs/astra/engineering-demo.md) ·
+[Install](#getting-started) · [Skill catalog](#find-the-right-skill) ·
+[User guide](docs/astra/user-guide.md)
 
-<p align="center">
-  <a href="#getting-started">Get started</a> ·
-  <a href="#what-you-can-ask-an-agent-to-do">Uses</a> ·
-  <a href="#engineering-and-evidence">Implementation and tests</a> ·
-  <a href="#find-the-right-skill">Find a skill</a> ·
-  <a href="#models-and-hosts">Models and hosts</a> ·
-  <a href="docs/astra/design-brief.md">Design brief</a>
-</p>
+[![CI](https://github.com/stevennitesh/programming-agent-skills/actions/workflows/ci.yml/badge.svg)](https://github.com/stevennitesh/programming-agent-skills/actions/workflows/ci.yml)
+[![Latest tagged release](https://img.shields.io/github/v/release/stevennitesh/programming-agent-skills)](https://github.com/stevennitesh/programming-agent-skills/releases/latest)
+[![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
----
+Coding agents need project context and a clear finish line. This project supplies
+workflows for research, debugging, review and repository maintenance, plus Python
+tools to install, update and verify the workflow pack. Each skill defines the task
+it covers, when it applies and the result to return. The agent chooses its methods
+within the user's scope and repository requirements.
 
-Programming Agent Skills contains 21 workflows that an agent can load for a
-specific task. Each skill describes when to use it, what work it covers, and
-what result to return. The managed installer deploys the pack for Codex.
+## Engineering and evidence
 
-Programmers can request a named workflow or let the agent select an automatic
-skill when it matches the task. The instructions specify which work is in scope,
-what needs checking, and what a completed result includes. The agent chooses its
-methods within those boundaries and the repository's requirements. For a clear,
-bounded code change, ask the agent to implement and verify it directly.
+I developed the workflow boundaries, package validation and supporting Python
+tools around ideas credited in [Acknowledgments](ACKNOWLEDGMENTS.md).
 
-## What you can ask an agent to do
+| Contribution | What the implementation does | Inspect it |
+| --- | --- | --- |
+| Managed installation | Previews changes, checks ownership, preserves unrelated skills, and records recoverable update transactions | [Installer](scripts/install_skills.py) and [recovery guide](INSTALLATION.md) |
+| Parallel worktree coordination | Creates worktrees from the assigned base, inspects integration and runtime state, and preserves dirty or uncertain work during cleanup | [Worktree helper](skills/astra/parallel-implement/scripts/lane_worktree.py) |
+| Package validation | Checks resources, references, catalog invocation rules and requested installed-source parity | [Validator](scripts/validate_skills.py) |
+| Agent inspection tools | Generates a navigable codebase atlas and records optional model-use telemetry | [Atlas](skills/astra/audit-codebase/scripts/atlas.py) and [telemetry](skills/astra/cost-aware-coding/scripts/telemetry.py) |
+| Task selection | Gives each workflow a compact selector and useful exclusions | [Selection examples](docs/astra/selection-examples.md) and [design brief](docs/astra/design-brief.md) |
 
-- Develop an idea into agreed behavior and a specification with
-  [shape-work](skills/astra/shape-work/SKILL.md). Resolve requirements before
-  asking for implementation.
-- Investigate a question or compare options with
-  [research](skills/astra/research/SKILL.md). Get an answer with sources,
-  uncertainty, and any gaps in the evidence.
-- Investigate a difficult failure with
-  [diagnosing-bugs](skills/astra/diagnosing-bugs/SKILL.md). Use observed behavior
-  to distinguish likely causes and identify what failed.
-- Review a proposed code change with
-  [change-review](skills/astra/change-review/SKILL.md). Get findings that identify
-  an affected behavior, supporting evidence, and a correction.
-- Request cleanup of stale, redundant, or brittle tests with
-  [test-cleanup](skills/astra/test-cleanup/SKILL.md). Preserve useful regression
-  protection while removing checks and fixtures that no longer serve it.
-- Maintain repository guidance or analyze conversations and tool logs with
-  [context-hygiene](skills/astra/context-hygiene/SKILL.md). Identify recurring
-  problems in instructions, tools, or the agent runtime. Recommend or apply
-  corrections within the authorized task.
-- Coordinate requested concurrent implementation with
-  [parallel-implement](skills/astra/parallel-implement/SKILL.md). Assign each agent
-  a task and the files or components it owns. Check the combined changes against
-  the agreed requirements.
+```mermaid
+flowchart TD
+    Source["Authored skills and Python tools"] --> Preview["Preview managed changes"]
+    Preview --> Ownership["Check installed ownership and edits"]
+    Ownership -->|Safe update| Apply["Apply update and record transaction"]
+    Ownership -->|Edited or conflicting copy| Preserve["Preserve installed content and report conflict"]
+    Apply --> Validate["Validate package and installed-source parity"]
+    Apply -->|Interrupted transaction| Recover["Recover from recorded transaction"]
+```
 
-These workflows can be used individually. The [full catalog](#find-the-right-skill)
-also covers design decisions, experiments, ticketing, Git cleanup, verification
-tools, and other tasks.
+### Demonstrated behavior
 
-## Models and hosts
+The [controlled examples](docs/astra/engineering-demo.md) exercise three useful
+failure cases:
 
-The skills were developed primarily for GPT 6 Astra and are intended for other
-capable coding models, including Sol 6.1, Opus 5.5, Fable 5.1, and Sonnet 5.5.
-The current managed pack lives in `skills/astra/`.
+- **Edited installed skill:** an update is refused; the installed tree and global
+  instructions stay unchanged.
+- **Cleanup failure after commit:** recovery retains the new skill version and
+  clears the completed transaction.
+- **Ignored worktree files:** cleanup detects artifacts that Git considers clean
+  and preserves them.
 
-The managed integration targets Codex. Hosts differ in how they load skills,
-select them automatically, and provide tools or subagents. Other hosts would
-need their own installation and tool integration. Package checks do not
-establish equivalent results across models.
-
-The optional [cost-aware workflow](#cost-aware-coding) has specific model
-assignments documented in its [model policy](skills/astra/cost-aware-coding/references/model-policy.md).
-
-<details>
-<summary><strong>Historical custom pack</strong></summary>
-
-The historical [custom skill pack](skills/custom/) remains available for
-comparison and separate evaluation, but it is not installed by the current
-installer. Current model-specific comparisons are not sufficient to claim that
-the historical package performs better for smaller models.
-
-</details>
+[CI](https://github.com/stevennitesh/programming-agent-skills/actions/workflows/ci.yml)
+runs public validation and the full test suite on Ubuntu and Windows. These tests
+establish installer, helper and package behavior. Agent output quality and cost
+require separate evaluation; the examples make no productivity claim.
 
 <a id="install"></a>
 
 ## Getting started
 
-You'll need [Codex](https://github.com/openai/codex), Git, and Python 3.11 or newer.
-The installer itself uses only Python's standard library.
-
-Clone the repository, preview the managed changes, then install:
+You'll need [Codex](https://github.com/openai/codex), Git and Python 3.11 or newer.
+The installer uses Python's standard library.
 
 ```sh
 git clone https://github.com/stevennitesh/programming-agent-skills.git
 cd programming-agent-skills
-
 python -m scripts.install_skills --dry-run
 python -m scripts.install_skills
 ```
 
-On macOS/Linux, use `python3` if needed.
+Use `python3` on systems that require it. These commands install the checked-out
+source; `main` can differ from the latest tagged release. The installer deploys
+`skills/astra/` to `$HOME/.agents/skills` and manages a bootstrap section in
+`$HOME/.codex/AGENTS.md`. It preserves unrelated skills and personal instructions.
+Use `--skip-global-agents` to install only the skills.
 
-These commands install the current **`main` branch**. The release badge links
-to a tagged snapshot, whose skill inventory and guidance may differ from `main`.
-To install a release instead, check out its tag before running the installer
-and consult its [release notes](https://github.com/stevennitesh/programming-agent-skills/releases).
-
-The installer deploys `skills/astra/` to `$HOME/.agents/skills` and manages a
-small bootstrap section in `$HOME/.codex/AGENTS.md`. It preserves unrelated
-skills and personal instructions and refuses unsafe ownership conflicts. Use
-`--skip-global-agents` if you want the skills without changing global
-instructions.
-
-After installation:
-
-- for a clear bounded code change, **just ask Codex to implement it**;
-- invoke a named skill such as `$shape-work` when you want an explicit workflow;
-- automatic skills can be selected by Codex when the request matches their scope.
-
-To update a `main` checkout, pull this repository and repeat the preview/install
-commands. For a release checkout, fetch tags and select the release you want
-before repeating those commands. See
-[installation and recovery](INSTALLATION.md) for migration, custom targets,
-installed-pack validation, and transaction recovery.
-
-Without the managed skills, [AGENTS_PORTABLE_FALLBACK.md](AGENTS_PORTABLE_FALLBACK.md)
-is an optional short starting point for global preferences and repository routing.
-
-## How it fits together
-
-Repository guidance records project facts and accepted decisions. Skills describe
-procedures for particular tasks.
-
-| Component | Role | When to use it |
-| --- | --- | --- |
-| Repository `AGENTS.md` | Verified commands, local constraints, and pointers | Read first in a repository |
-| Repository context and decisions | Project meaning, source boundaries, and durable decisions | When the task depends on project-specific meaning |
-| Direct coding | Normal implementation under repository guidance | Default for a clear bounded change |
-| Managed skills | Procedures for specific tasks, with scope and completion conditions | When the task matches that skill |
-| Historical research and evaluation | Earlier findings and pack designs | Use for past decisions and findings; current guidance governs the work |
-
-In this repository, [AGENTS.md](AGENTS.md) lists contributor commands and
-constraints. [CONTEXT.md](CONTEXT.md) identifies the managed source and historical
-packages. The [Astra design brief](docs/astra/design-brief.md) explains the current
-pack's design decisions. Each `skills/astra/*/SKILL.md` file describes how to run
-that workflow.
+For a clear, bounded code change, ask Codex to implement and verify it directly.
+For a specific workflow, request a named skill such as `$shape-work`. Automatic
+skills can be selected when their scope matches the task. See the
+[user guide](docs/astra/user-guide.md) for examples, model and host boundaries,
+and optional model allocation. [Installation and recovery](INSTALLATION.md)
+covers updates, custom targets, migration and recovery.
 
 ## Find the right skill
 
-**Request explicitly** means Codex waits for you to invoke or request that
-workflow. **Automatic when relevant** means Codex may select it when your request
-matches. You can also invoke an automatic skill explicitly.
+**Request explicitly** means Codex waits for you to request that workflow.
+**Automatic when relevant** means the agent may select it when its scope matches.
 
 <details>
 <summary><strong>Full catalog: all 21 skills and their invocation rules</strong></summary>
@@ -190,112 +121,21 @@ matches. You can also invoke an automatic skill explicitly.
 
 </details>
 
-For one positive request and one realistic near-miss for every skill, see
-[canonical skill selection examples](docs/astra/selection-examples.md).
+For matching requests and realistic near-misses, see
+[selection examples](docs/astra/selection-examples.md). Current workflow rules live
+in each `skills/astra/*/SKILL.md`; the [design brief](docs/astra/design-brief.md)
+explains composition and evidence boundaries. Historical packages and evaluation
+records remain available without overriding the current pack.
 
-A review or audit does not itself request fixes. A specification or ticket does
-not itself request implementation. Work proceeds under the user's existing
-authorization. Selecting context-hygiene does not grant permission for unrelated
-audits or memory writes. Memory changes need an explicit request and the host's
-supported update process.
+## Sources and contributing
 
-## Example: shape before implementation
+This project began with [Matt Pocock's skills](https://github.com/mattpocock/skills)
+and draws on [pstack](https://github.com/cursor/plugins/tree/main/pstack),
+[Ponytail](https://github.com/DietrichGebert/ponytail) and
+[Superpowers](https://github.com/obra/superpowers). [Acknowledgments](ACKNOWLEDGMENTS.md)
+records these influences and the additional source guidance. They are independent
+projects, not affiliations.
 
-Suppose an import job can fail after partially saving records. The product
-behavior is not yet settled, so start with shaping:
-
-```text
-$shape-work Help me design retries for failed imports in this repo.
-Some records may already have been saved. Clarify what can be retried safely,
-what users should see, and how we will know the feature works.
-```
-
-Once those behavioral decisions are settled, ask Codex to implement them
-directly. Ticketing, delegation, parallel work, or another skill is unnecessary
-unless the task actually needs it.
-
-## Cost-aware coding
-
-[$cost-aware-coding](skills/astra/cost-aware-coding/SKILL.md) is an optional,
-explicit workflow for assigning tasks to specific models. The user's starting
-lead agent retains planning, consequential decisions, and final review. Workers
-choose their methods within assigned scope.
-
-The skill documents model selection, worker assignments, recovery, and optional
-usage logs. For requested concurrent implementation,
-[$parallel-implement](skills/astra/parallel-implement/SKILL.md) coordinates worker
-ownership and integration. The goal is to reduce lead-model token use and
-unnecessary context transfers. Assess cost across the whole task, including
-handoffs, review, and repair; savings need to be measured.
-
-## Engineering and evidence
-
-This repository develops the workflow boundaries, packaging, and helper tools
-around ideas credited in [Acknowledgments](ACKNOWLEDGMENTS.md):
-
-- Each skill names the task it covers and the nearby tasks it excludes.
-  Longer instructions for specific cases live in linked references. The
-  [selection examples](docs/astra/selection-examples.md) show a matching request
-  and a realistic non-match for every managed skill.
-- The [installer](scripts/install_skills.py)
-  tracks ownership, previews updates, preserves unrelated skills, and records
-  transactions for recovery. It refuses to replace modified managed copies or
-  silently adopt unmanaged copies with the same name.
-- The pack includes a
-  [Git worktree helper](skills/astra/parallel-implement/scripts/lane_worktree.py),
-  a [codebase atlas generator](skills/astra/audit-codebase/scripts/atlas.py), and
-  optional [cost telemetry](skills/astra/cost-aware-coding/scripts/telemetry.py).
-  The [validator](scripts/validate_skills.py) checks package resources, references,
-  catalog invocation rules, and installed copies against their source when requested.
-
-For a concrete example, the [modified-skill test](tests/test_install_skills.py#L1208-L1226)
-installs a fixture skill, edits its installed copy, then attempts an update.
-It checks that the update is rejected and both the skill tree and global
-instructions remain unchanged. A separate
-[recovery test](tests/test_install_skills.py#L558-L596) injects a cleanup failure
-after an update commits, then checks that recovery retains the new version and
-clears the transaction. These are controlled tests of installer behavior.
-
-[CI](https://github.com/stevennitesh/programming-agent-skills/actions/workflows/ci.yml)
-runs public package validation and the full test suite on Ubuntu and Windows.
-These checks establish specific structural and mechanical behavior. They do
-**not** establish better generated code, lower total cost, or equivalent results
-across models.
-
-## What belongs in repository guidance
-
-Keep information that changes decisions: actual commands, non-obvious constraints,
-accepted behavior and compatibility requirements, and the user's priorities.
-Leave methods to the agent within those boundaries. A separate guide is useful
-for substantial project-specific requirements; a general engineering-contract
-file is not required or supplied by bootstrap.
-
-## Project status and evidence
-
-The pack is refined through source comparison, critical review, focused workflow
-tests, and real repository use. [Engineering and evidence](#engineering-and-evidence)
-provides examples of the checked package behavior and its limits.
-
-The [Astra design brief](docs/astra/design-brief.md) records current composition,
-ownership, evidence limits, and open questions. Historical research, synthesis,
-validation, and ADRs remain available as evidence but do not override current
-owners.
-
-## Influences and contributing
-
-This project began with
-[Matt Pocock's skills](https://github.com/mattpocock/skills) and draws on ideas
-from [pstack](https://github.com/cursor/plugins/tree/main/pstack),
-[Ponytail](https://github.com/DietrichGebert/ponytail), and
-[Superpowers](https://github.com/obra/superpowers). See
-[Acknowledgments](ACKNOWLEDGMENTS.md) for provenance and influences.
-
-If you're contributing to this repository, start with
-[CONTRIBUTING.md](CONTRIBUTING.md), then follow [AGENTS.md](AGENTS.md),
-[CONTEXT.md](CONTEXT.md), and the
-[Astra design brief](docs/astra/design-brief.md). The managed source is
-[skills/astra/](skills/astra/).
-
----
-
-[MIT License](LICENSE)
+For changes, start with [CONTRIBUTING.md](CONTRIBUTING.md) and
+[AGENTS.md](AGENTS.md). [CONTEXT.md](CONTEXT.md) identifies current source owners
+and retained history. [MIT License](LICENSE).
