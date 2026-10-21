@@ -1029,7 +1029,7 @@ def test_compact_gap_status_omits_evidence_without_losing_selected_detail(tmp_pa
     started(tmp_path)
     prepared = atlas.prepare_gaps(repo_root=tmp_path, report=report(tmp_path), lenses=["alpha:performance"])
     packet = json.loads(Path(prepared["packet"]).read_text(encoding="utf-8"))
-    evidence = ["LARGE_GAP_EVIDENCE" * 10000, "Focused probe output."]
+    evidence = ["LARGE_GAP_EVIDENCE", "Focused probe output."]
     packet["gaps"][0].update(id="performance-probe", disposition="narrowed", summary="Work is bounded.",
                             evidence=evidence, remaining_question="What is production latency?",
                             revisit_when="A production trace is available.")

@@ -66,7 +66,7 @@ review evidence. A selected workflow may require more within its own scope.
 | Model allocation and execution authority | [Cost-aware coding](../../skills/astra/cost-aware-coding/SKILL.md), only when requested |
 | Concurrent implementation scheduling, custody, and integration | [Parallel implement](../../skills/astra/parallel-implement/SKILL.md), only when requested |
 | Candidate correctness and maintainability assessment | [Change review](../../skills/astra/change-review/SKILL.md); the lead chooses direct, independent, or scoped high-assurance review |
-| Scoped retirement or simplification of stale, redundant, or brittle tests | [Test cleanup](../../skills/astra/test-cleanup/SKILL.md), only when explicitly requested; routine verification and feature test authoring stay with their work |
+| Test retirement, consolidation, organization, and execution efficiency | [Test cleanup](../../skills/astra/test-cleanup/SKILL.md), only when explicitly requested; routine verification and feature test authoring stay with their work |
 | Visual codebase mapping and baseline improvement discovery, hard bugs, or measured optimization | [Audit codebase](../../skills/astra/audit-codebase/SKILL.md), [diagnosing bugs](../../skills/astra/diagnosing-bugs/SKILL.md), and [hillclimb](../../skills/astra/hillclimb/SKILL.md) |
 | Evidence gathering and guided procedures | [Research](../../skills/astra/research/SKILL.md) and [wizard](../../skills/astra/wizard/SKILL.md) |
 | Active Git conflicts | [Resolving merge conflicts](../../skills/astra/resolving-merge-conflicts/SKILL.md) |
@@ -151,9 +151,10 @@ STE-informed blend and pstack's unslop principles support concrete, natural
 writing. Isolated wording edits, new research, and general website construction
 remain outside its scope. Both skills require an explicit request.
 
-Test-cleanup owns an explicitly requested test-maintenance workflow. Its central
-decision is which plausible regression a test catches in supported behavior. Agents choose
-what to keep, rewrite, consolidate, or remove, with evidence for retirement and
+Test-cleanup owns explicitly requested removal of low-value tests, consolidation,
+organization, and reduced execution cost. Its central decision is which plausible
+regression a test catches in supported behavior. Agents choose what to keep,
+rewrite, consolidate, reorganize, or remove, with evidence for retirement and
 preserved distinct failure cases. A cleanup request permits local test edits;
 read-only audits finish with findings. The user's global agent guidance owns a
 brief local completion check of tests added or modified in a work section, removing one-off
@@ -165,6 +166,11 @@ ledger, new framework, mutation campaign, or full-suite rerun after every edit.
 Shared fixture impact and unresolved questions determine broader validation.
 The method is instruction-only because semantic test value is the decision;
 existing repository tools own collection and execution.
+A conditional bulk-pruning reference adds a shared rubric, review of proposed
+deletions, exact syntax-aware batches, affected configuration cleanup, and
+comparable measurements for requested broad purges. Independent review is an
+option when delegation is authorized; agreement does not replace evidence for
+retiring a requirement. Category labels and deletion targets do not decide value.
 
 This design applies the concise discovery and reduced scaffolding guidance in
 OpenAI's [Astra prompting guide](https://developers.openai.com/api/docs/guides/latest-model#prompting-best-practices)

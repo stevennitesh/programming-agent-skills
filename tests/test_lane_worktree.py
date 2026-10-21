@@ -405,7 +405,7 @@ def test_cleanup_removes_named_safe_lanes_and_preserves_dirty_and_unintegrated(
     repo, base = repository(tmp_path)
     lane_root = tmp_path / "lanes"
     prepared: dict[str, Path] = {}
-    for name in ("oldest", "newer", "active", "uncertain", "dirty", "unintegrated"):
+    for name in ("oldest", "newer", "active", "dirty", "unintegrated"):
         result, packet = prepare(repo, lane_root, base, name)
         assert result.returncode == 0, packet
         prepared[name] = Path(str(packet["worktree"]))
@@ -438,7 +438,7 @@ def test_cleanup_removes_named_safe_lanes_and_preserves_dirty_and_unintegrated(
     ]
     assert not prepared["oldest"].exists()
     assert not prepared["newer"].exists()
-    for name in ("active", "uncertain", "dirty", "unintegrated"):
+    for name in ("active", "dirty", "unintegrated"):
         assert prepared[name].exists()
     reasons = {Path(item["worktree"]).name: item["reason"] for item in cleaned["preserved"]}
     assert reasons == {
@@ -451,10 +451,14 @@ def test_graph_end_cleanup_removes_all_safe_lanes(tmp_path: Path) -> None:
     repo, base = repository(tmp_path)
     lane_root = tmp_path / "lanes"
     worktrees = []
+    sentinels = []
     for name in ("one", "two"):
         result, packet = prepare(repo, lane_root, base, name)
         assert result.returncode == 0, packet
         worktrees.append(Path(str(packet["worktree"])))
+        sentinel = Path(str(packet["pytest_cache"])) / "sentinel.txt"
+        sentinel.write_text("keep\n", encoding="utf-8")
+        sentinels.append(sentinel)
 
     arguments = ["cleanup", "--repo", str(repo), "--root", str(lane_root)]
     for worktree in worktrees:
@@ -464,6 +468,15 @@ def test_graph_end_cleanup_removes_all_safe_lanes(tmp_path: Path) -> None:
     assert result.returncode == 0, cleaned
     assert cleaned["removed"] == [str(path.resolve()) for path in worktrees]
     assert all(not path.exists() for path in worktrees)
+    assert all(not path.exists() for path in sentinels)
+    registered = {
+        Path(path.removeprefix("worktree ")).resolve()
+        for path in git(repo, "worktree", "list", "--porcelain").splitlines()
+        if path.startswith("worktree ")
+    }
+    for worktree in worktrees:
+        assert worktree not in registered
+        assert not (lane_root / ".state" / worktree.name).exists()
     verify_arguments = [
         "verify-cleanup",
         "--repo",
@@ -575,39 +588,6 @@ def test_cleanup_rejects_reserved_state_worktree_name(tmp_path: Path) -> None:
     assert blocked["ok"] is False
     assert "does not match prepare lane naming" in str(blocked["error"])
     assert reserved.exists()
-
-
-def test_cleanup_removes_helper_owned_lane_state(
-    tmp_path: Path,
-) -> None:
-    repo, base = repository(tmp_path)
-    lane_root = tmp_path / "lanes"
-    result, packet = prepare(repo, lane_root, base, "preserve-state")
-    assert result.returncode == 0, packet
-    worktree = Path(str(packet["worktree"]))
-    sentinel = Path(str(packet["pytest_cache"])) / "sentinel.txt"
-    sentinel.write_text("keep\n", encoding="utf-8")
-
-    result, cleaned = helper(
-        "cleanup",
-        "--repo",
-        str(repo),
-        "--root",
-        str(lane_root),
-        "--completed",
-        str(worktree),
-    )
-
-    assert result.returncode == 0, cleaned
-    assert cleaned["removed"] == [str(worktree.resolve())]
-    assert not worktree.exists()
-    assert not sentinel.exists()
-    assert worktree not in {
-        Path(path.removeprefix("worktree ")).resolve()
-        for path in git(repo, "worktree", "list", "--porcelain").splitlines()
-        if path.startswith("worktree ")
-    }
-    assert not (lane_root / ".state" / "preserve-state").exists()
 
 
 def test_prepare_blocks_wrong_base_and_unregistered_target(tmp_path: Path) -> None:

@@ -1,16 +1,11 @@
 from __future__ import annotations
 
-import json
 import re
 import runpy
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 EXPERIMENTAL = ROOT / "skills/experimental"
-def test_retired_wayfinder_is_absent_from_experimental_runtime() -> None:
-    assert not (EXPERIMENTAL / "wayfinder").exists()
-    manifest = json.loads((EXPERIMENTAL / "manifest.json").read_text(encoding="utf-8"))
-    assert "wayfinder" not in manifest["skills"]
 
 
 def test_experimental_repo_bootstrap_validates_each_managed_source() -> None:

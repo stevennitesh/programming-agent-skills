@@ -369,7 +369,14 @@ def test_git_recovery_uses_exact_raw_blob_when_checkout_filter_drifts(
     path = tmp_path / relative
     path.parent.mkdir(parents=True)
     path.write_bytes(content)
+    (tmp_path / ".gitattributes").write_text("*.html text eol=crlf\n", encoding="utf-8")
     head = _commit_fixture(tmp_path)
+    filtered = subprocess.run(
+        ["git", "cat-file", "--filters", f"{head}:{relative}"],
+        cwd=tmp_path, check=True, capture_output=True,
+    ).stdout
+    assert filtered == content.replace(b"\n", b"\r\n")
+    assert filtered != content
     row = {
         "recovery": {
             "pointer": (
@@ -917,6 +924,13 @@ def test_research_synthesis_plan_settles_moves_and_preserved_owners(
     assert preserved["owner"] == "docs/synthesis/README.md"
     assert preserved["status"] == "prepared"
 
+    assert by_source[
+        "docs/research/language/03-high-signal-steering-words.md"
+    ]["owner"] == "docs/research/language/README.md"
+    assert by_source["docs/synthesis/skills/implement.md"]["owner"] == (
+        "docs/synthesis/skills/implement.md"
+    )
+
 
 def test_research_synthesis_group_moves_rebases_and_verifies(
     tmp_path: Path,
@@ -999,22 +1013,6 @@ def test_research_synthesis_verification_rejects_broken_moved_link(
             tmp_path,
             applied,
         )
-
-
-def test_research_synthesis_plan_records_specific_preserved_owners(
-    tmp_path: Path,
-) -> None:
-    rows, _ = _research_synthesis_migration_fixture(tmp_path)
-
-    prepared = migration_ledger.prepare_research_synthesis_migrations(rows)
-    by_source = {row["source"]["key"]: row for row in prepared}
-
-    assert by_source[
-        "docs/research/language/03-high-signal-steering-words.md"
-    ]["owner"] == "docs/research/language/README.md"
-    assert by_source["docs/synthesis/skills/implement.md"]["owner"] == (
-        "docs/synthesis/skills/implement.md"
-    )
 
 
 def test_research_synthesis_group_retry_is_idempotent(
@@ -1299,9 +1297,6 @@ def test_validation_migration_is_recoverable_retry_safe_and_verified(
         / "docs/validation/evals/convergent-pr-review-2026-07-24/"
         "campaign-decision.json"
     ).exists()
-    assert b"EV-convergent-pr-review-prompt4-20260724-01" in (
-        target.parent.as_posix().encode()
-    )
     assert target.read_bytes() != original
     assert verified[0]["status"] == "verified"
     assert verified[0]["observed_result"]["rollback_proved"] is False

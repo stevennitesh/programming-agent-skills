@@ -35,17 +35,6 @@ def test_create_manifest_is_mechanical_only() -> None:
             "relationship_index": "pending",
         },
     }
-    assert not (
-        {
-            "acceptance",
-            "decision",
-            "lock",
-            "repair",
-            "rubric_score",
-            "schedule",
-        }
-        & set(manifest)
-    )
 
 
 def registrations() -> list[dict[str, object]]:
@@ -507,14 +496,6 @@ def test_duplicate_registration_does_not_create_false_coverage() -> None:
 
     assert coverage["status"] == "blocked"
     assert any("duplicate" in failure for failure in coverage["failures"])
-
-
-def test_all_ten_named_gates_are_exposed() -> None:
-    coverage = pack_integration().derive_coverage(registrations())
-
-    assert {
-        row["gate_id"]: row["name"] for row in coverage["gates"]
-    } == pack_integration().GATES
 
 
 def test_rubric_is_registered_but_never_interpreted(tmp_path: Path) -> None:

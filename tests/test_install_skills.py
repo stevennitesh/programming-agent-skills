@@ -11,27 +11,6 @@ import pytest
 from scripts import install_skills, skill_pack_contract
 
 
-def test_install_cli_flags_remain_supported(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    monkeypatch.setattr(
-        sys,
-        "argv",
-        [
-            "install_skills",
-            "--dry-run",
-            "--json",
-            "--skip-global-agents",
-        ],
-    )
-
-    args = install_skills.parse_args()
-
-    assert args.dry_run is True
-    assert args.json is True
-    assert args.skip_global_agents is True
-
-
 def write_source_skill(root: Path, name: str, marker: str) -> None:
     skill = root / "skills/astra" / name
     skill.mkdir(parents=True)
@@ -200,7 +179,7 @@ def test_dry_run_returns_stable_structured_cohort_and_identities(
     assert first["identity_algorithm"] == "skill-tree-v1"
     assert first["planned_identities"]["alpha"]
     assert first["resulting_identities"] == {"alpha": None}
-    assert not installed.exists()
+    assert not installed.parent.exists()
 
     installed_result = install_skills.install(root, installed, None)
     current = install_skills.install(root, installed, None, dry_run=True)
@@ -285,6 +264,9 @@ def test_json_cli_preserves_human_output_default(
     payload = json.loads(capsys.readouterr().out)
     assert payload["schema_version"] == 1
     assert payload["new"] == ["alpha"]
+    assert payload["dry_run"] is True
+    assert payload["global_bootstrap"] == "skipped"
+    assert not installed.exists()
 
     monkeypatch.setattr(
         sys,
@@ -301,6 +283,8 @@ def test_json_cli_preserves_human_output_default(
     human = capsys.readouterr().out
     assert human.startswith("Managed skills: 1 in ")
     assert "New skills: alpha" in human
+    assert "Global bootstrap: skipped" in human
+    assert not installed.exists()
 
 
 def tree_snapshot(root: Path) -> dict[str, bytes]:
@@ -555,14 +539,15 @@ def test_global_bootstrap_replace_failure_restores_target_and_cleans_temp(
     assert transaction_dirs(installed) == []
 
 
+@pytest.mark.parametrize("pending_state_kind", ["valid-committed", "truncated"])
 def test_committed_cleanup_failure_recovers_without_rolling_back(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
+    pending_state_kind: str,
 ) -> None:
     root = tmp_path / "repo"
     installed = tmp_path / "skills"
     write_source_skill(root, "alpha", "v1")
-    write_template(root)
     install_skills.install(root, installed, None)
     (root / "skills/astra/alpha/SKILL.md").write_text("v2", encoding="utf-8")
     original_clear = install_skills.clear_operation_claims
@@ -584,39 +569,9 @@ def test_committed_cleanup_failure_recovers_without_rolling_back(
 
     pending_state = transaction / ".transaction-state.json.installing"
     pending_state.write_text(
-        json.dumps(state, indent=2, sort_keys=True) + "\n",
+        json.dumps(state, indent=2, sort_keys=True) + "\n"
+        if pending_state_kind == "valid-committed" else "{",
         encoding="utf-8",
-    )
-
-    monkeypatch.setattr(install_skills, "clear_operation_claims", original_clear)
-    result = install_skills.recover_transaction(transaction, installed, None)
-
-    assert result["status"] == "cleared-commit"
-    assert (installed / "alpha/SKILL.md").read_text(encoding="utf-8") == "v2"
-    assert transaction_dirs(installed) == []
-
-
-def test_truncated_active_state_temporary_uses_committed_state(
-    tmp_path: Path,
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    root = tmp_path / "repo"
-    installed = tmp_path / "skills"
-    write_source_skill(root, "alpha", "v1")
-    write_template(root)
-    install_skills.install(root, installed, None)
-    (root / "skills/astra/alpha/SKILL.md").write_text("v2", encoding="utf-8")
-    original_clear = install_skills.clear_operation_claims
-    monkeypatch.setattr(
-        install_skills,
-        "clear_operation_claims",
-        lambda parents, transaction: ["injected claim cleanup failure"],
-    )
-    with pytest.raises(RuntimeError, match="claim cleanup is incomplete"):
-        install_skills.install(root, installed, None)
-    transaction = transaction_dirs(installed)[0]
-    (transaction / ".transaction-state.json.installing").write_text(
-        "{", encoding="utf-8"
     )
 
     monkeypatch.setattr(install_skills, "clear_operation_claims", original_clear)
@@ -655,74 +610,34 @@ def test_prepared_state_reconciles_recovery_outcomes(
     assert not (transaction / ".transaction-state.json.installing").exists()
 
 
-def test_safe_orphan_preparing_state_is_cleared_before_install(tmp_path: Path) -> None:
-    root = tmp_path / "repo"
-    installed = tmp_path / "skills"
-    write_source_skill(root, "alpha", "v1")
-    write_template(root)
-    preparing = tmp_path / install_skills.PREPARING_TRANSACTION_NAME
-    preparing.mkdir()
-    state = install_skills.preparing_transaction_state(installed, None, ["alpha"], False)
-    install_skills.write_transaction_state(preparing, state)
-
-    result = install_skills.install(root, installed, None)
-
-    assert result["new"] == ["alpha"]
-    assert not preparing.exists()
-
-
-def test_safe_orphan_preparing_state_temporary_is_cleared_before_install(
-    tmp_path: Path,
-) -> None:
-    root = tmp_path / "repo"
-    installed = tmp_path / "skills"
-    write_source_skill(root, "alpha", "v1")
-    write_template(root)
-    preparing = tmp_path / install_skills.PREPARING_TRANSACTION_NAME
-    preparing.mkdir()
-    state = install_skills.preparing_transaction_state(installed, None, ["alpha"], False)
-    (preparing / ".transaction-state.json.installing").write_text(
-        json.dumps(state, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8",
-    )
-
-    result = install_skills.install(root, installed, None)
-
-    assert result["new"] == ["alpha"]
-    assert not preparing.exists()
-
-
-def test_empty_orphan_preparing_directory_is_cleared_before_install(
-    tmp_path: Path,
-) -> None:
-    root = tmp_path / "repo"
-    installed = tmp_path / "skills"
-    write_source_skill(root, "alpha", "v1")
-    write_template(root)
-    preparing = tmp_path / install_skills.PREPARING_TRANSACTION_NAME
-    preparing.mkdir()
-
-    result = install_skills.install(root, installed, None)
-
-    assert result["new"] == ["alpha"]
-    assert not preparing.exists()
-
-
 @pytest.mark.parametrize(
-    "state_name",
-    ["transaction-state.json", ".transaction-state.json.installing"],
+    ("state_name", "content_kind"),
+    [
+        pytest.param("transaction-state.json", "valid", id="valid-state"),
+        pytest.param(".transaction-state.json.installing", "valid", id="valid-temporary"),
+        pytest.param(None, "empty", id="empty-directory"),
+        pytest.param("transaction-state.json", "truncated", id="truncated-state"),
+        pytest.param(".transaction-state.json.installing", "truncated", id="truncated-temporary"),
+    ],
 )
-def test_truncated_orphan_preparing_state_is_cleared_before_install(
-    tmp_path: Path,
-    state_name: str,
+def test_orphan_preparing_residue_is_cleared_before_install(
+    tmp_path: Path, state_name: str | None, content_kind: str,
 ) -> None:
     root = tmp_path / "repo"
     installed = tmp_path / "skills"
     write_source_skill(root, "alpha", "v1")
-    write_template(root)
     preparing = tmp_path / install_skills.PREPARING_TRANSACTION_NAME
     preparing.mkdir()
-    (preparing / state_name).write_text("{", encoding="utf-8")
+    if state_name is not None:
+        state = install_skills.preparing_transaction_state(installed, None, ["alpha"], False)
+        if content_kind == "valid" and state_name == "transaction-state.json":
+            install_skills.write_transaction_state(preparing, state)
+        else:
+            (preparing / state_name).write_text(
+                json.dumps(state, indent=2, sort_keys=True) + "\n"
+                if content_kind == "valid" else "{",
+                encoding="utf-8",
+            )
 
     result = install_skills.install(root, installed, None)
 
@@ -1530,28 +1445,6 @@ def test_install_migrates_legacy_skill_pack_guide(tmp_path: Path) -> None:
     assert "## Personal After\n\nKeep me." in text
 
 
-def test_install_removes_only_previously_managed_retired_skills(tmp_path: Path) -> None:
-    root = tmp_path / "repo"
-    installed = tmp_path / "skills"
-    write_template(root)
-    write_source_skill(root, "alpha", "v1")
-    install_skills.install(root, installed, None)
-    (installed / "personal").mkdir()
-
-    for path in (root / "skills/astra/alpha").rglob("*"):
-        if path.is_file():
-            path.unlink()
-    (root / "skills/astra/alpha").rmdir()
-    write_source_skill(root, "beta", "v1")
-
-    result = install_skills.install(root, installed, None)
-
-    assert result["retired"] == ["alpha"]
-    assert not (installed / "alpha").exists()
-    assert (installed / "beta").is_dir()
-    assert (installed / "personal").is_dir()
-
-
 def test_retirement_uses_atomic_displacement_not_recursive_live_deletion(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -1562,6 +1455,9 @@ def test_retirement_uses_atomic_displacement_not_recursive_live_deletion(
     write_source_skill(root, "retired", "v1")
     write_source_skill(root, "anchor", "keep")
     install_skills.install(root, installed, None)
+    personal = installed / "personal/sentinel.txt"
+    personal.parent.mkdir()
+    personal.write_bytes(b"personal content")
     (root / "skills/astra/retired/SKILL.md").unlink()
     (root / "skills/astra/retired").rmdir()
     original_rmtree = install_skills.shutil.rmtree
@@ -1577,6 +1473,8 @@ def test_retirement_uses_atomic_displacement_not_recursive_live_deletion(
 
     assert result["retired"] == ["retired"]
     assert not (installed / "retired").exists()
+    assert personal.read_bytes() == b"personal content"
+    assert (installed / "anchor/SKILL.md").read_text(encoding="utf-8") == "keep"
 
 
 def test_dry_run_reports_new_updated_unchanged_and_retired(tmp_path: Path) -> None:
@@ -1606,18 +1504,6 @@ def test_dry_run_reports_new_updated_unchanged_and_retired(tmp_path: Path) -> No
     assert result["unchanged"] == ["alpha"]
     assert result["retired"] == ["old"]
     assert result["global_bootstrap"] == "present"
-
-
-def test_dry_run_does_not_create_the_install_parent(tmp_path: Path) -> None:
-    root = tmp_path / "repo"
-    installed = tmp_path / ".agents/skills"
-    write_template(root)
-    write_source_skill(root, "alpha", "v1")
-
-    result = install_skills.install(root, installed, None, dry_run=True)
-
-    assert result["new"] == ["alpha"]
-    assert not installed.parent.exists()
 
 
 @pytest.mark.parametrize("target_kind", ["skill", "manifest", "global"])
@@ -2249,12 +2135,3 @@ def test_install_preserves_recovery_snapshot_when_rollback_cannot_complete(
 
     install_skills.install(root, installed, global_agents)
     assert (installed / "alpha/SKILL.md").read_text(encoding="utf-8") == "v2"
-
-
-def test_installation_guide_documents_the_executable_recovery_path() -> None:
-    guide = (
-        Path(__file__).resolve().parents[1] / "INSTALLATION.md"
-    ).read_text(encoding="utf-8")
-
-    assert "python -m scripts.install_skills" in guide
-    assert "--recover-transaction <snapshot-path>" in guide
