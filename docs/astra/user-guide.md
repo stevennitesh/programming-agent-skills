@@ -18,6 +18,7 @@ Examples:
 - Compare options with [research](../../skills/astra/research/SKILL.md).
 - Investigate a difficult failure with [diagnosing-bugs](../../skills/astra/diagnosing-bugs/SKILL.md).
 - Review a proposed change with [change-review](../../skills/astra/change-review/SKILL.md).
+- Create a PR or follow it through CI and review to the requested endpoint with [pr-delivery](../../skills/astra/pr-delivery/SKILL.md).
 - Clean up a stale test suite with [test-cleanup](../../skills/astra/test-cleanup/SKILL.md).
 - Maintain repository guidance with [context-hygiene](../../skills/astra/context-hygiene/SKILL.md).
 - Coordinate requested concurrent work with [parallel-implement](../../skills/astra/parallel-implement/SKILL.md).

@@ -70,6 +70,12 @@ Preserve these properties without requiring separate commands or a fixed sequenc
   process name or delete shared state to obtain a clean environment. Preserve
   evidence needed for later review.
 
+When the requested workflow includes human inspection, keep its healthy preview
+and supporting resources available for that inspection. Record the actual URL,
+target identity, owned terminal session or PIDs, and recovery and shutdown routes.
+Make eventual cleanup ownership and the teardown condition clear. Ending an
+assistant turn does not by itself request teardown.
+
 Use authorized development/test targets and identities. Do not use real private
 credentials merely to validate tooling or expose secrets in captured evidence.
 A command named `dry-run` or `test` does not establish harmlessness; check the
@@ -108,8 +114,9 @@ intermittent failure needs causal investigation; ordinary repairs need no handof
 
 Account for owned resources after failed attempts and before retrying. Confirm
 cleanup by the resources' actual state, not only a command's success status, and
-confirm required evidence survives. Report anything left behind and its recovery
-path; unresolved cleanup prevents claiming reliable unattended reuse.
+confirm required evidence survives. Report retained resources and their recovery
+path, distinguishing an intentional handoff from failed or unaccounted-for cleanup.
+Unresolved cleanup prevents claiming reliable unattended reuse.
 
 ## Deliver usable tooling
 
