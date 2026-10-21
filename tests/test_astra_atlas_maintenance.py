@@ -347,7 +347,7 @@ def test_outcomes_are_atomic_append_only_and_validate_target_source(tmp_path: Pa
 
 
 def test_candidate_group_outcomes_do_not_resolve_later_added_findings(tmp_path: Path) -> None:
-    started(tmp_path)
+    started(tmp_path, analyzed=False)
     outcomes(tmp_path, event(tmp_path, "verified-group", "verified"))
     audit = audit_manifest(tmp_path, report(tmp_path))
     added = finding()
@@ -366,7 +366,7 @@ def test_candidate_group_outcomes_do_not_resolve_later_added_findings(tmp_path: 
 
 
 def test_candidate_group_implementation_does_not_implement_later_added_findings(tmp_path: Path) -> None:
-    started(tmp_path)
+    started(tmp_path, analyzed=False)
     outcomes(tmp_path, event(tmp_path, "group-implemented", "implemented"))
     audit = audit_manifest(tmp_path, report(tmp_path))
     added = finding()
@@ -536,8 +536,8 @@ def test_matching_subsystem_observations_and_paths_are_bounded_and_paginated(tmp
     assert second["subsystems_has_more"] is False
 
 
-def test_individual_findings_can_resolve_candidate_without_rewriting_analysis(tmp_path: Path) -> None:
-    started(tmp_path)
+def test_individual_findings_resolve_candidate_and_group_implementation_resets_proof(tmp_path: Path) -> None:
+    started(tmp_path, analyzed=False)
     audit = audit_manifest(tmp_path, report(tmp_path))
     second = finding()
     second["id"] = "second-defect"
@@ -833,17 +833,6 @@ def test_preview_limitation_is_once_per_capability_and_visual_proof_is_revision_
     assert atlas.check_report(repo_root=tmp_path, report=report(tmp_path))["visual_verification"]["performed_by_check_report"] is False
 
 
-@pytest.mark.parametrize("old_version", [1, 2, 3])
-def test_only_current_report_format_is_accepted(tmp_path: Path, old_version: int) -> None:
-    started(tmp_path)
-    data = report(tmp_path).read_bytes()
-    current = f'name="audit-codebase-report-version" content="{atlas.REPORT_VERSION}"'.encode()
-    old = f'name="audit-codebase-report-version" content="{old_version}"'.encode()
-    report(tmp_path).write_bytes(data.replace(current, old))
-    with pytest.raises(atlas.ReportError, match="create a new current-format map"):
-        atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))
-
-
 def test_finding_delivery_counts_and_duplicate_structural_changes(tmp_path: Path) -> None:
     started(tmp_path)
     target = {"kind": "finding", "id": "alpha-defect"}
@@ -863,7 +852,7 @@ def test_finding_delivery_counts_and_duplicate_structural_changes(tmp_path: Path
 
 @pytest.mark.parametrize("renewal", ["reopened", "implemented"])
 def test_reopening_one_finding_invalidates_group_completion_and_delivery(tmp_path: Path, renewal: str) -> None:
-    started(tmp_path)
+    started(tmp_path, analyzed=False)
     audit = audit_manifest(tmp_path, report(tmp_path))
     second = finding()
     second["id"] = "second-defect"
@@ -1022,7 +1011,7 @@ def test_indirect_group_verification_cannot_omit_expanded_analysis_scope(tmp_pat
 
 
 def test_fresh_finding_proof_supersedes_stale_group_proof_without_reimplementation(tmp_path: Path) -> None:
-    started(tmp_path)
+    started(tmp_path, analyzed=False)
     audit = audit_manifest(tmp_path, report(tmp_path))
     second = finding()
     second["id"] = "second-defect"
@@ -1046,7 +1035,7 @@ def test_fresh_finding_proof_supersedes_stale_group_proof_without_reimplementati
 
 @pytest.mark.parametrize("renewal", ["implemented", "reopened"])
 def test_finding_proof_completes_candidate_after_group_renewal(tmp_path: Path, renewal: str) -> None:
-    started(tmp_path)
+    started(tmp_path, analyzed=False)
     audit = audit_manifest(tmp_path, report(tmp_path))
     second = finding()
     second["id"] = "second-defect"

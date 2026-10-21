@@ -50,11 +50,9 @@ def _repo(root: Path) -> None:
     (root / "src" / "beta.py").write_text("VALUE=2\n")
     (root / "tests" / "test_alpha.py").write_text("def test_ok(): assert True\n")
     subprocess.run(["git", "init"], cwd=root, check=True, capture_output=True)
-    subprocess.run(["git", "config", "user.email", "a@b.invalid"], cwd=root, check=True)
-    subprocess.run(["git", "config", "user.name", "Audit"], cwd=root, check=True)
     subprocess.run(["git", "add", "."], cwd=root, check=True)
     subprocess.run(
-        ["git", "commit", "-m", "fixture"], cwd=root, check=True, capture_output=True
+        ["git", "-c", "user.email=a@b.invalid", "-c", "user.name=Audit", "commit", "-m", "fixture"], cwd=root, check=True, capture_output=True
     )
 
 

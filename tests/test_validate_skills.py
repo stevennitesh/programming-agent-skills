@@ -554,6 +554,10 @@ def test_active_surface_validation_rejects_retired_improvement_names_only_on_act
     ]
 
 
+def test_repo_bootstrap_schema_fingerprint_matches_shipped_files() -> None:
+    assert validate_skills.validate_setup_schema_manifest(Path(__file__).resolve().parents[1]) == []
+
+
 def test_setup_schema_fingerprint_detects_contract_drift(tmp_path: Path) -> None:
     setup = tmp_path / validate_skills.SETUP_SKILL_ROOT
     (setup / "scripts").mkdir(parents=True)
@@ -776,50 +780,62 @@ def test_required_installed_validation_rejects_a_missing_manifest(
     assert str(installed / validate_skills.INSTALLED_MANIFEST) in failures[0]
 
 
-def test_public_scan_safe_markers_cover_reserved_fixture_values() -> None:
-    assert "@example.invalid" in validate_skills.PUBLIC_SCAN_SAFE_MARKERS
-    assert "correct-horse-battery-staple" in validate_skills.PUBLIC_SCAN_SAFE_MARKERS
-
-
 def test_public_mode_scans_only_current_public_paths(
-    monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
 ) -> None:
-    calls: list[list[str]] = []
-
-    def fake_run_git(args: list[str], *, cwd: Path, check: bool = False):
-        calls.append(args)
-        if args == ["ls-files"]:
-            return subprocess.CompletedProcess(args, 0, "README.md\n", "")
-        if args == ["ls-files", "-ci", "--exclude-standard"]:
-            return subprocess.CompletedProcess(args, 0, "", "")
-        if args[:4] == ["grep", "-n", "-I", "-E"]:
-            return subprocess.CompletedProcess(args, 1, "", "")
-        raise AssertionError(args)
-
-    monkeypatch.setattr(validate_skills, "run_git", fake_run_git)
+    subprocess.run(["git", "init", "-q"], cwd=tmp_path, check=True, capture_output=True)
+    (tmp_path / "README.md").write_text(
+        "Contact: fixture@example.invalid\npassword: correct-horse-battery-staple\n",
+        encoding="utf-8",
+    )
+    historical = tmp_path / "docs/research/historical.md"
+    historical.parent.mkdir(parents=True)
+    historical.write_text("Contact: historical@sample.invalid\n", encoding="utf-8")
+    active = tmp_path / "skills/astra/example/SKILL.md"
+    active.parent.mkdir(parents=True)
+    active.write_text("Example skill.\n", encoding="utf-8")
+    subprocess.run(["git", "add", "."], cwd=tmp_path, check=True, capture_output=True)
 
     assert validate_skills.validate_public_mode(tmp_path) == []
 
-    grep_call = next(call for call in calls if call[:4] == ["grep", "-n", "-I", "-E"])
-    assert grep_call[grep_call.index("--") + 1 :] == list(
-        validate_skills.PUBLIC_CURRENT_SCAN_PATHS
-    )
-    assert "." not in grep_call[grep_call.index("--") + 1 :]
+    active.write_text("token: synthetic-fixture-value\n", encoding="utf-8")
+    failures = validate_skills.validate_public_mode(tmp_path)
+    assert len(failures) == 1
+    assert "skills/astra/example/SKILL.md:1:token:" in failures[0]
+    assert "historical@sample.invalid" not in failures[0]
+
+    active.write_text("Example skill.\n", encoding="utf-8")
+    assert validate_skills.validate_public_mode(tmp_path) == []
 
 
-def test_git_diff_validation_checks_worktree_and_index(monkeypatch, tmp_path: Path) -> None:
-    calls: list[list[str]] = []
+def test_git_diff_validation_checks_worktree_and_index(tmp_path: Path) -> None:
+    def git(*args: str) -> None:
+        subprocess.run(
+            ["git", *args], cwd=tmp_path, check=True, capture_output=True,
+        )
 
-    def fake_run_git(args: list[str], *, cwd: Path, check: bool = False):
-        calls.append(args)
-        return subprocess.CompletedProcess(args, 0, "", "")
-
-    monkeypatch.setattr(validate_skills, "run_git", fake_run_git)
-
+    git("init", "-q")
+    git("config", "core.whitespace", "blank-at-eol")
+    tracked = tmp_path / "example.txt"
+    tracked.write_text("clean\n", encoding="utf-8")
+    git("add", ".")
+    git("-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid",
+        "commit", "-qm", "fixture")
     assert validate_skills.validate_git_diff_check(tmp_path) == []
-    assert ["diff", "--check"] in calls
-    assert ["diff", "--cached", "--check"] in calls
+
+    tracked.write_text("dirty \n", encoding="utf-8")
+    failures = validate_skills.validate_git_diff_check(tmp_path)
+    assert "git diff --check failed for working tree:" in failures
+    assert "git diff --check failed for staged diff:" not in failures
+
+    git("add", "example.txt")
+    tracked.write_text("clean\n", encoding="utf-8")
+    failures = validate_skills.validate_git_diff_check(tmp_path)
+    assert "git diff --check failed for staged diff:" in failures
+    assert "git diff --check failed for working tree:" not in failures
+
+    git("add", "example.txt")
+    assert validate_skills.validate_git_diff_check(tmp_path) == []
 
 
 def test_focused_pytest_default_targets_current_contract_suite(monkeypatch) -> None:

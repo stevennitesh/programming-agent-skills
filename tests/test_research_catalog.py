@@ -547,7 +547,7 @@ def test_query_overflow_and_alias_collision_never_choose_or_truncate(
     assert all(item["scope_note"] for item in ambiguous["candidates"])
 
 
-def test_query_requires_explicit_problem_first_bound(tmp_path: Path) -> None:
+def test_query_requires_explicit_problem_first_bound() -> None:
     catalog = catalog_module()
     session = opened_session(catalog)
 

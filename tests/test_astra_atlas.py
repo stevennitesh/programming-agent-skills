@@ -271,7 +271,7 @@ def test_audit_adds_findings_candidates_and_coverage(tmp_path: Path) -> None:
     assert alpha["audit"]["candidates"][0]["strength"] == "strong"
 
 
-def test_analyze_updates_only_selected_candidate(tmp_path: Path) -> None:
+def test_analysis_persists_recommendation_options_and_handoff(tmp_path: Path) -> None:
     make_repo(tmp_path)
     publish(tmp_path, "render-report", map_manifest(tmp_path))
     publish(tmp_path, "audit-subsystem", audit_manifest(tmp_path, report(tmp_path)))
@@ -301,7 +301,7 @@ def test_refresh_marks_changed_source_without_revalidating(tmp_path: Path) -> No
     assert card["data-freshness"] == "changed"
 
 
-def test_source_and_report_drift_are_rejected(tmp_path: Path) -> None:
+def test_source_drift_is_rejected(tmp_path: Path) -> None:
     make_repo(tmp_path)
     publish(tmp_path, "render-report", map_manifest(tmp_path))
     stale = audit_manifest(tmp_path, report(tmp_path))
@@ -332,7 +332,10 @@ def test_current_format_only_and_tamper_detection(tmp_path: Path) -> None:
     assert "cdn" not in raw.lower() and "mermaid" not in raw.lower()
     for old_version in (1, 2, 3, 4):
         rpt.write_text(raw.replace(f'audit-codebase-report-version" content="{atlas.REPORT_VERSION}"', f'audit-codebase-report-version" content="{old_version}"'), encoding="utf-8")
-        with pytest.raises(atlas.ReportError, match="report version"):
+        with pytest.raises(
+            atlas.ReportError,
+            match="report version .*required; create a new current-format map",
+        ):
             atlas.inspect_report(repo_root=tmp_path, report=rpt)
     rpt.write_text(raw.replace("Architecture map", "Changed architecture", 1), encoding="utf-8")
     with pytest.raises(atlas.ReportError, match="canonical"):
