@@ -1,6 +1,6 @@
 # Astra skills pack design brief
 
-Current direction, reconciled 2026-10-06. The pack is built primarily for
+Current direction, reconciled 2026-10-21. The pack is built primarily for
 **GPT 6 Astra**. Optional cost-aware execution routes implementation to GPT 6.1 Sol
 and bounded work, including large-context retrieval and bulk writing, to GPT 6 Luna.
 This document owns design rationale and composition for `skills/astra/`;
@@ -66,6 +66,7 @@ review evidence. A selected workflow may require more within its own scope.
 | Model allocation and execution authority | [Cost-aware coding](../../skills/astra/cost-aware-coding/SKILL.md), only when requested |
 | Concurrent implementation scheduling, custody, and integration | [Parallel implement](../../skills/astra/parallel-implement/SKILL.md), only when requested |
 | Candidate correctness and maintainability assessment | [Change review](../../skills/astra/change-review/SKILL.md); the lead chooses direct, independent, or scoped high-assurance review |
+| PR creation, status, requested CI and hosted-review follow-through, and authorized merge | [PR delivery](../../skills/astra/pr-delivery/SKILL.md), selected for requested PR delivery rather than review-only assessment |
 | Test retirement, consolidation, organization, and execution efficiency | [Test cleanup](../../skills/astra/test-cleanup/SKILL.md), only when explicitly requested; routine verification and feature test authoring stay with their work |
 | Visual codebase mapping and baseline improvement discovery, hard bugs, or measured optimization | [Audit codebase](../../skills/astra/audit-codebase/SKILL.md), [diagnosing bugs](../../skills/astra/diagnosing-bugs/SKILL.md), and [hillclimb](../../skills/astra/hillclimb/SKILL.md) |
 | Evidence gathering and guided procedures | [Research](../../skills/astra/research/SKILL.md) and [wizard](../../skills/astra/wizard/SKILL.md) |
@@ -110,8 +111,10 @@ Change-review judges a fixed change candidate. Verification-harness creates
 or improves reusable repository tooling for agents to exercise and verify real
 UI, command, and agent interfaces. It reduces repeated setup and fragile
 interactions while preserving target identity, meaningful evidence, and resource
-ownership. The agent chooses methods and demonstrates the requested capability;
-failure attribution follows evidence, including unresolved causes. Routine test
+ownership. The agent chooses methods and demonstrates the requested capability.
+Requested human inspection retains a usable preview with an explicit resource
+handoff and teardown condition. Failure attribution follows evidence, including
+unresolved causes. Routine test
 execution needs no tooling workflow. Wizard prepares the smallest
 useful terminal handoff for a private or human-only step, reusing existing tools
 where suitable. Private input and session output stay with the human, while a
@@ -142,6 +145,13 @@ of worthwhile retained work. It preserves active ownership, uses evidence suited
 to rewritten history, and verifies authorized cleanup through the actual lifecycle
 owner. Parallel-implement still owns its lanes, and resolving-merge-conflicts owns
 active conflict resolution. Routine commits and pushes need no cleanup workflow.
+PR-delivery owns requested PR creation or updates and the requested endpoint:
+a status report, publication, merge-readiness, or authorized merge. It reuses
+change-review for technical feedback assessment and keeps CI, hosted-review
+completion, unresolved findings, and candidate freshness distinct. Monitoring
+does not authorize merging. The workflow uses existing tools rather than adding
+a watcher or prescribing review delegation. Editorial review and package checks
+do not establish reliable delivery behavior.
 Portfolio-presentation owns a coherent, evidence-backed reading experience across
 the requested project artifacts. Analysis and evaluation contracts stay with the
 project; the agent chooses narrative, visuals, tools, and organization. Finished
@@ -182,7 +192,7 @@ and [context engineering article](https://claude.dev/blog/the-new-rules-of-conte
 These sources support the authoring choices; they do not establish cleanup
 effectiveness or equivalent behavior across models.
 
-The managed pack currently contains 21 skills. Their metadata owns invocation
+The managed pack currently contains 22 skills. Their metadata owns invocation
 behavior; the README lists explicit-only workflows. Continuation handoffs belong
 to writing-for-agents, with execution-specific state added by the relevant workflow.
 Ordinary implementation uses the accepted assignment and applicable repository

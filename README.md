@@ -1,6 +1,6 @@
 # Programming Agent Skills
 
-**Steven Bangdiwala** · Python tools and 21 task-specific workflows for coding agents
+**Steven Bangdiwala** · Python tools and 22 task-specific workflows for coding agents
 
 ![Programming Agent Skills: coding workflows, managed installation and recovery](docs/images/featured.jpg)
 
@@ -92,7 +92,7 @@ covers updates, custom targets, migration and recovery.
 **Automatic when relevant** means the agent may select it when its scope matches.
 
 <details>
-<summary><strong>Full catalog: all 21 skills and their invocation rules</strong></summary>
+<summary><strong>Full catalog: all 22 skills and their invocation rules</strong></summary>
 
 | Your task | Skill | Use |
 | --- | --- | --- |
@@ -106,6 +106,7 @@ covers updates, custom targets, migration and recovery.
 | Discover codebase improvements through an HTML map and scoped audits | [$audit-codebase](skills/astra/audit-codebase/SKILL.md) | Request explicitly |
 | Optimize a measurable outcome through experiments | [$hillclimb](skills/astra/hillclimb/SKILL.md) | Request explicitly |
 | Review a code change for correctness and maintainability | [$change-review](skills/astra/change-review/SKILL.md) | Automatic when relevant |
+| Create or update a PR, check its status, or carry requested review and CI follow-through to an authorized endpoint | [$pr-delivery](skills/astra/pr-delivery/SKILL.md) | Automatic when relevant |
 | Remove low-value tests; consolidate, organize, and streamline useful coverage | [$test-cleanup](skills/astra/test-cleanup/SKILL.md) | Request explicitly |
 | Assess intake or clean up a requested backlog using current evidence | [$triage](skills/astra/triage/SKILL.md) | Request explicitly |
 | Turn a spec or sufficiently clear idea into bounded tickets with dependencies | [$to-tickets](skills/astra/to-tickets/SKILL.md) | Request explicitly |
