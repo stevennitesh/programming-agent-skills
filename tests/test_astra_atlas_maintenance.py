@@ -165,7 +165,7 @@ def test_retired_owner_keeps_stable_ids_and_original_evidence_selectable(tmp_pat
     after = state(tmp_path)
     assert after["retired_subsystems"][0]["audit"] == before["subsystems"][0]["audit"]
     assert atlas._current_scope(after, ["alpha", "beta"]) == {"gamma", "beta"}
-    selected = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), full=False, candidate="alpha-fix", history=True)
+    selected = atlas.inspect_report(include_fingerprints=True, repo_root=tmp_path, report=report(tmp_path), full=False, candidate="alpha-fix", history=True)
     assert selected["rows"][0]["historical"] is True
     assert selected["rows"][0]["record"]["analysis"] == before["subsystems"][0]["audit"]["candidates"][0]["analysis"]
     outcomes(tmp_path, event(tmp_path, "verified-after-retirement", "verified"))
@@ -560,7 +560,7 @@ def test_removed_active_candidate_can_receive_outcomes_and_filtered_history(tmp_
     for lens in audit["lenses"]:
         lens["finding_ids"] = []
     publish(tmp_path, "audit-subsystem", audit)
-    selected = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), full=False, candidate="alpha-fix", history=True)
+    selected = atlas.inspect_report(include_fingerprints=True, repo_root=tmp_path, report=report(tmp_path), full=False, candidate="alpha-fix", history=True)
     assert selected["rows"][0]["record"] == before["subsystems"][0]["audit"]["candidates"][0]
     assert selected["rows"][0]["historical"] is True
     assert any(item.get("candidate_revision") for item in selected["history"])
@@ -580,7 +580,7 @@ def test_compact_inspection_is_readonly_bounded_and_filters_external_evidence(tm
     publish(tmp_path, "analyze-candidate", analysis)
     original = report(tmp_path).read_bytes()
     (tmp_path / "analysis-context.txt").write_text("Changed constraint", encoding="utf-8")
-    selected = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), full=False, candidate="alpha-fix")
+    selected = atlas.inspect_report(include_fingerprints=True, repo_root=tmp_path, report=report(tmp_path), full=False, candidate="alpha-fix")
     assert selected["rows"][0]["source_changes"]["analysis"]["changed_paths"] == ["analysis-context.txt"]
     assert selected["rows"][0]["record"]["analysis"]["source_identity"]["fingerprints"]
     filtered = atlas.status_report(repo_root=tmp_path, report=report(tmp_path), changed_paths=["analysis-context.txt"])
@@ -590,11 +590,11 @@ def test_compact_inspection_is_readonly_bounded_and_filters_external_evidence(tm
     assert "record" not in page["rows"][0]
     assert "state" not in page
     assert report(tmp_path).read_bytes() == original
-    full = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), full=True)
+    full = atlas.inspect_report(include_fingerprints=True, repo_root=tmp_path, report=report(tmp_path), full=True)
     assert full["response_version"] == page["response_version"] == selected["response_version"] == 2
     assert "state" in full
     assert len(json.dumps(page)) < len(json.dumps(full))
-    assert "state" not in atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path))
+    assert "state" not in atlas.inspect_report(include_fingerprints=True, repo_root=tmp_path, report=report(tmp_path))
     for arguments, has_state in ((["--limit", "1"], False), (["--full"], True)):
         result = subprocess.run([sys.executable, str(SCRIPT), "inspect", "--repo-root", str(tmp_path), "--report", str(report(tmp_path)), *arguments], check=True, capture_output=True, text=True)
         response = json.loads(result.stdout)
@@ -671,7 +671,7 @@ def test_finding_scope_observes_affected_owner_structure_at_its_original_audit(t
     if systemic:
         audit["systemic_findings"], audit["findings"] = audit["findings"], []
     publish(tmp_path, "audit-subsystem", audit)
-    before = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), finding="alpha-defect")["rows"][0]
+    before = atlas.inspect_report(include_fingerprints=True, repo_root=tmp_path, report=report(tmp_path), finding="alpha-defect")["rows"][0]
     reconcile(tmp_path, subsystems=[{"id": "beta", "ownership": "Reviewed delivery authority."}])
     if historical:
         renewed = audit_manifest(tmp_path, report(tmp_path))
@@ -679,7 +679,7 @@ def test_finding_scope_observes_affected_owner_structure_at_its_original_audit(t
         renewed["lenses"][0]["finding_ids"] = []
         publish(tmp_path, "audit-subsystem", renewed)
     saved = report(tmp_path).read_bytes()
-    selected = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), finding="alpha-defect")["rows"][0]
+    selected = atlas.inspect_report(include_fingerprints=True, repo_root=tmp_path, report=report(tmp_path), finding="alpha-defect")["rows"][0]
     assert selected["historical"] is historical
     assert selected["record"] == before["record"]
     assert selected["audit_source_identity"] == before["audit_source_identity"]
@@ -690,20 +690,20 @@ def test_finding_scope_observes_affected_owner_structure_at_its_original_audit(t
     assert checked["finding_freshness"] == {"alpha-defect": "changed"}
     assert checked["finding_source_changes"]["alpha-defect"] == selected["source_changes"]
     cli = subprocess.run([sys.executable, str(SCRIPT), "inspect", "--repo-root", str(tmp_path), "--report", str(report(tmp_path)),
-                          "--finding", "alpha-defect"], check=True, capture_output=True, text=True)
+                          "--finding", "alpha-defect", "--include-fingerprints"], check=True, capture_output=True, text=True)
     assert json.loads(cli.stdout)["rows"][0]["source_changes"] == selected["source_changes"]
     assert report(tmp_path).read_bytes() == saved
 
 
 def test_historical_candidate_observes_structure_from_its_original_analysis(tmp_path: Path) -> None:
     started(tmp_path)
-    original = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), candidate="alpha-fix")["rows"][0]["record"]
+    original = atlas.inspect_report(include_fingerprints=True, repo_root=tmp_path, report=report(tmp_path), candidate="alpha-fix")["rows"][0]["record"]
     reconcile(tmp_path, subsystems=[{"id": "beta", "ownership": "Reviewed delivery authority."}])
     renewed = audit_manifest(tmp_path, report(tmp_path))
     renewed.update(findings=[], candidates=[])
     renewed["lenses"][0]["finding_ids"] = []
     publish(tmp_path, "audit-subsystem", renewed)
-    selected = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), candidate="alpha-fix")["rows"][0]
+    selected = atlas.inspect_report(include_fingerprints=True, repo_root=tmp_path, report=report(tmp_path), candidate="alpha-fix")["rows"][0]
     assert selected["historical"] and selected["record"] == original
     assert selected["source_changes"]["analysis"]["freshness"] == "changed"
     assert selected["source_changes"]["analysis"]["structure_changes"] == {"beta": ["ownership"]}
@@ -713,7 +713,7 @@ def test_historical_candidate_observes_structure_from_its_original_analysis(tmp_
     outcomes(tmp_path, delivery_requirements=[{"target": {"kind": "candidate", "id": "alpha-fix"}, "commit": True,
                                                "deployments": [], "reason": "Requested delivery remains pending."}])
     for filters in ({"subsystem": "beta"}, {"outstanding": True}, {"history": True}):
-        rows = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), **filters)["rows"]
+        rows = atlas.inspect_report(include_fingerprints=True, repo_root=tmp_path, report=report(tmp_path), **filters)["rows"]
         candidate_row = next(row for row in rows if row["target"] == {"kind": "candidate", "id": "alpha-fix"})
         assert candidate_row["source_changes"] == selected["source_changes"]
 
@@ -929,14 +929,14 @@ def test_filtered_inspection_reports_outcome_only_proof_deltas(tmp_path: Path) -
     for row in rows:
         assert row["work"]["status"] == "verification changed"
         assert row["outcome_source_changes"]["group-verified"]["changed_paths"] == ["proof.txt"]
-    selected = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), candidate="alpha-fix")["rows"][0]
+    selected = atlas.inspect_report(include_fingerprints=True, repo_root=tmp_path, report=report(tmp_path), candidate="alpha-fix")["rows"][0]
     assert selected["outcome_source_changes"]["group-verified"]["freshness"] == "changed"
     assert selected["outcomes"][0]["source_identity"] == state_from_bytes(saved)["outcomes"][0]["source_identity"]
     assert report(tmp_path).read_bytes() == saved
     # Later records do not hide the path-matched proof observation from a bounded query.
     for index in range(3):
         outcomes(tmp_path, event(tmp_path, f"delivery-{index}", "committed", reference=str(index) * 40))
-    limited = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), candidate="alpha-fix", changed_paths=["proof.txt"], limit=1)["rows"][0]
+    limited = atlas.inspect_report(include_fingerprints=True, repo_root=tmp_path, report=report(tmp_path), candidate="alpha-fix", changed_paths=["proof.txt"], limit=1)["rows"][0]
     assert len(limited["outcomes"]) == 1 and limited["outcomes_has_more"]
     assert limited["outcome_source_changes"]["group-verified"]["changed_paths"] == ["proof.txt"]
 
@@ -1222,7 +1222,7 @@ def test_finding_inspection_preserves_originating_audit_proof(tmp_path: Path, ki
             lens["finding_ids"] = []
         publish(tmp_path, "audit-subsystem", replacement)
     (tmp_path / "audit-proof.txt").write_text("Proof v2", encoding="utf-8")
-    selected = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), finding="alpha-defect", changed_paths=["audit-proof.txt"])
+    selected = atlas.inspect_report(include_fingerprints=True, repo_root=tmp_path, report=report(tmp_path), finding="alpha-defect", changed_paths=["audit-proof.txt"])
     assert selected["total"] == 1
     row = selected["rows"][0]
     assert row["historical"] == (transition != "current")
@@ -1232,7 +1232,7 @@ def test_finding_inspection_preserves_originating_audit_proof(tmp_path: Path, ki
     discovered = atlas.status_report(repo_root=tmp_path, report=report(tmp_path), changed_paths=["audit-proof.txt"], history=True)
     assert "alpha-defect" in {item["target"]["id"] for item in discovered["rows"]}
     outcomes(tmp_path, event(tmp_path, "finding-proof", "verified", target_kind="finding", target_id="alpha-defect"))
-    row = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), finding="alpha-defect")["rows"][0]
+    row = atlas.inspect_report(include_fingerprints=True, repo_root=tmp_path, report=report(tmp_path), finding="alpha-defect")["rows"][0]
     assert row["source_changes"]["audit"]["freshness"] == "changed"
     assert row["outcome_source_changes"]["finding-proof"]["freshness"] == "fresh"
     assert row["work"]["status"] == "verified" and row["audit_source_identity"] == original

@@ -89,6 +89,11 @@ only when the candidate adds material context. The helper derives counts and
 candidate scope from linked findings when scope is omitted. Show defects separately
 from retained complexity and gaps.
 
+For a material gap, give the smallest observation that would settle it, what
+evidence is available now, and any missing data or authority plus a revisit trigger.
+Pursue closure within the authorized scope; retain a handoff when it needs
+additional data, access, or a product decision.
+
 Group defects or opportunities only when they share a causal owner or direction
 that can be judged together. Strength is qualitative evidence for attention:
 `strong` for a consequential supported cost and credible direction,

@@ -66,6 +66,10 @@ Preserve these properties without requiring separate commands or a fixed sequenc
   authoritative state.
 - **Isolation and cleanup:** keep mutable fixtures and outputs within authorized
   resources, protecting unrelated sessions, data, processes, and external state.
+  Set isolated configuration and state paths before importing modules that cache
+  them. Resolve destructive fixture targets and confirm ownership before setup
+  or cleanup. Keep scratch artifacts outside product test, formatter, and build
+  discovery unless they are intentional inputs to the verification.
   Remove only resources the run created or explicitly owns. Never kill by broad
   process name or delete shared state to obtain a clean environment. Preserve
   evidence needed for later review.

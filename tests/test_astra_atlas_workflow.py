@@ -407,9 +407,9 @@ def test_followup_retains_analysis_and_lenses_with_its_own_source(tmp_path: Path
     assert audit["candidates"][0] == before["candidates"][0]
     assert audit["lenses"] == before["lenses"] and audit["source_identity"] == before["source_identity"]
     assert atlas.status_report(repo_root=tmp_path, report=report(tmp_path), candidate="alpha-fix")["rows"][0]["source_changes"]["scope"]["freshness"] == "changed"
-    row = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), finding="alpha-followup")["rows"][0]
+    row = atlas.inspect_report(include_fingerprints=True, repo_root=tmp_path, report=report(tmp_path), finding="alpha-followup")["rows"][0]
     assert row["audit_source_identity"] == raw["source_identity"] and row["source_changes"]["scope"]["freshness"] == "fresh"
-    selected_history = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), finding="alpha-followup", history=True)["history"]
+    selected_history = atlas.inspect_report(include_fingerprints=True, repo_root=tmp_path, report=report(tmp_path), finding="alpha-followup", history=True)["history"]
     assert next(entry for entry in selected_history if entry["operation"] == "append")["packet"]["source_identity"] == raw["source_identity"]
     compact_history = atlas.status_report(repo_root=tmp_path, report=report(tmp_path), finding="alpha-followup", history=True)["history"]
     assert all("packet" not in entry for entry in compact_history)
@@ -441,11 +441,11 @@ def test_superseded_followups_retain_each_records_original_source_binding(tmp_pa
         publish(tmp_path, "audit-subsystem", updated)
         latest = updated["source_identity"]
     publish(tmp_path, "audit-subsystem", audit_manifest(tmp_path, report(tmp_path)))
-    selected = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), finding=f["id"], history=True)
+    selected = atlas.inspect_report(include_fingerprints=True, repo_root=tmp_path, report=report(tmp_path), finding=f["id"], history=True)
     assert selected["rows"][0]["historical"] and selected["rows"][0]["audit_source_identity"] == latest
     revisions = [revision for row in selected["history"] for revision in row.get("finding_revisions", [])]
     assert revisions[0]["source_identity"] == original and revisions[-1]["source_identity"] == latest
-    history = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), candidate=c["id"], history=True)["history"]
+    history = atlas.inspect_report(include_fingerprints=True, repo_root=tmp_path, report=report(tmp_path), candidate=c["id"], history=True)["history"]
     candidate_revisions = [row["candidate_revision"] for row in history if "candidate_revision" in row]
     assert candidate_revisions[0]["source_identity"] == original and candidate_revisions[-1]["source_identity"] == latest
     first = next(row["superseded"] for row in state(tmp_path)["history"] if "audit" in row.get("superseded", {}))
@@ -453,7 +453,7 @@ def test_superseded_followups_retain_each_records_original_source_binding(tmp_pa
     assert first["source_bindings"][f"candidate:{c['id']}"]["source_identity"] == original
     proof.write_text("changed append evidence", encoding="utf-8")
     if not rebound:
-        observation = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), finding=f["id"])["rows"][0]["source_changes"]["scope"]
+        observation = atlas.inspect_report(include_fingerprints=True, repo_root=tmp_path, report=report(tmp_path), finding=f["id"])["rows"][0]["source_changes"]["scope"]
         assert observation["freshness"] == "changed" and "append-proof.txt" in observation["changed_paths"]
 
 
@@ -998,7 +998,7 @@ def test_historical_gap_claims_reject_new_dispositions_and_preserve_existing_his
     with pytest.raises(atlas.ReportError, match="current gap finding"):
         publish(tmp_path, "record-gaps", later)
     assert report(tmp_path).read_bytes() == before and state(tmp_path)["gap_dispositions"] == [original]
-    history = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), finding="scope-gap", history=True)["history"]
+    history = atlas.inspect_report(include_fingerprints=True, repo_root=tmp_path, report=report(tmp_path), finding="scope-gap", history=True)["history"]
     assert any(original in row.get("gap_dispositions", []) for row in history)
 
 

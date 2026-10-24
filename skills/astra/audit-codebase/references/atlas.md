@@ -61,6 +61,20 @@ Do not hand-edit the generated HTML or embedded state.
 
 Map records structure, not quality judgment.
 
+Start a map with the public preparation route:
+
+```text
+python <atlas.py> prepare-map --repo-root <repo> --report <report.html>
+python <atlas.py> render-report --repo-root <repo> --report <report.html> --manifest <map.json>
+```
+
+Between those commands, edit the returned `map.json` beside the report. It binds
+the current inventory and provisionally assigns all tracked paths to one owner.
+Supply the title, names, and purposes, then refine systems, subsystems, owned
+paths, and evidenced exclusions as useful. Blank semantic fields cannot publish;
+the draft's provisional grouping is not an ownership judgment. Existing packet
+files are never overwritten; use a new `--output` filename for another draft.
+
 Group current tracked source into meaningful systems and subsystems based on
 runtime or domain ownership, not directory shape alone. Each subsystem records
 its ID, system, name, purpose, and owned paths. Add ownership, authority, callers,
@@ -134,6 +148,10 @@ Analysis may end as:
 - `disproved`: the candidate no longer survives current evidence; or
 - `blocked`: one exact decision or missing evidence prevents a responsible
   conclusion.
+
+Only `blocked` uses a nonempty `question`; omit it or leave it empty for `analyzed`
+and `disproved`. State the exact missing observation or decision, rather than
+treating an implementation choice settled by current requirements as a blocker.
 
 For an analyzed candidate, record a supported recommendation and proof. Compare
 alternatives and add tradeoffs or evidence limits when material; options have no

@@ -10,22 +10,50 @@ Commands use UTF-8 directly on Windows; callers need no Python encoding flags.
 ```text
 python <atlas.py> prepare-audit --repo-root <repo> --report <report> --subsystem <id>
 python <atlas.py> prepare-analysis --repo-root <repo> --report <report> --candidate <id>
-python <atlas.py> prepare-outcomes --repo-root <repo> --report <report> --target candidate:<id> --type verified
+python <atlas.py> prepare-outcomes --repo-root <repo> --report <report> --target candidate:<id> --type implemented --type verified --check <receipt-id>
 ```
 
 Repeat `--subsystem` or `--candidate` for separate packets, or `--target` for a
 single outcome packet covering the selected set. `--affected-subsystem` expands
 audit or analysis scope. `--path` binds additional proof inputs, including test
 configuration, fixtures, or probe scripts outside the mapped owners. Use
-`--output` for another JSON filename beside the report; preparation never
+`--output` for another JSON filename beside the report; omit it for multiple
+audit or analysis selections so the helper names each packet. Preparation never
 overwrites judgments. Blank judgment fields cannot publish.
 Outcome and gap packets bind each target's source separately; additional `--path`
 proof inputs are shared across the selected targets and retained for every
 outcome type.
 
+Repeat `--type` to compose several lifecycle events for the same targets in one
+guarded outcome packet. Event order follows the supplied types; fill each event's
+judgment and any delivery reference. `--check` binds receipts only to `verified`
+events and requires that type. Separately prepared same-target stages cannot be
+batched as independent results: the first changes their shared target guard.
+Use one composed packet or publish and reprepare each later stage serially.
+
+For a long proof-input list, use repeatable `--paths-file <paths.json>` wherever
+`--path` is supported. Each UTF-8 file contains a JSON array of exact
+repository-relative file paths, for example `["src/check.py", "tests/test_check.py"]`.
+The list filename resolves relative to the repository root; its entries add to
+explicit `--path` values with the same validation and source binding. Ordinary
+directories do not expand recursively; select their exact files.
+
 Prepare at the source state actually being investigated or verified. If source
 changes during investigation, inspect the delta before preparing a replacement.
 A newer fingerprint alone is not renewed evidence.
+
+Compare a captured identity through the public operation when source equivalence
+is the question:
+
+```text
+python <atlas.py> source-identity --repo-root <repo> --compare <packet.json> --limit 20
+```
+
+It accepts a source packet, the `source-identity` response, or a prepared manifest
+with top-level `source_identity`. `matches` and bounded mismatch categories and
+paths report the result; additional `--path` or `--paths-file` values require those
+paths to be present in the expected packet. These fingerprints include source
+kinds and Git state; comparing them to plain file SHA-256 values is not equivalent.
 
 ## Publish independent results once
 
@@ -86,6 +114,10 @@ every meaningful proof input; the helper cannot discover hidden dependencies,
 remote state, or external toolchain changes. Do not reuse a check whose unrecorded
 dependencies changed.
 
+Use bounded refusal categories and changed paths to determine why reuse failed;
+an environment mismatch does not reveal which variable caused it. Recheck the
+affected inputs rather than relaxing equivalence or rerunning unrelated checks.
+
 Use `prepare-outcomes --type verified --check <receipt-id>` to bind the receipt's
 proof inputs and evidence references automatically; repeat `--check` as needed.
 Supply the conclusion that the check supports. A verified outcome referencing
@@ -107,9 +139,11 @@ python <atlas.py> status --repo-root <repo> --report <report> --gaps
 
 Repeat `--lens`, or use `--finding <gap-id>`, to prepare the selected claims.
 Record `closed`, `narrowed`, or `deferred`, decisive evidence, and the remaining
-question and revisit condition when unresolved. The helper binds each disposition
-to the original claim and the source inspected for this follow-up. It does not
-rewrite historical lens coverage or turn uncertainty into a verified fix.
+question and revisit condition when unresolved. For a material unresolved gap,
+include the smallest closure observation, usable evidence already available, and
+any missing data or owner decision in the summary and evidence. The helper binds
+each disposition to the original claim and the source inspected for this follow-up.
+It does not rewrite historical lens coverage or turn uncertainty into a verified fix.
 The compact view derives current gaps and their latest applicable dispositions;
 a replaced claim does not inherit an older closure. Changed disposition inputs
 remain visible for judgment. Evidence counts replace payloads in `status --gaps`;

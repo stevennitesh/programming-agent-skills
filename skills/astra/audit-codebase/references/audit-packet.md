@@ -13,7 +13,9 @@ and a semantic publication guard. Existing packets are never overwritten. Use `-
 new JSON filename when preparing another packet; a bare filename resolves beside
 the report. Add
 `--affected-subsystem <id>` or `--path <path>` for additional implicated source
-or proof inputs. Repeat either option as needed.
+or proof inputs. Repeat either option as needed. Include every affected mapped
+owner before publication; if investigation reaches another owner, reprepare with
+that owner and inspect its inputs before relying on the expanded snapshot.
 
 Keep the generated mechanics. Fill `source_trace.summary` with the meaningful
 behavior traced. Add findings and candidates when supported. A minimal defect
@@ -48,15 +50,31 @@ broader explicit `affected_scope` when the proposed change reaches further. Link
 finding scopes are always included; an explicit scope cannot narrow them.
 
 A finding needs ID, kind, class, title, locations, decisive evidence, impact,
-and affected scope. A defect also needs expectation and scenario; retained
-complexity needs `protected_constraint`; a gap needs `missing_evidence`.
+and affected scope. Its additional fields depend on the claim:
+
+| Kind | Required detail | Conditional detail |
+| --- | --- | --- |
+| `defect` | `expectation`, `scenario` | `severity` |
+| `opportunity` | No additional required fields | `scenario` and `severity` are not allowed. |
+| `retained complexity` | `protected_constraint` | `ceiling`, `revisit_trigger` |
+| `gap` | `missing_evidence` | `boundary_reason`, `reentry` |
+
+Text such as `impact`, `scenario`, `missing_evidence`, and `evidence_limits` is a
+JSON string. `locations`, `evidence`, `affected_scope`, `proof`, `finding_ids`,
+and candidate `risks` and `required_proof` are arrays of nonempty strings.
+Required finding arrays and required text must be nonempty. Omit unsupported
+optional detail rather than filling it with placeholder claims.
 Optional direction, causal owner, confidence, severity, proof, or revisit detail
 should serve the decision. Candidate risks, benefit, required proof, additional
 evidence, problem context, and before/after comparison are optional.
 
 Record only relevant lens assessments. `complete` needs evidence or finding IDs;
 `evidence gap` and `not applicable` need a reason. Finding references reuse the
-evidence. Omitted dimensions render as **not inspected**, not completed.
+evidence; each referenced finding's `primary_class` must equal the lens's `class`.
+Use the lens's direct
+`evidence` for a cross-cutting observation classified under another lens; a
+candidate may link findings of different classes. Omitted dimensions render as
+**not inspected**, not completed.
 Optional trace lists, systemic findings, recommendation, and evidence limits add
 scope-specific information; coverage counts come from the helper.
 
@@ -78,5 +96,6 @@ checking that they still apply; capturing a later snapshot alone is not renewed
 evidence. Never bypass guards or silently refresh a completed packet.
 
 For several selected owners, repeat `--subsystem`; each gets a packet from the
-same report revision. Use [Prepared work and verification](workflow.md) for
+same report revision. Omit `--output` for multiple selections so the helper names
+each packet. Use [Prepared work and verification](workflow.md) for
 coordinator publication, analysis and outcome preparation, and narrow follow-ups.

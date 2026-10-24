@@ -1,4 +1,5 @@
 [tool.pytest.ini_options]
+cache_dir = ".tmp/pytest-cache"
 addopts = [
     "--strict-markers",
     "--strict-config",
