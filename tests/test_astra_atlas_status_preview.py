@@ -54,6 +54,36 @@ def test_retained_map_inventory_obeys_source_paging_without_changing_history(tmp
     assert report(tmp_path).read_bytes() == before
 
 
+def test_subsystem_source_pages_advance_independently_of_row_limit(tmp_path: Path) -> None:
+    started(tmp_path)
+    (tmp_path / "proof").mkdir()
+    paths = [f"proof/{index:03d}.txt" for index in range(35)]
+    for path in paths:
+        (tmp_path / path).write_text("original", encoding="utf-8")
+    audit = audit_manifest(tmp_path, report(tmp_path))
+    audit["source_identity"] = identity(tmp_path, ["src/a.py", "src/b.py", "tests/test_a.py", *paths])
+    publish(tmp_path, "audit-subsystem", audit)
+    before = report(tmp_path).read_bytes()
+    for path in paths:
+        (tmp_path / path).write_text("changed", encoding="utf-8")
+    for offset in (0, 20, 34, 50):
+        page = atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), subsystem="alpha",
+                                    limit=1, source_limit=2, source_offset=offset)
+        observation = page["subsystems"][0]
+        assert observation["matching_paths"] == audit["source_identity"]["paths"][offset:offset + 2]
+        assert observation["matching_paths_offset"] == offset and observation["matching_paths_limit"] == 2
+        assert observation["matching_paths_has_more"] == (offset + 2 < 38)
+        for changed in (observation["source_changes"], page["source_changes"]):
+            assert changed["changed_paths"] == paths[offset:offset + 2]
+            assert changed["changed_paths_offset"] == offset and changed["changed_paths_limit"] == 2
+            assert changed["changed_paths_total"] == 35
+            assert changed["changed_paths_has_more"] == (offset + 2 < 35)
+        filtered = atlas.status_report(repo_root=tmp_path, report=report(tmp_path), changed_paths=["proof"],
+                                        limit=1, source_limit=2, source_offset=offset)["subsystems"][0]
+        assert filtered["matching_paths"] == filtered["source_changes"]["changed_paths"] == paths[offset:offset + 2]
+    assert report(tmp_path).read_bytes() == before
+
+
 def test_current_linked_proof_is_separate_from_changed_retained_history(tmp_path: Path) -> None:
     two_findings(tmp_path)
     outcomes(tmp_path, event(tmp_path, "old-group-proof", "verified"))

@@ -3564,7 +3564,7 @@ def _inspection_sources(value: Any, *, include_fingerprints: bool, limit: int, o
 
 
 def _subsystem_inspection(state: dict[str, Any], sub: dict[str, Any], root: Path, paths: Sequence[str], limit: int,
-                          revisions: dict[int, tuple[dict[str, Any], dict[str, Any]]]) -> dict[str, Any] | None:
+                          revisions: dict[int, tuple[dict[str, Any], dict[str, Any]]], *, source_offset: int = 0) -> dict[str, Any] | None:
     packet = sub.get("audit", {}).get("source_identity") or sub["map_source"]
     bound = set(packet["paths"]) | set(sub["owned_paths"])
     matching = sorted(path for path in bound if not paths or any(path == prefix or path.startswith(prefix.rstrip("/") + "/") for prefix in paths))
@@ -3578,15 +3578,19 @@ def _subsystem_inspection(state: dict[str, Any], sub: dict[str, Any], root: Path
         observed = _structure_observation(_packet_observation(root, packet), sorted(owners), since, revisions)
     changed = observed["changed_paths"]
     return {"subsystem_id": sub["id"], "name": sub["name"], "display_name": _display_title(state, "subsystem", sub["id"], sub["name"]), "state": sub["state"], "historical": historical,
-            "source_sha256": packet["sha256"], "matching_paths": matching[:limit], "matching_paths_total": len(matching), "matching_paths_has_more": len(matching) > limit,
-            "source_changes": {**observed, "changed_paths": changed[:limit], "changed_paths_total": len(changed), "changed_paths_has_more": len(changed) > limit}}
+            "source_sha256": packet["sha256"], "matching_paths": matching[source_offset:source_offset + limit],
+            "matching_paths_total": len(matching), "matching_paths_offset": source_offset, "matching_paths_limit": limit,
+            "matching_paths_has_more": source_offset + limit < len(matching),
+            "source_changes": {**observed, "changed_paths": changed[source_offset:source_offset + limit],
+                               "changed_paths_total": len(changed), "changed_paths_offset": source_offset,
+                               "changed_paths_limit": limit, "changed_paths_has_more": source_offset + limit < len(changed)}}
 
 
 def inspect_report(*, repo_root: Path, report: Path, full: bool = False,
                    subsystem: str | None = None, candidate: str | None = None, finding: str | None = None,
                    changed_paths: Sequence[str] = (), outstanding: bool = False, history: bool = False,
                    limit: int = 20, offset: int = 0, detail: bool = True, gaps: bool = False,
-                   include_fingerprints: bool = False, source_limit: int = 20, source_offset: int = 0) -> dict[str, Any]:
+                   include_fingerprints: bool = False, source_limit: int | None = None, source_offset: int = 0) -> dict[str, Any]:
     data, state = _load(repo_root.resolve(), report)
     result = {
         "response_version": RESPONSE_VERSION,
@@ -3605,8 +3609,10 @@ def inspect_report(*, repo_root: Path, report: Path, full: bool = False,
         return result
     if limit < 1 or limit > 100 or offset < 0:
         raise ReportError("inspection limit must be 1..100 and offset nonnegative")
-    if source_limit < 1 or source_limit > 100 or source_offset < 0:
+    source_page_limit = 20 if source_limit is None else source_limit
+    if type(source_page_limit) is not int or source_page_limit < 1 or source_page_limit > 100 or source_offset < 0:
         raise ReportError("inspection source limit must be 1..100 and source offset nonnegative")
+    observation_path_limit = limit if source_limit is None else source_page_limit
     root = repo_root.resolve()
     _refresh_observation(state, root)
     candidates, findings = _catalog(state)
@@ -3683,7 +3689,7 @@ def inspect_report(*, repo_root: Path, report: Path, full: bool = False,
                 continue
             if selected_owners is not None and sid not in selected_owners:
                 continue
-            observed_subsystem = _subsystem_inspection(state, sub, root, paths, limit, revisions)
+            observed_subsystem = _subsystem_inspection(state, sub, root, paths, observation_path_limit, revisions, source_offset=source_offset)
             if observed_subsystem is not None:
                 subsystem_rows.append(observed_subsystem)
     result.update(summary=_summary(state), observed_at=state["observed_at"], rows=rows[offset:offset + limit], total=len(rows), offset=offset, limit=limit, has_more=offset + limit < len(rows),
@@ -3702,15 +3708,15 @@ def inspect_report(*, repo_root: Path, report: Path, full: bool = False,
         result.update(gaps=gap_rows[offset:offset + limit], gaps_total=len(gap_rows), gaps_has_more=offset + limit < len(gap_rows))
     if subsystem and detail:
         result["subsystem"] = subs[subsystem]
-        selected_subsystem = _subsystem_inspection(state, subs[subsystem], root, [], limit, revisions)
+        selected_subsystem = _subsystem_inspection(state, subs[subsystem], root, [], observation_path_limit, revisions, source_offset=source_offset)
         result["source_changes"] = selected_subsystem["source_changes"]
     if history:
         entries = _inspection_history(state, rows, subsystem=subsystem, candidate=candidate, finding=finding,
                                       paths=paths, outstanding=outstanding, detail=detail, matched_subsystems=[sub["subsystem_id"] for sub in subsystem_rows])
         result.update(history=entries[offset:offset + limit], history_total=len(entries), history_has_more=offset + limit < len(entries))
-    result["source_projection"] = {"include_fingerprints": include_fingerprints, "limit": source_limit, "offset": source_offset,
+    result["source_projection"] = {"include_fingerprints": include_fingerprints, "limit": source_page_limit, "offset": source_offset,
                                    "complete_state_available": "--full"}
-    return _inspection_sources(result, include_fingerprints=include_fingerprints, limit=source_limit, offset=source_offset)
+    return _inspection_sources(result, include_fingerprints=include_fingerprints, limit=source_page_limit, offset=source_offset)
 
 
 def status_report(*, repo_root: Path, report: Path, **filters: Any) -> dict[str, Any]:
@@ -3845,7 +3851,7 @@ def _parser() -> argparse.ArgumentParser:
         if name == "inspect":
             p.add_argument("--full", action="store_true")
             p.add_argument("--include-fingerprints", action="store_true", help="Include source fingerprints for the selected source page")
-            p.add_argument("--source-limit", type=int, default=20, help="Maximum paths per source packet")
+            p.add_argument("--source-limit", type=int, help="Paths per source page (default 20; subsystem observations follow --limit when omitted)")
             p.add_argument("--source-offset", type=int, default=0, help="Source path page offset")
     p = commands.add_parser("check-report")
     p.add_argument("--repo-root", type=Path, required=True)

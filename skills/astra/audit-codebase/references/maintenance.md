@@ -59,7 +59,9 @@ Outcome evidence and its observations return the latest relevant records up to
 the requested limit, with totals and more-record indicators; path-filtered
 observations retain matching proof inputs. Use history or full state for older detail.
 Selected inspection bounds source paths separately with `--source-limit` (default
-20) and `--source-offset`. Source packets retain their digest and path totals;
+20) and `--source-offset`. An explicit source limit also controls subsystem
+matching and changed-path observations; when omitted, those observations retain
+their existing `--limit` bound. Source packets retain their digest and path totals;
 `--include-fingerprints` adds the matching fingerprint page when those values are
 needed. `inspect --full` returns complete packets. Map drift separately exposes
 added, removed, and unowned tracked paths. An unchanged prior packet does not prove
