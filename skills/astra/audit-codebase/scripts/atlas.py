@@ -15,7 +15,7 @@ import textwrap
 from datetime import datetime, timezone
 from html import escape, unescape
 from html.parser import HTMLParser
-from pathlib import Path, PurePosixPath
+from pathlib import Path, PurePosixPath, PureWindowsPath
 from typing import Any, NoReturn, Sequence
 
 REPORT_VERSION, STATE_VERSION = 6, 6
@@ -165,8 +165,22 @@ def _unpack_state(wire: dict[str, Any]) -> dict[str, Any]:
 
 def _obj(value: object, label: str) -> dict[str, Any]:
     if not isinstance(value, dict):
-        raise ReportError(f"{label} must be an object")
+        raise ReportError(f"{label} must be an object; got {_value_type(value)}")
     return dict(value)
+
+
+def _value_type(value: object) -> str:
+    if value is None:
+        return "null"
+    if isinstance(value, bool):
+        return "boolean"
+    if isinstance(value, str):
+        return "string"
+    if isinstance(value, list):
+        return "array"
+    if isinstance(value, dict):
+        return "object"
+    return "number" if isinstance(value, (int, float)) else type(value).__name__
 
 
 def _strict(
@@ -179,19 +193,23 @@ def _strict(
     if missing:
         raise ReportError(f"{label} missing fields: {', '.join(missing)}")
     if unknown:
-        raise ReportError(f"{label} has unknown fields: {', '.join(unknown)}")
+        raise ReportError(f"{label} has unknown fields: {', '.join(unknown)}; allowed fields: {', '.join(sorted(required | optional))}")
 
 
 def _text(value: object, label: str, *, empty: bool = False) -> str:
-    if not isinstance(value, str) or (not empty and not value.strip()):
+    if not isinstance(value, str):
+        raise ReportError(f"{label} must be {'a string' if empty else 'a non-empty string'}; got {_value_type(value)}")
+    if not empty and not value.strip():
         raise ReportError(f"{label} must be a non-empty string")
     return value.strip()
 
 
 def _texts(value: object, label: str, *, empty: bool = True) -> list[str]:
-    if not isinstance(value, list) or (not empty and not value):
-        raise ReportError(f"{label} must be a list")
-    result = [_text(v, f"{label} item") for v in value]
+    if not isinstance(value, list):
+        raise ReportError(f"{label} must be a list of non-empty strings; got {_value_type(value)}")
+    if not empty and not value:
+        raise ReportError(f"{label} must be a non-empty list of strings")
+    result = [_text(v, f"{label}[{i}]") for i, v in enumerate(value)]
     if len(result) != len(set(result)):
         raise ReportError(f"{label} contains duplicates")
     return result
@@ -207,7 +225,7 @@ def _id(value: object, label: str) -> str:
 def _rel(value: object, label: str) -> str:
     raw = _text(value, label).replace("\\", "/")
     path = PurePosixPath(raw)
-    if path.is_absolute() or ".." in path.parts or raw in {"", "."}:
+    if path.is_absolute() or PureWindowsPath(raw).drive or ".." in path.parts or raw in {"", "."}:
         raise ReportError(f"{label} must be repository-relative")
     return str(path)
 
@@ -229,15 +247,22 @@ def _git(root: Path, *args: str) -> str:
 
 
 def _index_entries(root: Path, paths: Sequence[str] = ()) -> dict[str, dict[str, str]]:
+    # File-backed CLI inputs must also stay bounded when forwarded to Git. Leave
+    # room for quoting and executable arguments under Windows' command-line cap.
+    selected = set(paths) if sum(len(path.encode("utf-16-le")) // 2 + 3 for path in paths) > 16000 else None
+    query = () if selected is not None else paths
     entries = {}
-    for record in _git(root, "--literal-pathspecs", "ls-files", "--stage", "-z", "--", *paths).split("\0"):
+    for record in _git(root, "--literal-pathspecs", "ls-files", "--stage", "-z", "--", *query).split("\0"):
         if not record:
             continue
         metadata, path = record.split("\t", 1)
+        path = path.replace("\\", "/")
+        if selected is not None and path not in selected:
+            continue
         mode, object_id, stage = metadata.split()
         if stage != "0":
             raise ReportError(f"source index has an unresolved entry: {path}")
-        entries[path.replace("\\", "/")] = {"mode": mode, "object_id": object_id}
+        entries[path] = {"mode": mode, "object_id": object_id}
     return entries
 
 
@@ -276,6 +301,11 @@ def _source_digest(root: Path, path: str, entries: dict[str, dict[str, str]], *,
     else:
         try:
             is_link = target.is_symlink()
+            if not is_link and target.is_dir():
+                raise ReportError(
+                    f"source path is an ordinary directory: {path}; select exact files with --path or --paths-file; "
+                    "recursive directory expansion is not supported", stage="source-input"
+                )
             content = os.fsencode(os.readlink(target)) if is_link else target.read_bytes()
             payload = {"mode": mode, "kind": "symlink" if is_link else "file", "content_sha256": _digest(content)}
             if not is_link:
@@ -334,6 +364,85 @@ def source_identity(*, repo_root: Path, paths: Sequence[str]) -> dict[str, Any]:
         "sha256": h.hexdigest(),
         "fingerprints": fingerprints,
     }
+
+
+class _SourceObservationCache:
+    """Share path reads only within one read-only observation operation."""
+
+    def __init__(self, root: Path) -> None:
+        self.root = root
+        self.fingerprints: dict[str, str | None] = {}
+        self.errors: dict[str, str] = {}
+
+    def observe(self, paths: Sequence[str]) -> None:
+        pending = sorted(set(paths) - self.fingerprints.keys())
+        if not pending:
+            return
+        try:
+            entries = _index_entries(self.root, pending)
+        except ReportError:
+            # An unresolved index entry must not make unrelated paths unavailable.
+            entries = None
+        for path in pending:
+            try:
+                selected = _index_entries(self.root, [path]) if entries is None else entries
+                self.fingerprints[path] = _source_digest(self.root, path, selected).hex()
+            except ReportError as exc:
+                self.fingerprints[path] = None
+                self.errors[path] = str(exc)
+
+
+def _observed_source(root: Path, packet: dict[str, Any], sources: _SourceObservationCache | None = None) -> dict[str, Any]:
+    sources = sources if sources is not None else _SourceObservationCache(root)
+    sources.observe(packet["paths"])
+    unavailable = sorted(path for path in packet["paths"] if sources.fingerprints[path] is None)
+    changed = sorted(path for path in packet["paths"] if sources.fingerprints[path] != packet["fingerprints"][path])
+    current_sha = None
+    if not unavailable:
+        h = hashlib.sha256()
+        for path in sorted(packet["paths"]):
+            h.update(path.encode() + b"\0" + bytes.fromhex(sources.fingerprints[path]))
+        current_sha = h.hexdigest()
+    result = {"freshness": "changed" if changed or current_sha != packet["sha256"] else "fresh",
+              "changed_paths": changed, "unavailable_paths": unavailable, "current_sha256": current_sha}
+    if unavailable:
+        result["error"] = sources.errors[unavailable[0]]
+    return result
+
+
+def compare_source_identity(*, repo_root: Path, expected: dict[str, Any],
+                            required_paths: Sequence[str] = (), limit: int = 20) -> dict[str, Any]:
+    """Compare a saved public identity or prepared packet without exposing fingerprints."""
+    if type(limit) is not int or not 0 <= limit <= 100:
+        raise ReportError("source comparison limit must be an integer from 0 to 100", stage="source-input")
+    value = _obj(expected, "expected source identity")
+    if "source_identity" in value:
+        value = _obj(value["source_identity"], "expected source_identity")
+    if "response_version" in value:
+        if value["response_version"] != RESPONSE_VERSION:
+            raise ReportError("unsupported source identity response version", stage="source-input")
+        value.pop("response_version")
+    packet = _source_packet(value, "expected source identity")
+    required = {_rel(path, "required source path") for path in required_paths}
+    missing = sorted(required - set(packet["paths"]))
+    observed = _observed_source(repo_root.resolve(), packet)
+    categories = []
+    if missing:
+        categories.append("required_paths_missing")
+    if observed["unavailable_paths"]:
+        categories.append("source_unavailable")
+    if observed["freshness"] == "changed":
+        categories.append("source_identity_changed")
+    result = {"response_version": RESPONSE_VERSION, "matches": not categories,
+              "freshness": "changed" if categories else "fresh", "categories": categories,
+              "path_count": len(packet["paths"]), "expected_sha256": packet["sha256"],
+              "current_sha256": observed["current_sha256"], "limit": limit, "truncated": False}
+    for field, values in (("changed_paths", observed["changed_paths"]), ("unavailable_paths", observed["unavailable_paths"]),
+                          ("missing_required_paths", missing)):
+        result[field] = values[:limit]
+        result[field.removesuffix("s") + "_count"] = len(values)
+        result["truncated"] |= len(values) > limit
+    return result
 
 
 def _report_path(root: Path, report: Path, *, exists: bool) -> Path:
@@ -442,27 +551,30 @@ def _map(raw: dict[str, Any], root: Path) -> dict[str, Any]:
         raise ReportError(f"map manifest requires version {MANIFEST_VERSION}")
     if raw["expected_report_sha256"] != "absent":
         raise ReportError("new map expects absent report")
+    title = _text(raw["title"], "map manifest.title")
     if not isinstance(raw["systems"], list) or not raw["systems"]:
-        raise ReportError("systems must not be empty")
+        raise ReportError("map manifest.systems must be a non-empty list of objects")
     systems = []
     for i, v in enumerate(raw["systems"]):
-        x = _obj(v, f"systems[{i}]")
-        _strict(x, {"id", "name"}, set(), f"systems[{i}]")
+        label = f"map manifest.systems[{i}]"
+        x = _obj(v, label)
+        _strict(x, {"id", "name"}, set(), label)
         systems.append(
-            {"id": _id(x["id"], "system id"), "name": _text(x["name"], "system name")}
+            {"id": _id(x["id"], f"{label}.id"), "name": _text(x["name"], f"{label}.name")}
         )
     if not isinstance(raw["subsystems"], list) or not raw["subsystems"]:
-        raise ReportError("subsystems must not be empty")
-    subs = [_subsystem(v, f"subsystems[{i}]") for i, v in enumerate(raw["subsystems"])]
+        raise ReportError("map manifest.subsystems must be a non-empty list of objects")
+    subs = [_subsystem(v, f"map manifest.subsystems[{i}]") for i, v in enumerate(raw["subsystems"])]
     sids = [x["id"] for x in subs]
     sysids = [x["id"] for x in systems]
     if len(sids) != len(set(sids)) or len(sysids) != len(set(sysids)):
         raise ReportError("map ids must be unique")
     for sub in subs:
         if sub["system_id"] not in sysids:
-            raise ReportError(f"unknown system for {sub['id']}")
-        if any(d["id"] not in sids for d in sub["dependencies"]):
-            raise ReportError(f"unknown dependency for {sub['id']}")
+            raise ReportError(f"map manifest subsystem {sub['id']}.system_id names unknown system; choose one of: {', '.join(sysids)}")
+        unknown = [d["id"] for d in sub["dependencies"] if d["id"] not in sids]
+        if unknown:
+            raise ReportError(f"map manifest subsystem {sub['id']}.dependencies names unknown subsystem(s): {', '.join(unknown)}; choose one of: {', '.join(sids)}")
     excluded = _exclusions(raw.get("excluded", []))
     observed = inventory(repo_root=root)
     tracked = set(observed["tracked_paths"])
@@ -499,7 +611,7 @@ def _map(raw: dict[str, Any], root: Path) -> dict[str, Any]:
         sub["map_source"] = {k: packet[k] for k in ("paths", "sha256", "fingerprints")}
     state = {
         "state_version": STATE_VERSION,
-        "title": _text(raw["title"], "title"),
+        "title": title,
         "observation_identity": identity,
         "systems": systems,
         "subsystems": subs,
@@ -526,42 +638,47 @@ def _map(raw: dict[str, Any], root: Path) -> dict[str, Any]:
     return state
 
 
-def _lenses(value: object) -> list[dict[str, Any]]:
+def _lenses(value: object, label: str = "lenses") -> list[dict[str, Any]]:
     if not isinstance(value, list):
-        raise ReportError("lenses must be a list")
+        raise ReportError(f"{label} must be a list of objects; got {_value_type(value)}")
     result = []
     for i, v in enumerate(value):
-        x = _obj(v, f"lenses[{i}]")
+        row = f"{label}[{i}]"
+        x = _obj(v, row)
         _strict(
             x,
             {"class", "state"},
             {"evidence", "finding_ids", "reason"},
-            f"lenses[{i}]",
+            row,
         )
-        name = _text(x["class"], "lens class")
-        state = _text(x["state"], "lens state")
-        if name not in _LENSES or state not in _LENS_STATES:
-            raise ReportError("unsupported lens class or state")
-        evidence = _texts(x.get("evidence", []), "lens evidence")
-        finding_ids = [_id(y, "finding id") for y in _texts(x.get("finding_ids", []), "finding ids")]
+        name = _text(x["class"], f"{row}.class")
+        state = _text(x["state"], f"{row}.state")
+        if name not in _LENSES:
+            raise ReportError(f"{row}.class must be one of: {', '.join(_LENSES)}")
+        if state not in _LENS_STATES:
+            raise ReportError(f"{row}.state must be one of: {', '.join(sorted(_LENS_STATES))}")
+        evidence = _texts(x.get("evidence", []), f"{row}.evidence")
+        finding_ids = [_id(y, f"{row}.finding_ids[{j}]") for j, y in enumerate(_texts(x.get("finding_ids", []), f"{row}.finding_ids"))]
         if state == "complete" and not (evidence or finding_ids):
-            raise ReportError(f"complete lens {name} requires evidence")
+            raise ReportError(f"{row} complete lens {name} requires non-empty evidence or finding_ids")
         result.append(
             {
                 "class": name,
                 "state": state,
                 "evidence": evidence,
                 "finding_ids": finding_ids,
-                "reason": _text(x.get("reason", ""), "lens reason", empty=state == "complete"),
+                "reason": _text(x.get("reason", ""), f"{row}.reason", empty=state == "complete"),
             }
         )
     if len({x["class"] for x in result}) != len(result):
-        raise ReportError("lenses must not repeat a class")
+        raise ReportError(f"{label} must not repeat a class")
     return result
 
 
 def _finding(value: object, label: str) -> dict[str, Any]:
     x = _obj(value, label)
+    identifier = _id(x.get("id"), f"{label}.id")
+    label = f"{label} ({identifier})"
     fields = {
         "id",
         "kind",
@@ -589,24 +706,26 @@ def _finding(value: object, label: str) -> dict[str, Any]:
     }
     required = {"id", "kind", "primary_class", "title", "locations", "evidence", "impact", "affected_scope"}
     _strict(x, required, (fields - required) | kind_fields, label)
-    kind = _text(x["kind"], "kind")
-    primary = _text(x["primary_class"], "primary class")
-    if kind not in _KINDS or primary not in _LENSES:
-        raise ReportError(f"{label} has unsupported kind or class")
+    kind = _text(x["kind"], f"{label}.kind")
+    primary = _text(x["primary_class"], f"{label}.primary_class")
+    if kind not in _KINDS:
+        raise ReportError(f"{label}.kind must be one of: {', '.join(sorted(_KINDS))}")
+    if primary not in _LENSES:
+        raise ReportError(f"{label}.primary_class must be one of: {', '.join(_LENSES)}")
     result = {
-        "id": _id(x["id"], "finding id"),
+        "id": identifier,
         "kind": kind,
         "primary_class": primary,
-        "title": _text(x["title"], "title"),
-        "expectation": _text(x.get("expectation", ""), "expectation", empty=kind != "defect"),
-        "locations": _texts(x["locations"], "locations", empty=False),
-        "evidence": _texts(x["evidence"], "evidence", empty=False),
-        "impact": _text(x["impact"], "impact"),
-        "causal_owner": _text(x.get("causal_owner", ""), "causal owner", empty=True),
-        "affected_scope": _texts(x["affected_scope"], "affected scope", empty=False),
-        "direction": _text(x.get("direction", ""), "direction", empty=True),
-        "proof": _texts(x.get("proof", []), "proof"),
-        "confidence": _text(x.get("confidence", ""), "confidence", empty=True),
+        "title": _text(x["title"], f"{label}.title"),
+        "expectation": _text(x.get("expectation", ""), f"{label}.expectation", empty=kind != "defect"),
+        "locations": _texts(x["locations"], f"{label}.locations", empty=False),
+        "evidence": _texts(x["evidence"], f"{label}.evidence", empty=False),
+        "impact": _text(x["impact"], f"{label}.impact"),
+        "causal_owner": _text(x.get("causal_owner", ""), f"{label}.causal_owner", empty=True),
+        "affected_scope": _texts(x["affected_scope"], f"{label}.affected_scope", empty=False),
+        "direction": _text(x.get("direction", ""), f"{label}.direction", empty=True),
+        "proof": _texts(x.get("proof", []), f"{label}.proof"),
+        "confidence": _text(x.get("confidence", ""), f"{label}.confidence", empty=True),
     }
     required_by_kind = {
         "defect": ("scenario",),
@@ -615,15 +734,17 @@ def _finding(value: object, label: str) -> dict[str, Any]:
         "opportunity": (),
     }
     for field in required_by_kind[kind]:
-        result[field] = _text(x.get(field), field)
+        result[field] = _text(x.get(field), f"{label}.{field}")
     allowed_by_kind = {"defect": {"severity", "scenario"}, "gap": {"missing_evidence", "boundary_reason", "reentry"},
                        "retained complexity": {"protected_constraint", "ceiling", "revisit_trigger"}, "opportunity": set()}
     for field in (allowed_by_kind[kind] - set(required_by_kind[kind])) & set(x):
-        result[field] = _text(x[field], field)
+        result[field] = _text(x[field], f"{label}.{field}")
     unexpected = kind_fields & set(x) - allowed_by_kind[kind]
     if unexpected:
         raise ReportError(
-            f"{label} has fields not valid for {kind}: {', '.join(sorted(unexpected))}"
+            f"{label} has fields not valid for {kind}: {', '.join(sorted(unexpected))}; "
+            "severity and scenario belong only to defect findings; "
+            f"allowed kind-specific fields: {', '.join(sorted(allowed_by_kind[kind])) or 'none'}"
         )
     return result
 
@@ -665,31 +786,33 @@ def _comparison(value: object) -> dict[str, Any]:
 
 def _candidate(value: object, label: str) -> dict[str, Any]:
     x = _obj(value, label)
+    identifier = _id(x.get("id"), f"{label}.id")
+    label = f"{label} ({identifier})"
     fields = {
         "id", "title", "primary_class", "strength", "finding_ids", "affected_scope",
         "problem", "evidence", "direction", "benefit", "risks", "required_proof",
     }
     required = {"id", "title", "primary_class", "strength", "finding_ids", "direction"}
     _strict(x, required, (fields - required) | {"comparison"}, label)
-    primary = _text(x["primary_class"], "primary class")
-    strength = _text(x["strength"], "candidate strength")
+    primary = _text(x["primary_class"], f"{label}.primary_class")
+    strength = _text(x["strength"], f"{label}.strength")
     if primary not in _LENSES:
-        raise ReportError("unsupported candidate class")
+        raise ReportError(f"{label}.primary_class must be one of: {', '.join(_LENSES)}")
     if strength not in {"strong", "worth exploring", "speculative"}:
-        raise ReportError("candidate strength must be strong, worth exploring, or speculative")
+        raise ReportError(f"{label}.strength: candidate strength must be strong, worth exploring, or speculative")
     result = {
-        "id": _id(x["id"], "candidate id"),
-        "title": _text(x["title"], "title"),
+        "id": identifier,
+        "title": _text(x["title"], f"{label}.title"),
         "primary_class": primary,
         "strength": strength,
-        "finding_ids": [_id(y, "finding id") for y in _texts(x["finding_ids"], "finding ids", empty=False)],
-        "affected_scope": _texts(x.get("affected_scope", []), "affected scope"),
-        "problem": _text(x.get("problem", ""), "problem", empty=True),
-        "evidence": _texts(x.get("evidence", []), "evidence"),
-        "direction": _text(x["direction"], "direction"),
-        "benefit": _text(x.get("benefit", ""), "benefit", empty=True),
-        "risks": _texts(x.get("risks", []), "risks"),
-        "required_proof": _texts(x.get("required_proof", []), "required proof"),
+        "finding_ids": [_id(y, f"{label}.finding_ids[{i}]") for i, y in enumerate(_texts(x["finding_ids"], f"{label}.finding_ids", empty=False))],
+        "affected_scope": _texts(x.get("affected_scope", []), f"{label}.affected_scope"),
+        "problem": _text(x.get("problem", ""), f"{label}.problem", empty=True),
+        "evidence": _texts(x.get("evidence", []), f"{label}.evidence"),
+        "direction": _text(x["direction"], f"{label}.direction"),
+        "benefit": _text(x.get("benefit", ""), f"{label}.benefit", empty=True),
+        "risks": _texts(x.get("risks", []), f"{label}.risks"),
+        "required_proof": _texts(x.get("required_proof", []), f"{label}.required_proof"),
         "state": "presented",
     }
     if "comparison" in x:
@@ -716,10 +839,12 @@ def _audit(raw: dict[str, Any]) -> dict[str, Any]:
     _strict(raw, required, fields - required, "audit manifest")
     if raw["version"] != MANIFEST_VERSION:
         raise ReportError(f"audit manifest requires version {MANIFEST_VERSION}")
-    expected = _text(raw["expected_report_sha256"], "expected report sha")
+    subsystem = _id(raw["subsystem_id"], "audit manifest.subsystem_id")
+    label = f"audit manifest (subsystem {subsystem})"
+    expected = _text(raw["expected_report_sha256"], f"{label}.expected_report_sha256")
     if not _SHA.fullmatch(expected):
-        raise ReportError("expected report sha must be sha256")
-    trace = _obj(raw["source_trace"], "source trace")
+        raise ReportError(f"{label}.expected_report_sha256 must be sha256")
+    trace = _obj(raw["source_trace"], f"{label}.source_trace")
     tf = {
         "summary",
         "entry_points",
@@ -730,60 +855,94 @@ def _audit(raw: dict[str, Any]) -> dict[str, Any]:
         "representative_flows",
         "history_signals",
     }
-    _strict(trace, {"summary"}, tf - {"summary"}, "source trace")
+    _strict(trace, {"summary"}, tf - {"summary"}, f"{label}.source_trace")
     trace = {
-        k: (_text(trace[k], k) if k == "summary" else _texts(trace.get(k, []), k)) for k in sorted(tf)
+        k: (_text(trace[k], f"{label}.source_trace.{k}") if k == "summary" else _texts(trace.get(k, []), f"{label}.source_trace.{k}")) for k in sorted(tf)
     }
     for name in ("findings", "candidates", "systemic_findings"):
         if not isinstance(raw.get(name, []), list):
-            raise ReportError(f"{name} must be a list")
-    findings = [_finding(v, f"findings[{i}]") for i, v in enumerate(raw.get("findings", []))]
+            raise ReportError(f"{label}.{name} must be a list of objects; got {_value_type(raw[name])}")
+    findings = [_finding(v, f"{label}.findings[{i}]") for i, v in enumerate(raw.get("findings", []))]
     systemic = [
-        _finding(v, f"systemic[{i}]") for i, v in enumerate(raw.get("systemic_findings", []))
+        _finding(v, f"{label}.systemic_findings[{i}]") for i, v in enumerate(raw.get("systemic_findings", []))
     ]
     candidates = [
-        _candidate(v, f"candidates[{i}]") for i, v in enumerate(raw.get("candidates", []))
+        _candidate(v, f"{label}.candidates[{i}]") for i, v in enumerate(raw.get("candidates", []))
     ]
     fids = [x["id"] for x in findings + systemic]
     cids = [x["id"] for x in candidates]
     if len(fids) != len(set(fids)) or len(cids) != len(set(cids)):
         raise ReportError("finding and candidate ids must be unique")
     finding_by_id = {x["id"]: x for x in findings + systemic}
-    lenses = _lenses(raw.get("lenses", []))
-    for lens in lenses:
-        for finding_id in lens["finding_ids"]:
+    lenses = _lenses(raw.get("lenses", []), f"{label}.lenses")
+    for i, lens in enumerate(lenses):
+        for j, finding_id in enumerate(lens["finding_ids"]):
             finding = finding_by_id.get(finding_id)
             if finding is None:
-                raise ReportError(f"lens {lens['class']} names unknown finding")
+                raise ReportError(f"{label}.lenses[{i}].finding_ids[{j}] names unknown finding {finding_id}; choose a finding id from this packet")
             if finding["primary_class"] != lens["class"]:
                 raise ReportError(
-                    f"lens {lens['class']} names finding from {finding['primary_class']}"
+                    f"{label}.lenses[{i}].finding_ids[{j}]: lens {lens['class']} names finding {finding_id} "
+                    f"from primary_class {finding['primary_class']}; finding_ids may reference only findings whose "
+                    f"primary_class equals the lens class; move {finding_id} to lens {finding['primary_class']} "
+                    "and record cross-lens observations in evidence"
                 )
-    for c in candidates:
-        if set(c["finding_ids"]) - set(fids):
-            raise ReportError(f"candidate {c['id']} names unknown findings")
+    for i, c in enumerate(candidates):
+        missing = set(c["finding_ids"]) - set(fids)
+        if missing:
+            raise ReportError(f"{label}.candidates[{i}] ({c['id']}).finding_ids names unknown findings: {', '.join(sorted(missing))}; choose finding ids from this packet")
         if not any(
             finding_by_id[finding_id]["kind"] in {"defect", "opportunity"}
             for finding_id in c["finding_ids"]
         ):
             raise ReportError(
-                f"candidate {c['id']} requires a defect or opportunity finding"
+                f"{label}.candidates[{i}] ({c['id']}).finding_ids requires a defect or opportunity finding"
             )
         linked_scope = {sid for fid in c["finding_ids"] for sid in finding_by_id[fid]["affected_scope"]}
         c["affected_scope"] = sorted(set(c["affected_scope"]) | linked_scope)
     return {
         "expected_report_sha256": expected,
-        "subsystem_id": _id(raw["subsystem_id"], "subsystem id"),
-        "source_identity": _source_packet(raw["source_identity"], "source identity"),
+        "subsystem_id": subsystem,
+        "source_identity": _source_packet(raw["source_identity"], f"{label}.source_identity"),
         "source_trace": trace,
         "lenses": lenses,
         "findings": findings,
         "candidates": candidates,
         "systemic_findings": systemic,
-        "coverage": _text(raw.get("coverage", ""), "coverage", empty=True),
-        "evidence_limits": _text(raw.get("evidence_limits", ""), "evidence limits", empty=True),
-        "recommendation": _text(raw.get("recommendation", ""), "recommendation", empty=True),
+        "coverage": _text(raw.get("coverage", ""), f"{label}.coverage", empty=True),
+        "evidence_limits": _text(raw.get("evidence_limits", ""), f"{label}.evidence_limits", empty=True),
+        "recommendation": _text(raw.get("recommendation", ""), f"{label}.recommendation", empty=True),
     }
+
+
+def _audit_source_preflight(packet: dict[str, Any], state: dict[str, Any], *, append: bool = False) -> list[str]:
+    """Explain missing owner bindings before a packet can publish incomplete claims."""
+    subsystem = packet["subsystem_id"]
+    scope = {subsystem}
+    known = {sub["id"] for sub in state["subsystems"] + state["retired_subsystems"]}
+    for name in ("findings", "systemic_findings", "candidates"):
+        for index, record in enumerate(packet[name]):
+            unknown = set(record["affected_scope"]) - known
+            if unknown:
+                raise ReportError(
+                    f"audit manifest (subsystem {subsystem}).{name}[{index}] ({record['id']}).affected_scope "
+                    f"names unknown owner(s): {', '.join(sorted(unknown))}; choose mapped subsystem ids: {', '.join(sorted(known))}"
+                )
+            scope.update(record["affected_scope"])
+    owners = _current_scope(state, sorted(scope))
+    required = sorted({path for owner in state["subsystems"] if owner["id"] in owners for path in owner["owned_paths"]})
+    bound = set(packet["source_identity"]["paths"])
+    missing = {owner["id"]: sorted(set(owner["owned_paths"]) - bound)
+               for owner in state["subsystems"] if owner["id"] in owners and set(owner["owned_paths"]) - bound}
+    if missing:
+        details = "; ".join(f"{sid} ({', '.join(paths[:5])}{', ...' if len(paths) > 5 else ''})" for sid, paths in sorted(missing.items()))
+        extra = "".join(f" --affected-subsystem {sid}" for sid in sorted(owners - {subsystem}))
+        raise ReportError(
+            f"audit manifest (subsystem {subsystem}).source_identity.paths omits required affected-owner bindings: {details}; "
+            f"reprepare with prepare-audit --subsystem {subsystem}{extra}{' --append' if append else ''} --output NEW.json "
+            "using the same --repo-root and --report, then transfer the completed judgments"
+        )
+    return required
 
 
 def _analysis(raw: dict[str, Any]) -> dict[str, Any]:
@@ -874,35 +1033,28 @@ def _source_packet(value: object, label: str) -> dict[str, Any]:
 def _verify_source_packet(
     root: Path, packet: dict[str, Any], required_paths: Sequence[str]
 ) -> dict[str, Any]:
-    if set(required_paths) - set(packet["paths"]):
-        raise ReportError("source_identity omits required bound source")
+    missing = sorted(set(required_paths) - set(packet["paths"]))
+    if missing:
+        raise ReportError("source_identity omits required bound source: " + _bounded_names(missing) + "; reprepare with all affected source paths")
     expected = source_identity(repo_root=root, paths=packet["paths"])
     actual = {"paths": packet["paths"], "sha256": packet["sha256"]}
     current = {"paths": expected["paths"], "sha256": expected["sha256"]}
     if actual != current:
-        raise ReportError("source_identity does not match current bound source")
+        changed = sorted(path for path in packet["paths"] if packet["fingerprints"][path] != expected["fingerprints"].get(path))
+        raise ReportError("source_identity does not match current bound source: " + (_bounded_names(changed) if changed else "snapshot digest changed") + "; inspect the delta and reprepare")
     if packet["fingerprints"] != expected["fingerprints"]:
         raise ReportError("source fingerprints do not match current bound source")
     return {k: expected[k] for k in ("paths", "sha256", "fingerprints")}
 
 
-def _packet_observation(root: Path, packet: dict[str, Any]) -> dict[str, Any]:
-    result = {"freshness": "fresh", "changed_paths": []}
-    try:
-        current = source_identity(repo_root=root, paths=packet["paths"])
-        result["freshness"] = "fresh" if current["sha256"] == packet["sha256"] else "changed"
-        result["changed_paths"] = sorted(path for path in packet["paths"] if current["fingerprints"][path] != packet["fingerprints"][path])
-    except ReportError as exc:
-        result["freshness"] = "changed"
-        result["error"] = str(exc)
-        for path in packet["paths"]:
-            try:
-                actual = source_identity(repo_root=root, paths=[path])["fingerprints"][path]
-            except ReportError:
-                actual = None
-            if actual != packet["fingerprints"][path]:
-                result["changed_paths"].append(path)
-    return result
+def _bounded_names(values: Sequence[str], limit: int = 20) -> str:
+    shown = ", ".join(values[:limit])
+    return shown + (f" (+{len(values) - limit} more)" if len(values) > limit else "")
+
+
+def _packet_observation(root: Path, packet: dict[str, Any], *, sources: _SourceObservationCache | None = None) -> dict[str, Any]:
+    observed = _observed_source(root, packet, sources)
+    return {key: value for key, value in observed.items() if key in {"freshness", "changed_paths", "error"}}
 
 
 def _map_drift(state: dict[str, Any], root: Path) -> dict[str, Any]:
@@ -1076,10 +1228,13 @@ def _work_status(state: dict[str, Any], target: dict[str, str]) -> dict[str, Any
     own_events = _target_events(state, target)
     relevant = dict(own_events)
     linked = []
+    linked_work = []
     if target["kind"] == "candidate":
         for fid in item["record"]["finding_ids"]:
             relevant.update(_target_events(state, {"kind": "finding", "id": fid}))
-            linked.append(_work_status(state, {"kind": "finding", "id": fid})["status"])
+            work = _work_status(state, {"kind": "finding", "id": fid})
+            linked_work.append(work)
+            linked.append(work["status"])
     epoch = max((index for index, event in relevant.items() if event["type"] in {"implemented", "reopened"}), default=-1)
     current = [event for index, event in own_events if index >= epoch]
     decisions = [event for event in current if event["type"] in {"implemented", "verified", "deferred", "reopened"}]
@@ -1089,9 +1244,12 @@ def _work_status(state: dict[str, Any], target: dict[str, str]) -> dict[str, Any
     if target["kind"] == "candidate" and item["record"]["state"] == "disproved":
         status = "disproved"
     group_changed = False
+    proof_ids = []
     if decisions:
         decision = decisions[-1]
         status = "open" if decision["type"] == "reopened" else decision["type"]
+        if decision["type"] == "verified":
+            proof_ids = [decision["id"]]
         if status == "verified" and state.get("outcome_freshness", {}).get(decision["id"]) != "fresh":
             status = "verification changed"
         if decision["type"] == "verified" and target["kind"] == "candidate":
@@ -1101,6 +1259,7 @@ def _work_status(state: dict[str, Any], target: dict[str, str]) -> dict[str, Any
     if target["kind"] == "candidate" and (not decisions or status in {"open", "implemented", "verified", "deferred", "verification changed"}) and not group_changed:
         if linked and all(value == "verified" for value in linked):
             status = "verified"
+            proof_ids = [identifier for work in linked_work for identifier in work["current_proof_outcome_ids"]]
             verified_paths = set()
             candidate_digest = _candidate_digests(state, [target["id"]])[target["id"]]
             for fid in item["record"]["finding_ids"]:
@@ -1115,15 +1274,27 @@ def _work_status(state: dict[str, Any], target: dict[str, str]) -> dict[str, Any
             status = "deferred"
         elif relevant:
             status = next((value for value in ("open", "verification changed", "implemented") if value in linked), "open")
+            proof_ids = [identifier for work in linked_work for identifier in work["current_proof_outcome_ids"]]
     requirement = next((row for row in state.get("delivery_requirements", []) if row["target"] == target), None)
     commits = [event["reference"] for event in current if event["type"] == "committed"]
     deployments = [event["destination"] for event in current if event["type"] == "deployed"]
     outcome_ids = [relevant[index]["id"] for index in sorted(relevant)]
     observed = [state["outcome_freshness"][identifier] for identifier in outcome_ids if identifier in state["outcome_freshness"]]
+    # The active proof comes from the same decisions that established status. A
+    # prior verification must not survive a later implementation or reopening.
+    proof_ids = [identifier for identifier in outcome_ids if identifier in proof_ids] if status in {"verified", "verification changed"} else []
+    historical_ids = [identifier for identifier in outcome_ids if identifier not in proof_ids]
+    historical = [state["outcome_freshness"][identifier] for identifier in historical_ids if identifier in state["outcome_freshness"]]
     return {"status": status, "commit_pending": bool(requirement and requirement["commit"] and not commits),
             "deployment_pending": sorted(set(requirement["deployments"]) - set(deployments)) if requirement else [],
             "commits": commits, "deployments": deployments, "outcome_ids": outcome_ids,
-            "outcome_freshness": "changed" if "changed" in observed else "fresh" if observed else ""}
+            "outcome_freshness": "changed" if "changed" in observed else "fresh" if observed else "",
+            "current_completion": status,
+            "current_proof_freshness": "fresh" if status == "verified" else "changed" if status == "verification changed" else "",
+            "current_proof_outcome_ids": proof_ids,
+            "historical_outcome_ids": historical_ids,
+            "historical_outcome_freshness": "changed" if "changed" in historical else "fresh" if historical else "",
+            "implementation_epoch_outcome_id": relevant[epoch]["id"] if epoch >= 0 else ""}
 
 
 def _current_scope(state: dict[str, Any], ids: Sequence[str]) -> set[str]:
@@ -1215,6 +1386,7 @@ def _finding_observations(state: dict[str, Any], item: dict[str, Any], root: Pat
 
 def _refresh_observation(state: dict[str, Any], root: Path) -> None:
     cache = {}
+    sources = _SourceObservationCache(root)
     revisions = _reconciliation_revisions(state)
     audit_indices = {item["selection"]: index for index, item in enumerate(state["history"]) if item["operation"] == "audit"}
     analysis_indices = {item["selection"]: index for index, item in enumerate(state["history"]) if item["operation"] == "analyze"}
@@ -1222,7 +1394,7 @@ def _refresh_observation(state: dict[str, Any], root: Path) -> None:
     def observe(packet: dict[str, Any]) -> dict[str, Any]:
         key = _canonical(packet)
         if key not in cache:
-            cache[key] = _packet_observation(root, packet)
+            cache[key] = _packet_observation(root, packet, sources=sources)
         return cache[key]
 
     state["source_changes"] = {sub["id"]: observe(sub.get("audit", {}).get("source_identity") or sub["map_source"]) for sub in state["subsystems"]}
@@ -1715,7 +1887,7 @@ def _maintenance_html(state: dict[str, Any]) -> str:
         freshness = work["outcome_freshness"]
         evidence_badge = _state_row("Evidence", _input_badge(freshness, "Outcome")) if freshness else ""
         cards.append(f'<article class="card" id="work-{kind}-{escape(identifier)}" data-filter-card data-entity="outcome" data-state="outcome" data-freshness="{freshness}" {_work_attributes(work)} data-search="{escape(identifier + " " + entry["record"]["title"] + " " + _display_title(state, kind, identifier, entry["record"]["title"]), quote=True)}"><h3>{escape(_display_title(state, kind, identifier, entry["record"]["title"]))}</h3><p class="record-id">{kind.capitalize()} <code>{escape(identifier)}</code></p>{_state_row("Work", _work_badges(work, entry["record"].get("kind", "")))}{evidence_badge}<details><summary>Outcome evidence</summary><ul class="compact">{"".join(events)}</ul></details></article>')
-    preview = "".join(f'<li>{escape(record["environment"])} / {escape(record["capability"])}: {escape(record["state"])} — {escape(record["reason"])}' + (f'<p>Visually checked report revision <code>{escape(record["report_sha256"])}</code></p>' if record["state"] == "verified" else "") + '</li>' for record in state["preview"])
+    preview = "".join(f'<li>{escape(record["environment"])} / {escape(record["capability"])}: {escape("pending · rendering unobserved" if record["state"] == "pending" else record["state"])} — {escape(record["reason"])}' + (f'<p>Visually checked report revision <code>{escape(record["report_sha256"])}</code></p>' if record["state"] == "verified" else "") + '</li>' for record in state["preview"])
     archived = []
     for kind, catalog in (("candidate", candidates), ("finding", findings)):
         for identifier, entry in sorted(catalog.items()):
@@ -2006,8 +2178,8 @@ def _preview_record(value: object, *, stored: bool = False) -> dict[str, Any]:
     raw = _obj(value, "preview record")
     _strict(raw, {"environment", "capability", "state", "reason", "evidence"}, {"report_sha256"} | ({"recorded_at"} if stored else set()), "preview record")
     preview_state = _text(raw["state"], "preview state")
-    if preview_state not in {"unavailable", "verified"}:
-        raise ReportError("preview state must be unavailable or verified")
+    if preview_state not in {"pending", "unavailable", "verified"}:
+        raise ReportError("preview state must be pending, unavailable or verified")
     result = {key: _text(raw[key], f"preview {key}") for key in ("environment", "capability", "state", "reason")}
     result["evidence"] = _texts(raw["evidence"], "preview evidence", empty=False)
     if preview_state == "verified":
@@ -2016,7 +2188,7 @@ def _preview_record(value: object, *, stored: bool = False) -> dict[str, Any]:
             raise ReportError("visual verification requires the checked report digest")
         result["report_sha256"] = digest
     elif "report_sha256" in raw:
-        raise ReportError("environment limitations do not claim report verification")
+        raise ReportError("unobserved previews and environment limitations do not claim report verification")
     result["recorded_at"] = _text(raw.get("recorded_at"), "preview time") if stored else _now()
     return result
 
@@ -2228,6 +2400,35 @@ def _content_identity(root: Path, paths: Sequence[str]) -> dict[str, Any]:
     return {"paths": sorted(paths), "fingerprints": fingerprints, "sha256": h.hexdigest()}
 
 
+def _verification_reuse_differences(previous: dict[str, Any], current: dict[str, Any]) -> list[str]:
+    """Explain exact equality refusals without disclosing command or environment values."""
+    labels = {
+        "targets": "targets changed", "command": "command changed", "environment": "environment changed (label)",
+        "candidate_findings": "candidate membership changed", "finding_sha256": "finding claims changed",
+        "candidate_sha256": "candidate contracts changed", "environment_sha256": "process environment changed (or executable/runtime identity)",
+        "ownership_sha256": "ownership changed",
+    }
+    differences = []
+    for field, label in labels.items():
+        if previous[field] != current[field]:
+            if field in {"candidate_findings", "finding_sha256", "candidate_sha256"}:
+                changed = sorted(key for key in set(previous[field]) | set(current[field])
+                                 if previous[field].get(key) != current[field].get(key))
+                label += ": " + _bounded_names(changed)
+            differences.append(label)
+    old, new = previous["content_identity"], current["content_identity"]
+    if old["paths"] != new["paths"]:
+        differences.append("proof path membership changed: " + _bounded_names(sorted(set(old["paths"]) ^ set(new["paths"]))))
+    if old != new:
+        changed = sorted(path for path in set(old["paths"]) & set(new["paths"])
+                         if old["fingerprints"][path] != new["fingerprints"][path])
+        if changed:
+            differences.append("proof content changed: " + _bounded_names(changed))
+        elif old["paths"] == new["paths"]:
+            differences.append("proof content identity changed")
+    return differences
+
+
 def _check_ownership(state: dict[str, Any], targets: Sequence[dict[str, str]]) -> str:
     catalog = _catalog(state)
     scopes = set()
@@ -2418,12 +2619,30 @@ def verify(*, repo_root: Path, report: Path, identifier: str, targets: Sequence[
         if reuse:
             previous = next((row for row in state["checks"] if row["id"] == reuse), None)
             if previous is None or previous["exit_code"] != 0 or previous["source_drift"]:
-                raise ReportError("reuse requires a passing, drift-free receipt")
-            if any(previous[key] != value for key, value in (("targets", selected), ("command", command), ("environment", environment),
-                    ("candidate_findings", membership), ("finding_sha256", finding_digests), ("candidate_sha256", candidate_digests), ("environment_sha256", environment_sha), ("content_identity", content), ("ownership_sha256", ownership))):
-                raise ReportError("verification inputs, ownership, command, or environment changed; run the check")
+                reason = ("receipt missing" if previous is None else "original check failed" if previous["exit_code"] != 0
+                          else "original check source drift: " + _bounded_names(previous["source_drift"]))
+                raise ReportError("verification reuse refused: " + reason + "; reuse requires a passing, drift-free receipt; run the check", stage="verification-reuse")
+            differences = _verification_reuse_differences(previous, {
+                "targets": selected, "command": command, "environment": environment, "candidate_findings": membership,
+                "finding_sha256": finding_digests, "candidate_sha256": candidate_digests, "environment_sha256": environment_sha,
+                "content_identity": content, "ownership_sha256": ownership,
+            })
+            if differences:
+                if "ownership changed" in differences:
+                    catalog = _catalog(state)
+                    scopes = set()
+                    for target in selected:
+                        record = catalog[0 if target["kind"] == "candidate" else 1][target["id"]]["record"]
+                        scopes.update(record["affected_scope"])
+                        scopes.update(record.get("analysis", {}).get("affected_scope", []))
+                    index = differences.index("ownership changed")
+                    differences[index] += ": " + _bounded_names(sorted(_current_scope(state, sorted(scopes))))
+                raise ReportError("verification reuse refused: " + "; ".join(differences) + "; run the check", stage="verification-reuse")
             log = previous["log"]
-            log_path = _check_log(root, previous)
+            try:
+                log_path = _check_log(root, previous)
+            except ReportError as exc:
+                raise ReportError("verification reuse refused: verification log missing or changed; run the check", stage="verification-reuse") from exc
             code = 0
         else:
             log_path = path.with_name(f"check-{identifier}.log")
@@ -2550,8 +2769,13 @@ def _guard_view(operation: str, raw: dict[str, Any], state: dict[str, Any]) -> d
             target.append([record, linked, [event for event in state["outcomes"] if event["id"] in effective],
                            [row for row in state["delivery_requirements"] if row["target"] in related]])
         if operation == "record-outcome":
-            target.append({"outcome_types": sorted([{"target": _target(row["target"], state), "type": row.get("type")}
-                                                   for row in raw.get("events", [])], key=_canonical)})
+            ordered = [{"target": _target(row["target"], state), "type": row.get("type")}
+                       for row in raw.get("events", [])]
+            transitions = {"outcome_types": sorted(ordered, key=_canonical)}
+            # Retain single-type prepared guards; lifecycle order affects the implementation epoch.
+            if len({row["type"] for row in ordered}) > 1:
+                transitions["outcome_order"] = ordered
+            target.append(transitions)
     return {"operation": operation, "context_sha256": _digest(_canonical([state["systems"], context, state["excluded"]])),
             "target_sha256": _digest(_canonical(target)),
             "source_sha256": _digest(_canonical(sorted(_bound_packets(raw), key=_canonical)))}
@@ -2596,8 +2820,7 @@ def _append_findings(raw: dict[str, Any], state: dict[str, Any], root: Path) -> 
     candidates, findings = _catalog(state)
     if any(row["id"] in findings for row in packet["findings"] + packet["systemic_findings"]) or any(row["id"] in candidates for row in packet["candidates"]):
         raise ReportError("follow-up IDs must be new, including historical IDs")
-    scope = {sub["id"]} | {sid for record in packet["findings"] + packet["systemic_findings"] + packet["candidates"] for sid in record["affected_scope"]}
-    required = [path for owner in state["subsystems"] if owner["id"] in _current_scope(state, sorted(scope)) for path in owner["owned_paths"]]
+    required = _audit_source_preflight(packet, state, append=True)
     _verify_source_packet(root, packet["source_identity"], required)
     sub["audit"]["findings"] += packet["findings"]
     sub["audit"]["candidates"] += packet["candidates"]
@@ -2716,7 +2939,7 @@ def _prepare_raw(objective: str, root: Path, report: Path, raw: dict[str, Any], 
                     f"unknown subsystem {packet['subsystem_id']}; choose one of: {', '.join(x['id'] for x in state['subsystems'])}"
                 )
             packet["source_identity"] = _verify_source_packet(
-                root, packet["source_identity"], selected["owned_paths"]
+                root, packet["source_identity"], _audit_source_preflight(packet, state)
             )
             historical_candidates, historical_findings = _catalog(state)
             if any(item["id"] in historical_candidates and historical_candidates[item["id"]]["origin"] != selected["id"] for item in packet["candidates"]):
@@ -2862,6 +3085,28 @@ def _finish_mutation(p: dict[str, Any], objective: str, repo_root: Path, validat
     return result
 
 
+def prepare_map(*, repo_root: Path, report: Path, output: Path | None = None) -> dict[str, Any]:
+    """Prepare inventory mechanics; blank judgments keep the provisional owner unpublished."""
+    root = repo_root.resolve()
+    path = _report_path(root, report, exists=False)
+    if path.exists():
+        raise ReportError("prepare-map requires an absent report; use reconcile-map for an existing atlas")
+    observed = inventory(repo_root=root)
+    packet = {
+        "version": MANIFEST_VERSION, "expected_report_sha256": "absent", "title": "",
+        "observation_identity": observed["identity"],
+        "systems": [{"id": "system", "name": ""}],
+        "subsystems": [{"id": "subsystem", "system_id": "system", "name": "", "purpose": "",
+                        "ownership": "", "authority": [], "callers": [], "dependencies": [], "interfaces": [],
+                        "proof_seams": [], "owned_paths": observed["tracked_paths"]}],
+        "excluded": [], "coverage": "", "evidence_limits": "",
+    }
+    path.parent.mkdir(parents=True, exist_ok=True)
+    return _write_packet(root, path, packet, output or Path("map.json"),
+                         tracked_path_count=len(observed["tracked_paths"]),
+                         required_fields=["title", "systems[0].name", "subsystems[0].name", "subsystems[0].purpose"])
+
+
 def prepare_audit(*, repo_root: Path, report: Path, subsystem: str,
                   affected_subsystems: Sequence[str] = (), paths: Sequence[str] = (),
                   output: Path | None = None, append: bool = False) -> dict[str, Any]:
@@ -2930,42 +3175,55 @@ def _source_packet_view(root: Path, paths: Sequence[str]) -> dict[str, Any]:
     return {key: value for key, value in source_identity(repo_root=root, paths=paths).items() if key != "response_version"}
 
 
-def prepare_outcomes(*, repo_root: Path, report: Path, targets: Sequence[str], outcome_type: str,
-                     paths: Sequence[str] = (), output: Path | None = None, check_ids: Sequence[str] = ()) -> dict[str, Any]:
+def prepare_outcomes(*, repo_root: Path, report: Path, targets: Sequence[str], outcome_type: str | None = None,
+                     outcome_types: Sequence[str] = (), paths: Sequence[str] = (), output: Path | None = None,
+                     check_ids: Sequence[str] = ()) -> dict[str, Any]:
+    """Prepare one guarded lifecycle packet in requested type order, then target order."""
     root = repo_root.resolve()
     path = _report_path(root, report, exists=True)
     data, state = _load(root, path)
     selected = [_parse_target(value, state) for value in targets]
     if not selected or len({_canonical(target) for target in selected}) != len(selected):
         raise ReportError("prepare-outcomes requires distinct targets")
-    if outcome_type not in {"implemented", "verified", "deferred", "reopened", "committed", "deployed"}:
-        raise ReportError("unsupported outcome type")
+    if outcome_type is not None and outcome_types:
+        raise ReportError("prepare-outcomes accepts outcome_type or outcome_types, not both")
+    if isinstance(outcome_types, str) or not isinstance(outcome_types, Sequence):
+        raise ReportError("outcome_types must be a sequence of outcome type strings")
+    kinds = [outcome_type] if outcome_type is not None else list(outcome_types)
+    supported = {"implemented", "verified", "deferred", "reopened", "committed", "deployed"}
+    if not kinds or any(not isinstance(kind, str) or kind not in supported for kind in kinds):
+        raise ReportError(f"prepare-outcomes requires supported outcome types; choose one or more of: {', '.join(sorted(supported))}")
+    if len(kinds) != len(set(kinds)):
+        raise ReportError("prepare-outcomes requires distinct outcome types in lifecycle order")
     checks = {row["id"]: row for row in state["checks"]}
-    if check_ids and (outcome_type != "verified" or len(set(check_ids)) != len(check_ids) or set(check_ids) - set(checks)):
+    if check_ids and ("verified" not in kinds or len(set(check_ids)) != len(check_ids) or set(check_ids) - set(checks)):
         raise ReportError("--check requires known, distinct receipts and verified outcomes")
     shared_paths = {_rel(p, "proof path") for p in paths}
     bound = set()
+    rows = [(kind, target) for kind in kinds for target in selected]
     packet = {"version": MANIFEST_VERSION, "expected_report_sha256": _digest(data), "events": [
-        {"id": f"{target['kind']}-{target['id']}-{outcome_type}-{len(state['outcomes']) + index + 1}", "target": target,
-         "type": outcome_type, "summary": "", "evidence": []} for index, target in enumerate(selected)]}
+        {"id": f"{target['kind']}-{target['id']}-{kind}-{len(state['outcomes']) + index + 1}", "target": target,
+         "type": kind, "summary": "", "evidence": []} for index, (kind, target) in enumerate(rows)]}
     for event in packet["events"]:
+        kind = event["type"]
         event_paths = set(_outcome_required_paths(state, event)) | shared_paths
-        if check_ids:
+        if check_ids and kind == "verified":
             applicable = [check_id for check_id in check_ids if event["target"] in checks[check_id]["targets"]]
             if not applicable:
-                raise ReportError("selected target has no supplied verification receipt")
+                raise ReportError(f"verified event for {event['target']['kind']}:{event['target']['id']} has no supplied verification receipt")
             event["check_ids"] = applicable
             event["evidence"] = [f"Check {check_id}: {checks[check_id]['log']['path']}" for check_id in applicable]
             event_paths.update(p for check_id in applicable for p in checks[check_id]["source_identity"]["paths"])
-        if outcome_type in {"implemented", "verified"} or shared_paths:
+        if kind in {"implemented", "verified"} or shared_paths:
             bound.update(event_paths)
             event["source_identity"] = _source_packet_view(root, sorted(event_paths))
-        if outcome_type in {"committed", "deployed"}:
+        if kind in {"committed", "deployed"}:
             event["reference"] = ""
-        if outcome_type == "deployed":
+        if kind == "deployed":
             event["destination"] = ""
     packet["prepared"] = _guard_view("record-outcome", packet, state)
-    return _write_packet(root, path, packet, output or Path(f"outcomes-{outcome_type}.json"), targets=selected, source_paths=sorted(bound))
+    return _write_packet(root, path, packet, output or Path(f"outcomes-{'-'.join(kinds)}.json"),
+                         targets=selected, outcome_types=kinds, source_paths=sorted(bound))
 
 
 def prepare_gaps(*, repo_root: Path, report: Path, findings: Sequence[str] = (), lenses: Sequence[str] = (),
@@ -3276,6 +3534,35 @@ def _inspection_history(state: dict[str, Any], rows: list[dict[str, Any]], *, su
     return entries
 
 
+def _inspection_sources(value: Any, *, include_fingerprints: bool, limit: int, offset: int) -> Any:
+    """Project source evidence without changing stored packets or proof inputs."""
+    if isinstance(value, list):
+        return [_inspection_sources(item, include_fingerprints=include_fingerprints, limit=limit, offset=offset) for item in value]
+    if not isinstance(value, dict):
+        return value
+    if {"paths", "fingerprints"} <= value.keys():
+        paths = value["paths"]
+        page = paths[offset:offset + limit]
+        if include_fingerprints and offset == 0 and len(paths) <= limit:
+            return dict(value)
+        result = {key: _inspection_sources(item, include_fingerprints=include_fingerprints, limit=limit, offset=offset)
+                  for key, item in value.items() if key not in {"paths", "fingerprints"}}
+        result.update(paths=page, paths_total=len(paths), paths_offset=offset, paths_limit=limit,
+                      paths_has_more=offset + limit < len(paths), fingerprints_total=len(value["fingerprints"]),
+                      fingerprints_included=include_fingerprints)
+        if include_fingerprints:
+            result["fingerprints"] = {path: value["fingerprints"][path] for path in page}
+        return result
+    result = {key: _inspection_sources(item, include_fingerprints=include_fingerprints, limit=limit, offset=offset)
+              for key, item in value.items()}
+    for key in {"changed_paths", "owned_paths", "audit_scope", "matching_paths", "added_paths", "removed_paths", "unowned_paths", "missing_owned_paths"} & value.keys():
+        paths = value[key]
+        if isinstance(paths, list) and f"{key}_total" not in value and not (include_fingerprints and offset == 0 and len(paths) <= limit):
+            result.update({key: paths[offset:offset + limit], f"{key}_total": len(paths), f"{key}_offset": offset,
+                           f"{key}_limit": limit, f"{key}_has_more": offset + limit < len(paths)})
+    return result
+
+
 def _subsystem_inspection(state: dict[str, Any], sub: dict[str, Any], root: Path, paths: Sequence[str], limit: int,
                           revisions: dict[int, tuple[dict[str, Any], dict[str, Any]]]) -> dict[str, Any] | None:
     packet = sub.get("audit", {}).get("source_identity") or sub["map_source"]
@@ -3298,7 +3585,8 @@ def _subsystem_inspection(state: dict[str, Any], sub: dict[str, Any], root: Path
 def inspect_report(*, repo_root: Path, report: Path, full: bool = False,
                    subsystem: str | None = None, candidate: str | None = None, finding: str | None = None,
                    changed_paths: Sequence[str] = (), outstanding: bool = False, history: bool = False,
-                   limit: int = 20, offset: int = 0, detail: bool = True, gaps: bool = False) -> dict[str, Any]:
+                   limit: int = 20, offset: int = 0, detail: bool = True, gaps: bool = False,
+                   include_fingerprints: bool = False, source_limit: int = 20, source_offset: int = 0) -> dict[str, Any]:
     data, state = _load(repo_root.resolve(), report)
     result = {
         "response_version": RESPONSE_VERSION,
@@ -3317,6 +3605,8 @@ def inspect_report(*, repo_root: Path, report: Path, full: bool = False,
         return result
     if limit < 1 or limit > 100 or offset < 0:
         raise ReportError("inspection limit must be 1..100 and offset nonnegative")
+    if source_limit < 1 or source_limit > 100 or source_offset < 0:
+        raise ReportError("inspection source limit must be 1..100 and source offset nonnegative")
     root = repo_root.resolve()
     _refresh_observation(state, root)
     candidates, findings = _catalog(state)
@@ -3398,7 +3688,7 @@ def inspect_report(*, repo_root: Path, report: Path, full: bool = False,
                 subsystem_rows.append(observed_subsystem)
     result.update(summary=_summary(state), observed_at=state["observed_at"], rows=rows[offset:offset + limit], total=len(rows), offset=offset, limit=limit, has_more=offset + limit < len(rows),
                   subsystems=subsystem_rows[offset:offset + limit], subsystems_total=len(subsystem_rows), subsystems_has_more=offset + limit < len(subsystem_rows))
-    result["map_drift"] = {key: value[:limit] if isinstance(value, list) else value for key, value in state["map_drift"].items()}
+    result["map_drift"] = dict(state["map_drift"])
     result["map_drift"]["totals"] = {key: len(value) for key, value in state["map_drift"].items() if isinstance(value, list)}
     result["preview"] = state["preview"]
     if gaps:
@@ -3418,7 +3708,9 @@ def inspect_report(*, repo_root: Path, report: Path, full: bool = False,
         entries = _inspection_history(state, rows, subsystem=subsystem, candidate=candidate, finding=finding,
                                       paths=paths, outstanding=outstanding, detail=detail, matched_subsystems=[sub["subsystem_id"] for sub in subsystem_rows])
         result.update(history=entries[offset:offset + limit], history_total=len(entries), history_has_more=offset + limit < len(entries))
-    return result
+    result["source_projection"] = {"include_fingerprints": include_fingerprints, "limit": source_limit, "offset": source_offset,
+                                   "complete_state_available": "--full"}
+    return _inspection_sources(result, include_fingerprints=include_fingerprints, limit=source_limit, offset=source_offset)
 
 
 def status_report(*, repo_root: Path, report: Path, **filters: Any) -> dict[str, Any]:
@@ -3502,14 +3794,41 @@ def check_report(*, repo_root: Path, report: Path) -> dict[str, Any]:
             "visual_verification": {"performed_by_check_report": False, "records": state["preview"]}}
 
 
+def _cli_paths(root: Path, paths: Sequence[str], files: Sequence[Path]) -> list[str]:
+    """Read additive UTF-8 path lists without expanding shell arguments."""
+    selected = list(paths)
+    for filename in files:
+        path = filename if filename.is_absolute() else root / filename
+        try:
+            values = json.loads(path.read_text(encoding="utf-8-sig"))
+        except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+            raise ReportError(f"--paths-file {filename}: cannot read UTF-8 JSON path list: {exc}", stage="arguments") from exc
+        if not isinstance(values, list):
+            raise ReportError(f"--paths-file {filename}: expected a JSON array of repository-relative file paths", stage="arguments")
+        selected.extend(_rel(value, f"--paths-file {filename}[{index}]") for index, value in enumerate(values))
+    return sorted({_rel(value, "--path") for value in selected})
+
+
+def _add_path_arguments(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument("--path", action="append", default=[], dest="paths", help="Exact repository-relative proof file; repeat as needed")
+    parser.add_argument("--paths-file", action="append", default=[], type=Path, dest="paths_files",
+                        help="UTF-8 JSON array of proof paths; list filename is relative to --repo-root; additive and repeatable")
+
+
 def _parser() -> argparse.ArgumentParser:
-    parser = JsonArgumentParser()
+    parser = JsonArgumentParser(description="Prepare, inspect and safely publish a self-contained codebase atlas.")
     commands = parser.add_subparsers(dest="command", required=True)
     p = commands.add_parser("inventory")
     p.add_argument("--repo-root", type=Path, required=True)
-    p = commands.add_parser("source-identity")
+    p = commands.add_parser("source-identity", help="Capture exact file identity or compare a saved source packet")
     p.add_argument("--repo-root", type=Path, required=True)
-    p.add_argument("--path", action="append", dest="paths", required=True)
+    _add_path_arguments(p)
+    p.add_argument("--compare", type=Path, help="Compare a saved identity response or prepared packet against current files")
+    p.add_argument("--limit", type=int, default=20, help="Maximum paths per comparison mismatch summary")
+    p = commands.add_parser("prepare-map", help="Write a map draft with current inventory and mechanical identity fields")
+    p.add_argument("--repo-root", type=Path, required=True)
+    p.add_argument("--report", type=Path, required=True)
+    p.add_argument("--output", type=Path, help="New JSON filename beside the report; never overwrites a draft")
     for name in ("inspect", "status"):
         p = commands.add_parser(name)
         p.add_argument("--repo-root", type=Path, required=True)
@@ -3525,6 +3844,9 @@ def _parser() -> argparse.ArgumentParser:
         p.add_argument("--offset", type=int, default=0)
         if name == "inspect":
             p.add_argument("--full", action="store_true")
+            p.add_argument("--include-fingerprints", action="store_true", help="Include source fingerprints for the selected source page")
+            p.add_argument("--source-limit", type=int, default=20, help="Maximum paths per source packet")
+            p.add_argument("--source-offset", type=int, default=0, help="Source path page offset")
     p = commands.add_parser("check-report")
     p.add_argument("--repo-root", type=Path, required=True)
     p.add_argument("--report", type=Path, required=True)
@@ -3537,21 +3859,22 @@ def _parser() -> argparse.ArgumentParser:
         p.add_argument("--report", type=Path, required=True)
         if name == "prepare-outcomes":
             p.add_argument("--target", action="append", required=True, dest="targets")
-            p.add_argument("--type", required=True, dest="outcome_type")
+            p.add_argument("--type", action="append", required=True, dest="outcome_types",
+                           help="Lifecycle event type; repeat in intended order to compose one guarded packet")
             p.add_argument("--check", action="append", default=[], dest="check_ids")
         else:
             p.add_argument("--subsystem" if name == "prepare-audit" else "--candidate", action="append", required=True, dest="selections")
             p.add_argument("--affected-subsystem", action="append", default=[], dest="affected_subsystems")
         if name == "prepare-audit":
             p.add_argument("--append", action="store_true")
-        p.add_argument("--path", action="append", default=[], dest="paths")
+        _add_path_arguments(p)
         p.add_argument("--output", type=Path)
     p = commands.add_parser("prepare-gaps")
     p.add_argument("--repo-root", type=Path, required=True)
     p.add_argument("--report", type=Path, required=True)
     p.add_argument("--finding", action="append", default=[], dest="findings")
     p.add_argument("--lens", action="append", default=[], dest="lenses")
-    p.add_argument("--path", action="append", default=[], dest="paths")
+    _add_path_arguments(p)
     p.add_argument("--output", type=Path)
     p = commands.add_parser("publish-batch")
     p.add_argument("--repo-root", type=Path, required=True)
@@ -3565,7 +3888,7 @@ def _parser() -> argparse.ArgumentParser:
     p.add_argument("--id", required=True)
     p.add_argument("--target", action="append", required=True, dest="targets")
     p.add_argument("--environment", required=True)
-    p.add_argument("--path", action="append", default=[], dest="paths")
+    _add_path_arguments(p)
     p.add_argument("--reuse")
     p.add_argument("check_command", nargs=argparse.REMAINDER)
     p = commands.add_parser("edit-presentation")
@@ -3586,6 +3909,7 @@ def _parser() -> argparse.ArgumentParser:
             p.add_argument("--environment")
             p.add_argument("--capability")
             preview = p.add_mutually_exclusive_group()
+            preview.add_argument("--pending", action="store_true")
             preview.add_argument("--unavailable", action="store_true")
             preview.add_argument("--verified", action="store_true")
             p.add_argument("--reason")
@@ -3601,14 +3925,27 @@ def main(argv: Sequence[str] | None = None) -> int:
             stream.reconfigure(encoding="utf-8")
     try:
         a = _parser().parse_args(argv)
+        if hasattr(a, "paths"):
+            a.paths = _cli_paths(a.repo_root, a.paths, a.paths_files)
         if a.command == "inventory":
             result = inventory(repo_root=a.repo_root)
         elif a.command == "source-identity":
-            result = source_identity(repo_root=a.repo_root, paths=a.paths)
+            if a.compare:
+                expected_path = a.compare if a.compare.is_absolute() else a.repo_root / a.compare
+                result = compare_source_identity(repo_root=a.repo_root, expected=_json(expected_path, "source comparison"),
+                                                 required_paths=a.paths, limit=a.limit)
+            else:
+                if not a.paths:
+                    raise ReportError("source-identity requires --path or --paths-file, or --compare for a saved packet", stage="arguments")
+                result = source_identity(repo_root=a.repo_root, paths=a.paths)
+        elif a.command == "prepare-map":
+            result = prepare_map(repo_root=a.repo_root, report=a.report, output=a.output)
         elif a.command in {"inspect", "status"}:
+            source_options = {"include_fingerprints": a.include_fingerprints, "source_limit": a.source_limit,
+                              "source_offset": a.source_offset} if a.command == "inspect" else {}
             result = inspect_report(repo_root=a.repo_root, report=a.report, full=getattr(a, "full", False), detail=a.command == "inspect",
                                     subsystem=a.subsystem, candidate=a.candidate, finding=a.finding, changed_paths=a.changed_paths,
-                                    outstanding=a.outstanding, history=a.history, limit=a.limit, offset=a.offset, gaps=a.gaps)
+                                    outstanding=a.outstanding, history=a.history, limit=a.limit, offset=a.offset, gaps=a.gaps, **source_options)
         elif a.command == "check-report":
             result = check_report(repo_root=a.repo_root, report=a.report)
         elif a.command == "refresh":
@@ -3626,7 +3963,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                                          affected_subsystems=a.affected_subsystems, paths=a.paths, output=a.output) for selection in a.selections]
             result = prepared[0] if len(prepared) == 1 else {"response_version": RESPONSE_VERSION, "packets": prepared}
         elif a.command == "prepare-outcomes":
-            result = prepare_outcomes(repo_root=a.repo_root, report=a.report, targets=a.targets, outcome_type=a.outcome_type, paths=a.paths, output=a.output, check_ids=a.check_ids)
+            result = prepare_outcomes(repo_root=a.repo_root, report=a.report, targets=a.targets, outcome_types=a.outcome_types, paths=a.paths, output=a.output, check_ids=a.check_ids)
         elif a.command == "prepare-gaps":
             result = prepare_gaps(repo_root=a.repo_root, report=a.report, findings=a.findings, lenses=a.lenses, paths=a.paths, output=a.output)
         elif a.command == "publish-batch":
@@ -3653,13 +3990,13 @@ def main(argv: Sequence[str] | None = None) -> int:
             result = edit_presentation(repo_root=a.repo_root, report=a.report, kind=a.kind, identifier=a.id,
                                        title=a.title, validate_only=a.validate_only)
         elif a.command == "record-preview" and a.manifest is None:
-            if not (a.unavailable or a.verified):
-                raise ReportError("record-preview requires --manifest or --unavailable/--verified with observation fields")
+            if not (a.pending or a.unavailable or a.verified):
+                raise ReportError("record-preview requires --manifest or --pending/--unavailable/--verified with observation fields")
             result = record_preview(repo_root=a.repo_root, report=a.report, environment=a.environment, capability=a.capability,
-                                    state="verified" if a.verified else "unavailable", reason=a.reason, evidence=a.evidence,
+                                    state="verified" if a.verified else "pending" if a.pending else "unavailable", reason=a.reason, evidence=a.evidence,
                                     viewed_report_sha256=a.viewed_report_sha256, validate_only=a.validate_only)
         else:
-            if a.command == "record-preview" and any((a.environment, a.capability, a.unavailable, a.verified, a.reason, a.evidence, a.viewed_report_sha256)):
+            if a.command == "record-preview" and any((a.environment, a.capability, a.pending, a.unavailable, a.verified, a.reason, a.evidence, a.viewed_report_sha256)):
                 raise ReportError("record-preview manifest and direct observation fields cannot be combined")
             result = mutate_report(
                 objective=a.command,
@@ -3671,17 +4008,12 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(json.dumps(result, ensure_ascii=False, sort_keys=True))
         return 1 if a.command == "verify" and not result["passed"] else 0
     except ReportError as exc:
-        print(
-            json.dumps(
-                {
-                    "response_version": RESPONSE_VERSION,
-                    "ok": False,
-                    "stage": exc.stage,
-                    "error": str(exc),
-                },
-                sort_keys=True,
-            )
-        )
+        error = {"response_version": RESPONSE_VERSION, "ok": False, "stage": exc.stage, "error": str(exc)}
+        if "a" in locals():
+            error["operation"] = a.command
+            if getattr(a, "manifest", None) is not None:
+                error["manifest"] = str(a.manifest)
+        print(json.dumps(error, sort_keys=True))
         return 2
 
 

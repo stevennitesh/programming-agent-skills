@@ -19,6 +19,9 @@ is selected. Both observe current source without writing the report.
 Helper responses use `response_version: 2`; manifests remain version 1 and
 report/state use format 6. Compact inspection omits the complete `state` field;
 request `inspect --full` when it is needed.
+Use these public responses and prepared packets rather than private normalization
+functions or guessed envelope fields. A wrapper must preserve a failed command's
+exit and error output before attempting to parse success fields.
 For a copied `$audit-codebase inspect candidate ...` or `inspect finding ...`
 selection, resolve its run and stable ID through filtered inspection. Report the
 relevant changes and outcomes and judge what reassessment, if any, remains needed.
@@ -55,9 +58,22 @@ Applicable finding-level proof inputs also make their candidate selectable.
 Outcome evidence and its observations return the latest relevant records up to
 the requested limit, with totals and more-record indicators; path-filtered
 observations retain matching proof inputs. Use history or full state for older detail.
-Source packets include
-per-path fingerprints. Map drift separately exposes added, removed, and unowned
-tracked paths. An unchanged prior packet does not prove newly added code was audited.
+Selected inspection bounds source paths separately with `--source-limit` (default
+20) and `--source-offset`. Source packets retain their digest and path totals;
+`--include-fingerprints` adds the matching fingerprint page when those values are
+needed. `inspect --full` returns complete packets. Map drift separately exposes
+added, removed, and unowned tracked paths. An unchanged prior packet does not prove
+newly added code was audited.
+
+Read `current_completion` and `current_proof_freshness` for the evaluated work
+state. Current proof freshness is `fresh` for sufficient current verification,
+`changed` when that verification changed, and empty when there is no sufficient
+current proof. `current_proof_outcome_ids` identifies the applicable decisions;
+the helper considers implementation/reopen epochs, candidate membership, and
+linked finding proof. `historical_outcome_freshness` and `historical_outcome_ids`
+describe retained outcomes outside that proof. A changed historical receipt can
+coexist with verified current work; neither the last verified event nor aggregate
+historical freshness alone establishes current completion.
 
 ## Reconcile reviewed ownership changes
 
@@ -209,6 +225,7 @@ Record observations directly without preparing a preview manifest:
 
 ```text
 python <atlas.py> record-preview --repo-root <repo> --report <report.html> --environment <host> --capability html-preview --unavailable --reason "Host cannot render local HTML" --evidence "Supported preview operation reported unavailable."
+python <atlas.py> record-preview --repo-root <repo> --report <report.html> --environment <host> --capability html-preview --pending --reason "Preview request accepted; rendering unobserved" --evidence "Supported preview operation queued the tab."
 python <atlas.py> record-preview --repo-root <repo> --report <report.html> --environment <host> --capability html-preview --verified --viewed-report-sha256 <actually-viewed-digest> --reason "Changed reading path checked" --evidence "Inspected titles, links, and selections on the viewed revision."
 ```
 
@@ -218,7 +235,9 @@ was viewed does not establish visual proof. The command records observations; th
 host owns opening and inspecting the preview. `record-preview` also accepts the
 usual guard fields plus `preview` with `environment`, `capability`, `state`,
 `reason`, and nonempty `evidence`. Use `state: "unavailable"` for a host limitation;
-identical records for the same environment/capability are no-ops. Reconsider when
+use `state: "pending"` for an accepted request whose rendering remains unobserved.
+Neither state takes a viewed-report digest or establishes visual proof.
+Identical records for the same environment/capability are no-ops. Reconsider when
 the host or capability changes, rather than repeating the same blocked check.
 Use `state: "verified"` with `report_sha256` naming the actual viewed revision.
 The record names that revision before metadata publication; it does not claim

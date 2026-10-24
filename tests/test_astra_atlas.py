@@ -403,6 +403,9 @@ def test_analysis_freshness_tracks_its_own_evidence_and_preserves_judgment(tmp_p
     make_repo(tmp_path)
     publish(tmp_path, "render-report", map_manifest(tmp_path))
     audit = audit_manifest(tmp_path, report(tmp_path))
+    # This audit inspects alpha; the later analysis independently expands to beta.
+    audit["findings"][0]["affected_scope"] = ["alpha"]
+    audit["candidates"][0]["affected_scope"] = ["alpha"]
     audit["source_identity"] = identity(tmp_path, ["src/a.py", "tests/test_a.py"])
     publish(tmp_path, "audit-subsystem", audit)
     (tmp_path / "analysis-context.txt").write_text("original constraint", encoding="utf-8")
