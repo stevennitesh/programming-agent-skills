@@ -5,116 +5,91 @@ description: Present a project's demonstrated work coherently for recruiters or 
 
 # Portfolio presentation
 
-Make the requested project artifacts understandable and credible to an outside
-reader. Connect the problem, the author's contribution, consequential decisions,
-and demonstrated results through a coherent reading path. Choose the narrative,
-visual design, tools, and level of detail for the audience and requested surfaces.
-No fixed case-study template or new website is required.
+Present the problem, the author's contribution, consequential decisions, and
+demonstrated results through a coherent reading path for an outside audience.
+Choose narrative, visuals, tools, and detail for the requested surfaces; no fixed
+template or new website is required. Use only when requested.
 
-For a read-only audit, return findings and recommendations. When editing is
-authorized, deliver the requested presentation using the project's existing
-artifact owners and publishing conventions. A presentation request does not by
-itself authorize publication, new experiments, or changes to scientific meaning.
+An audit alone returns findings. Authorized edits use existing artifact owners
+and publishing conventions. Presentation alone grants no authority to publish,
+run new experiments, or change scientific meaning.
 
 ## Establish the story the evidence supports
 
-Use the intended audience, purpose, and deliverables from the request. Inspect
-the project's actual implementation, maintained result artifacts, and relevant
-requirements far enough to distinguish what exists from plans or aspirations.
-Resolve only consequential gaps in audience or emphasis that the context cannot
-settle; choose ordinary editorial details directly.
+Inspect actual implementation, maintained results, and accepted requirements,
+distinguishing demonstrated work from plans. Use the requested audience, purpose,
+and deliverables; settle only consequential gaps the context cannot answer and
+choose ordinary editorial details directly.
 
-Identify the useful problem or learning objective, what the author built or
-investigated, why the important choices were made, and what the evidence shows.
-Attribute the author's work separately from dependencies, source datasets, or
-inherited components. Explain consequential tradeoffs and negative findings when
-they change the reader's assessment. Do not invent business impact, deployment
-experience, or independent validation to strengthen the story.
+Explain the problem or learning objective, what the author built/investigated,
+why key choices matter, and what the evidence shows. Attribute contribution
+separately from dependencies, datasets, and inherited work. Include consequential
+tradeoffs and negative findings; invent no business impact, deployment experience,
+or independent validation.
 
-Keep measurements, interpretation, and proposed applications distinguishable.
-Preserve the project's evaluation boundaries and attach material limitations to
-the claims they qualify. Describe proxies or synthetic demonstrations as such.
-Methodological defects belong with the project's analysis or engineering owner;
-presentation polish must not conceal them or silently change the analysis.
+Separate measurements, interpretation, and proposed applications. Preserve
+evaluation boundaries, label proxies/synthetic demonstrations, and attach material
+limits to their claims. Expose methodological defects to the analysis/engineering
+owner rather than concealing them or silently changing the analysis.
 
-For data-analysis projects, explain what the data represent and the consequential
-source, sampling, or preparation choices behind the finding. Distinguish
-descriptive or exploratory findings from claims about unseen cases or causal
-effects. Present existing uncertainty where it changes interpretation; a credible
-result can be descriptive, negative, or inconclusive. Use the existing analysis
-and its limits; this presentation work does not require new statistical tests or
-reopening an evaluation.
+For data-analysis work, explain what the data represent and consequential source,
+sampling, and preparation choices. Distinguish descriptive/exploratory findings
+from unseen-case or causal claims. Retain existing uncertainty; negative or
+inconclusive results can be credible. Use the existing analysis without requiring
+new statistical tests or reopening evaluation.
 
-For findings that inform a decision, explain who could use them, which choice
-they support, and how material uncertainty or constraints affect that use. Keep
-recommendations conditional on the evidence; model performance alone does not
-establish the outcomes of acting on its predictions.
+For decision-relevant findings, explain the user, supported choice, and material
+uncertainty or constraints. Recommendations stay conditional on evidence; model
+performance alone does not establish outcomes from acting on predictions.
 
 ## Write for the intended reader
 
-For the finished reader-facing product, aim for roughly 50% ASD-STE100 Simplified
-Technical English and 50% precise domain language. Use this as a balance of
-explanation and terminology, not a word-count quota or alternating sentence
-pattern. Default to a reader who knows the domain but is new to this project;
-adapt the explanation to the intended audience from the request.
+Aim for roughly 50% ASD-STE100 Simplified Technical English and 50% precise domain
+language in finished prose: a balance of explanation and terminology, not a
+word-count quota or sentence pattern. Default to a domain-aware reader new to
+the project; adapt to the requested audience.
 
 Domain familiarity does not imply statistical or machine-learning familiarity.
-Explain consequential metrics in terms of the question they answer and what the
-reader can infer from them. Retain technical precision and make supporting detail
-available where it helps the reader assess the result.
+Explain consequential metrics through the question they answer and supported
+inferences; retain precision and accessible supporting detail.
 
-Use the controlled-language approach of
-[ASD-STE100](https://www.asd-ste100.org/about_STE.html) for explanations: clear
-sentence structure, consistent word meanings, and precise technical nouns and
-verbs. Prefer short, complete sentences and active verbs. Give each sentence a
-clear main point and make the actor and references unambiguous. Explain what was
-built, how it works, and why the choices matter. STE permits subject-specific
-technical nouns and verbs; retain useful domain vocabulary and explain local names
-and unfamiliar abbreviations without reteaching the reader's field. This portfolio
-blend is STE-informed, not a claim of full conformity to its rules and dictionary.
+Use [ASD-STE100](https://www.asd-ste100.org/about_STE.html)-informed explanations:
+clear complete sentences, active verbs, unambiguous actors/references, consistent
+meanings, and precise technical terms. Explain local names and unfamiliar
+abbreviations without reteaching the field. This blend claims no full conformity
+to STE rules or dictionary.
 
-Write like a practitioner explaining actual work. Name concrete actions,
-constraints, tradeoffs, and observed results. Prefer direct verbs, complete
-sentences, and consistent terms. Let sentence length and structure follow the
-content. Cut inflated claims, vague attributions, stock transitions, rhetorical
-contrasts, forced groupings, decorative emphasis, and compressed fragments that
-make the reader decode the prose. Keep necessary uncertainty and technical
-precision. Do not invent personal experience, emotion, or results to sound human.
-
-Apply the editing intent of pstack's
-[Unslop](https://github.com/cursor/plugins/blob/main/pstack/skills/unslop/SKILL.md):
-replace generic flourish with information specific to the work. The principles
-above are sufficient for this skill; no separate editing workflow is required.
+Apply pstack's [Unslop](https://github.com/cursor/plugins/blob/main/pstack/skills/unslop/SKILL.md)
+intent directly: concrete actions, constraints, tradeoffs, and observed results
+instead of generic flourish. Cut inflated claims, vague attributions, stock
+transitions, rhetorical contrasts, forced groupings, decorative emphasis, and
+compressed fragments. Let structure follow the content; invent no personal
+experience or emotion. No separate editing workflow is required.
 
 ## Make the requested artifacts agree
 
-Choose a clear entry point and a useful route to supporting technical detail,
-without requiring a particular document tree. Explain project-specific vocabulary
-in terms the audience can understand. Let each artifact serve its purpose while
-keeping claims, numbers, terminology, and status consistent across the affected
-README, report, charts, resume material, or website in scope.
+Use a clear entry point and route to supporting detail without imposing a document
+tree. Keep claims, numbers, terminology, and status consistent across in-scope
+READMEs, reports, charts, resume material, or websites while preserving each
+artifact's purpose.
 
-Trace decisive numbers and visuals to their current evidence source. Reconcile
-units, labels, denominators, cohorts, time windows, baselines, and evaluation stage
-where they affect interpretation. If artifacts disagree, resolve the producing
-data or calculation before choosing which claim to present; otherwise expose the
-unresolved discrepancy. Do not repair disagreement by copying a preferred number
-everywhere or relabeling a chart whose underlying quantity differs.
+Trace decisive numbers/visuals to current sources, reconciling units, labels,
+denominators, cohorts, time windows, baselines, and evaluation stage. Investigate
+disagreement at its producing data/calculation within existing authority; return
+needed analysis changes to that owner or expose the unresolved discrepancy.
+Do not copy a preferred number everywhere or relabel a different underlying
+quantity to make artifacts agree.
 
-Use visuals that help the audience assess the result. Give them interpretable
-labels, comparisons, and nearby explanations; select axes, scales, and emphasis
-that preserve the finding's meaning. Supply meaningful text alternatives for
-consequential visuals and use additional cues when colour carries distinctions.
-Choose descriptions, labels, patterns, or tables that convey the relevant finding
-for the surface and audience. Prefer existing evidence-generation paths when
-regenerating an artifact. Updating a renderer within scope does not authorize
-retuning a model or reopening a held-out evaluation to obtain a better story.
+Use visuals that support assessment, with interpretable labels, comparisons,
+and explanations. Axes, scales, and emphasis must preserve meaning. Supply useful
+text alternatives and cues beyond colour for consequential distinctions. Prefer
+existing evidence-generation paths; renderer changes do not authorize model
+retuning or reopening held-out evaluation for a better story.
 
-Provide a practical path to inspect the demonstrated work when relevant, using
-available examples, outputs, or documented execution. Distinguish inspected,
-executed, and independently reproduced evidence. Missing reproducibility should
-be visible, not replaced by an unrelated demo or new infrastructure. Keep private
-inputs and credentials out of public examples and rendered artifacts.
+Offer available examples, outputs, or execution instructions for inspecting the
+work. Distinguish inspected, executed, and independently reproduced evidence;
+expose missing reproducibility rather than substituting unrelated demos or
+infrastructure. Exclude private inputs and credentials from public artifacts.
 
 For GitHub-hosted data science presentations, read
 [GitHub data science artifacts](references/github-data-science.md) for notebook
@@ -122,19 +97,13 @@ viewer constraints and access to the supporting evidence.
 
 ## Verify the reader's experience
 
-Inspect the requested rendered surfaces with the available preview or renderer.
-Check the consequential reading path, chart/text agreement, legibility, links,
-and layout at the relevant presentation sizes. Judge whether the intended reader
-can identify the question, the author's contribution, the main finding, its
-consequential limits, and where to inspect supporting evidence across that reading
-path. Use available reader feedback when it helps resolve a consequential doubt.
-The prose should preserve useful domain detail and read naturally without
-unexplained local jargon or generic filler.
-Source text or a successful build alone cannot establish how the result appears.
-Fix presentation defects within scope and report any surface that could not be
-inspected.
+Inspect requested rendered surfaces using an available preview/renderer. Check
+the reading path, chart/text agreement, legibility, links, and layout at relevant
+presentation sizes.
+The reader should find the question, author contribution, main finding, limits,
+and supporting evidence without unexplained local jargon or filler. Use available
+reader feedback when useful. Source text or a successful build alone does not
+establish appearance; fix presentation defects and report uninspected surfaces.
 
-Deliver the requested artifacts and a concise account of changes, checked
-surfaces, and material evidence or rendering limits. Keep the result honest about
-what was demonstrated and easy to inspect; leave broader research, product work,
-and publication to their authorized scopes.
+Deliver the artifacts, material changes, checked surfaces, and evidence/rendering
+limits. Broader research, product work, and publication retain their own authority.

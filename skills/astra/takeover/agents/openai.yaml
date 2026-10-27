@@ -1,0 +1,6 @@
+interface:
+  display_name: "Takeover"
+  short_description: "Continue inherited work and preserve contributor credit"
+  default_prompt: "Use $takeover to finish this inherited PR, branch, or agent work at the requested endpoint, preserving accepted decisions, write custody, and contributor credit."
+policy:
+  allow_implicit_invocation: false

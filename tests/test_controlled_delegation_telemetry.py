@@ -9,7 +9,7 @@ from pathlib import Path
 import pytest
 
 
-SCRIPT = Path(__file__).resolve().parents[1] / 'skills/astra/cost-aware-coding/scripts/telemetry.py'
+SCRIPT = Path(__file__).resolve().parents[1] / 'skills/astra/controlled-delegation/scripts/telemetry.py'
 spec = importlib.util.spec_from_file_location('cost_telemetry', SCRIPT)
 telemetry = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(telemetry)

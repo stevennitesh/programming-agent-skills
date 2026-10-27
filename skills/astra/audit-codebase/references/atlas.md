@@ -12,7 +12,8 @@ Immutable source snapshots and evidence are stored once by content ID inside the
 self-contained HTML. Inspection and expandable history resolve those references;
 no sidecar database or previous-format adapter is needed.
 Read [Atlas maintenance](maintenance.md) when resuming a report, reconciling
-structural changes, or recording authorized implementation and delivery.
+structural changes, recording authorized implementation and delivery, or checking
+and previewing the report.
 
 ## Purpose
 
@@ -213,17 +214,10 @@ that supported the original diagnosis; it does not require repeating every
 historical audit. Renew affected evidence before reusing an unverified stale
 recommendation. Coverage freshness and fix verification remain separate.
 
-Try the host's supported HTML preview once. A queued tab is pending; an opened
-surface alone does not establish visual verification. For ordinary content
-updates, inspect changed content and the relevant links and selections. For
-renderer changes, also inspect the actual reading path, filters, labels, layout,
-and relevant interactions at useful widths. Report unavailable preview or
-clipboard capabilities without treating source or build checks as UI proof.
-Record an unavailable capability once per environment and reconsider when the host
-or capability changes. Repeated references to a limitation are not failed attempts.
-Use the direct preview-recording operation in [Atlas maintenance](maintenance.md).
-Do not create temporary servers or repeatedly recover tabs for an ordinary audit.
-Use `edit-presentation` to change a displayed title without another audit event.
+Follow [Check and preview](maintenance.md#check-and-preview-the-report) for content
+versus renderer verification, supported preview, and recording the actual observed
+revision and capability limits. Use `edit-presentation` for display-title changes
+without another audit event.
 
 Local JavaScript may navigate, filter, reveal retained history, or copy text. It
 does not invoke commands or mutate state.
@@ -248,6 +242,7 @@ ownership and source changes separately and does not establish visual verificati
 After a failed or uncertain write, inspect the current report before retrying.
 Never bypass source identity, report-digest, writer-lock, or read-back checks.
 
-The report lives under `.tmp/audit-codebase/<run-id>/report.html` unless the user
-or repository separately chooses a durable archival destination. Atlas creation
-does not authorize a commit or publication elsewhere.
+Keep the active report at `.tmp/audit-codebase/<run-id>/report.html`; managed
+report commands require that workbench path. Separately authorized archive copies
+may live elsewhere for viewing or history; resume managed operations from the
+supported workbench. Atlas creation does not authorize a commit or publication.

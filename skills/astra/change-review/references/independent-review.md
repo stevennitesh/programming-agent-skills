@@ -1,35 +1,53 @@
 # Independent review
 
-Use when a fresh review context would materially improve judgment or the caller
-requires independent review. One reviewer can provide this isolation; multiple
-reviewers are a separate coverage choice.
+Use for independent review or multiple reviewers, including requested high
+assurance. One reviewer can supply independent context; additional reviewers are
+a coverage choice under the user's constraints, active model policy, and budget.
 
-The reviewer is separate from the candidate's implementation and integration
-authors. Give it the fixed candidate and comparison, accepted requirements,
-relevant sources, available evidence, assigned scope, and the finding and output
-contracts from the main skill. It needs access to surrounding context and
-dependencies sufficient to judge the change, not only the diff.
+## Independent context and custody
 
-Start with a fresh context rather than the implementation conversation. For a
-general review, keep lead suspicions and peer findings out of the initial brief.
-For targeted verification, provide the hypothesis as an unproven claim and ask the
-reviewer to assess it independently. Preserve factual requirements, constraints,
-and known verification results without supplying a desired verdict. Isolation must
-not deprive the reviewer of governing context.
+Choose a reviewer separate from the candidate's implementation and integration
+authors. Give it a fixed candidate and comparison, accepted requirements, relevant
+sources and evidence, assigned scope, [Finding standards](finding-standards.md),
+and the main skill's output contract. Permit surrounding-code and dependency
+inspection beyond the diff.
 
-Reviewers are read-only: they assess and return findings, coverage, and evidence
-gaps. They do not repair, publish, or delegate further. Establish a fixed review
-target under the active workflow's custody rules before dispatch. Separate
-conversations or worktrees do not isolate mutable services, databases, or proof;
-report the independence actually achieved.
+Start with fresh context, preserving governing facts without supplying a desired
+verdict. Keep lead suspicions and peer findings out of a general-review brief;
+for targeted verification, present the hypothesis as unproven.
 
-The lead evaluates returned findings against the candidate and relevant contrary
-evidence, resolves disagreements, and owns the final conclusion. Keep independent
-contributions attributable by reviewer and scope. If the lead authored or
-integrated the change, distinguish its synthesis from the independent review.
+Reviewers assess read-only and return findings, coverage, and evidence gaps; they
+do not repair, publish, or delegate. Freeze the review target under the execution
+owner's custody rules before dispatch. Separate conversations or worktrees do not isolate
+shared services, databases, or proof; report the independence actually achieved.
 
-For a repaired successor, reviewers may retain their review context while it
-remains useful and independent of implementation. Use fresh reviewers when needed
-to restore isolation. Prior findings and evidence apply only while still valid
-for the new candidate. If required independence cannot be established, report that
-limit without presenting a direct review as independent.
+For a repaired successor, retain useful reviewer context while it remains
+independent of implementation. Refresh evidence affected by the changes and use
+fresh reviewers when needed to restore isolation.
+
+## Multiple reviewers
+
+Choose the count and complementary primary scopes for material risks and gaps,
+such as behavior, persistence, or concurrency. Scopes focus attention without
+restricting necessary evidence or requiring every reviewer to repeat the whole
+review. Use one candidate and finding standard, without finding quotas.
+
+For requested council membership or provider diversity, honor specified members
+through supported routes and the active model policy. Verify exposed identities
+and report unavailable members or material substitutions. Provider diversity
+alone does not establish independence; no fixed number of flagship models is
+required by default.
+
+## Synthesize the result
+
+The lead owns overall coverage and final acceptance. Deduplicate supported
+findings, check contrary evidence, and resolve disagreements through evidence
+rather than votes. Address material gaps no reviewer assessed. Keep contributions
+attributable by reviewer and scope; distinguish an author's synthesis from the
+independent assessment. Record scores only if requested and actually returned;
+ratings or unanimous satisfaction are not acceptance gates.
+
+If required independence, membership, or coverage is unavailable, identify what
+remains incomplete. Do not describe direct or single-reviewer work as completed
+multi-reviewer assurance. Authorized repair rounds follow
+[Review feedback](review-feedback.md).

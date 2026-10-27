@@ -39,7 +39,7 @@ accepted outcome. A delivery outline can help explain feasibility or order of
 work; distinguish accepted sequencing constraints from a suggested approach.
 
 The execution lead owns implementation sequencing, assignments, checkpoints, and
-run state, using cost-aware-coding when selected. Those decisions may adapt as
+run state, using controlled-delegation when selected. Those decisions may adapt as
 evidence changes. Ordinary planning does not require that workflow.
 
 Keep speculative file lists, model settings, worker state, and orchestration

@@ -5,10 +5,11 @@ parallel work. Reconstruct the run from actual candidate, lifecycle-owner, proce
 and applicable tracker state before resuming. Retained host identities or helper
 packets identify owned lanes; directory names alone do not.
 
-When cost-aware-coding also governs execution, use its
-[Recovery](../../cost-aware-coding/references/recovery.md) contract for model-route
-failure attribution and worker replacement. Parallel lane custody, integration
-provenance, and composed proof still belong here.
+When a model-routing policy also governs the run, use its shared
+[routing contract](../../controlled-delegation/references/model-policy.md) for
+classification and unavailable routes. Worker replacement, lane custody,
+integration provenance, and composed proof remain owned here; do not import
+controlled team limits into parallel recovery.
 
 ## Recover the actual state
 

@@ -1,6 +1,6 @@
 interface:
   display_name: "Ultra model routing"
   short_description: "Route Sol and Terra workers alongside native Ultra"
-  default_prompt: "Use $ultra-model-routing for this task; preserve my selected lead and native delegation, apply the child model policy, and complete the required reviews before authorized PR delivery."
+  default_prompt: "Use $ultra-model-routing for this task; preserve my selected lead and native delegation, apply the shared model routing, and complete the required reviews before authorized PR delivery."
 policy:
   allow_implicit_invocation: false

@@ -81,7 +81,7 @@ Use `--skip-global-agents` to install only the managed skills. Use
 
 ## Optional Codex quiet waiting
 
-If your cost-aware lead keeps narrating or monitoring while Sol works because of
+If your controlled-delegation lead keeps narrating or monitoring while Sol works because of
 host-level progress instructions, this opt-in policy makes delegated waiting an
 explicit exception. It applies across repositories using this Codex configuration,
 only while a delegated agent holds exclusive custody and an event-driven wait is
@@ -89,7 +89,7 @@ available. Normal reporting resumes when custody returns or local work resumes.
 
 The installer and repo-bootstrap do not apply this personal setting. Edit it
 yourself, or explicitly authorize an agent to inspect and update the configuration.
-Invoking cost-aware-coding alone does not grant that access. For assisted setup:
+Invoking controlled-delegation alone does not grant that access. For assisted setup:
 
 > Apply the optional Codex quiet-waiting setup from INSTALLATION.md. You may inspect
 > and update my active Codex configuration for this setting. Preserve everything

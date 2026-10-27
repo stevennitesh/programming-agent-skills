@@ -1,37 +1,31 @@
 # Finding standards
 
-Apply before admitting a review observation. A finding needs:
+Use this standard for fresh findings and assessment of supplied feedback.
+A finding must establish:
 
 - An accepted requirement, repository rule, supported behavior, or demonstrated
   maintainability obligation relevant to the selected change.
-- A concrete reachable scenario introduced, worsened, or left unsatisfied by that
-  candidate, including a required omission.
-- Direct evidence from the candidate, its relevant context, or faithful
-  verification.
-- A consequential failure or avoidable maintenance cost, not a style preference.
-- A correction or proof request proportionate to that consequence.
+- A concrete reachable problem the candidate introduces or worsens, or an accepted
+  requirement of that change it fails to satisfy.
+- Direct evidence of the trigger and consequential failure or maintenance cost.
+- A correction or proof request proportionate to the consequence.
 
-An agent-written plan does not by itself make an added mechanism or gate binding.
-Trace a disputed obligation to accepted behavior, repository policy, or a necessary
-supported guarantee. Distinguish an unnecessary mechanism from an accepted
-guarantee whose revision belongs to its owner.
+An unrelated pre-existing defect is outside ordinary change-review scope. An
+unchanged line can still cause a regression activated by the candidate; explain
+that connection. Missing required behavior is eligible even without a regression.
 
-Findings must survive relevant contrary evidence, including domain distinctions,
-external contracts, or migration needs that justify the current design. Reject
-disproved claims, speculative hardening, unrelated cleanup, and preferences for a
-different but equally valid design. An unchanged line can be the causal location
-of a regression activated by the candidate; explain that connection.
+Tests and agent-written plans are evidence, not independent acceptance authority;
+their agreement does not prove an assumption they share. Trace disputed
+obligations to accepted intent, policy, or a necessary supported guarantee.
+Preserve domain meaning and compatibility, and check contrary evidence such as
+external contracts or migration needs before admitting a finding.
 
-A maintainability finding need not cause a runtime failure, but it must demonstrate
-a concrete cost such as caller burden, duplicated policy, change amplification,
-or avoidable operational complexity.
-
-Use one finding per independently actionable obligation and combine duplicate
-symptoms when one correction addresses the same cause. Preserve stable finding IDs
-when tracking remediation. Identify the reviewed location, trigger, evidence,
-impact, and necessary correction or proof. Keep corrections proportionate.
-Recommend a broader repair when its demonstrated benefits justify the additional
-scope and cost.
+Reject speculative hardening, unrelated cleanup, style preferences, and equally
+valid alternative designs. Maintainability findings need a concrete cost, such as
+duplicated policy, caller burden, or change amplification. Combine duplicate
+symptoms of one cause into one actionable finding. Identify its location, trigger,
+evidence, impact, and needed correction or proof; recommend broader repair only
+when demonstrated benefits justify its scope and cost.
 
 ## Priority and blocking
 
@@ -42,20 +36,18 @@ Calibrate priority from demonstrated impact and reach:
 - **P2:** meaningful bounded failure or maintainability cost.
 - **P3:** lower-impact actionable problem.
 
-Priority estimates impact; it does not by itself determine whether the candidate
-can pass a gate. A P2 can require correction when it violates binding acceptance,
-while a nonblocking observation can remain visible at any priority.
-
-Do not inflate severity because a pattern sounds dangerous. Optional suggestions
-are not findings unless they satisfy the admission standard; include them only
-when requested or materially useful and label them separately.
+Priority does not determine blocking: a P2 can violate binding acceptance, while
+a nonblocking observation may remain at any priority. Low frequency or a different
+supported caller does not automatically make a reachable security, data-loss,
+compatibility, or concurrency failure a nit. Do not inflate speculative risks or
+promote optional suggestions into findings.
 
 ## Missing proof and gate decisions
 
-Unavailable optional verification is a coverage limit, not automatically a defect.
-Missing evidence needed to decide a governing obligation makes the review
-incomplete. Omission of required proof can itself be a finding when the admission
-conditions above hold. Distinguish both from a verified defect.
+Unavailable optional verification is a coverage limit. Missing evidence needed to
+judge a governing obligation makes the review incomplete. Omission of required
+proof can itself be a finding when it meets the admission standard; distinguish
+that obligation from a verified behavior defect.
 
 When a gate decision is requested, return:
 
@@ -63,23 +55,14 @@ When a gate decision is requested, return:
   candidate can satisfy applicable behavior or policy;
 - **incomplete:** required candidate identity, coverage, source, or evidence
   remains unresolved;
-- **pass with residual risk:** required coverage is complete and no required
-  correction remains, but a characterized material limitation still belongs to an
+- **needs owner decision:** required coverage is complete and no required
+  correction remains, but a characterized material risk still requires its
   owner's acceptance;
-- **pass:** required coverage is complete, no required correction remains, and no
-  decision-bearing uncertainty is unresolved.
+- **pass:** required coverage is complete, no required correction or consequential
+  decision remains, and any material residual risk has an authorized disposition.
 
-A verified required correction can block the candidate even when unrelated
-coverage remains incomplete; preserve that coverage limit. Do not use residual
-risk to disguise missing required proof.
-
-A gate judgment applies to the reviewed candidate. It does not authorize merge,
-release, deployment, or acceptance of residual risk.
-
-Distinguish required corrections from nonblocking findings and optional
-suggestions. Identify any residual-risk decision and its owner unless acceptance
-was already authorized.
-
-For remediation, preserve finding identities and explain each disposition from
-current evidence. A missing prior report limits claims about resolving that report
-but does not prevent a clearly labeled fresh review of the selected candidate.
+Report blocking findings even when other coverage is incomplete, retaining both
+facts. Name required corrections, nonblocking findings, and any risk decision and
+its owner. Residual risk cannot substitute for missing required proof. A verdict
+applies only to the reviewed candidate and grants no merge, release, deployment,
+or risk-acceptance authority.

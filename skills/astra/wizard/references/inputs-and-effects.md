@@ -44,10 +44,16 @@ backup copies. Stop the stage when safe persistence is unavailable.
 
 ## External effects and uncertain outcomes
 
+Before a consequential effect, display the actual target, active identity when
+relevant, and effect. An explicit action such as saving to that displayed target
+can confirm intent; avoid redundant approval prompts. One confirmation may cover
+a bounded group against the same target. Reconfirm when identity, target, or scope
+materially changes. This runtime check establishes the human's intended target
+without expanding the task's existing authority.
+
 Bind each mutation to the explicit account, project or repository, environment,
 resource, and scope it affects. Do not rely silently on a CLI's default account or
-current directory. Recheck identity and target when either changes after
-confirmation.
+current directory.
 
 Check command status and an observable postcondition. When a secret value cannot
 be read back, verify its exact scope/name and available fresh metadata and leave

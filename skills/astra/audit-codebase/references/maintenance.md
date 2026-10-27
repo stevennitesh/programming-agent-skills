@@ -1,6 +1,7 @@
 # Atlas maintenance
 
-Use when resuming a saved atlas or keeping it accurate as authorized fixes land.
+Use when resuming a saved atlas, keeping it accurate as authorized fixes land,
+or checking and previewing the report.
 The helper owns deterministic reconciliation and publication; the agent judges
 ownership, changed conclusions, adequate proof, and the requested delivery scope.
 

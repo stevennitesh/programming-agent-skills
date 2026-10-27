@@ -5,83 +5,50 @@ description: Maintain repository guidance and durable memory, or analyze agent s
 
 # Context hygiene
 
-Leave future agents accurate, sufficient, discoverable context for the work in
-scope. Reconcile repository guidance and keep useful durable memory without
-accumulating temporary task state. Choose the investigation, organization,
-consolidation, and verification suited to the problem.
+Leave future agents accurate, sufficient, retrievable context within the requested
+scope. Use this skill for a concrete context problem or requested retrospective.
+Stay within the selected repository, records, or memory surface; a missing
+preferred document alone is not a gap.
 
-This skill can be selected when a concrete context problem is relevant to the
-active task or a session retrospective is requested. Selection does not expand
-the task into an unrelated repository audit or global memory sweep. A missing
-preferred document alone is not a context gap.
+## Select the work
 
-## Scope and authority
-
-Establish the requested repository, memory surface, or session evidence and result.
-An inspection or read-only request returns findings and recommendations. Apply
-already-authorized cleanup without another approval cycle; ask only when
-consequential meaning or authority remains unresolved, and continue independent
-work within scope.
-Memory writes require an explicit user request covering the memory change and
-the runtime's supported update mechanism.
-
-Repository guidance can own accepted requirements. Memories and historical
-summaries supply recall and evidence; they do not create authority or override
-newer user decisions. Preserve project meaning, deliberate local choices,
-unrelated work, and useful history. Keep secrets and unrelated sensitive detail
-at their protected owners.
-
-## What earns a place
-
-Use future value, durability, evidence, scope, ownership, and retrieval cost to
-judge what to retain, correct, consolidate, relocate, or retire. These are decision
-criteria, not a required inventory or report template. Preserve the conditions and
-rationale that make a lesson useful; distinguish observations, inferences, and
-accepted decisions. Age, repetition, and a missing inbound link do not establish
-obsolescence or truth.
-
-Keep current facts at their maintained owners and supply retrieval pointers when
-they prevent costly rediscovery. Use existing mechanical enforcement where it
-already owns a rule. Do not replace a useful active source until its necessary
-meaning and retrieval path survive at the chosen owner.
-
-## Choose the relevant branch
-
-- [Repository context](references/audit-and-changes.md): reconcile scattered
-  guidance, unclear ownership, conflicting instructions, stale commands, or missing
-  repository knowledge. This skill owns ongoing maintenance, including authorized
-  edits across the affected context surface.
-- [Session retrospectives](references/session-retrospective.md): analyze selected
-  agent conversations, tool logs, and harness issues for supported patterns,
-  reusable corrections, and their maintained owners.
-- [Managed memory](references/managed-memory.md): review a selected memory store or
-  extract supported durable lessons from selected work; separate active recall
-  from temporary state and history, and use supported update mechanisms.
+- [Repository guidance reconciliation](references/audit-and-changes.md): maintain
+  scattered, stale, conflicting, or missing repository context and its readers.
+- [Session retrospectives](references/session-retrospective.md): investigate
+  selected conversations, tool records, and harness issues for supported patterns
+  and corrections at their owners.
+- [Managed memory](references/managed-memory.md): assess durable lessons or a
+  selected memory store through the runtime's supported mechanisms.
 
 [Repo bootstrap](../repo-bootstrap/SKILL.md) owns initial guidance and requested
-setup migrations, such as adopting a skill pack or tracker configuration.
-[Writing for agents](../writing-for-agents/SKILL.md) owns an already-selected
-instruction artifact. Routine context maintenance needs no separate authoring or
-bootstrap phase.
+setup migration; [writing-for-agents](../writing-for-agents/SKILL.md) owns a selected
+instruction or handoff. Routine maintenance needs no additional setup or authoring
+phase.
 
-A material model or host change can justify reconsidering obsolete scaffolding.
-Preserve still-needed requirements and boundaries while leaving methods open.
-Use [Behavior evaluation](../writing-for-agents/references/behavior-evaluation.md)
-when consequential uncertainty or a performance claim needs behavioral evidence;
-ordinary cleanup does not require an evaluation campaign.
+## Preserve authority and useful meaning
 
-## Completion and return
+An audit returns findings; apply already-authorized repairs without another
+approval cycle. Resolve only consequential unknown meaning or authority with its
+owner and continue independent work. Memory mutation requires an explicit user
+request and the runtime's supported update path; analysis or a useful lesson alone
+does not authorize it.
 
-An audit is complete when it explains the material context problems, evidence,
-recommended changes and owners, and coverage limits. It need not mutate anything.
-A reflection can finish with no durable lesson.
+Repository guidance may hold binding requirements. Memory and historical summaries
+are recall/evidence, not authority over current decisions. Preserve local choices,
+scope, conditions, rationale, unrelated work, and private material. Judge retention
+by future value, evidence, ownership, durability, and retrieval cost; age, repetition,
+or a missing inbound link alone proves neither truth nor obsolescence.
 
-Authorized cleanup is complete when the affected context is sufficient and
-reachable, retained meaning is preserved, and displaced guidance no longer
-competes as current authority. Verify the surface future agents actually use.
-Report unresolved gaps; a submitted memory update remains pending until its
-active effect can be verified. Do not imply completion of unavailable effects.
+## Verify the result
 
-Return the material findings or changes, decisive evidence, and remaining limits.
-Choose a useful format without prescribing a document tree or producing records
-that the task does not need.
+Finish an audit with supported findings, proposed owners, and coverage limits;
+no durable lesson or edit may be warranted. For authorized cleanup, verify the
+receiving path: retained meaning is accessible, displaced guidance no longer
+competes, and gaps remain explicit. A submitted memory delta is pending until its
+active effect is verified.
+
+On a model or host change, reconsider obsolete scaffolding while preserving
+requirements. Use [Behavior evaluation](../writing-for-agents/references/behavior-evaluation.md)
+for consequential method uncertainty or an efficacy claim; ordinary cleanup needs
+no evaluation campaign. Return material results and limits without requiring a
+fixed document tree or report.

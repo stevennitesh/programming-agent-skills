@@ -1,0 +1,6 @@
+interface:
+  display_name: "Controlled Delegation"
+  short_description: "Control delegation with one worker and limited support"
+  default_prompt: "Use $controlled-delegation for controlled delegation: preserve my selected lead, follow the shared model routing, use one primary worker and at most one support agent, reuse useful worker context, and wait between consequential questions and review returns."
+policy:
+  allow_implicit_invocation: false

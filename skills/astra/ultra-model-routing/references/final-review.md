@@ -1,74 +1,37 @@
 # Final review
 
-Use for this skill's review requirement before opening an authorized PR, or
-when the user explicitly requests this final-review sequence. Use
-[change-review](../../change-review/SKILL.md) for review evidence and findings;
-this reference owns the round count and progression.
+Use before this workflow opens an authorized PR, or when the user requests this
+sequence. This reference owns the count and progression;
+[change-review](../../change-review/SKILL.md) owns candidate evidence, findings,
+independence, correction review, and any requested gate decision.
 
-## Preserve the requested sequence
+## Complete three sequential rounds
 
-Complete three sequential final-review rounds with fresh, read-only reviewers.
-Use the review route in the [main skill](../SKILL.md); retain targeted Max
-escalation under [Model policy](model-policy.md). Explicit user changes to the
-count or arrangement take precedence for their stated scope.
+Start each round with a fresh, read-only reviewer independent of implementation
+and integration, using [Shared model routing](../../controlled-delegation/references/model-policy.md).
+Give it the accepted requirements, fixed candidate and comparison, relevant
+sources, verification, and material limits under change-review. Each assessment
+covers the accepted outcome; complementary emphases do not waive obligations.
 
-A round consists of an independent assessment of an identified candidate,
-triage of its findings, authorized repairs, and necessary verification of those
-repairs. Begin the next round after that work is complete. Multiple reviewers
-of the same candidate running concurrently belong to one round; they do not
-satisfy three sequential rounds.
+A round includes assessment, lead triage, authorized repairs, and the necessary
+verification and correction review. Complete that work before starting the next
+round. Concurrent reviewers count as one round. A still-independent reviewer may
+verify corrections within a round; the next required round starts fresh.
+Do not manufacture findings or repeat checks whose evidence remains valid.
 
-Give each reviewer the accepted requirements, applicable repository guidance,
-candidate and comparison, verification evidence, and material known limits.
-Provide prior findings where correction review needs them, without treating a
-previous verdict as evidence that the successor is correct.
+## Finish on the delivery candidate
 
-Bind the review to fixed content or review custody. Do not let mutable checkout
-changes invalidate a review silently. Preserve each review's identity when the
-candidate changes and reassess affected evidence.
+Bind each assessment to fixed content or review custody and refresh evidence
+affected by successor changes. A third-round defect still needs repair and review
+of affected successor behavior before delivery. Choose further coverage for its
+impact; do not restart all three rounds mechanically.
 
-## Use each round to improve coverage
+Missing required coverage or an unavailable required reviewer remains incomplete.
+The lead resolves findings by evidence and retains acceptance; reviewer agreement
+alone establishes no gate. Report the final candidate, round status, decisive
+checks, and material limits concisely.
 
-Let reviewers choose their investigations and useful checks. Each round must
-assess the candidate against the accepted outcome; a narrower emphasis does not
-waive an applicable correctness obligation. Useful complementary emphases are:
-
-1. **First round:** required behavior, implementation correctness, and supported
-   behavior that must be preserved.
-2. **Second round:** failure paths, interactions, compatibility, security where
-   relevant, and cases the existing checks may miss.
-3. **Third round:** the integrated candidate, effects of repairs, remaining
-   obligations, and readiness for the requested delivery endpoint.
-
-These emphases guide coverage rather than prescribe a universal checklist.
-Use the existing review finding standards; do not manufacture findings to fill
-a round or repeat expensive checks whose evidence remains applicable.
-
-The lead assesses findings by evidence, resolves contradictory conclusions,
-and returns actionable corrections to the appropriate worker. Reviewer
-agreement is not a vote that establishes correctness. Keep ordinary repairs
-with the worker whose context remains useful.
-
-## Finish on the actual delivery candidate
-
-Complete the required rounds before opening the PR. If the third round finds
-a defect, repair it and review the affected successor behavior before delivery.
-Three completed assessments do not excuse unresolved findings or an unreviewed
-correction. Choose further focused or broader review according to the repair's
-impact; do not mechanically restart all three rounds for every change.
-
-Keep required checks, candidate freshness, and material evidence gaps separate.
-Do not mark an unavailable review as completed or replace independent review
-with the implementation worker's self-assessment. A consequential unresolved
-block means review readiness is incomplete, even if useful implementation
-work has finished.
-
-Return the final candidate, review coverage and round status, decisive checks,
-resolved findings, and remaining material limits concisely. No new report
-schema, permanent ledger, or blanket testing campaign is required.
-
-Review readiness does not authorize publication, risk acceptance, merge, or
-deployment. Use [PR delivery](../../pr-delivery/SKILL.md) for the already-requested
-delivery endpoint. For review-only work, return the findings and review status.
-For implementation without PR delivery, perform the requested or applicable
-reviews without inventing a PR-opening task.
+Complete the sequence before PR opening, using [pr-delivery](../../pr-delivery/SKILL.md)
+only for the authorized endpoint. Explicit user changes to the count or arrangement
+take precedence. This sequence grants no publication or risk-acceptance authority
+and adds no PR workflow to implementation-only or review-only work.

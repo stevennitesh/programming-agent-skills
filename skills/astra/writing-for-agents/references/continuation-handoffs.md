@@ -59,6 +59,11 @@ Git/tracker state, or create/message/move tasks. Perform separately authorized
 actions under their existing rules and report their actual results. Name another
 skill only when a concrete remaining task needs it and the receiver can access it.
 
+When the user explicitly requests adopting and finishing another actor's work,
+[takeover](../../takeover/SKILL.md) owns receiving that responsibility, reconciling
+the actual candidate and custody, and preserving contributor credit. Preparing a
+handoff alone does not select or execute takeover.
+
 Check that a fresh receiver can locate the work, distinguish claims from proof,
 preserve decisions, and take an authorized next step. Verify accessible pointers;
 mark missing or unchecked sources and require refresh before dependent action.

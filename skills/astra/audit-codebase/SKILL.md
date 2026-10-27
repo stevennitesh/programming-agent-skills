@@ -5,142 +5,76 @@ description: Discover evidence-backed codebase improvements using a visual map a
 
 # Audit codebase
 
-Find worthwhile improvements to correctness, reliability, architecture,
-simplicity, maintainability, developer workflows, and data or resource use.
-The atlas helps the user explore systems, see audit progress and evidence, and
-choose useful work. Choose mapping granularity, investigation methods, and depth
-within the requested scope. Spend effort on questions that can change the result.
+Discover worthwhile improvements through a visual map and scoped evidence.
+Choose boundaries, hypotheses, methods, and depth for the request. Default writes
+are the managed report and invocation-owned temporary files; findings alone grant
+no product changes, revised product meaning, tracker publication, merge, release,
+or deployment authority.
+For combined analysis-and-fix requests, finish the authorized set and verification,
+recording outcomes; the read-only default does not truncate existing authority.
 
-Audit is read-only with respect to product behavior. The managed HTML report and
-invocation-owned temporary files are the only default writes. Findings and
-candidates do not authorize implementation, tracker publication, merge, release,
-deployment, or changes to accepted product meaning.
+## Select scope and investigate
 
-When fixes are also authorized, carry the selected set through the requested
-analysis, implementation, and verification, then record its outcomes together.
-Use suitable methods or an already-selected execution workflow. Commit, release,
-and deployment follow the user's actual delivery scope. The audit's default write
-boundary does not truncate a combined request.
+Use [Visual atlas](references/atlas.md) to create or resume the current-format
+workbench. In guided exploration, show meaningful systems and let the user select
+scope and deeper candidates. Honor a scope or delegated selection already supplied,
+including whole-repository audits, without asking again. An explicitly brief or
+text-only assessment may stay in chat; a no-write request creates no report.
 
-## Select scope and prepare
+Start navigation with compact `status` and filtered `inspect`, not the full HTML
+or state. Use [Audit packet](references/audit-packet.md) to prepare source-bound,
+guarded inputs before investigation; the helper owns validation and publication,
+while the agent owns semantic judgments and evidence. Do not rebuild that plumbing.
 
-Create or resume the workbench using [Visual atlas](references/atlas.md). Map
-meaningful owners at a useful initial granularity; deepen the map where the
-investigation needs it. For guided exploration, show the map and let the user
-select a subsystem, then a candidate for deeper analysis. Honor an already-selected
-scope, including a whole-repository audit or delegated scope selection, without
-asking the user to select it again.
-For agent reading, start with compact `status` and filter by scope or stable ID.
-Use selected `inspect` for needed evidence; avoid loading the full HTML or state
-into context for routine navigation.
+Trace accepted behavior, implicated owners/callers, and concrete consequences.
+Treat complexity, duplication, coordination costs, and suspected bottlenecks as
+hypotheses until supported. Seek counterexamples, use discriminating probes when
+needed, and reuse valid checks. Follow shared owners far enough to establish the
+affected set before calling a problem systemic. Extra files or unfamiliar design
+alone prove no avoidable complexity; preserve justified policy and lifecycle.
 
-Use the helper's preparation command for the selected audit, analysis, or outcome
-to supply the scope, report guard, and source snapshot. Fill in judgments and
-evidence; the helper handles validation and publication. See [Audit packet](references/audit-packet.md)
-for the concise input and optional detail. The ordinary path is:
+Use reliability, domain, design, simplification, coding practice, and performance
+as coverage prompts. [Quality questions](references/quality-questions.md) supplies
+optional detail; record actual coverage and gaps, leaving omitted lenses not
+inspected. No finding, probe, alternative, essay, or delegation quota is required.
+For authorized delegation, split distinct hypotheses/owners and collect attributable
+evidence and limits without duplicate investigation.
 
-```text
-Select scope → prepare packets → investigate → publish once → check the result
-```
+## Record supported findings and candidates
 
-An explicit brief or text-only assessment may stay in chat. A no-write request
-creates no report. Return supported findings with material coverage limits.
+Distinguish defects violating accepted expectations, opportunities with demonstrated
+avoidable cost, retained complexity protecting requirements, and evidence gaps.
+Keep observations, reproduced/measured results, inference, and expected benefit
+distinct. A material gap needs its smallest deciding observation, usable evidence,
+missing input/authority, and revisit condition; pursue closure within scope.
 
-## Investigate demonstrated costs
+Group findings only by a coherent causal owner or improvement direction. Candidates
+link findings and add a useful direction, qualitative strength, risks, and required
+proof where material; the helper derives counts and scope. Do not optimize for
+finding count, deleted lines, or novelty.
 
-Read relevant guidance and accepted decisions, then trace the selected behavior
-and its implicated owners and callers. Judge supported behavior and real change
-pressure. Coordination costs, leaked representation, duplicated policy, shallow
-modules, repeated workarounds, difficult proof, and suspicious complexity are
-hypotheses until a concrete scenario and consequence support them.
+For selected analysis, revalidate source and constraints and compare materially
+different options only. [Codebase-design](../codebase-design/SKILL.md) owns an
+unresolved ownership/migration choice; [prototype](../prototype/SKILL.md) obtains
+a needed new observation. Return a supported recommendation, disproved proposal,
+or exact blocker. Analysis alone starts no implementation.
 
-Use the six lenses—reliability, domain, design, simplification, coding practice,
-and performance—as concise coverage prompts. [Quality questions](references/quality-questions.md)
-offers optional questions where useful. Record dimensions actually examined and
-material gaps; omitted lenses remain **not inspected**. No finding, probe,
-alternative, or per-lens essay quota is required.
+## Publish and verify
 
-Seek counterexamples that could disprove the diagnosis. Passing tests alone may
-not distinguish the intended rule from a plausible wrong one. Choose probes,
-measurements, history reads, or reviews that resolve a remaining question; reuse
-passing checks when their relevant inputs are unchanged. If delegation is
-authorized, split distinct hypotheses or owners and request location, observation,
-consequence, counterevidence, and limits from each reviewer. Avoid duplicate
-investigation or a new report format for delegated results.
+Publish meaningful scope batches through guarded operations and retain stable IDs,
+source identities, and readback. Use [Prepared work and verification](references/workflow.md)
+for coordinated batches, narrow follow-ups, check receipts, and gap dispositions;
+no universal operation sequence is required. Use `edit-presentation` for display
+changes rather than another audit.
 
-Follow shared owners or sibling callers far enough to establish the affected set
-before calling a problem systemic. One implementation, extra files, or unfamiliar
-architecture does not establish unnecessary complexity. Preserve justified
-ownership, lifecycle, contracts, and hidden policy.
+Use [Atlas maintenance](references/maintenance.md) for resumed or changed source,
+ownership, and fix/delivery records. Inspect relevant deltas without reopening all
+history or erasing original evidence of verified work.
 
-## Record findings and useful candidates
-
-Classify supported observations as:
-
-- **defect:** an accepted expectation is violated;
-- **opportunity:** a demonstrated avoidable cost is worth reducing;
-- **retained complexity:** current requirements justify the complexity;
-- **gap:** evidence is insufficient to settle the claim.
-
-Distinguish observations, reproduced or measured behavior, inference, and expected
-benefit. Keep the decisive evidence and uncertainty with the finding. Candidates
-reference those findings and add a coherent improvement direction; repeat facts
-only when the candidate adds material context. The helper derives counts and
-candidate scope from linked findings when scope is omitted. Show defects separately
-from retained complexity and gaps.
-
-For a material gap, give the smallest observation that would settle it, what
-evidence is available now, and any missing data or authority plus a revisit trigger.
-Pursue closure within the authorized scope; retain a handoff when it needs
-additional data, access, or a product decision.
-
-Group defects or opportunities only when they share a causal owner or direction
-that can be judged together. Strength is qualitative evidence for attention:
-`strong` for a consequential supported cost and credible direction,
-`worth exploring` for a supported problem with material uncertainty, or
-`speculative` for a plausible weak signal. Do not optimize for finding count,
-deleted lines, or architectural novelty.
-
-For selected candidate analysis, revalidate implicated source, constraints, and
-proof. Compare only materially different choices; keeping the design, a small
-change, a structural change, or replacement are options when relevant.
-Use [codebase-design](../codebase-design/SKILL.md) for a consequential ownership or
-migration decision, or [prototype](../prototype/SKILL.md) for a needed new observation.
-Conclude with a supported recommendation, a disproved proposal, or an exact
-blocker. Analysis alone does not start implementation.
-
-## Publish a useful decision surface
-
-Publish a meaningful scope batch when it is ready, or when an intermediate result
-helps the user's ongoing exploration. Keep source identities, stable IDs, guarded
-publication, and read-back. Use `edit-presentation` for display-title changes;
-wording and layout adjustments do not require another audit event.
-For independent prepared results, use `publish-batch`; the coordinator owns the
-write. Use `append-findings` for a narrow follow-up that should retain existing
-analyses and lens coverage. See [Prepared work and verification](references/workflow.md)
-when collecting results, carrying passing checks across Git-only changes, or
-recording gap dispositions. These operations supply mechanics, not a required
-sequence for every investigation. Keep bespoke probes when they answer a real
-question; do not rebuild packet, publication, or provenance plumbing.
-
-Use [Atlas maintenance](references/maintenance.md) to inspect relevant changes,
-reconcile ownership, and retain fix and delivery outcomes. Changed source prompts
-inspection of the delta and relevant conclusions. It does not reopen every
-historical finding or erase evidence of a verified fix.
-
-Run `check-report` after publication. For ordinary content updates, inspect the
-changed content and its links and selection commands. For renderer changes,
-also check layout and relevant interactions at useful window widths. Try the
-host's supported HTML preview once and record opened, pending, or unavailable
-honestly; opening alone does not establish visual verification. Record an
-unavailable capability once per environment and reconsider when the host or
-capability changes. Avoid temporary servers and repeated tab recovery for an
-ordinary audit. Static checks remain separate from visual proof.
-
-Return the report path, strongest supported conclusions, selectable IDs, and
-material limits. Complete when the requested scope has been judged and the result
-checked, with any preview limitation stated. For combined requests, also finish
-authorized fixes and verification and record their outcomes, making blockers or
-requested delivery still pending clear. Further selection belongs to the user
-unless already supplied or delegated. HTML controls navigate, filter, and copy
-selections; they never mutate the repository or start another workflow.
+Run `check-report` after publication and follow
+[Check and preview](references/maintenance.md#check-and-preview-the-report) for
+content versus renderer checks and the supported preview's actual result.
+Return the report path, strongest conclusions, selectable IDs, and limits.
+Complete the requested scope and any authorized fixes/verification, exposing pending
+delivery or blockers. Further selection remains with the user unless supplied or
+delegated. HTML controls navigate/copy selections; they never execute workflows.

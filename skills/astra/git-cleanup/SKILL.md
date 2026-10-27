@@ -7,8 +7,7 @@ description: Assess and clean branches or worktrees, including retained-work int
 
 Reconcile the requested branches and worktrees while preserving useful work and
 active ownership. Finish with evidence for what was retained, integrated, or
-removed and the resulting repository state. Choose the inspection, comparison,
-integration, and cleanup methods appropriate to the repository and host.
+removed and the resulting repository state. Use only when requested.
 
 An assessment-only request stays read-only. For authorized cleanup or integration,
 carry the work through without asking again for effects already covered. Cleanup
@@ -44,9 +43,11 @@ changes whose disposition is unclear, read
 
 If the user requests integration of worthwhile work, assess its actual changes
 against current requirements and the target code before selecting what to retain.
-Use [change-review](../change-review/SKILL.md) for candidate assessment and
+Use [change-review](../change-review/SKILL.md) when candidate assessment is needed and
 [codebase-design](../codebase-design/SKILL.md) when reuse or ownership remains
-unresolved. Do not replay every old commit merely because it is unmerged.
+unresolved. For a retained PR that needs an authorized base update, use
+[Refresh an existing PR](../pr-delivery/references/refresh-existing-pr.md).
+Do not replay every old commit merely because it is unmerged.
 
 Integrate accepted work within the requested scope and repository policy, then
 verify the combined result with checks appropriate to its affected behavior.
@@ -72,7 +73,8 @@ When synchronization is requested, update the intended local branch to the
 verified remote state without discarding local commits or unrelated changes.
 A diverged branch requires reconciliation within scope, not a reset for cosmetic
 equality. Publication, PR closure, and history rewriting require their own existing
-authority; branch deletion alone does not establish those effects.
+authority; branch deletion alone does not establish those effects. Requested PR
+publication or delivery stays with [pr-delivery](../pr-delivery/SKILL.md).
 
 ## Verify the endpoint
 

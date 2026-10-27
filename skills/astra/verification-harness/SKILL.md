@@ -5,132 +5,98 @@ description: Create or improve reusable repository tooling for agents to exercis
 
 # Verification harness
 
-Create or improve repository-owned tools that make real product behavior faster,
-easier, and more reliable for agents to exercise and verify. Reduce repeated
-setup, fragile interactions, and rediscovery. The deliverable is reusable tooling
-and enough instructions to use it, demonstrated against the actual product.
-
-Choose the tools, implementation, and verification methods for the requested
-capability. Ordinary test execution needs no tooling workflow. Use
-[prototype](../prototype/SKILL.md) when the goal is a bounded experiment to resolve
-a design or feasibility uncertainty, and [wizard](../wizard/SKILL.md) for a private
-or human-only prerequisite.
+Create or improve reusable repository tools that let agents launch, drive, and
+verify real product interfaces without repeated fragile setup or rediscovery.
+Deliver usable tooling and instructions, demonstrated against the intended product.
+Use this workflow when requested; ordinary test execution needs no tooling phase.
+For a bounded feasibility experiment use [prototype](../prototype/SKILL.md);
+private or human-only prerequisites belong to [wizard](../wizard/SKILL.md) when
+requested.
 
 ## Find the useful tooling improvement
 
-Inspect the relevant source, run commands, existing harnesses, and supported
-interfaces to identify what agents repeatedly struggle to launch, drive, or
-observe. Reuse or improve the existing owner before adding another tool. A script,
-tool configuration, or corrected usage instructions may be sufficient; build a
-framework only when the requested capability needs one.
+Inspect source, run commands, existing tools, and supported interfaces. Improve
+the existing owner before adding another tool; a script, configuration change,
+or corrected usage instructions may suffice. Build a framework only when needed
+for the requested capability.
 
-Select the surfaces needed for the task. These examples guide fidelity, not a
-requirement to support every interface:
+Select the needed UI, command, API, or agent/MCP surface. Exercise its supported
+consumer entry point, including arguments, configuration, discovery, or schemas
+when relevant. Internal calls can aid setup or diagnosis but cannot establish
+an untested interface works. Substitutes prove only properties they preserve;
+identify the integrations or behavior they bypass.
 
-- **User interfaces:** drive supported interactions and observe the resulting
-  state, persistence, and material side effects relevant to the claim.
-- **Commands:** exercise the actual entry point with relevant arguments, input,
-  and configuration; expose output, exit behavior, and resulting effects.
-- **Agent interfaces:** exercise the advertised API, tool, or MCP contract through
-  the interface available to its consumer, including discovery or schemas when
-  relevant. Observe usable results, errors, and effects; distinguish an accepted
-  asynchronous request from completed work.
-
-Internal calls can help setup or diagnosis, but cannot establish that an untested
-consumer interface works. Fixtures or substitutes support only claims about the
-properties they preserve; identify integrations or behavior they bypass.
-
-Read [Feature map](references/feature-map.md) when several capabilities or surfaces
-need a maintained index to avoid repeated discovery, or when such a map is
-explicitly requested.
+Read [Feature map](references/feature-map.md) when several capabilities need a
+maintained verification index or the user requests one. A map is optional and
+does not establish that its recipes were exercised.
 
 ## Build for repeatable use
 
-Use the repository's established tooling and documentation locations. Add helpers
-where they remove repeated fragile work. Leave entry points, inputs, prerequisites,
-expected observations, and resource ownership clear enough for a fresh agent to
-use the tools without reconstructing their implementation.
+Use established tooling/documentation locations. Make entry points, inputs,
+prerequisites, expected observations, and resource ownership usable by a fresh
+agent without reconstructing the implementation. Preserve these properties
+without requiring separate commands or a fixed sequence:
 
-Preserve these properties without requiring separate commands or a fixed sequence:
+- **Target and readiness:** identify the intended source/build, configuration,
+  instance, and account before driving it; launch or attach as appropriate and
+  recheck identity when the candidate/target changes. A separate doctor command
+  is optional. For browser proof, establish approved-browser access to the actual
+  preview URL before dependent checks. A listening server or generated HTML does
+  not prove access; use only permitted routes and retain unsupported proof gaps.
+- **Drive and observe:** use stable supported controls; capture the action,
+  decisive result, and material effects. A screenshot, successful response, exit
+  code, accepted asynchronous request, or initial cached rendering alone cannot
+  establish a required transition. Where acceptance requires it, change state
+  and verify the interface reaches the expected authoritative result.
+- **Isolation and cleanup:** isolate mutable fixtures, configuration, and outputs
+  within authorized resources. Set state paths before imports that cache them;
+  resolve destructive fixture targets and verify ownership before setup/cleanup.
+  Keep scratch outside test, formatter, and build discovery unless intentional.
+  On Windows with unusable default temp storage, set process-local `TEMP` and
+  `TMP` to fresh writable ignored scratch before launching affected tools;
+  pytest's `--basetemp` does not redirect every tempfile user or child process.
+  Filesystem capability denials, such as hardlinks, need separate diagnosis.
+  Remove only owned resources; never kill by broad process name or delete shared
+  state for a clean run. Preserve required evidence.
 
-- **Target and readiness:** identify the intended source/build and relevant
-  configuration, instance, or account before driving it. Launch or attach as
-  appropriate; a separate doctor command is optional. Recheck identity when the
-  candidate or target changes so evidence belongs to the claimed instance.
-- **Drive and observe:** use stable supported controls and capture the action,
-  decisive result, and material side effects. A screenshot, successful tool
-  response, or exit code alone is insufficient when a transition or effect is
-  what must be established. For a cached or asynchronous interface, initial
-  rendering may not establish correctness. Where acceptance requires it, exercise
-  a relevant state change and verify that the interface reaches the expected
-  authoritative state.
-- **Isolation and cleanup:** keep mutable fixtures and outputs within authorized
-  resources, protecting unrelated sessions, data, processes, and external state.
-  Set isolated configuration and state paths before importing modules that cache
-  them. Resolve destructive fixture targets and confirm ownership before setup
-  or cleanup. Keep scratch artifacts outside product test, formatter, and build
-  discovery unless they are intentional inputs to the verification.
-  Remove only resources the run created or explicitly owns. Never kill by broad
-  process name or delete shared state to obtain a clean environment. Preserve
-  evidence needed for later review.
+Use authorized development/test identities. Do not use real private credentials
+merely to validate tooling or expose secrets in evidence. Inspect consequential
+mechanisms: a `dry-run` or `test` name alone does not establish harmlessness.
+Repair ordinary setup, launch, driver, assertion, and cleanup failures within
+scope without renewed permission. Do not bypass product defects, weaken accepted
+expectations, or change the product behavior under test to make tooling pass.
 
-When the requested workflow includes human inspection, keep its healthy preview
-and supporting resources available for that inspection. Record the actual URL,
-target identity, owned terminal session or PIDs, and recovery and shutdown routes.
-Make eventual cleanup ownership and the teardown condition clear. Ending an
-assistant turn does not by itself request teardown.
-
-Use authorized development/test targets and identities. Do not use real private
-credentials merely to validate tooling or expose secrets in captured evidence.
-A command named `dry-run` or `test` does not establish harmlessness; check the
-mechanism or effects that matter.
-
-Repair ordinary setup, launch, driver, assertion, and cleanup problems within the
-assignment and continue without approval for each iteration. Harness scaffolding
-must preserve the product behavior being verified. Do not weaken an expectation
-or bypass a product defect to produce a passing run.
+When human inspection is requested, retain a healthy preview and supporting
+resources. Hand off the actual URL, target identity, owned sessions/PIDs, recovery
+and shutdown routes, cleanup owner, and teardown condition. Ending an assistant
+turn alone does not request teardown.
 
 ## Demonstrate the capability
 
-Exercise the created or improved tooling against the intended product using
-workflows that establish the requested capability. Choose relevant success,
-failure, or recovery cases rather than a fixed test count. A representative run
-can prove a driver works; it does not certify every feature reachable through it.
+Exercise the tools against the intended product with relevant success, failure,
+or recovery cases. A representative run can establish a driver works without
+certifying every reachable feature. For added or materially changed custom target
+checks or outcome assertions, use a safe negative control or equivalent evidence
+that rejects the relevant wrong target/result. Wrong-target rejection alone does
+not establish outcome sensitivity. Use disposable fixtures or wrong expected
+markers, never real-state damage; reuse applicable prior check evidence.
 
-When adding or materially changing custom target checks or outcome assertions,
-use a safe negative control or equivalent evidence that the affected check
-rejects the relevant wrong target or result. A disposable fixture or deliberately
-wrong expected marker may suffice; never damage real state for this purpose.
-Rejecting a wrong target alone does not prove that the outcome assertion detects
-incorrect behavior. Reuse trustworthy prior check evidence when its mechanism and
-conditions remain applicable; unchanged runs need no repeated demonstration.
+Attribute failures from evidence: tooling defects, product violations, unavailable
+prerequisites, and unresolved causes are distinct. Failure to reach an interface
+may be a product startup crash. If product repair is authorized, fix it under that
+work and rerun affected verification; otherwise report it separately. Use
+[diagnosing-bugs](../diagnosing-bugs/SKILL.md) for difficult causal investigation;
+ordinary repairs need no handoff.
 
-Interpret failures from evidence. Distinguish broken tooling, product behavior
-that violates the accepted result, unavailable environment prerequisites, and
-unresolved causes. Failure to reach an interface is not itself a harness defect:
-the product may crash during startup. Preserve the observation and uncertainty
-until there is enough evidence to attribute it.
-
-If product repair is already authorized, carry the finding into that work and
-rerun affected verification after the fix. Otherwise report the product defect
-separately. Use [diagnosing-bugs](../diagnosing-bugs/SKILL.md) when a difficult or
-intermittent failure needs causal investigation; ordinary repairs need no handoff.
-
-Account for owned resources after failed attempts and before retrying. Confirm
-cleanup by the resources' actual state, not only a command's success status, and
-confirm required evidence survives. Report retained resources and their recovery
-path, distinguishing an intentional handoff from failed or unaccounted-for cleanup.
-Unresolved cleanup prevents claiming reliable unattended reuse.
+Account for owned resources after failed attempts and before retrying. Verify
+cleanup through actual resource state and preserve evidence. Distinguish intended
+human handoff from failed/unaccounted cleanup; unresolved cleanup prevents
+claiming reliable unattended reuse.
 
 ## Deliver usable tooling
 
-Complete when the requested tooling is usable by a fresh agent, has been exercised
-against the intended product, and produces evidence credible for its stated
-coverage with understood resource ownership and cleanup. If execution or decisive
-checks remain blocked, identify the unproved capability and label the affected
-tooling as unverified rather than claiming operational readiness.
-
-Return the created or improved paths, how to use them, what was demonstrated on
-which candidate/environment, and material coverage limits or remaining defects.
-Resume any already-authorized calling work that the tools unblock. A tooling-only
-assignment ends with that deliverable; it does not start a broader product audit.
+Finish with tooling a fresh agent can use, demonstrated coverage on the identified
+candidate/environment, and understood resource ownership. Return paths, usage,
+decisive observations, and material gaps or defects. Label blocked or unexercised
+capabilities unverified rather than operationally ready. Resume already-authorized
+calling work that is unblocked; tooling-only work does not start a product audit.

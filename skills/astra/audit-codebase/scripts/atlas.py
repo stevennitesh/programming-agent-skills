@@ -1746,7 +1746,7 @@ def _candidate_commands(x: dict[str, Any], run_id: str, freshness: str, work: di
         next_action = (
             f"Use analyzed audit candidate {x['id']} from atlas run {run_id}. "
             "Help me choose the appropriate next owner among direct implementation, "
-            "$codebase-design, $prototype, or $to-tickets. Do not start the next workflow yet."
+            "$codebase-design, $prototype, or $ticketing. Do not start the next workflow yet."
         )
     elif not changed and x["state"] == "blocked" and work["status"] == "open":
         next_action = (

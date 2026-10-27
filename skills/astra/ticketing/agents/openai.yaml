@@ -1,0 +1,6 @@
+interface:
+  display_name: "Ticketing"
+  short_description: "Assess tracked work or create bounded delivery tickets"
+  default_prompt: "Use $ticketing for the requested assessment, cleanup, or decomposition. Follow repository tracker conventions, preserve active claims and truthful readiness, and publish only authorized effects."
+policy:
+  allow_implicit_invocation: false

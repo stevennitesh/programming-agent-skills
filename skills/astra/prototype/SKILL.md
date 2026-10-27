@@ -5,89 +5,50 @@ description: Run a bounded experiment to resolve a design, integration, interact
 
 # Prototype
 
-Resolve a bounded uncertainty with evidence credible enough to guide the calling
-decision. Choose the experiment design, tools, fidelity, variants, measurements,
-and reporting format. Keep the effort proportionate to the question. A successful
-probe does not establish production readiness.
+Resolve a bounded uncertainty with a new observation. Reuse existing evidence
+when it already decides the question. Use [diagnosing-bugs](../diagnosing-bugs/SKILL.md)
+for an existing failure's cause and [hillclimb](../hillclimb/SKILL.md) for sustained
+measured improvement. A prototype may still need several runs or revisions.
 
-Use [diagnosing-bugs](../diagnosing-bugs/SKILL.md) when the question is why an
-existing failure occurs. Use [hillclimb](../hillclimb/SKILL.md) when the goal is an
-ongoing measured improvement loop. A bounded prototype can use multiple runs and
-revisions to answer its question.
+## Frame faithful evidence
 
-## 1. Define the deciding observation
+State the uncertainty, affected decision, and observation that distinguishes
+credible outcomes. Set consequential comparison conditions or success criteria
+before the decisive run, including a limitation case when happy-path behavior
+cannot decide. Do not use an experiment to settle a user-owned product preference.
 
-State the uncertainty, the decision it affects, and the observation capable of
-distinguishing the credible outcomes. Reuse an existing result when it already
-settles the question; do not build a ceremonial prototype.
+Use the cheapest surface that preserves the deciding mechanism. Simplify incidental
+infrastructure and polish, not concurrency, persistence, interaction, or another
+property being tested. Read the relevant [Evidence methods](references/evidence-methods.md)
+section for state/logic/integration, visual interaction, or variable measurements.
+Substitutes prove only properties they preserve, not production readiness.
 
-Define consequential comparison conditions or success criteria before the
-decisive run so the result is not judged retrospectively. Include a condition
-that can expose the relevant limitation when a happy-path demonstration would
-not distinguish the decision.
+## Run and adapt
 
-Do not use an experiment to decide an unresolved product preference on the user's
-behalf. If exploration changes the question or metric, state that change rather
-than silently moving the success rule.
+Follow repository scratch and isolation rules and authorized development targets.
+A local path does not isolate a shared database or service. Account for created
+files, processes, and other resources; preserve unrelated work.
 
-## 2. Preserve necessary fidelity
+Exercise the actual behavior and verify the instrument reaches the mechanism and
+exposes the deciding observation. Repair ordinary setup or instrumentation within
+scope and continue; a broken instrument does not disprove the approach. If faithful
+evidence remains unavailable, state the gap and bound substitute-based claims.
 
-Use the cheapest existing or temporary surface that can faithfully expose the
-deciding property. Simplify incidental infrastructure, state, and polish, not the
-mechanism whose behavior is being tested.
+Use exploratory runs, comparisons, or revised instruments as needed. Make question
+or criterion changes explicit and distinguish exploratory evidence from proof of
+the revised conclusion. Stop when answered, genuinely blocked, or further effort
+cannot justify its decision value. Do not expand into production work to obtain
+a favorable result.
 
-A substitute supports only claims about properties it preserves. An in-memory
-model cannot establish database isolation, and a static render cannot establish
-interaction behavior. If the required mechanism or environment is unavailable,
-determine whether ordinary setup or instrument repair can make it usable within
-scope. When faithful evidence remains unavailable, report the gap and limit
-substitute-based claims to the properties actually exercised.
+## Return and continue within scope
 
-For state, logic, integration, visual interaction, or variable measurements, read
-the relevant section of [Evidence methods](references/evidence-methods.md).
+Deliver the observation, conditions, substitutions, conclusion or exact gap, and
+requested demo, comparison, or reusable experiment. Preserve reproduction detail
+when future use needs it. Account for resources, stop or explicitly retain created
+services/processes, preserve requested artifacts, and safely remove other disposable
+material. Identify blocked deliverables.
 
-## 3. Run the experiment
-
-Follow repository scratch and isolation conventions. Keep experiment effects
-within authorized development targets and account for processes, services, files,
-or other resources the probe creates. A disposable local path does not isolate a
-shared database or external service.
-
-Exercise the actual behavior, rendering, or measurement under the framed
-conditions. Confirm that the instrument reaches the intended mechanism and makes
-the deciding observation visible.
-
-Use exploratory runs, comparisons, instrument improvements, and reruns when they
-help resolve the uncertainty. Repair ordinary probe errors, missing local setup,
-or faulty instrumentation within authorized scope and continue. A broken
-instrument is not evidence that the proposed approach fails.
-
-Keep question or criterion changes visible and distinguish exploratory findings
-from evidence for the revised conclusion. Stop experimenting when the question is
-answered, a genuine blocker establishes the evidence gap, or further effort is
-unlikely to improve the decision enough to justify its cost.
-
-Do not expand the experiment into production implementation merely to obtain a
-favorable result.
-
-## 4. Deliver the result and continue within scope
-
-Return the decisive observation, the conditions and substitutions that bound it,
-and the resulting conclusion or precise evidence gap. Deliver any requested
-runnable demo, comparison artifact, or reusable experiment with enough context to
-use or rerun it. Identify blocked deliverables explicitly. Preserve other
-reproduction detail when future verification or comparison needs it.
-
-Completion includes the requested evidence and artifacts and accounting for the
-probe's resources. Stop or account for created processes and services; retain
-requested artifacts and remove other disposable material when safe. Preserve
-unrelated work.
-
-Prototype code is evidence first. Reuse it in production only after the calling
-work evaluates it against production ownership, quality, and integration
-requirements.
-
-When the experiment supports already-authorized implementation, carry its result
-back into that work and continue within the active workflow. A prototype-only
-request ends with its result; the experiment does not itself authorize production
-implementation or other effects outside its scope.
+Prototype code remains evidence until the calling work evaluates production
+ownership, quality, and integration. Resume already-authorized implementation when
+the result unblocks it; a prototype-only request ends with the result and grants
+no wider production or external effects.

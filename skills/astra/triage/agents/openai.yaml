@@ -1,6 +1,0 @@
-interface:
-  display_name: "Triage"
-  short_description: "Assess intake and reconcile tracked work"
-  default_prompt: "Use $triage to assess this intake or backlog against current evidence and apply only the requested cleanup under the repository's tracker conventions."
-policy:
-  allow_implicit_invocation: false

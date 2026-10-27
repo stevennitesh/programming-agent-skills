@@ -9,29 +9,21 @@ Recover the intended combined behavior, preserve unrelated work, and stop at the
 requested Git endpoint. Removing conflict markers alone does not establish a
 correct resolution.
 
-Choose the investigation tools, resolution techniques, and grouping of related
-conflicts. Preserve necessary ordering: understand state and authority before
-mutation, and inspect the resolved candidate before continuation.
-
 ## Establish the operation and authority
 
-Inspect the worktree identity, status, Git-resolved operation metadata, unmerged
-index (`git ls-files -u`), relevant commits, conflicted paths, and existing
-staged, unstaged, and untracked work. In linked worktrees, do not assume `.git`
-is a directory.
+Inspect worktree identity, status, Git-resolved operation metadata, unmerged
+index (`git ls-files -u`), relevant commits and paths, and staged, unstaged, and
+untracked work. In linked worktrees, `.git` need not be a directory.
 
-Establish the requested endpoint before mutation. Status, explanation, and review
-requests are read-only. A request to finish an active operation carries its normal
-resolution, staging, and native continuation effects within repository policy; a
-resolve-only request does not by itself authorize a commit. Preserve an explicit
-endpoint such as leaving resolutions unstaged or leaving a no-commit operation
-prepared.
+Establish the endpoint before mutation. Status, explanation, and review are
+read-only. Finishing an active operation carries its normal resolution, staging,
+and native continuation effects within repository policy; resolve-only work does
+not authorize a commit. Preserve explicit unstaged or no-commit endpoints.
 
-If neither an active operation nor unmerged entries remain, report the observed state
-instead of starting an integration. An active operation may still await review or
-continuation after conflicts have already been staged. Do not resolve a worktree
-concurrently with another integration owner. Re-observe state after another actor
-or unexpected change.
+If neither an active operation nor unmerged entries remain, report state rather
+than starting an integration. Staged resolutions can still await continuation.
+Do not share write custody with another integration owner; refresh state after
+another actor or unexpected change.
 
 ## Reconcile the intended combination
 
@@ -40,57 +32,47 @@ in [Operation details](references/operations.md). Map index stages and side name
 to their real objects before using side-selection commands; `ours`, `theirs`,
 and marker labels are not statements of intent.
 
-Use the accepted requirements and affected code to determine the intended combined
-behavior. Preserve compatible intent from both changes. When the changes disagree
-semantically, follow the governing requirement and surface only a consequential
-decision that lacks an owner-held answer.
+Reconcile the affected code under accepted requirements, preserving compatible
+intent from both changes. For semantic disagreement, follow the governing
+requirement; surface consequential decisions only when no owner-held answer exists.
 
-Resolve affected neighboring paths when the conflict changes a contract they
-consume. Whole-side selection is valid when the resulting candidate satisfies the
-governing requirements and preserves required intent. Inspect final path presence,
-names, content, and modes rather than only marker locations.
+Include neighboring consumers when a changed contract affects them. Whole-side
+selection is valid when it preserves required intent. Inspect final path presence,
+names, content, and modes, including changes beyond marker locations.
 
 ## Verify the resolved candidate
 
-Treat manual, automatic, merge-driver, and `rerere` resolutions as candidates to
-inspect. Require the resulting unmerged/index state and resolved delta to represent
-the intended combination.
+Inspect manual, automatic, merge-driver, and `rerere` results as candidates.
+The resolved delta and index must represent the intended combination.
 
-Choose intermediate checks for the affected behavior and the risk of continuing,
-honoring any repository-required per-commit checks. Reuse still-valid evidence;
-each replay does not automatically require a full suite. Verify the final combined
-result at the requested endpoint with repository-required checks and focused
-evidence. When the conflict changes an integration seam, prove the ordinary
-combined producer/consumer path rather than relying only on tests that passed
-independently on each side.
+Choose intermediate checks for continuation risk and required per-commit policy;
+each replay needs no automatic full suite. Verify the final combined result with
+required checks and focused evidence, reusing still-valid proof. For changed
+integration seams, prove the ordinary combined producer/consumer path; passing
+checks on each side alone do not establish integration.
 
-Repair resolution-caused failures and routine local tooling problems within scope
-and existing authority, then rerun affected checks. These repairs and retries
-need no renewed permission; preserve required checks and repository policy.
+Repair resolution-caused failures and routine local tooling problems within
+existing scope and authority, then rerun affected checks without renewed permission.
 
-Choose a staging method that includes only changes owned by this resolution and
-preserves unrelated user-owned changes. Whole-worktree staging is appropriate only
-when every change it would include has been verified to belong to the resolution.
+Stage only resolution-owned changes. Whole-worktree staging is appropriate only
+after verifying every included change belongs to the resolution.
 
 ## Reach the authorized endpoint
 
 Before native continuation, require an empty unmerged index and inspect the staged
-delta. If continuation would necessarily commit or otherwise absorb unrelated
-user-owned work, stop and report that conflict. Do not stash, discard, rewrite,
-unstage, or commit unrelated work merely to make continuation possible without
-authority.
+delta. Stop if continuation would absorb unrelated work. Do not stash, discard,
+rewrite, unstage, or commit that work to make continuation possible without authority.
 
-When continuation is authorized, use the observed operation's native continuation
-and preserve its selected commits, mainline, messages, options, and policy. Do not
-replace a replay operation with a plain commit. Continue through subsequent
-conflicts without renewed permission, refreshing operation state and affected
-context as needed. Stop at the requested endpoint, for an unresolved consequential
-decision or missing authority, or when an execution blocker cannot be resolved
-within scope.
+Use the observed operation's authorized native continuation, preserving selected
+commits, mainline, messages, options, and policy; a plain commit cannot replace
+replay continuation. Continue through subsequent conflicts without renewed
+permission, refreshing state and context. Stop at the endpoint, for an unresolved
+consequential decision or missing authority, or for a blocker that cannot be
+resolved within scope.
 
-For no-commit endpoints, empty replays, editor/hook/signing failures, abort/skip/
-quit choices, strategy or mainline changes, or other recovery effects, use
-[Operation details](references/operations.md) rather than improvising a shortcut.
+For no-commit endpoints, empty replays, editor/hook/signing failures, or recovery
+choices such as abort, skip, quit, or strategy/mainline changes, use
+[Operation details](references/operations.md).
 
 Finish by re-observing status, unmerged entries, and operation metadata. Report the
 endpoint reached, material intent choices, resulting revision when applicable,

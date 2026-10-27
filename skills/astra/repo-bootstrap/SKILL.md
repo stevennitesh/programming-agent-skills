@@ -5,65 +5,45 @@ description: Establish repository agent guidance or migrate its setup. Exclude o
 
 # Repo bootstrap
 
-Establish repository guidance or migrate it for the requested setup.
-Leave future agents a coherent reading path grounded in current sources and the
-repository's deliberate decisions. Choose the investigation, files, organization,
-and verification appropriate to that outcome. For an inspection, return findings
-without editing.
+Establish initial repository guidance or perform a requested setup migration.
+Leave accurate commands, non-obvious local constraints, accepted decisions, and
+discoverable owners for future work. An inspection alone returns findings without edits.
 
-This skill owns initial guidance and requested setup migrations, such as adopting
-a skill pack or configuring a tracker. Ongoing reconciliation of scattered,
-stale, conflicting, or missing guidance belongs to
-[context-hygiene](../context-hygiene/SKILL.md). Writing or auditing an
-already-selected instruction artifact belongs to
-[writing-for-agents](../writing-for-agents/SKILL.md).
+Ongoing context maintenance belongs to [context-hygiene](../context-hygiene/SKILL.md);
+a selected instruction rewrite belongs to [writing-for-agents](../writing-for-agents/SKILL.md).
+Choose by the requested work, not the filename being edited.
 
-## Required result
+## Establish the reading path
 
-The guidance should give future agents:
+Use verified sources and existing owners. Preserve deliberate local policy,
+project meaning, exceptions, unrelated work, and useful history. Templates are
+optional seeds, not synchronization contracts; missing preferred files or different
+wording alone do not justify changes or block coding.
 
-- Working commands grounded in their current scripts or configuration.
-- Non-obvious repository constraints and accepted decisions relevant to their work.
-- Discoverable instructions at the right scope, with conditional pointers to
-  maintained sources.
-- Clear ownership of current rules, with displaced instructions and conflicting
-  copies reconciled within the requested scope.
+For existing guidance, use the shared
+[Repository guidance reconciliation](../context-hygiene/references/audit-and-changes.md)
+method. Reading it does not select a maintenance workflow or require another phase.
+Keep mechanical enforcement at its owner, and record only operating authority
+already established by the task and enforcing mechanism.
 
-Preserve deliberate local policy, project meaning, unrelated work, and historical
-evidence. Templates are optional starting material; adopted guidance belongs to
-the repository and need not track later template wording. A missing preferred
-file or a wording difference alone is not a setup gap.
+Read conditional setup details only when needed:
 
-Use existing owners where useful and add documents only when their content or
-reading conditions justify them. Keep mechanical enforcement at its actual owner.
-When recording a non-obvious safe operating boundary helps prevent needless
-approval stops, verify it from the enforcing mechanism and state only authority
-already granted by the task.
+- [Setup defaults](references/setup-defaults.md): optional layout and domain route.
+- [Agent instruction files](references/agent-instructions.md): actual instruction
+  scope and reading paths, or explicitly requested global guidance.
+- [Tracker setup](references/tracker-setup.md): requested tracker configuration
+  or guidance for established tracking.
+- [Parallel support](references/parallel-support.md): requested setup or a concrete
+  prerequisite gap; execution still owns workers and lane lifecycle.
 
-## Conditional details
+## Finish the authorized setup
 
-Read only the references needed for the requested setup:
+Apply settled changes without another approval cycle. Ask only for consequential
+policy or authority that remains unresolved; continue independent work. Setup
+alone grants no dependency installation, new tooling, tracker mutations, global
+edits, worker dispatch, commits, or publication.
 
-- [Setup defaults](references/setup-defaults.md): initial guidance, placement of
-  project-specific requirements, and an optional domain route.
-- [Agent instruction files](references/agent-instructions.md): instruction scope,
-  reading paths, or explicitly requested global guidance.
-- [Reconcile existing guidance](references/reconcile-existing.md): preserve local
-  decisions and reconcile displaced routes during a requested setup migration.
-- [Tracker setup](references/tracker-setup.md): requested tracker configuration or
-  guidance for established tracking.
-- [Parallel support](references/parallel-support.md): requested parallel setup or
-  a concrete prerequisite gap reported by the execution workflow.
-
-## Scope and completion
-
-Apply settled changes within the user's authorization. Ask only for unresolved
-consequential policy choices; continue independent authorized work. Guidance setup
-alone does not authorize dependency installation, new tooling, tracker mutations,
-global-file edits, commits, publication, or starting workers.
-
-Finish when the requested reading path is accessible, accurate, and sufficient
-for the intended workflow, with deliberate local choices preserved and displaced
-rules removed from active use. Match verification to the claim: source inspection
-can establish a command's definition; runtime success requires execution.
-Report material changes, preserved exceptions, and unresolved gaps.
+Verify that future agents reach the current guidance, displaced rules no longer
+compete, and local choices survive. Source inspection establishes a command's
+definition; runtime success requires execution. Report changed surfaces,
+preserved exceptions, and remaining gaps. An equivalent repeat migration needs no edit.

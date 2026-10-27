@@ -29,7 +29,7 @@ tools around ideas credited in [Acknowledgments](ACKNOWLEDGMENTS.md).
 | Managed installation | Previews changes, checks ownership, preserves unrelated skills, and records recoverable update transactions | [Installer](scripts/install_skills.py) and [recovery guide](INSTALLATION.md) |
 | Parallel worktree coordination | Creates worktrees from the assigned base, inspects integration and runtime state, and preserves dirty or uncertain work during cleanup | [Worktree helper](skills/astra/parallel-implement/scripts/lane_worktree.py) |
 | Package validation | Checks resources, references, catalog invocation rules and requested installed-source parity | [Validator](scripts/validate_skills.py) |
-| Agent inspection tools | Generates a navigable codebase atlas and records optional model-use telemetry | [Atlas](skills/astra/audit-codebase/scripts/atlas.py) and [telemetry](skills/astra/cost-aware-coding/scripts/telemetry.py) |
+| Agent inspection tools | Generates a navigable codebase atlas and records optional model-use telemetry | [Atlas](skills/astra/audit-codebase/scripts/atlas.py) and [telemetry](skills/astra/controlled-delegation/scripts/telemetry.py) |
 | Task selection | Gives each workflow a compact selector and useful exclusions | [Selection examples](docs/astra/selection-examples.md) and [design brief](docs/astra/design-brief.md) |
 
 ```mermaid
@@ -107,11 +107,11 @@ covers updates, custom targets, migration and recovery.
 | Optimize a measurable outcome through experiments | [$hillclimb](skills/astra/hillclimb/SKILL.md) | Request explicitly |
 | Review a code change for correctness and maintainability | [$change-review](skills/astra/change-review/SKILL.md) | Automatic when relevant |
 | Create or update a PR, check its status, or carry requested review and CI follow-through to an authorized endpoint | [$pr-delivery](skills/astra/pr-delivery/SKILL.md) | Automatic when relevant |
+| Adopt and finish another actor's PR, branch, or agent work while preserving intent, custody, and contributor credit | [$takeover](skills/astra/takeover/SKILL.md) | Request explicitly |
 | Remove low-value tests; consolidate, organize, and streamline useful coverage | [$test-cleanup](skills/astra/test-cleanup/SKILL.md) | Request explicitly |
-| Assess intake or clean up a requested backlog using current evidence | [$triage](skills/astra/triage/SKILL.md) | Request explicitly |
-| Turn a spec or sufficiently clear idea into bounded tickets with dependencies | [$to-tickets](skills/astra/to-tickets/SKILL.md) | Request explicitly |
+| Assess or reconcile tracked work, or turn clear ideas into bounded tickets | [$ticketing](skills/astra/ticketing/SKILL.md) | Request explicitly |
 | Implement concurrently with separate ownership and clear dependencies | [$parallel-implement](skills/astra/parallel-implement/SKILL.md) | Request explicitly |
-| Assign work to GPT 6 models while the lead retains decisions and review | [$cost-aware-coding](skills/astra/cost-aware-coding/SKILL.md) | Request explicitly |
+| Delegate through one primary worker and limited support while the lead retains decisions and acceptance | [$controlled-delegation](skills/astra/controlled-delegation/SKILL.md) | Request explicitly |
 | Route subagent models alongside native Ultra and review before PR delivery | [$ultra-model-routing](skills/astra/ultra-model-routing/SKILL.md) | Request explicitly |
 | Resolve an active Git merge or rebase conflict | [$resolving-merge-conflicts](skills/astra/resolving-merge-conflicts/SKILL.md) | Automatic when relevant |
 | Assess branches and worktrees, integrate worthwhile work when requested, and clean up safely | [$git-cleanup](skills/astra/git-cleanup/SKILL.md) | Request explicitly |
@@ -134,7 +134,9 @@ records remain available without overriding the current pack.
 This project began with [Matt Pocock's skills](https://github.com/mattpocock/skills)
 and draws on [pstack](https://github.com/cursor/plugins/tree/main/pstack),
 [Ponytail](https://github.com/DietrichGebert/ponytail) and
-[Superpowers](https://github.com/obra/superpowers). [Acknowledgments](ACKNOWLEDGMENTS.md)
+[Superpowers](https://github.com/obra/superpowers), with selected continuation and
+PR-delivery ideas from [Tstack](https://github.com/t3dotgg/tstack).
+[Acknowledgments](ACKNOWLEDGMENTS.md)
 records these influences and the additional source guidance. They are independent
 projects, not affiliations.
 

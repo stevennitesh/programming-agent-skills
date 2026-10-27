@@ -14,6 +14,12 @@ I did not invent every good idea in this pack. It draws on public work from:
   the task needs.
 - [Superpowers](https://github.com/obra/superpowers), especially skill-based
   planning, debugging, verification, and delegated development workflows.
+- [Tstack by Theo Browne](https://github.com/t3dotgg/tstack/tree/7de017b3fc9d50c03cf3ecb98fb71e0ca65a78bd),
+  especially receiving unfinished work while preserving contributor credit,
+  reassessing old PRs before rebasing, explicit delivery endpoints, and bounded
+  review feedback. These ideas are adapted into takeover and the existing
+  delivery and review owners. Its watcher and fixed model or bot policies are not
+  included.
 - [Andrej Karpathy's observations on coding agents](https://x.com/karpathy/status/2015883857489522876),
   especially the warnings about hidden assumptions, unnecessary abstractions,
   unrelated edits, and work that is never meaningfully verified.

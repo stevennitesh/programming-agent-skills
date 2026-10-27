@@ -16,10 +16,10 @@ dispatch successors. Product writes and external effects remain limited by the
 user's existing authorization.
 
 If the user explicitly combines this skill with
-[cost-aware-coding](../cost-aware-coding/SKILL.md), this skill owns concurrency,
-lane custody, integration, and parallel recovery. Cost-aware-coding continues to
-own GPT-6 model and effort routing, budget constraints, and its final review
-requirement.
+[controlled-delegation](../controlled-delegation/SKILL.md), this skill owns concurrency,
+lane custody, integration, and parallel recovery. Apply
+[Shared model routing](../controlled-delegation/references/model-policy.md);
+controlled-delegation retains budget constraints and its final review requirement.
 
 ## 1. Admit independent work
 
@@ -116,7 +116,7 @@ observations remain valid. Missing required proof leaves delivery incomplete.
 
 Use [change-review](../change-review/SKILL.md) when requested, required by the
 repository, or needed for a concrete unresolved shared-contract or migration
-judgment. When cost-aware-coding also governs the run, its lead owns that skill's
+judgment. When controlled-delegation also governs the run, its lead owns that skill's
 required final review and acceptance of the stable integrated candidate.
 
 Finish authorized tracker transitions through the tracker reference. After actor

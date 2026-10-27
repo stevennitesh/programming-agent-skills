@@ -1,63 +1,62 @@
-# Repository context
+# Repository guidance reconciliation
 
-Use for ongoing repository context assessment or authorized maintenance. The
-result is a coherent reading path with trustworthy owners and enough local
-knowledge for the intended work. Choose the discovery and verification methods.
+Use for existing guidance within a requested bootstrap migration or ongoing
+context maintenance. This shared method does not select either workflow, expand
+its scope, or require a preferred document tree.
 
-## Find what affects future work
+## Establish current meaning and consumers
 
-Follow relevant root and nested instructions, commands, guides, current plans,
-decision records, and indexes. For a repository-wide request, include unlinked
-material so existing pointers do not hide obsolete or conflicting guidance.
-A focused repair needs only its affected sources and consumers.
+Follow affected root/nested instructions, commands, guides, plans, decisions,
+indexes, and mechanical checks. Include unlinked material in a repository-wide
+request; a focused repair needs only affected sources and readers. Check claims
+against code, configuration, accepted decisions, and actual workflow needs.
+Newer code can expose drift without overriding accepted behavior.
 
-Check current claims against code, configuration, accepted decisions, and actual
-workflow needs. Include missing knowledge: a needed command, non-obvious
-constraint, ownership decision, or reading condition may have no document yet.
-A missing preferred filename or an empty template section is not itself a gap.
-Source inspection establishes a command's definition; runtime success needs
-execution when that claim matters and execution is authorized.
+Distinguish deliberate policy from inherited defaults. An older bootstrap's rule
+is not automatically an intentional override, and a newer template cannot replace
+a real project choice. Use decisions, history, and consumers when provenance
+matters; ask only when an unresolved distinction changes consequential policy.
+Preserve verified facts, domain meaning, rationale, exceptions, and useful history.
+Historical records remain evidence rather than current instructions.
 
-Distinguish incorrect current guidance, unresolved claims, superseded material
-still presented as active, and useful historical evidence. Newer code can reveal
-documentation drift without overriding accepted behavior or project meaning.
+Missing commands, owner pointers, or constraints can be real gaps. An absent
+preferred filename, optional section, or equivalent local wording is not.
+For instruction scope or authorized global setup, use
+[Agent instruction files](../../repo-bootstrap/references/agent-instructions.md).
 
-## Consolidate at the useful owner
+## Reconcile at the useful owner
 
-Keep brief local requirements in existing instructions or another maintained
-owner. Split or combine documents when their content and reading conditions
-justify it. Consolidation should reduce conflicting ownership without forcing all
-context into one file or creating a generic engineering contract.
+Compare meaning, triggers, exceptions, and authority before combining apparent
+duplicates. Update useful owners and affected readers rather than creating a
+parallel source or generic engineering contract. Add verified missing knowledge;
+do not invent product policy. A retired workflow with no replacement may simply
+leave direct work, not another mandatory step. Template parity is not the goal.
 
-Compare apparent duplicates by meaning, including scope, triggers, exceptions,
-and authority. Preserve deliberate differences. Resolve contradictions through
-accepted decisions and current owners; ask only when an unresolved consequential
-choice cannot be established from evidence.
+For repeated command or search failures, derive actual paths and entry points
+from current files/configuration and correct the runnable command and host
+prerequisites at their owner. Source inspection establishes definition; runtime
+success requires authorized execution. An environment failure is not proof of a
+product defect, and recurring per-review workarounds are not a maintained fix.
 
-Add or correct missing guidance from verified sources. Do not invent product or
-domain policy to fill a gap. When accepted meaning itself needs a decision, use
-the repository's domain route or
-[shape-work](../../shape-work/SKILL.md) under its invocation policy.
+When accepted meaning needs a decision, use the repository's domain route or
+[shape-work](../../shape-work/SKILL.md) under its invocation policy. For conflicting
+or displaced specs, plans, domain records, or ADRs, use
+[Document reconciliation](../../shape-work/references/document-reconciliation.md).
+Routine command and pointer repairs need no separate shaping workflow.
 
-For conflicting or displaced specs, domain records, plans, or decisions with
-active consumers, use
-[Document reconciliation](../../shape-work/references/document-reconciliation.md)
-for its applicability and preservation requirements. Routine command or pointer
-repairs do not need that separate workflow.
+## Apply within authority and verify the receiving path
 
-## Verify authorized maintenance
+Refresh mutable targets when drift could overwrite other work. Preserve unrelated
+content and historical evidence. Make replacement meaning accessible, update
+affected pointers and competing copies, then retire displaced rules. Archiving one
+file does not remove instructions still exposed elsewhere.
 
-Refresh mutable targets when drift could overwrite another actor's work. Preserve
-unrelated content and historical evidence unless their mutation is requested.
-Update affected pointers and competing current copies when relocating meaning;
-archiving one file does not retire instructions exposed elsewhere.
+Adapt checks that enforce a displaced convention while preserving their actual
+protection. Product changes, new tooling, tracker mutations, global edits, or
+revised accepted behavior need their own authority; a shared reference grants none.
 
-Reconcile mechanical checks that enforce a displaced context convention when
-within the authorized maintenance, preserving still-valid protections. Product
-changes, new tooling, tracker mutations, and revisions to accepted behavior need
-their own task authority.
-
-Verify retained meaning, replacement access, and the affected reading path.
-Check that stale rules are no longer active within scope and that missing
-knowledge has been supplied or remains an explicit gap. Reuse valid evidence;
-do not require an exhaustive repository audit for a bounded correction.
+Verify that future agents find current owners, retained meaning, and local
+exceptions, and no longer receive displaced rules. Reuse still-valid evidence;
+a legacy validator proves only its own rules. An equivalent repeat migration
+needs no edit. Report changed surfaces and explicit policy, access, or knowledge
+gaps without expanding a bounded repair into an exhaustive audit.

@@ -15,10 +15,11 @@ automatically selectable skills, the request is shown in ordinary language.
 | [$audit-codebase](../../skills/astra/audit-codebase/SKILL.md) | `$audit-codebase Map this repo's systems in an HTML workbench, show audit progress and improvement candidates, and let me choose what to inspect next; do not implement changes.` | Map meaningful ownership and dependencies, show current coverage and freshness, and let the user select audit or analysis scopes. A request that already selects a whole-repository scope or delegates selection proceeds within that authority without repeated selection prompts. | `Review this PR for regressions.` That is change-review because the subject is a fixed change candidate. |
 | [$change-review](../../skills/astra/change-review/SKILL.md) | `Review this branch against main for correctness and maintainability problems introduced by the change.` | Fix the candidate identity, judge changed behavior against accepted obligations, and return evidence-backed findings without unrelated baseline cleanup. | `Audit the whole repo for architecture debt.` That is audit-codebase because there is no selected change candidate. |
 | [$pr-delivery](../../skills/astra/pr-delivery/SKILL.md) | `Create a PR for this change and merge when CI and Codex review are green.` | Reuse or create the intended PR, carry authorized corrections through CI and requested review, and merge only after current applicable evidence supports the exact head. Verify the remote result. | `Review this PR for regressions and report findings.` That is change-review; assessment alone authorizes no publication or merge. |
+| [$takeover](../../skills/astra/takeover/SKILL.md) | `$takeover Finish the work in this other agent's PR, including the user's later corrections, and leave it ready for me to merge. Preserve the original contributors' credit.` | Reconcile accepted intent with the actual candidate, dirty work, and write custody; assess inherited claims, preserve attribution, and continue to the authorized endpoint through existing owners. | `Rebase this old PR onto its current base and tell me whether it is still useful.` Refresh alone belongs to pr-delivery. `Write a handoff so another agent can continue.` Packet preparation belongs to writing-for-agents. |
 | [$codebase-design](../../skills/astra/codebase-design/SKILL.md) | `Decide whether this feature should extend our existing retry helper or replace the duplicated retry paths, and what can be retired.` | Inspect existing capabilities and consumers, choose the simplest suitable ownership, and return the caller transition and retirement obligations with necessary compatibility preserved. | `Implement the already-settled retry change.` Direct implementation needs no additional design phase. `Decide what users should see after a partially saved import.` Unsettled product behavior belongs to shape-work. |
 | [$context-hygiene](../../skills/astra/context-hygiene/SKILL.md) | `Reconcile this repo's scattered guidance, conflicting owners, and missing test commands.` | Maintain the affected reading path from verified sources, preserve accepted meaning, and apply authorized cleanup without a separate setup phase. | `Set up agent guidance for this new repository.` That is repo-bootstrap because initial setup is requested. |
-| [$cost-aware-coding](../../skills/astra/cost-aware-coding/SKILL.md) | `$cost-aware-coding Implement the accepted retry consolidation plan while minimizing Astra lead-token churn.` | The lead assigns acceptance including caller migration and scoped cleanup; Sol owns implementation and retirement while preserving supported behavior, Luna supplies useful bounded support, and the lead waits for meaningful questions or review returns before accepting the complete candidate. | `Implement this two-line null check.` Direct coding is cheaper than delegation overhead. |
-| [$ultra-model-routing](../../skills/astra/ultra-model-routing/SKILL.md) | `$ultra-model-routing Keep my Sol 6.1 Ultra lead, implement this accepted change, and prepare the requested PR with the skill's child routes and final reviews.` | Preserve native delegation, select both model and effort for scoped fresh children, use defined routine work and substantive work routes appropriately, and complete three sequential independent final-review rounds with correction verification before authorized PR creation. | `Change my default lead to Sol Ultra and install global agent configuration.` Runtime setup is outside this routing policy. |
+| [$controlled-delegation](../../skills/astra/controlled-delegation/SKILL.md) | `$controlled-delegation Implement the accepted retry consolidation plan with one primary worker and limited support.` | The lead assigns acceptance including caller migration and scoped cleanup; one worker owns implementation and retirement while preserving supported behavior. Routine help, architecture advice, and review share one support slot under the shared routing policy; the lead waits for meaningful questions or review returns before accepting the complete candidate. | `Implement this two-line null check.` Direct coding avoids unnecessary delegation. `Keep native Ultra delegation for this task.` Use ultra-model-routing instead of the controlled execution workflow. |
+| [$ultra-model-routing](../../skills/astra/ultra-model-routing/SKILL.md) | `$ultra-model-routing Keep my Sol 6.1 Ultra lead, implement this accepted change, and prepare the requested PR with the shared child routes and final reviews.` | Preserve native delegation, select both model and effort from shared routing for scoped fresh children, and complete three sequential independent final-review rounds with correction verification before authorized PR creation. Do not import the controlled team's support limit. | `Change my default lead to Sol Ultra and install global agent configuration.` Runtime setup is outside this routing policy. |
 | [$diagnosing-bugs](../../skills/astra/diagnosing-bugs/SKILL.md) | `This failure appears only under concurrent retries. Find the causal mechanism and fix it if the evidence supports a repair.` | Use targeted probes or controlled interventions when existing evidence cannot distinguish causes, adapt the investigation to results, and verify the authorized causal repair. If unresolved, identify the remaining alternatives, next discriminating observation, and limiting condition. | `The stack trace points to a misspelled variable; fix it.` An obvious local fix does not need the diagnosis workflow. |
 | [$hillclimb](../../skills/astra/hillclimb/SKILL.md) | `$hillclimb Reduce p95 import latency without changing results; use comparable measurements and keep only proven improvements.` | Preserve the objective and keep rule, repair measurement when needed, adapt the search within scope and budget, and continue past intermediate wins until a stopping condition warrants final confirmation. | `Check once whether batching 100 records is faster than 10.` That is a bounded prototype unless an optimization loop is actually requested. |
 | [$parallel-implement](../../skills/astra/parallel-implement/SKILL.md) | `$parallel-implement Implement these three accepted independent tickets concurrently and integrate them; use the existing dataset without copying it into each worktree.` | Establish usable isolated lanes before dispatch, share durable inputs by reference while isolating writes, give workers exclusive custody and implementation freedom, integrate serially, prove the composed result, and clean through each lane's lifecycle owner. | `Implement this one feature.` A single coherent change should stay direct or serial. |
@@ -27,9 +28,8 @@ automatically selectable skills, the request is shown in ordinary language.
 | [$research](../../skills/astra/research/SKILL.md) | `Compare the documented retry guarantees of SQS and Pub/Sub and recommend which fits these constraints.` | Inspect decisive source material, investigate credible counterevidence without forcing disagreement, and deliver a supported comparison with material uncertainties and coverage limits. Choose methods and depth for the question. | `Benchmark both clients in this repo to observe actual throughput.` That requires a new observation, so use prototype for a bounded experiment. |
 | [$resolving-merge-conflicts](../../skills/astra/resolving-merge-conflicts/SKILL.md) | `Resolve the conflicts in this active rebase and continue it, preserving both intended changes.` | Observe the active Git operation, reconcile intended combined behavior, prove the resolved candidate, and reach only the authorized endpoint. | `Merge feature-x into main from a clean worktree.` Starting an ordinary integration is not conflict resolution. |
 | [$shape-work](../../skills/astra/shape-work/SKILL.md) | `$shape-work Brainstorm a better failed-import workflow with me, challenge the scope, and write the agreed spec.` | Use an adaptive interview to settle goals, scope, behavior, and acceptance; deliver the spec and reconcile affected current decisions while leaving implementation methods open. | `Choose whether retry state belongs in the service or repository layer.` That is codebase-design because the question is technical ownership. |
-| [$to-tickets](../../skills/astra/to-tickets/SKILL.md) | `$to-tickets Turn this migration spec into bounded tickets using this repo's tracker, with enough context for independent agents and dependencies for parallel work.` | Preserve accepted meaning, create coherent assignments with acceptance and accessible source context, and record required predecessor results, unblock conditions, potential parallel work, and known coordination constraints. | `$triage Classify this newly reported issue.` Raw tracker intake belongs to triage. |
+| [$ticketing](../../skills/astra/ticketing/SKILL.md) | `$ticketing Turn this accepted CSV export idea into bounded draft tickets with acceptance and dependencies.` | Select the requested assessment/cleanup or decomposition/publication effects; preserve current tracker meaning, active claims, useful existing work, and truthful readiness. A clear idea needs no prior triage or formal spec. | `Implement these tickets concurrently.` Execution belongs to parallel-implement when requested. `Help decide what this export should do.` Unsettled meaning belongs to shape-work. |
 | [$test-cleanup](../../skills/astra/test-cleanup/SKILL.md) | `$test-cleanup Clean up this suite: remove useless tests, consolidate overlapping coverage, organize the remaining cases, and reduce avoidable setup cost.` | Judge candidates against supported behavior, remove low-value checks, consolidate and organize useful cases and fixtures, preserve distinct failures and test independence, reconcile collection after moves, and report verification and any measured savings. | `Implement the CSV export feature and add its regression tests.` Ordinary feature test authoring and its brief local completion check do not initiate a full cleanup workflow. |
-| [$triage](../../skills/astra/triage/SKILL.md) | `$triage Clean up this backlog: reconcile stale status, duplicates, and completed work using the repo's tracker conventions.` | Assess the requested set with proportionate evidence, preserve active ownership and truthful dependencies, apply authorized corrections, and report verified changes, unresolved items, and coverage limits. | `Split this accepted feature into implementation tickets.` Decomposition belongs to to-tickets. |
 | [$verification-harness](../../skills/astra/verification-harness/SKILL.md) | `$verification-harness Improve our launch and driver tools so agents can exercise the app, CLI, and MCP interface repeatably and capture reliable results.` | Reuse or improve repository tooling, choose methods for the requested surfaces, demonstrate the capability against the intended product, and preserve meaningful assertions, evidence, and resource ownership. | `Run the existing CLI smoke test and report the result.` Routine verification needs no tooling workflow. |
 | [$wizard](../../skills/astra/wizard/SKILL.md) | `$wizard Help me enter the private API key through my terminal so you can resume the integration work; keep the key out of this chat and your tool output.` | Reuse or build a checked terminal procedure, keep private input and session output with the human, and use sufficient non-secret evidence to resume already-authorized work. | `Build a reusable driver for the same flow with an isolated test account.` Agent-operated product tooling belongs to verification-harness. |
 | [$writing-for-agents](../../skills/astra/writing-for-agents/SKILL.md) | `Rewrite this AGENTS.md section so a fresh coding agent knows when to run the project-specific verifier.` | Preserve intent, receiver context, authority, and completion evidence while leaving valid methods open. | `Ask the worker to fix the typo in this file and report the change.` Routine dispatch uses the owning workflow directly and needs no separate instruction-authoring phase. |
@@ -46,6 +46,36 @@ reconcile affected setup and configuration, and validate the retained suite.
 Independent review can help when delegation is authorized. A request to identify
 purge candidates without editing returns findings. `Make CI faster` alone does
 not authorize deleting tests or selecting a repository-wide purge.
+
+## PR refresh, delivery, and review branches
+
+`Bring this old PR up to date with its current base and update its branch` selects
+pr-delivery's [refresh branch](../../skills/astra/pr-delivery/references/refresh-existing-pr.md).
+Assess intent and changes since divergence before replaying commits. A read-only
+request to assess the same PR ends with a supported disposition and does not
+authorize fetching, rebasing, pushing, or closing it. Neither request alone
+selects takeover or branch cleanup.
+
+`Finish this change, open the PR, fix CI and requested review findings, and merge
+when the repository gates pass` requests delivery through an authorized merge.
+`Do the same preparation, but leave the PR ready for me to merge` selects the
+human-merge endpoint, including checking existing auto-merge and queue state.
+Use [delivery endpoints](../../skills/astra/pr-delivery/references/delivery-endpoints.md)
+for those branches. `Open a PR` alone does not request monitoring or merge.
+
+`Review this candidate with the three provider models I named` selects the
+multiple-reviewer branch of [independent review](../../skills/astra/change-review/references/independent-review.md),
+subject to actual availability and model policy. `Review and repair this change in
+a bounded loop` uses [review feedback](../../skills/astra/change-review/references/review-feedback.md),
+which loads the same finding standard as fresh review. Neither scores, consensus,
+nor a spent review budget establishes acceptance, and review-only work remains
+read-only. Routine review does not automatically recruit a council or select a
+model-specific loop.
+
+`Review this PR and tell me whether it passes the required gate` uses
+[Finding standards](../../skills/astra/change-review/references/finding-standards.md).
+No actionable findings does not imply complete required coverage; a pending
+consequential risk decision is reported as needing owner decision, not a pass.
 
 ## Context-maintenance branches
 
@@ -87,7 +117,7 @@ the closest realistic boundary rather than an obviously unrelated task.
 - `$shape-work Reconcile what "complete" means in this spec, domain record, and ADR.`
   resolves the consequential meaning and reconciles its affected current owners.
 - `Turn this agreed spec into an implementation plan.` belongs to the execution
-  lead, using cost-aware-coding when selected; it does not require another shaping
+  lead, using controlled-delegation when selected; it does not require another shaping
   interview.
 - `Find and fix stale commands and scattered repository guidance.` belongs to
   context-hygiene. Broader context cleanup does not become shaping merely because
@@ -95,21 +125,22 @@ the closest realistic boundary rather than an obviously unrelated task.
 
 ## Ticketing input branches
 
-`$to-tickets Draft tickets for the CSV export idea we just agreed, including its
+`$ticketing Draft tickets for the CSV export idea we just agreed, including its
 dependencies.` can proceed from a sufficiently clear conversation without a formal
 specification. The draft must carry the agreed facts or point to an accessible
 shared source. `Help me decide what this export feature should do` belongs to
 shape-work while consequential behavior is unresolved; independent settled parts
 can still be decomposed when ticketing is requested.
 
-## Triage assessment and cleanup branches
+## Ticketing assessment and cleanup branches
 
-`$triage Show which tickets need attention; do not change them` returns a
+`$ticketing Show which tickets need attention; do not change them` returns a
 read-only overview with useful priorities and coverage limits. A request to clean
 up the same queue can apply supported corrections within its authority. Existing
 ready tickets remain eligible for assessment; their active claims and assignments
 must be preserved unless a coordinated change is authorized. One item needing
-deep investigation does not prevent independent cleanup of the rest.
+deep investigation does not prevent independent cleanup of the rest. Assessment
+or cleanup alone does not authorize ticket creation or decomposition.
 
 ## Wizard delivery and continuation branches
 
