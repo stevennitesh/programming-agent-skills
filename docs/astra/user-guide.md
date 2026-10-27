@@ -74,3 +74,11 @@ planning, consequential decisions and final review. The
 [model policy](../../skills/astra/cost-aware-coding/references/model-policy.md)
 describes assignments. Assess cost across the whole task, including handoffs,
 review and repair; savings need measurement.
+
+[Ultra model routing](../../skills/astra/ultra-model-routing/SKILL.md) is a separate
+explicit choice when you want to keep the selected Ultra lead and native
+delegation while assigning models and efforts to children. Its source owns the
+Sol/Terra routes and three sequential final-review rounds before authorized PR
+creation. Select it instead of the cost-aware execution workflow for that task.
+It does not select the lead, install runtime agent configuration, or establish
+measured savings. Source edits remain separate from installation.

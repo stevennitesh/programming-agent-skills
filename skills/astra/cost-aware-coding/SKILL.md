@@ -10,6 +10,10 @@ Astra attention for planning, architecture, codebase ownership, consequential
 questions, and review. Judge efficiency across the completed task, including
 briefing, implementation, verification, review, and repair.
 
+For child-model routing that preserves native Ultra delegation, select
+[ultra-model-routing](../ultra-model-routing/SKILL.md) instead. Keep one model
+allocation policy active for the same work.
+
 ## Roles and default team
 
 The default team has one lead, one primary worker, and one bounded worker

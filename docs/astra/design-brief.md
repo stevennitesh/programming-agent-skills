@@ -1,8 +1,10 @@
 # Astra skills pack design brief
 
-Current direction, reconciled 2026-10-21. The pack is built primarily for
+Current direction, reconciled 2026-10-26. The pack is built primarily for
 **GPT 6 Astra**. Optional cost-aware execution routes implementation to GPT 6.1 Sol
 and bounded work, including large-context retrieval and bulk writing, to GPT 6 Luna.
+Optional Ultra model routing supplies a separate Sol/Terra child-allocation policy
+alongside the user's selected native delegation mode.
 This document owns design rationale and composition for `skills/astra/`;
 individual skills own execution.
 [Issue #94](https://github.com/stevennitesh/programming-agent-skills/issues/94)
@@ -64,6 +66,7 @@ review evidence. A selected workflow may require more within its own scope.
 | Requested intake assessment, backlog reconciliation, and actionable handoff | [Triage](../../skills/astra/triage/SKILL.md), only when explicitly requested |
 | Delivery decomposition and tracker publication | [To tickets](../../skills/astra/to-tickets/SKILL.md), using repository tracker guidance and an accepted source |
 | Model allocation and execution authority | [Cost-aware coding](../../skills/astra/cost-aware-coding/SKILL.md), only when requested |
+| Child-model allocation alongside native Ultra and its pre-PR review sequence | [Ultra model routing](../../skills/astra/ultra-model-routing/SKILL.md), only when requested |
 | Concurrent implementation scheduling, custody, and integration | [Parallel implement](../../skills/astra/parallel-implement/SKILL.md), only when requested |
 | Candidate correctness and maintainability assessment | [Change review](../../skills/astra/change-review/SKILL.md); the lead chooses direct, independent, or scoped high-assurance review |
 | PR creation, status, requested CI and hosted-review follow-through, and authorized merge | [PR delivery](../../skills/astra/pr-delivery/SKILL.md), selected for requested PR delivery rather than review-only assessment |
@@ -192,7 +195,7 @@ and [context engineering article](https://claude.dev/blog/the-new-rules-of-conte
 These sources support the authoring choices; they do not establish cleanup
 effectiveness or equivalent behavior across models.
 
-The managed pack currently contains 22 skills. Their metadata owns invocation
+The managed pack currently contains 23 skills. Their metadata owns invocation
 behavior; the README lists explicit-only workflows. Continuation handoffs belong
 to writing-for-agents, with execution-specific state added by the relevant workflow.
 Ordinary implementation uses the accepted assignment and applicable repository
@@ -242,7 +245,7 @@ request and one nearest realistic non-match for each managed skill. They are
 maintenance checks for discovery boundaries, not another router or execution
 contract; frontmatter descriptions and skill bodies remain authoritative.
 
-## Cost-aware roles and autonomy
+## Model allocation and autonomy
 
 [Cost-aware coding](../../skills/astra/cost-aware-coding/SKILL.md) owns the accepted
 lead, worker, bounded-helper, and reviewer responsibilities, optional checkpoints,
@@ -253,6 +256,16 @@ owns exact models and effort choices; the user selects the starting lead.
 When parallel implementation is requested, parallel-implement owns concurrency,
 custody, integration, and recovery. Keep current routing and execution mechanics
 at these skill owners instead of duplicating them in repository context.
+
+[Ultra model routing](../../skills/astra/ultra-model-routing/SKILL.md) is a separate
+explicit choice for retaining native Ultra delegation while assigning child
+models and efforts. It owns its routing table, conditional spawning guidance,
+and three-round final-review requirement before authorized PR creation. Native
+orchestration retains decomposition and coordination; change-review retains
+finding and evidence standards, and pr-delivery retains publication authority.
+Do not combine the two model-allocation policies for the same work. An instruction
+package does not enforce runtime routing, budget, or publication gates, and its
+editorial checks do not establish lower cost or equivalent output quality.
 
 ## Installation and migration
 

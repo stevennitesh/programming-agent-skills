@@ -1,6 +1,6 @@
 # Programming Agent Skills
 
-**Steven Bangdiwala** · Python tools and 22 task-specific workflows for coding agents
+**Steven Bangdiwala** · Python tools and 23 task-specific workflows for coding agents
 
 ![Programming Agent Skills: coding workflows, managed installation and recovery](docs/images/featured.jpg)
 
@@ -92,7 +92,7 @@ covers updates, custom targets, migration and recovery.
 **Automatic when relevant** means the agent may select it when its scope matches.
 
 <details>
-<summary><strong>Full catalog: all 22 skills and their invocation rules</strong></summary>
+<summary><strong>Full catalog: all 23 skills and their invocation rules</strong></summary>
 
 | Your task | Skill | Use |
 | --- | --- | --- |
@@ -112,6 +112,7 @@ covers updates, custom targets, migration and recovery.
 | Turn a spec or sufficiently clear idea into bounded tickets with dependencies | [$to-tickets](skills/astra/to-tickets/SKILL.md) | Request explicitly |
 | Implement concurrently with separate ownership and clear dependencies | [$parallel-implement](skills/astra/parallel-implement/SKILL.md) | Request explicitly |
 | Assign work to GPT 6 models while the lead retains decisions and review | [$cost-aware-coding](skills/astra/cost-aware-coding/SKILL.md) | Request explicitly |
+| Route subagent models alongside native Ultra and review before PR delivery | [$ultra-model-routing](skills/astra/ultra-model-routing/SKILL.md) | Request explicitly |
 | Resolve an active Git merge or rebase conflict | [$resolving-merge-conflicts](skills/astra/resolving-merge-conflicts/SKILL.md) | Automatic when relevant |
 | Assess branches and worktrees, integrate worthwhile work when requested, and clean up safely | [$git-cleanup](skills/astra/git-cleanup/SKILL.md) | Request explicitly |
 | Make a project's portfolio artifacts coherent, understandable, and supported by evidence | [$portfolio-presentation](skills/astra/portfolio-presentation/SKILL.md) | Request explicitly |
