@@ -12,9 +12,9 @@ incompatible targets as dispersion or sentiment evidence.
 
 This fixture exercises existing requirements in:
 
-- [`value-stock` Gate 4](../../../../../../skills/extra/value-stock/SKILL.md);
-- [Residual Income And Excess Return](../../../../../../skills/extra/value-stock/references/valuation-methods.md#residual-income-and-excess-return); and
-- [analyst-target reconciliation](../../../../../../skills/extra/value-stock/references/source-protocol.md#earnings-and-guidance).
+- [`value-stock` Gate 4](https://github.com/stevennitesh/programming-agent-skills/blob/61d30dde76322128876ffa580c630d7ca0620c51/skills/extra/value-stock/SKILL.md);
+- [Residual Income And Excess Return](https://github.com/stevennitesh/programming-agent-skills/blob/61d30dde76322128876ffa580c630d7ca0620c51/skills/extra/value-stock/references/valuation-methods.md#residual-income-and-excess-return); and
+- [analyst-target reconciliation](https://github.com/stevennitesh/programming-agent-skills/blob/61d30dde76322128876ffa580c630d7ca0620c51/skills/extra/value-stock/references/source-protocol.md#earnings-and-guidance).
 
 ## Entry-Positive Fixture
 
