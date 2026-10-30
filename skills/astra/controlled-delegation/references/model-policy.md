@@ -28,6 +28,12 @@ does not make work routine.
   establishes remains advisory or review work. The lead retains decisions and
   acceptance; ordinary coding choices need no separate architecture phase.
 
+Route a coherent assignment by the judgment it requires, including substantive
+work mixed with routine steps. Keep mechanical steps and implementation
+verification with that worker when splitting them would add unnecessary handoffs.
+An author's testing and self-checking remain implementation work; they do not
+count as independent candidate review.
+
 When the assignment changes category, preserve useful evidence and re-scope it
 under the appropriate route. Keep useful context for coherent corrections and
 follow the execution owner's custody and support limits before reassignment.

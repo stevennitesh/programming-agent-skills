@@ -31,8 +31,14 @@ limits and the execution owner's dispatch rules.
 
 ## Continue and verify selection
 
-Reuse suitable workers for coherent follow-ups. Recheck configuration when a
-role, host, resume behavior, or observed mismatch makes selection uncertain.
+Reuse workers for coherent follow-ups while their configuration remains
+appropriate. When a changed assignment requires a different route, use supported
+configuration controls or transfer the assignment and useful evidence to a newly
+routed worker under the execution owner's custody rules. Follow-up message text
+alone does not change a worker's model or effort.
+
+Recheck configuration when a role, host, resume behavior, or observed mismatch
+makes selection uncertain.
 If the intended pair cannot be expressed, use an available supported role only
 when it selects that pair; otherwise report the limitation and continue
 independent authorized work. A required unavailable reviewer remains incomplete.
