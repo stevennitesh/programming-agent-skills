@@ -43,6 +43,11 @@ unverified effects. Stop dependent stages until their prerequisites hold.
 
 ## Check and repair without private input
 
+Check the exact command or script entry point in the shell and version the human
+will use. When permissions affect behavior, verify the prerequisite with a safe
+check that leaves the real target untouched. State any shell or privilege
+condition that could not be exercised.
+
 Check syntax and material safety/completion branches: cancellation/EOF, command
 and persistence failure, target confirmation, uncertain outcomes, and exported
 status where applicable. Use dummy values, stubs, or isolated local targets;

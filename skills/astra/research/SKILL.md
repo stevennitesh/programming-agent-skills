@@ -15,6 +15,13 @@ Establish the question and decision-changing constraints, including relevant
 version, cutoff, jurisdiction, repository state, audience, and comparison criteria.
 Reuse settled context and follow consequential gaps as findings emerge.
 
+When the user or repository specifies a maintained acquisition route, use it for
+the requested evidence. If a retained copy is missing or stale, check the
+supported live interface when available and authorized. Treat an access failure
+as specific to the route tested. Before using a substitute, record why the
+preferred route fell short and verify that the substitute meets the applicable
+coverage, cutoff, and data requirements.
+
 Use sources capable of establishing the claim: operative authority for obligations,
 code for mechanics, applicable observations for behavior, and empirical evidence
 for effectiveness. Documentation is not observed behavior, association is not

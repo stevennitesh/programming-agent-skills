@@ -14,6 +14,11 @@ the definition from a particular implementation and evidence of effectiveness.
 Use reproducible calculations for derived decisive numbers when practical and
 retain input provenance; arithmetic cannot repair incompatible source semantics.
 
+When refreshing an accepted comparison, preserve its calculation method,
+horizon, and input basis while updating the requested inputs. If equivalent
+inputs are unavailable, identify the gap in the comparison. Label results from
+another method or basis separately.
+
 For performance claims, compare equivalent work under relevant conditions and
 account for warmup, caching, repeated measurements, noise, and displaced costs.
 Adaptive selection on the same evaluation data can inflate the apparent benefit;

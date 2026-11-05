@@ -5,8 +5,9 @@ preserve a contract; they do not prescribe a test framework or exhaustive matrix
 
 ## Results cross a boundary
 
-When one stage feeds another, identify the actual produced result, its ordinary
-consumer, and the meaning that must survive the handoff. Include materially
+When one stage feeds another, identify what produces the result, what normally
+consumes it, where its contract is checked, and what meaning must survive the
+handoff. Include materially
 different successful and rejected outcomes. Preserve value or null, issues,
 availability, provenance, and identity when the source makes them meaningful.
 Do not replace a distinguishing field or state with a vague category.

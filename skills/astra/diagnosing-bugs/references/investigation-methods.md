@@ -63,6 +63,12 @@ change the explanation. Compare what the producer emitted with what the consumer
 received, decoded, stored, and acted on. Preserve identity and ordering; similar
 log lines from different requests do not form a causal chain.
 
+When tool status and the observed result disagree, identify which layer emitted
+the status. Correlate the same operation across dispatch, execution, and delivery.
+Distinguish rejection before execution, work still running, an unconfirmed effect,
+and a completed effect whose result was not delivered. If the available evidence
+cannot distinguish them, name the missing observation.
+
 For environment-only failures, compare the relevant deployed code, runtime and
 dependency versions, configuration, permissions, filesystem or network semantics,
 and data shape. Verify effective runtime values instead of assuming intended

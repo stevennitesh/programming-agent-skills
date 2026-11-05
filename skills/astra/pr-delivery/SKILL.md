@@ -27,6 +27,10 @@ Establish the requested endpoint and applicable checks, reviews, merge condition
 and repository policy. Preserve unrelated work and active write custody; delivery
 does not grant history-rewrite, cleanup, or residual-risk acceptance authority.
 
+When choosing between direct publication and PR delivery, check the target
+branch’s current protection or applicable repository rules. If a PR is required,
+preserve the local candidate and use the PR route within existing authority.
+
 ## Prepare and publish the PR
 
 Inspect the candidate and comparison; complete required verification and supported
