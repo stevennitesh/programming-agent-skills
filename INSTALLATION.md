@@ -73,7 +73,7 @@ evidence.
 
 When no global `AGENTS.md` exists, the installer seeds the complete
 [`GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md`](GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md)
-template. Later installs create or update only its `## Skill Pack Bootstrap`
+template. Later installs create or update only its `## Skill pack bootstrap`
 section. Delegation rules and other personal instructions remain untouched.
 
 Use `--skip-global-agents` to install only the managed skills. Use

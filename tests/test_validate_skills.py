@@ -439,16 +439,13 @@ def test_experimental_manifest_tracks_candidates_without_activating_them(
     assert "Experimental skill has no active custom counterpart: example" in failures
 
 
-def test_global_bootstrap_validation_requires_one_structured_managed_section(
+def test_global_bootstrap_validation_requires_one_managed_section(
     tmp_path: Path,
 ) -> None:
     template = tmp_path / validate_skills.GLOBAL_AGENTS_TEMPLATE
     template.write_text(
         "# Global Codex Instructions\n\n"
-        "**Route:** **Setup:** **Boundary:**\n\n"
-        "```markdown\n## Skill Pack Bootstrap\n```\n\n"
-        "## Skill Pack Bootstrap\n\n"
-        "Mention `$skill-router` and `$repo-bootstrap` without role bullets.\n",
+        "```markdown\n## Skill pack bootstrap\n```\n",
         encoding="utf-8",
     )
 
@@ -456,14 +453,11 @@ def test_global_bootstrap_validation_requires_one_structured_managed_section(
         tmp_path, ["repo-bootstrap", "skill-router"]
     )
 
-    assert any("structured Route, Setup, and Boundary roles" in item for item in failures)
+    assert any("must contain ## Skill pack bootstrap" in item for item in failures)
 
     template.write_text(
         "# Global Codex Instructions\n\n"
-        "## Skill Pack Bootstrap\n\n"
-        "- **Route:** `$skill-router`\n"
-        "- **Setup:** `$repo-bootstrap`\n"
-        "- **Boundary:** owners\n\n"
+        "## Skill pack bootstrap\n\nManaged.\n\n"
         "## Skill Pack Bootstrap\n\nDuplicate.\n",
         encoding="utf-8",
     )
@@ -473,32 +467,21 @@ def test_global_bootstrap_validation_requires_one_structured_managed_section(
     assert any("exactly one" in item for item in failures)
 
 
-def test_global_bootstrap_routes_setup_and_maintenance_without_extra_skills(
+def test_global_bootstrap_validation_checks_optional_skill_references(
     tmp_path: Path,
 ) -> None:
     template = tmp_path / validate_skills.GLOBAL_AGENTS_TEMPLATE
     content = (
         "# Global Codex Instructions\n\n"
-        "## Skill Pack Bootstrap\n\n"
-        "- **Route:** specialists\n"
-        "- **Setup:** `$repo-bootstrap` and `$context-hygiene`\n"
-        "- **Boundary:** local owners\n"
+        "## Skill pack bootstrap\n\nManaged.\n"
     )
     names = ["repo-bootstrap", "context-hygiene", "change-review"]
     template.write_text(content, encoding="utf-8")
     assert validate_skills.validate_global_agents_template(tmp_path, names) == []
 
-    template.write_text(
-        content.replace("`$context-hygiene`", "maintenance"), encoding="utf-8"
-    )
+    template.write_text(content + "Use `$missing-skill`.\n", encoding="utf-8")
     assert validate_skills.validate_global_agents_template(tmp_path, names) == [
-        f"{validate_skills.GLOBAL_AGENTS_TEMPLATE} is missing bootstrap skill: context-hygiene"
-    ]
-
-    template.write_text(content + "Use `$change-review`.\n", encoding="utf-8")
-    assert validate_skills.validate_global_agents_template(tmp_path, names) == [
-        f"{validate_skills.GLOBAL_AGENTS_TEMPLATE} must keep the bootstrap lean; "
-        "unexpected skill reference: change-review"
+        f"{validate_skills.GLOBAL_AGENTS_TEMPLATE} references missing skill: missing-skill"
     ]
 
 

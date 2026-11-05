@@ -21,8 +21,8 @@ def write_template(root: Path) -> None:
     root.mkdir(parents=True, exist_ok=True)
     (root / "GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md").write_text(
         "# Global Codex Instructions\n\n"
-        "## Skill Pack Bootstrap\n\n"
-        "- **Route:** Suggest `$skill-router`.\n",
+        "## Skill pack bootstrap\n\n"
+        "Managed bootstrap guidance.\n",
         encoding="utf-8",
     )
 
@@ -876,8 +876,8 @@ def test_current_bootstrap_preserves_personal_mixed_line_endings(
     original = (
         b"# Global Codex Instructions\r\n\r\n"
         b"Personal rule.\n\n"
-        b"## Skill Pack Bootstrap\r\n\r\n"
-        b"- **Route:** Suggest `$skill-router`.\r\n"
+        b"## Skill pack bootstrap\r\n\r\n"
+        b"Managed bootstrap guidance.\r\n"
     )
     global_agents.write_bytes(original)
     (root / "skills/astra/alpha/SKILL.md").write_text("v2", encoding="utf-8")
@@ -1318,9 +1318,12 @@ def test_install_refuses_to_retire_a_modified_managed_skill(tmp_path: Path) -> N
 
 
 def test_install_updates_only_existing_bootstrap_section(tmp_path: Path) -> None:
-    root = tmp_path / "repo"
     target = tmp_path / "AGENTS.md"
-    write_template(root)
+    template = tmp_path / install_skills.GLOBAL_TEMPLATE_NAME
+    template.write_text(
+        "# Global Codex Instructions\n\n## Skill pack bootstrap\n\nManaged.\n",
+        encoding="utf-8",
+    )
     target.write_text(
         "# Global Codex Instructions\n\nPersonal before.\n\n"
         "## Skill Pack Bootstrap\n\nOld route.\n\n"
@@ -1328,19 +1331,13 @@ def test_install_updates_only_existing_bootstrap_section(tmp_path: Path) -> None
         encoding="utf-8",
     )
 
-    status = install_skills.install_global_bootstrap(
-        root / "GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md",
-        target,
+    assert install_skills.install_global_bootstrap(template, target) == "updated"
+    assert target.read_text(encoding="utf-8") == (
+        "# Global Codex Instructions\n\nPersonal before.\n\n"
+        "## Skill pack bootstrap\n\nManaged.\n\n"
+        "## Personal After\n\nKeep me.\n"
     )
-
-    text = target.read_text(encoding="utf-8")
-    assert status == "updated"
-    assert "Old route" not in text
-    assert install_skills.bootstrap_section(
-        root / "GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md"
-    ) in text
-    assert "Personal before" in text
-    assert "## Personal After\n\nKeep me." in text
+    assert install_skills.install_global_bootstrap(template, target) == "present"
 
 
 def test_install_seeds_the_full_global_template_once(tmp_path: Path) -> None:

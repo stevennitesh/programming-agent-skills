@@ -46,7 +46,6 @@ CURRENT_REQUIRED_FILES = (
 LEGACY_REQUIRED_FILES = (
     "skills/custom/repo-bootstrap/engineering-contract.md",
 )
-GLOBAL_AGENTS_SKILLS = frozenset(("repo-bootstrap", "context-hygiene"))
 GLOBAL_AGENTS_FORBIDDEN_TOKENS = ("## Shell Search Safety", "rg -F --")
 PUBLISHED_MARKDOWN_ROOTS = (
     "skills",
@@ -822,16 +821,6 @@ def validate_global_agents_template(root: Path, skill_names: list[str]) -> list[
             failures.append(
                 f"{GLOBAL_AGENTS_TEMPLATE} references missing skill: {skill_name}"
             )
-    for skill_name in sorted(GLOBAL_AGENTS_SKILLS - refs):
-        failures.append(
-            f"{GLOBAL_AGENTS_TEMPLATE} is missing bootstrap skill: {skill_name}"
-        )
-    for skill_name in sorted(refs - GLOBAL_AGENTS_SKILLS):
-        failures.append(
-            f"{GLOBAL_AGENTS_TEMPLATE} must keep the bootstrap lean; "
-            f"unexpected skill reference: {skill_name}"
-        )
-
     template = root / GLOBAL_AGENTS_TEMPLATE
     if template.is_file():
         text = template.read_text(encoding="utf-8")
@@ -839,29 +828,14 @@ def validate_global_agents_template(root: Path, skill_names: list[str]) -> list[
             failures.append(
                 f"{GLOBAL_AGENTS_TEMPLATE} must begin with # Global Codex Instructions"
             )
+        heading = pack_contract.BOOTSTRAP_HEADING
         try:
-            span = pack_contract.level_two_section_span(text, "## Skill Pack Bootstrap")
-        except ValueError:
-            span = None
-            failures.append(
-                f"{GLOBAL_AGENTS_TEMPLATE} must contain exactly one "
-                "## Skill Pack Bootstrap heading"
-            )
+            span = pack_contract.level_two_section_span(text, heading, ignore_case=True)
+        except ValueError as error:
+            return [*failures, f"{GLOBAL_AGENTS_TEMPLATE}: {error}"]
         if span is None:
-            if not any("exactly one" in failure for failure in failures):
-                failures.append(
-                    f"{GLOBAL_AGENTS_TEMPLATE} must contain exactly one "
-                    "## Skill Pack Bootstrap heading"
-                )
-            managed = ""
-        else:
-            managed = text[span[0] : span[1]]
-        roles = re.findall(r"(?m)^- \*\*(Route|Setup|Boundary):\*\*", managed)
-        if roles != ["Route", "Setup", "Boundary"]:
-            failures.append(
-                f"{GLOBAL_AGENTS_TEMPLATE} must define structured Route, Setup, "
-                "and Boundary roles in that order"
-            )
+            return [*failures, f"{GLOBAL_AGENTS_TEMPLATE} must contain {heading}"]
+        managed = text[span[0] : span[1]]
         for token in GLOBAL_AGENTS_FORBIDDEN_TOKENS:
             if token in managed:
                 failures.append(

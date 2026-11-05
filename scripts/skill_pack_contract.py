@@ -17,6 +17,7 @@ MANIFEST_SOURCE = "skills/astra"
 EXPERIMENTAL_SOURCE = "skills/experimental"
 EXPERIMENTAL_MANIFEST_NAME = "manifest.json"
 EXPERIMENTAL_MANIFEST_FORMAT = 1
+BOOTSTRAP_HEADING = "## Skill pack bootstrap"
 SKILL_NAME_RE = re.compile(r"^[a-z0-9][a-z0-9-]*$")
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 
@@ -51,13 +52,17 @@ def level_two_heading_spans(text: str) -> list[tuple[str, int, int]]:
     ]
 
 
-def level_two_section_span(text: str, heading: str) -> tuple[int, int] | None:
-    """Return one exact level-two section span or reject duplicate headings."""
+def level_two_section_span(
+    text: str, heading: str, *, ignore_case: bool = False
+) -> tuple[int, int] | None:
+    """Return one level-two section span or reject duplicate headings."""
     title = heading.removeprefix("## ")
+    if ignore_case:
+        title = title.casefold()
     matches = [
         (start, end)
         for candidate, start, end in level_two_heading_spans(text)
-        if candidate == title
+        if (candidate.casefold() if ignore_case else candidate) == title
     ]
     if len(matches) > 1:
         raise ValueError(f"Markdown must contain exactly one {heading} heading")
