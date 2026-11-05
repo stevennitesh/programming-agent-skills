@@ -13,6 +13,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from scripts.skill_pack_contract import (
+    BOOTSTRAP_HEADING,
     MANIFEST_FORMAT,
     MANIFEST_NAME,
     MANIFEST_SOURCE,
@@ -36,7 +37,6 @@ else:
 
 
 GLOBAL_TEMPLATE_NAME = "GLOBAL_AGENTS_TEMPLATE_SKILL_PACK.md"
-BOOTSTRAP_HEADING = "## Skill Pack Bootstrap"
 LEGACY_BOOTSTRAP_HEADING = "## Skill Pack Guide"
 LEGACY_BOUNDARY_HEADING = "## Boundary"
 TRANSACTION_PREFIX = ".programming-agent-skills-transaction-"
@@ -1671,7 +1671,7 @@ def read_global_template(template: Path) -> str:
 
 def bootstrap_section(template: Path) -> str:
     text = read_global_template(template)
-    span = level_two_section_span(text, BOOTSTRAP_HEADING)
+    span = level_two_section_span(text, BOOTSTRAP_HEADING, ignore_case=True)
     if span is None:
         raise ValueError(f"Template is missing {BOOTSTRAP_HEADING}: {template}")
     start, end = span
@@ -1680,7 +1680,7 @@ def bootstrap_section(template: Path) -> str:
 
 def render_global_bootstrap(template: Path, target: Path) -> tuple[str, str]:
     template_text = read_global_template(template)
-    span = level_two_section_span(template_text, BOOTSTRAP_HEADING)
+    span = level_two_section_span(template_text, BOOTSTRAP_HEADING, ignore_case=True)
     if span is None:
         raise ValueError(f"Template is missing {BOOTSTRAP_HEADING}: {template}")
     start, end = span
@@ -1689,7 +1689,7 @@ def render_global_bootstrap(template: Path, target: Path) -> tuple[str, str]:
         return "created", template_text.strip() + "\n"
 
     text = target.read_text(encoding="utf-8")
-    current_span = level_two_section_span(text, BOOTSTRAP_HEADING)
+    current_span = level_two_section_span(text, BOOTSTRAP_HEADING, ignore_case=True)
     if current_span is not None:
         start, end = current_span
         updated = text[:start].rstrip() + "\n\n" + section
