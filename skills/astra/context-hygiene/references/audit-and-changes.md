@@ -51,6 +51,11 @@ content and historical evidence. Make replacement meaning accessible, update
 affected pointers and competing copies, then retire displaced rules. Archiving one
 file does not remove instructions still exposed elsewhere.
 
+For a requested move or consolidation, rescan the named root after the change.
+Verify that canonical files are at the intended paths, affected references
+resolve, and obsolete copies were retired where retirement was in scope. Keep
+substantive history at its existing owner.
+
 Adapt checks that enforce a displaced convention while preserving their actual
 protection. Product changes, new tooling, tracker mutations, global edits, or
 revised accepted behavior need their own authority; a shared reference grants none.

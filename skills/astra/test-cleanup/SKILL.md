@@ -11,9 +11,10 @@ remove tests according to the failures they catch. Fewer tests, higher coverage,
 or a green run alone do not establish improvement; a supported no-change result
 is valid.
 
-Use only when explicitly requested. Use the selected task, directory, or suite;
-if unspecified, start with tests added or modified in the current task and their
-fixtures/helpers. Establish scope before deletion when no task-local set exists.
+Use only when explicitly requested. A test purge covers the full collected suite
+within the selected repository or narrower scope. For other cleanup with no stated
+scope, start with tests added or modified in the current task and their fixtures
+and helpers. Establish scope before deletion when no task-local set exists.
 A read-only audit returns findings; cleanup authorizes supported test edits
 without approval for each one. Routine local completion checks do not invoke this
 full workflow. Run-only requests and ordinary feature coverage stay with their work.

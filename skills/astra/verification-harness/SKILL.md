@@ -48,6 +48,14 @@ without requiring separate commands or a fixed sequence:
   code, accepted asynchronous request, or initial cached rendering alone cannot
   establish a required transition. Where acceptance requires it, change state
   and verify the interface reaches the expected authoritative result.
+  When acceptance requires full coverage, account for each requested view, control,
+  and export with its own observed result or blocker. After changing a view,
+  verify the selected state and settled content. For an export, distinguish the
+  trigger, the download event or path, and the artifact opened by its intended
+  consumer. Verify the last state required by acceptance. For viewer-specific
+  interactions, exercise the relevant input mode and viewer restrictions on the
+  final artifact. If a substitute is used, state which of those conditions it
+  reproduced.
 - **Isolation and cleanup:** isolate mutable fixtures, configuration, and outputs
   within authorized resources. Set state paths before imports that cache them;
   resolve destructive fixture targets and verify ownership before setup/cleanup.

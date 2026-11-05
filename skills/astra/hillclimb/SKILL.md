@@ -52,9 +52,12 @@ the search, not accepted success criteria.
 
 ## Confirm and finish
 
-Continue until the target is confirmed, bounded effort ends, no worthwhile supported
-hypothesis remains, or an unresolved measurement/authority blocker prevents progress.
-Reserve effort for final confirmation. Compare the integrated retained result with
+Apply the user’s stopping condition. A threshold or tolerance can qualify a
+candidate while the search remains open. If the user supplied no stopping
+condition, finish when the target is confirmed, the agreed effort is exhausted,
+or no worthwhile supported hypothesis remains. Stop dependent experiments when
+an unresolved measurement or authority blocker prevents progress. Reserve effort
+for final confirmation. Compare the integrated retained result with
 the original baseline under the final valid method; isolated gains need not compose.
 Apply Measurement integrity's fresh-run/held-out rules when tuning could bias
 selection, preserving frozen evaluation authority.
