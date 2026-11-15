@@ -185,10 +185,11 @@ Choose one execution arrangement for the same work:
 | You want | Invoke | Execution and review |
 | --- | --- | --- |
 | A compact team and less lead activity | [$controlled-delegation](../../skills/astra/controlled-delegation/SKILL.md) | One primary worker and one shared support slot by default; the lead waits during implementation and accepts the result. Review is proportionate. |
-| Native Ultra delegation | [$ultra-model-routing](../../skills/astra/ultra-model-routing/SKILL.md) | Native orchestration chooses the team; three sequential independent reviews precede authorized PR opening. |
+| Native Ultra delegation | [$ultra-model-routing](../../skills/astra/ultra-model-routing/SKILL.md) | Native orchestration chooses the team. An independent Sol review precedes authorized PR opening, with an Astra review added for consequential changes or unresolved design risk. |
 
-Both preserve the selected lead and use the same
-[Shared model routing](../../skills/astra/controlled-delegation/references/model-policy.md).
+Both preserve the selected lead and follow
+[Shared model routing](../../skills/astra/controlled-delegation/references/model-policy.md),
+which defines the Ultra routes for architecture, codebase design, and review.
 A bounded assignment still needs substantive judgment when its rules are unsettled.
 The controlled support slot covers routine help, architecture advice, or review;
 an implementation helper cannot independently review its own candidate.
