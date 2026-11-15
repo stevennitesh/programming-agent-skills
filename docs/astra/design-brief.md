@@ -3,8 +3,9 @@
 Current direction, reconciled 2026-10-26. The pack is built primarily for
 **GPT 6 Astra**. Controlled delegation supplies a compact team and waiting lead;
 Ultra model routing preserves the user's selected native delegation mode.
-Both use one shared Sol/Terra child-routing policy while retaining separate
-execution rules and the user's selected lead.
+Both use one shared child-routing policy with Ultra-specific routes for
+architecture, codebase design, and review. Each retains its own execution rules
+and the user's selected lead.
 This document owns design rationale and composition for `skills/astra/`;
 individual skills own execution.
 [Issue #94](https://github.com/stevennitesh/programming-agent-skills/issues/94)
@@ -318,7 +319,8 @@ contract; frontmatter descriptions and skill bodies remain authoritative.
 The user selects the starting lead. Choose
 [controlled delegation](../../skills/astra/controlled-delegation/SKILL.md) for a compact
 team and waiting lead, or [native Ultra delegation](../../skills/astra/ultra-model-routing/SKILL.md)
-for native orchestration and its three sequential pre-PR reviews.
+for native orchestration with one independent Sol review before PR opening by
+default and an Astra review for consequential changes or unresolved design risk.
 
 Both load [Shared model routing](../../skills/astra/controlled-delegation/references/model-policy.md)
 and [Native spawning](../../skills/astra/controlled-delegation/references/native-spawning.md).

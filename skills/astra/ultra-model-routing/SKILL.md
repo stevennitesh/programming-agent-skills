@@ -20,6 +20,10 @@ override, and availability rules. Loading shared references does not import
 controlled team limits or waiting rules. Keep small work direct when delegation
 would add more work than it saves.
 
+Consult Astra before implementation when an open architecture or codebase design
+decision could force substantial rework. Recover missing evidence or tooling at
+its source before escalating a judgment call.
+
 Use [Native spawning](../controlled-delegation/references/native-spawning.md) for host
 controls, fresh-child context, and selection evidence. Carry the assignment's
 authority, routing, and execution rules into authorized descendants. Reuse
@@ -31,10 +35,9 @@ concurrency requirements.
 Use [change-review](../change-review/SKILL.md) for candidate assessment and repairs.
 Choose useful interim review rather than adding a review after every edit.
 
-Before opening an authorized PR, complete **three sequential final-review rounds**
-unless the user changes that requirement. Read
-[Final review](references/final-review.md) for round progression and successor
-verification. Concurrent reviewers form one round.
+Before opening an authorized PR, complete an independent Sol review by default.
+Read [Final review](references/final-review.md) for when to add an Astra review
+and how to verify corrections. Honor the user's requested review arrangement.
 
 The lead retains final acceptance. Return candidate identity, review coverage,
 required checks, and material limits. Review does not grant publication, merge,

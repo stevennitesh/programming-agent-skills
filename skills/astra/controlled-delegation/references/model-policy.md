@@ -5,6 +5,15 @@ ultra-model-routing. It selects neither execution workflow. Preserve the selecte
 lead model, effort, and native mode; the calling workflow owns delegation,
 custody, waiting, review arrangement, and delivery.
 
+For `ultra-model-routing`:
+
+- Use `gpt-6-astra` at `xhigh` for delegated architecture decisions and advice,
+  and codebase design questions.
+- Use `gpt-6.1-sol` at `xhigh` for the default candidate review.
+- Use `gpt-6-astra` at `xhigh` for an escalated [Ultra final review](../../ultra-model-routing/references/final-review.md).
+
+Use the defaults below for other assignments.
+
 | Delegated assignment | Model | Effort |
 | --- | --- | --- |
 | Architecture, design advice, and candidate review | `gpt-6.1-sol` | `xhigh` |
@@ -40,10 +49,11 @@ does not make work routine.
 - **Substantive:** investigate causes, trace interacting behavior, make
   unsettled implementation or analytical choices, or resolve uncertain cases.
   Running a check may be routine while explaining its failure needs this route.
-- **Architecture or review:** judge ownership, interfaces, migration, or candidate
-  correctness. Collecting fixed evidence can be routine support; deciding what it
-  establishes remains advisory or review work. The lead retains decisions and
-  acceptance; ordinary coding choices need no separate architecture phase.
+- **Architecture, codebase design, or review:** judge ownership, interfaces,
+  reuse, migration, or candidate correctness. Collecting fixed evidence can be
+  routine support. Deciding what it establishes remains advisory or review work.
+  The lead retains decisions and acceptance. Ordinary coding choices need no
+  separate architecture phase.
 
 For other work, route a coherent assignment by the judgment it requires, including
 substantive work mixed with routine steps. Keep mechanical steps and implementation
