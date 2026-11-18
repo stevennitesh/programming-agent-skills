@@ -11,6 +11,11 @@ Expose the relevant initial state, action, observed result, and resulting state
 through the interface the question concerns. Exercise ordering, rejection, or
 interruption only when those conditions can change the answer.
 
+When comparing approaches, replay a representative action against equivalent
+starting state. Include the failure or recovery case when it is the reason for
+choosing between the approaches. Inspect the resulting state as well as the
+immediate response when either can change the decision.
+
 Keep incidental I/O and nondeterminism out of a logic model. When concurrency,
 persistence, serialization, or a remote protocol is the deciding property,
 exercise that mechanism in an authorized isolated environment rather than
