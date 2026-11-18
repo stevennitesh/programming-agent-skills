@@ -13,11 +13,11 @@ applicability, supporting evidence, and any needed revalidation conditions.
 Required repository rules belong in maintained repository guidance; memory can
 point to that owner when the pointer is useful.
 
-Temporary branch state, passing test counts, running processes, current blockers,
-and completed-task status generally belong in active task state or history.
-Remove them from durable guidance when they no longer help a future decision.
-A version, path, commit, or incident identifier may still be useful provenance or
-a retrieval key; evaluate its role rather than deleting it by category.
+Keep temporary branch state, test counts, running processes, and current
+blockers in the active task record when needed to resume, or in dated history
+when they document an earlier result. Preserve still-active ownership, pause,
+and protection decisions when retiring the surrounding status. A version, path,
+commit, or incident identifier can still serve as provenance or a retrieval key.
 
 Choose whether to retain, correct, consolidate, relocate, or retire each affected
 meaning. Do not manufacture a general lesson from every temporary observation.
@@ -27,10 +27,14 @@ An explicit durable preference needs no recurrence. Preserve newer user directio
 and distinguish accepted decisions from recommendations. Copied summaries do not
 independently corroborate a claim.
 
-For example, "the last test run passed" is a historical result. A verified cause
-of repeated test failures, its applicable conditions, and the maintained fix
-location may support a reusable lesson. Do not promote a temporary workaround to
-an unconditional rule.
+For a supported causal lesson, keep the trigger, the cause or remaining
+uncertainty, the better action, and how to verify it. Include scope and a useful
+owner or evidence pointer when they can change a future decision. For example,
+after an ambiguous publication result, the request may have succeeded before the
+response was lost. Read back the remote state and verify the intended revision
+before deciding whether a retry is needed. Keep the PR number and last observed
+status with the episode. When code or maintained guidance owns the remedy, point
+there if it saves rediscovery. Keep any distinct caution that still matters.
 
 ## Distinguish storage roles
 

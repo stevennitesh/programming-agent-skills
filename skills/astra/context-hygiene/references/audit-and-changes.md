@@ -6,11 +6,13 @@ its scope, or require a preferred document tree.
 
 ## Establish current meaning and consumers
 
-Follow affected root/nested instructions, commands, guides, plans, decisions,
-indexes, and mechanical checks. Include unlinked material in a repository-wide
-request; a focused repair needs only affected sources and readers. Check claims
-against code, configuration, accepted decisions, and actual workflow needs.
-Newer code can expose drift without overriding accepted behavior.
+Start with the instructions the intended agent loads and the decisions the
+guidance affects. A focused repair needs only affected sources and readers.
+For a repository-wide audit, inventory broadly, including unlinked files that
+may contain guidance. Read in depth where a file may own a rule, compete with
+current guidance, or lead a reader to it. Check claims against code,
+configuration, accepted decisions, and actual workflow needs. Newer code can
+expose drift without overriding accepted behavior.
 
 Distinguish deliberate policy from inherited defaults. An older bootstrap's rule
 is not automatically an intentional override, and a newer template cannot replace
@@ -31,6 +33,13 @@ duplicates. Update useful owners and affected readers rather than creating a
 parallel source or generic engineering contract. Add verified missing knowledge;
 do not invent product policy. A retired workflow with no replacement may simply
 leave direct work, not another mandatory step. Template parity is not the goal.
+
+Keep one maintained owner for each rule or fact. Put commands and constraints
+needed across the repository in its entry guidance. Keep local rules at their
+applicable scope and put specialized detail behind a short pointer that says
+when to read it. For example, “Before changing evaluation data, read the holdout
+rules in the evaluation guide.” Put the pointer where the agent will see it
+before the decision, and keep unrelated procedures out of that reading path.
 
 For repeated command or search failures, derive actual paths and entry points
 from current files/configuration and correct the runnable command and host
@@ -61,7 +70,12 @@ protection. Product changes, new tooling, tracker mutations, global edits, or
 revised accepted behavior need their own authority; a shared reference grants none.
 
 Verify that future agents find current owners, retained meaning, and local
-exceptions, and no longer receive displaced rules. Reuse still-valid evidence;
-a legacy validator proves only its own rules. An equivalent repeat migration
-needs no edit. Report changed surfaces and explicit policy, access, or knowledge
-gaps without expanding a bounded repair into an exhaustive audit.
+exceptions, and no longer receive displaced rules. When changing what loads or
+when, trace a relevant routine task and a task that needs the scoped guidance
+from their intended entry points. Check that the routine task can proceed
+without loading unrelated references and that the scoped task reaches its rule
+before acting.
+Reuse still-valid evidence. A legacy validator proves only its own rules. An
+equivalent repeat migration needs no edit. Report changed surfaces and explicit
+policy, access, or knowledge gaps without expanding a bounded repair into an
+exhaustive audit.

@@ -17,6 +17,11 @@ credible outcomes. Set consequential comparison conditions or success criteria
 before the decisive run, including a limitation case when happy-path behavior
 cannot decide. Do not use an experiment to settle a user-owned product preference.
 
+If the approach is open, identify materially different candidates and build the
+smallest runnable versions that could change the choice. Use current behavior
+as a baseline when it helps, compare under the same relevant conditions, and
+drop candidates the evidence rules out. A single probe can settle a narrow question.
+
 Use the cheapest surface that preserves the deciding mechanism. Simplify incidental
 infrastructure and polish, not concurrency, persistence, interaction, or another
 property being tested. Read the relevant [Evidence methods](references/evidence-methods.md)
@@ -25,9 +30,12 @@ Substitutes prove only properties they preserve, not production readiness.
 
 ## Run and adapt
 
-Follow repository scratch and isolation rules and authorized development targets.
-A local path does not isolate a shared database or service. Account for created
-files, processes, and other resources; preserve unrelated work.
+Use the repository's disposable workspace for standalone experiments, such as
+`.tmp/prototype/<name>` in a repo that uses `.tmp`. Choose an authorized temporary
+location if the repo has no convention. Use an isolated checkout or development
+target when the experiment needs the real repo layout, runtime, or persistent
+state. A local path does not isolate a shared database or service. Account for
+created files, processes, and other resources and preserve unrelated work.
 
 Exercise the actual behavior and verify the instrument reaches the mechanism and
 exposes the deciding observation. Repair ordinary setup or instrumentation within
@@ -42,11 +50,15 @@ a favorable result.
 
 ## Return and continue within scope
 
-Deliver the observation, conditions, substitutions, conclusion or exact gap, and
-requested demo, comparison, or reusable experiment. Preserve reproduction detail
-when future use needs it. Account for resources, stop or explicitly retain created
-services/processes, preserve requested artifacts, and safely remove other disposable
-material. Identify blocked deliverables.
+Use the observation, conditions, substitutions, and conclusion or exact gap in
+the active task. Include the result in that task's normal response when it changes
+the decision or exposes a material limitation. Give a standalone prototype reply,
+demo, or replay command only when requested. When showing how an approach works,
+choose the shortest useful example of its actual behavior.
+
+Preserve reproduction detail when future use needs it. Account for resources,
+stop or explicitly retain created services and processes, preserve requested
+artifacts, and safely remove other disposable material. Identify blocked deliverables.
 
 Prototype code remains evidence until the calling work evaluates production
 ownership, quality, and integration. Resume already-authorized implementation when

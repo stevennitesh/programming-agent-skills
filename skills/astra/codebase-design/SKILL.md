@@ -1,15 +1,12 @@
 ---
 name: codebase-design
-description: Resolve code reuse, ownership, simplification, or integration decisions. Exclude product/domain meaning, edits with a settled design, and whole-codebase audits.
+description: Choose or simplify a technical design when ownership, interfaces, dependencies, reuse, or migration materially affect the work. Exclude product and domain decisions, settled implementation, and whole-codebase audits.
 ---
 
 # Codebase design
 
-Choose the simplest complete design for accepted behavior using existing
-capabilities and enforceable ownership. Include caller transitions and retirement
-of displaced paths. Design-only work returns a decision without edits; within
-authorized implementation, resolve the design and continue without another
-approval gate. No architecture pattern or separate design document is required.
+Choose the simplest complete design that preserves accepted behavior. Use the
+repository's existing capabilities and put each guarantee where it can be enforced.
 
 ## Establish the decision
 
@@ -27,12 +24,12 @@ workflow requirement.
 
 ## Choose ownership and evidence
 
-Consolidate genuinely shared policy; similar-looking code may have different
-semantics. Judge simplicity across callers, state, configuration, dependencies,
-and maintenance. Keep boundaries that hide meaningful policy or coordination;
-collapse those that merely relocate complexity. File or line counts alone do not
-establish a simpler design. Ground representation choices in actual access and
-material scale or consistency needs.
+Trace a real caller through the proposed boundary. When it can change the choice,
+walk through a consequential failure or the next realistic change. See where the
+rule is enforced, which details callers still have to coordinate, and where
+changes would land. Favor a boundary that reduces coordination across the system
+and preserves caller behavior. Similar code can have different policies. Ground
+representation choices in actual access and material scale or consistency needs.
 
 Before strengthening shared validation, inspect its real callers and distinguish
 integrity checks from operation-specific eligibility. If it reads persisted
@@ -52,13 +49,15 @@ Its result proves only the conditions exercised. Return to the product/domain
 owner only when the choice would change accepted behavior, scope, risk tolerance,
 or another owner-held guarantee; keep unresolved assumptions explicit.
 
-## Return an implementable decision
+## Use or return the decision
 
-State the selected direction, supported retain decision, or precise unresolved
-choice, with the decisive tradeoff and affected owners or guarantees. Include
-caller migration, retirement, compatibility, and verification obligations, and
-why any superseded path must remain. Reuse the caller's artifact. For requested
-durable capture, use shape-work's
-[Domain meaning and decision records](../shape-work/references/domain-modeling.md)
-without another feature interview. Stop at the design-only endpoint or resume
-already-authorized implementation.
+During authorized implementation, apply the decision and continue. Surface a
+decisive tradeoff or material assumption in the task's normal response. For a
+design-only request, return the recommendation, case for retaining the current
+design, or exact unresolved choice, with the reason and affected guarantees.
+Keep implementation edits within separately authorized work.
+Include migration, retirement, compatibility, or verification details where they
+affect the decision or delivery. If a superseded path must remain, say why.
+
+Reuse the caller's artifact. For requested durable capture, use shape-work's
+[Domain meaning and decision records](../shape-work/references/domain-modeling.md).
