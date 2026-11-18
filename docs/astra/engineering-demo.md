@@ -50,7 +50,7 @@ python -m scripts.validate_skills --public
 
 These tests operate on temporary fixtures. They do not install the pack into
 your personal skills directory. [CI](../../.github/workflows/ci.yml) runs public
-validation and the full suite on Ubuntu and Windows.
+validation and the full suite on Ubuntu, plus targeted checks on Windows.
 
 For real installation and recovery commands, use
 [Installation and recovery](../../INSTALLATION.md). The actual implementation
