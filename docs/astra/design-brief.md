@@ -1,8 +1,8 @@
 # Astra skills pack design brief
 
-Current direction, reconciled 2026-10-26. The pack is built primarily for
-**GPT 6 Astra**. Controlled delegation supplies a compact team and waiting lead;
-Ultra model routing preserves the user's selected native delegation mode.
+The pack is designed for capable coding models, with Astra 6.2 and Sol 6.2 in
+the current routing policy. Controlled delegation supplies a compact team and
+waiting lead. Ultra model routing preserves the user's selected native delegation mode.
 Both use one shared child-routing policy with Ultra-specific routes for
 architecture, codebase design, and review. Each retains its own execution rules
 and the user's selected lead.
@@ -28,11 +28,12 @@ this brief explains why the pieces fit together.
 
 ## What earns a place
 
-Keep an instruction when it improves a likely decision or prevents a credible
-failure. Put it at the owner of that decision; use code or existing tools for
-mechanical work. Put substantial conditional detail behind a clear trigger and
-pointer. A few natural actions and a recognizable outcome are useful shapes,
-not a word-count or step-count target.
+Keep an instruction when it helps the agent make a better decision, produce a
+better result, or prevent a credible failure. Define the outcome, relevant
+constraints, authority, and what would establish completion. Leave investigation,
+tool choice, and implementation methods open unless a dependency or consequential
+effect requires a particular method. Put conditional detail behind a clear
+trigger and use existing tools for mechanical work.
 
 Discovery metadata is shared model context. Keep each skill description to the
 smallest reliable selector plus its nearest useful exclusion; procedure and
@@ -254,10 +255,19 @@ comparable measurements for requested broad purges. Independent review is an
 option when delegation is authorized; agreement does not replace evidence for
 retiring a requirement. Category labels and deletion targets do not decide value.
 
-This design applies the concise discovery and reduced scaffolding guidance in
-OpenAI's [Astra prompting guide](https://developers.openai.com/api/docs/guides/latest-model#prompting-best-practices)
-and [skills article](https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra),
-alongside Anthropic's [skill authoring guidance](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices),
+The original [Astra skills article](https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra)
+supports concise discovery and conditional detail. The [GPT-6.2 prompting guide](https://developers.openai.com/api/docs/guides/latest-model#prompting-best-practices)
+recommends giving agents room to proceed on reasonable, reversible assumptions,
+and specifying project conventions or audience needs where they affect the result.
+The [GPT-6.2 release](https://openai.com/index/introducing-gpt-6-2-astra-sol/)
+reports that both models sometimes omitted blockers in evaluations. Keep material
+blockers and verification gaps visible at completion. Apply task-specific steering
+as the work evolves. Integrations that build Responses API requests can preserve
+earlier context and append updates to retain cache reuse and prior reasoning.
+[OpenAI's conversation prefix guide](https://developers.openai.com/api/docs/guides/keep-prefix-unchanged)
+owns those request mechanics.
+
+The pack also draws on Anthropic's [skill authoring guidance](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices),
 [Opus 5.5 prompting guide](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-5-5),
 [Opus 5.5 usage article](https://claude.dev/blog/getting-the-most-out-of-opus-5-5/),
 and [context engineering article](https://claude.dev/blog/the-new-rules-of-context-engineering-for-claude-5-generation-models/).
@@ -348,8 +358,10 @@ that historical package.
 Repo bootstrap owns initial guidance and requested setup migrations: accurate repository
 guidance, preserved deliberate decisions, reconciled obsolete routes, and a
 coherent reading path. The agent chooses the investigation, files, organization,
-and verification. Conditional references supply migration and optional setup
-conventions; domain and tracker templates are starting material only when useful.
+and a representative first action to verify when practical. Pack adoption also
+checks relevant skill availability in the intended host. Conditional references
+supply migration and optional setup conventions. Domain and tracker templates
+are starting material when useful.
 No generic engineering contract, document tree, or template parity is required.
 Tracker setup requires requested or established tracking, and parallel
 prerequisites do not start workers.
@@ -375,11 +387,14 @@ behavior. Reviews and editorial reconciliation do not establish better generated
 code, lower total cost, or equivalent quality across models. Model assignments
 remain hypotheses requiring workload-specific calibration.
 
-Use actual runs to evaluate unnecessary spawns, context transfers, approval turns,
-repair attempts, ownership disagreements, and elapsed time alongside correctness
-and maintainability. Include failures and compare equivalent accepted outcomes;
-logged telemetry alone does not prove savings. Do not restart a broad rewrite
-without a concrete behavioral gap.
+Use actual runs to compare the current guidance with a shorter or more flexible
+version when a specific instruction might be getting in the way. Judge the work
+against task acceptance: correctness, completeness, maintainability, authority,
+and honest reporting of what was verified. Let a valid method earn the same result
+regardless of whether it follows the usual steps. Compare rework, avoidable
+handoffs, and elapsed time among runs that satisfy the same acceptance criteria.
+See [Behavior evaluation](../../skills/astra/writing-for-agents/references/behavior-evaluation.md)
+for comparisons that need stronger evidence.
 
 For deeper evidence, consult the [initial assessment](../research/gpt-6-astra-skill-pack-assessment-2026-09-05.md)
 and [contract assessment](../research/astra-engineering-contract-2026-09-05.md) as

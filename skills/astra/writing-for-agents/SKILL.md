@@ -29,8 +29,14 @@ orchestration with its execution owner.
 
 Let the receiver choose investigation, tools, and implementation methods. Prescribe
 order or technique only for a governing requirement, dependency, or fragile
-operation. Use concrete examples for consequential ambiguity and fixed output
-shapes only when a consumer needs them. Request useful evidence and uncertainty,
+operation. When goals can conflict, state what takes priority and which decisions
+the receiver owns. Make it clear when a suggested approach can change as evidence
+emerges. A retry assignment could say, “Preserve both callers’ retry behavior.
+Reuse the helper if it can express both policies. Choose a different design if
+needed and ask before changing the public contract.”
+
+Use concrete examples for consequential ambiguity and fixed output shapes only
+when a consumer needs them. Request useful evidence and uncertainty,
 not narrated reasoning or generic exhortations.
 
 ## Keep instructions lean and owned
@@ -41,6 +47,10 @@ existing mechanical enforcement where appropriate. Remove repeated defaults,
 generic advice, and unnecessary scaffolding without losing authority, custody,
 acceptance, recovery, or necessary ordering. One incident alone does not justify
 a universal rule.
+
+Put a reminder where it can change the next decision. Name the condition and
+the action or evidence it calls for. A publication reminder could say, “If
+publication times out, read back the remote state before retrying.”
 
 Reconcile directly affected readers and competing guidance when meaning,
 discovery, or authority changes. Preserve history. For displaced or conflicting
