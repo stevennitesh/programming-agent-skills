@@ -65,7 +65,7 @@ authority; already-authorized combined work continues within its scope.
 
 | You need | Skill | Result |
 | --- | --- | --- |
-| Initial repository guidance or a requested setup migration | [$repo-bootstrap](../../skills/astra/repo-bootstrap/SKILL.md) | Verified local commands, constraints, and reading paths |
+| Initial repository guidance or a requested setup migration | [$repo-bootstrap](../../skills/astra/repo-bootstrap/SKILL.md) | A usable reading path, verified local commands where practical, and any missing repo or host prerequisites |
 | Reconcile existing guidance, review memory, or analyze agent sessions | [$context-hygiene](../../skills/astra/context-hygiene/SKILL.md) | Scoped context repairs or supported findings |
 | Write or audit a selected instruction, skill, or handoff | [$writing-for-agents](../../skills/astra/writing-for-agents/SKILL.md) | A usable artifact or focused assessment |
 
@@ -169,9 +169,9 @@ current instructions.
 
 ## Models and hosts
 
-The managed pack in `skills/astra/` was developed primarily for GPT 6 Astra and
-is intended for capable coding models, including Sol 6.1, Opus 5.5, Fable 5.1
-and Sonnet 5.5. The managed integration targets Codex. Other hosts need their own
+The managed pack in `skills/astra/` is intended for capable coding models,
+including Astra 6.2, Sol 6.2, Opus 5.5, Fable 5.1, and Sonnet 5.5.
+The managed integration targets Codex. Other hosts need their own
 skill installation and tool integration. Package checks do not establish
 equivalent results across models.
 

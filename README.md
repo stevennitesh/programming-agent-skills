@@ -55,7 +55,8 @@ failure cases:
   and preserves them.
 
 [CI](https://github.com/stevennitesh/programming-agent-skills/actions/workflows/ci.yml)
-runs public validation and the full test suite on Ubuntu and Windows. These tests
+runs public validation and the full suite on Ubuntu, with targeted native Windows
+checks for locking, filesystem behavior, subprocesses, and path handling. These tests
 establish installer, helper and package behavior. Agent output quality and cost
 require separate evaluation; the examples make no productivity claim.
 

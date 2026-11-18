@@ -7,17 +7,17 @@ custody, waiting, review arrangement, and delivery.
 
 For `ultra-model-routing`:
 
-- Use `gpt-6-astra` at `xhigh` for delegated architecture decisions and advice,
+- Use `gpt-6.2-astra` at `xhigh` for delegated architecture decisions and advice,
   and codebase design questions.
-- Use `gpt-6.1-sol` at `xhigh` for the default candidate review.
-- Use `gpt-6-astra` at `xhigh` for an escalated [Ultra final review](../../ultra-model-routing/references/final-review.md).
+- Use `gpt-6.2-sol` at `xhigh` for the default candidate review.
+- Use `gpt-6.2-astra` at `xhigh` for an escalated [Ultra final review](../../ultra-model-routing/references/final-review.md).
 
 Use the defaults below for other assignments.
 
 | Delegated assignment | Model | Effort |
 | --- | --- | --- |
-| Architecture, design advice, and candidate review | `gpt-6.1-sol` | `xhigh` |
-| Substantive coding, debugging, investigation, and reasoning | `gpt-6.1-sol` | `high` |
+| Architecture, design advice, and candidate review | `gpt-6.2-sol` | `xhigh` |
+| Substantive coding, debugging, investigation, and reasoning | `gpt-6.2-sol` | `high` |
 | Routine execution, settled bulk work, and mechanical tasks | `gpt-6.1-terra` | `medium` |
 | Computer use, including browser and desktop interaction | `gpt-6.1-terra` | `medium` |
 | Visual extraction | `gpt-6.1-terra` | `medium` |

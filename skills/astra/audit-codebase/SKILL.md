@@ -15,16 +15,17 @@ recording outcomes; the read-only default does not truncate existing authority.
 
 ## Select scope and investigate
 
-Use [Visual atlas](references/atlas.md) to create or resume the current-format
-workbench. In guided exploration, show meaningful systems and let the user select
-scope and deeper candidates. Honor a scope or delegated selection already supplied,
-including whole-repository audits, without asking again. An explicitly brief or
-text-only assessment may stay in chat; a no-write request creates no report.
+Honor a scope or delegated selection already supplied, including whole-repository
+audits, without asking again. For a brief or text-only assessment, inspect the
+code directly and report in chat when that meets the request. No-write assessments
+stay in chat.
 
-Start navigation with compact `status` and filtered `inspect`, not the full HTML
-or state. Use [Audit packet](references/audit-packet.md) to prepare source-bound,
-guarded inputs before investigation; the helper owns validation and publication,
-while the agent owns semantic judgments and evidence. Do not rebuild that plumbing.
+For atlas work, use [Visual atlas](references/atlas.md) to create or resume the
+workbench. Use compact `status` and filtered `inspect` to navigate saved work.
+In guided exploration, show meaningful systems and let the user select scope and
+deeper candidates. Before investigating a subsystem for atlas publication,
+prepare the source-bound inputs with [Audit packet](references/audit-packet.md).
+The helper owns validation and publication. The agent owns judgments and evidence.
 
 Trace accepted behavior, implicated owners/callers, and concrete consequences.
 Treat complexity, duplication, coordination costs, and suspected bottlenecks as
@@ -59,7 +60,7 @@ unresolved ownership/migration choice; [prototype](../prototype/SKILL.md) obtain
 a needed new observation. Return a supported recommendation, disproved proposal,
 or exact blocker. Analysis alone starts no implementation.
 
-## Publish and verify
+## Publish and verify atlas updates
 
 Publish meaningful scope batches through guarded operations and retain stable IDs,
 source identities, and readback. Use [Prepared work and verification](references/workflow.md)
@@ -74,7 +75,11 @@ history or erasing original evidence of verified work.
 Run `check-report` after publication and follow
 [Check and preview](references/maintenance.md#check-and-preview-the-report) for
 content versus renderer checks and the supported preview's actual result.
-Return the report path, strongest conclusions, selectable IDs, and limits.
-Complete the requested scope and any authorized fixes/verification, exposing pending
-delivery or blockers. Further selection remains with the user unless supplied or
-delegated. HTML controls navigate/copy selections; they never execute workflows.
+Return the report path and selectable IDs for atlas work. HTML controls
+navigate/copy selections; they never execute workflows.
+
+## Finish the requested scope
+
+Return the strongest conclusions and limits. Complete any authorized fixes and
+verification, and report pending delivery or blockers. Further selection remains
+with the user unless supplied or delegated.

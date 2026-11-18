@@ -49,10 +49,11 @@ user changes to the review arrangement take precedence. Review grants no
 publication or risk-acceptance authority and adds no PR workflow to
 implementation-only or review-only work.
 
-## Evaluate changes to review routing
+## Compare routes when evidence is needed
 
-Before changing a default, compare it with the proposed route on a small set of
-identical PR snapshots. Include clean changes and defects with known later fixes.
+Apply explicitly requested model version updates directly. When choosing between
+routes or assessing whether a route improves results, compare them on a small set
+of identical PR snapshots. Include clean changes and defects with known later fixes.
 Keep the fixes out of the reviewer's reach and verify findings against the code.
 Compare Sol `high` with `xhigh`, measure what a targeted Astra pass adds after
 Sol, or try Terra `medium` for a narrow review specialty. Track unique verified
