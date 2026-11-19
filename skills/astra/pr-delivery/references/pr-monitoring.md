@@ -7,8 +7,9 @@ as part of routine delivery.
 
 Assign one monitoring owner for a PR. Reuse a supported existing watch rather
 than starting duplicate monitors. A delegated reviewer does not acquire the
-parent's delivery or monitoring ownership. Preserve enough target and resource
-identity to resume safely after interruption.
+parent's delivery or monitoring ownership. When interruption could lose progress,
+use the existing continuation record to retain the PR, last observed head, open
+findings, pending gates, next authorized action, and any owned watch resources.
 
 Handle already-present actionable state before waiting. Prefer an event-driven
 host watch when available; otherwise use an existing bounded wait or status
@@ -19,8 +20,9 @@ or overlapping waits. Keep unchanged, non-actionable states quiet.
 A wake or successful watcher exit is a signal to refresh the PR and reassess its
 candidate and gates under the main skill. Resume against a moved head; include
 relevant base changes even without line conflicts. Repository policy and requested
-reviews determine gates, not fixed bot names. An old comment can still identify
-an unfixed issue after a push; an inaccessible review remains unavailable.
+reviews determine which gates apply. Check the review result against the current
+candidate. Carry forward earlier findings that remain open and relevant. Treat an
+inaccessible review as unavailable.
 
 For rate-limit, access, or transport failures, distinguish unavailable evidence
 from failed code. Honor exposed retry/reset timing and use a supported alternate

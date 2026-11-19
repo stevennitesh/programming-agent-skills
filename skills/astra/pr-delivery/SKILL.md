@@ -5,8 +5,9 @@ description: Create, update, monitor, or merge pull requests, including status i
 
 # PR delivery
 
-Reach the requested PR endpoint and verify its actual remote state using a
-connector, API, or CLI that exposes the needed information and effects.
+Carry the PR through the requested endpoint, including authorized work after
+merge. Verify remote PR state through a connector, API, or CLI and verify each
+requested result at its intended destination.
 
 Status inquiries end with one read-only report. Creation or update alone does not
 authorize continued monitoring, review fixes, or merge. Carry requested
@@ -71,16 +72,18 @@ Carry supported corrections through the authorized scope. Replies and resolution
 require existing authority and verified remote state; a local fix alone cannot
 justify thread resolution.
 
-After head or base changes, reestablish affected verification, requested review,
-and integration gates. Retain still-applicable evidence, including across Git-only
-changes. Missing infrastructure or access evidence does not justify speculative
-code fixes. Do not rebase every behind branch unless policy or behavior requires it.
+After head or base changes, reuse evidence whose relevant inputs and claims still
+apply. Rerun affected local checks. Confirm that required hosted CI, requested
+review, and integration gates apply to the candidate the forge will merge.
+Missing infrastructure or access evidence does not justify speculative code fixes.
+Do not rebase every behind branch unless policy or behavior requires it.
 
 For waiting on CI, review, or forge state, use
 [PR monitoring](references/pr-monitoring.md). Treat new questions and constraints
-as steering unless the user cancels or replaces the objective. Repair recoverable failures
-within scope; stop dependent work for missing authority, required input, or a
-blocker that cannot be resolved within scope. Leave a usable continuation state.
+as steering unless the user cancels or replaces the objective. Repair recoverable
+failures in scope. When a required input, permission, or unresolved blocker stops
+a dependent step, complete independent authorized work and leave a usable
+continuation state.
 
 ## Merge and verify the endpoint
 
@@ -97,9 +100,9 @@ merge remains pending until the forge confirms it merged. Active conflicts belon
 within the authorized integration endpoint.
 
 Read back the remote PR, target branch, and merged revision before claiming
-success; inspect state before retrying an uncertain merge. Requested branch/worktree
-cleanup remains with [git-cleanup](../git-cleanup/SKILL.md).
+success. Inspect state before retrying an uncertain merge. Carry requested sync,
+installation, and cleanup through [Delivery endpoints](references/delivery-endpoints.md#complete-requested-work-after-merge).
 
 Report the PR, endpoint, candidate or merged revision, decisive checks and reviews,
 and remaining blockers or evidence limits. Distinguish local repairs, published
-changes, and verified merge state.
+changes, verified merge, and each requested result after merge.

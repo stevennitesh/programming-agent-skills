@@ -15,16 +15,17 @@ requested.
 
 ## Find the useful tooling improvement
 
-Inspect source, run commands, existing tools, and supported interfaces. Improve
-the existing owner before adding another tool; a script, configuration change,
-or corrected usage instructions may suffice. Build a framework only when needed
-for the requested capability.
+Find the repository's supported verification route. If a documented route exists,
+try the smallest safe case with its stated prerequisites. Use the observed
+friction to improve the existing owner before adding tooling. A corrected recipe,
+configuration change, or small script may suffice. Build a framework only when
+needed for the requested capability.
 
-Select the needed UI, command, API, or agent/MCP surface. Exercise its supported
-consumer entry point, including arguments, configuration, discovery, or schemas
-when relevant. Internal calls can aid setup or diagnosis but cannot establish
-an untested interface works. Substitutes prove only properties they preserve;
-identify the integrations or behavior they bypass.
+A quick check can support iteration when it exercises the relevant logic. When
+acceptance depends on a UI, command, API, or agent/MCP interface, use its supported
+consumer entry point and observe the settled outcome. Include arguments,
+configuration, discovery, or schemas when they matter. One focused run can serve
+both purposes. Identify material behavior or integrations a substitute bypasses.
 
 Read [Feature map](references/feature-map.md) when several capabilities need a
 maintained verification index or the user requests one. A map is optional and
@@ -32,10 +33,10 @@ does not establish that its recipes were exercised.
 
 ## Build for repeatable use
 
-Use established tooling/documentation locations. Make entry points, inputs,
-prerequisites, expected observations, and resource ownership usable by a fresh
-agent without reconstructing the implementation. Preserve these properties
-without requiring separate commands or a fixed sequence:
+Put the shortest usable recipe where the repository documents how to verify the
+product. Make the entry point, inputs, prerequisites, expected observations, and
+resource ownership clear to a fresh agent. Preserve these properties without
+requiring separate commands or a fixed sequence:
 
 - **Target and readiness:** identify the intended source/build, configuration,
   instance, and account before driving it; launch or attach as appropriate and
@@ -56,6 +57,11 @@ without requiring separate commands or a fixed sequence:
   interactions, exercise the relevant input mode and viewer restrictions on the
   final artifact. If a substitute is used, state which of those conditions it
   reproduced.
+- **Result and recovery:** keep default output compact. Show the target, what ran,
+  and the decisive observation or blocker. Point to logs or artifacts when they
+  help with follow-up. For consequential asynchronous actions, retain the
+  operation ID or equivalent lookup handle when available. After a timeout or
+  other ambiguous result, read back actual state before retrying.
 - **Isolation and cleanup:** isolate mutable fixtures, configuration, and outputs
   within authorized resources. Set state paths before imports that cache them;
   resolve destructive fixture targets and verify ownership before setup/cleanup.
@@ -81,9 +87,9 @@ turn alone does not request teardown.
 
 ## Demonstrate the capability
 
-Exercise the tools against the intended product with relevant success, failure,
-or recovery cases. A representative run can establish a driver works without
-certifying every reachable feature. For added or materially changed custom target
+Exercise the documented route against the intended product with relevant success,
+failure, or recovery cases. A representative run can establish a driver's
+capability for the exercised path. For added or materially changed custom target
 checks or outcome assertions, use a safe negative control or equivalent evidence
 that rejects the relevant wrong target/result. Wrong-target rejection alone does
 not establish outcome sensitivity. Use disposable fixtures or wrong expected

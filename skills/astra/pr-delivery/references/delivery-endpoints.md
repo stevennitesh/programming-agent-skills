@@ -11,6 +11,24 @@ requested CI/review follow-through to the main skill's verified merge endpoint.
 Implementation retains its execution owner; delivery selects no extra reviewer
 model, review loop, or skill pipeline.
 
+## Complete requested work after merge
+
+Use the confirmed merge and target branch as the starting point. Continue through
+the requested effects with their maintained owners:
+
+- Use [Git cleanup](../../git-cleanup/SKILL.md) for requested synchronization and
+  branch or worktree cleanup. Verify the intended local branch against the
+  current remote target and read back the disposition of the affected refs and
+  worktrees.
+- Follow the repository's installation instructions for the intended host or
+  target. Use the verified merged revision or another authorized revision that
+  contains the delivered change. Verify the installed version or content at
+  the destination.
+
+Order these steps by their dependencies and the user's request. If a step is
+blocked, complete independent authorized steps and report the state of each
+requested result.
+
 ## Prepare for the human to merge
 
 Complete the requested preparation, corrections, checks, and review, then leave

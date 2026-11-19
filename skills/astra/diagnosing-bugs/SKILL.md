@@ -18,10 +18,10 @@ happens, not what should happen. Use a faithful feedback loop; attributable
 production evidence may suffice without a local reproducer.
 
 Trace the earliest evidenced divergence and how it produces the symptom. Form a
-falsifiable explanation with predicted observations. When existing evidence fits
-credible alternatives, execute a targeted probe or reversible intervention within
-authority that distinguishes them. More agreeing observations or one green run
-after an edit do not establish cause.
+falsifiable explanation with predicted observations. Prefer the lowest-cost
+observation that could rule out a credible cause or change the next decision.
+If existing evidence cannot distinguish the alternatives, use a targeted probe
+or reversible intervention within authority.
 
 Use the relevant [Investigation methods](references/investigation-methods.md) for
 runtime inspection, controlled experiments, intermittency, cross-system failures,
@@ -43,10 +43,11 @@ suppression may be a mitigation without explaining upstream corruption or restor
 the required outcome; label that distinction.
 
 Add or update regression evidence when it protects the real failure or policy
-requires it. Prefer detecting the original mechanism over mirroring the patch.
-Verify the required behavior through the original faithful loop when available,
-not just disappearance of the error. Finite clean runs do not prove elimination
-of intermittent failure, and a substitute cannot certify properties it bypasses.
+requires it. When practical, use the same focused check to expose the original
+failure before the fix and verify the required outcome afterward under comparable
+conditions. Use the original workflow when available. Captured evidence or
+controlled replay can support verification of rare failures. Report limits from
+sampling and from any part of the original mechanism the check bypasses.
 
 Use repository scratch/isolation rules. Remove or account for diagnostic
 instrumentation and resources, preserve requested reproducers/evidence, and repeat

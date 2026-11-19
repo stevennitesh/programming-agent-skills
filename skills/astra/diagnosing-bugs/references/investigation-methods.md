@@ -7,12 +7,14 @@ probe over building new diagnostic infrastructure.
 
 ## Targeted instrumentation and runtime inspection
 
-When the symptom appears downstream of the bad state, observe selected boundaries
-or invariants to narrow the first divergence. Assertions, correlated traces,
-counters, or watchpoints can expose the relevant input, output, write, identity,
-or state transition. Capture what can change the explanation rather than logging
-everything. Account for filtering, sampling, buffering, and timing changes when
-interpreting missing or reordered observations.
+When the symptom appears downstream of the bad state, inspect a boundary where
+the expected behavior is clear. Compare with a working execution when available.
+On a long path, choose an intermediate boundary where the suspected divergence
+would be observable. Narrow the interval between the last known good state and
+the first evidenced divergence. Assertions, correlated traces, counters, or
+watchpoints can expose the relevant value or transition. Account for filtering,
+sampling, buffering, and timing changes when interpreting missing or reordered
+observations.
 
 For hangs or unexplained stalls, thread or task snapshots, progress counters, and
 resource or lock ownership can distinguish waiting from slow progress. For
@@ -22,10 +24,12 @@ interpret their findings within the paths and properties they observe.
 
 ## Controlled interventions and replay
 
-When several causes fit the observations, vary a suspected causal factor while
-keeping relevant comparison conditions stable. A reversible intervention or
-negative control can test whether the predicted consequence follows. If several
-factors change together, limit attribution to what the comparison distinguishes.
+When several causes fit the observations, ask what you would expect to see if
+the leading explanation were wrong. Check existing evidence first when it can
+answer that question. To test a suspected factor directly, vary it while keeping
+relevant comparison conditions stable. A reversible intervention or negative
+control can help. If several factors change together, limit attribution to what
+the comparison distinguishes.
 
 For suspected timing or recovery failures, consider controlled scheduling,
 cancellation, timeouts, or injection of a relevant partial failure. Exercise the
@@ -85,12 +89,13 @@ reproduce the problem, request the minimal action and observation needed.
 
 ## History, differential checks, and reduction
 
-Compare known working and failing states under the same relevant input and
-environment. A historical implementation is a comparison, not automatically the
-correct specification. A first-bad commit localizes introduction; inspect the
-changed mechanism before calling it the root cause.
+Compare known working and failing states with relevant inputs and environment
+held comparable apart from the factor under investigation. Check the intended
+behavior against its governing requirement. A first-bad commit localizes
+introduction; inspect the changed mechanism before calling it the root cause.
 
-Use bisection only when the symptom classifier is reliable enough for the search.
+Use version bisection when history bounds a transition and the check reliably
+identifies the original failure.
 Distinguish build or setup failure from the target defect and skip untestable
 revisions rather than classifying them as bad. Preserve the user's active work
 when executing historical states.
@@ -127,6 +132,11 @@ differences from the regression.
 Use profiling, tracing, or deterministic work counts to identify a plausible
 mechanism, then measure its actual effect. A hotspot alone does not prove it caused
 the observed slowdown.
+
+For slow CI, use existing job and step timings to separate runner queue time,
+setup, and test execution before rerunning jobs. Follow the chain of jobs that
+determines elapsed time. Repeated test work can consume runner time without
+necessarily delaying completion when jobs run in parallel.
 
 Account for warmup, cache state, ordering, and noise when material. Faster
 incomplete or behaviorally different work is not a repaired regression.

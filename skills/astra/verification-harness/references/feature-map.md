@@ -10,9 +10,9 @@ not evidence that every listed feature was exercised.
 
 ## Record supported proof routes
 
-Use the repository's existing documentation structure. Prefer one compact index
-when it remains readable; split feature entries only when their drive or evidence
-instructions need independent maintenance.
+Keep the index discoverable from the repository's normal verification
+instructions. Prefer one compact index when it remains readable. Split feature
+entries when their drive or evidence instructions need independent maintenance.
 
 For each mapped feature, record only what a future verifier needs:
 
