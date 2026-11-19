@@ -25,6 +25,18 @@ Read [Finding standards](references/finding-standards.md) for admission, priorit
 missing evidence, and requested gate decisions. Unrelated baseline-improvement
 discovery belongs to [audit-codebase](../audit-codebase/SKILL.md).
 
+## Review the change in the codebase
+
+Use the request and supported behavior to establish what the change should do.
+Follow affected entry points, callers, state transitions, and failure paths as
+far as needed to judge that behavior. Check whether an existing owner already
+supplies the rule, data, or operation. Flag duplication when it creates a concrete
+risk of divergent behavior, unnecessary execution, or maintenance cost.
+
+For consequential behavior, judge whether existing or changed tests would catch
+a plausible regression through the affected mechanism. Choose the depth and
+evidence that fit the risk.
+
 ## Choose the needed branches
 
 Review directly when that is sufficient. For independent or multiple-reviewer
@@ -34,8 +46,9 @@ user requirements and the active model policy; size alone does not require
 delegation. The lead retains final acceptance.
 
 Read [Impact analysis](references/impact-analysis.md) for requested blast radius,
-changes to shared validation, persisted-input acceptance or supported compatibility,
-or consequential assumptions beyond the diff and direct callers.
+shared validation, persisted-input acceptance, or supported compatibility changes.
+Use it also for consequential assumptions beyond direct callers or when types,
+runtime values, or test coverage need closer inspection.
 
 Read [Review feedback](references/review-feedback.md) for supplied findings,
 repair reviews, or a requested bounded review-and-repair loop.

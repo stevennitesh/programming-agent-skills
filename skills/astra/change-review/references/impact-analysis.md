@@ -1,8 +1,8 @@
 # Impact analysis
 
-Read when the user asks for blast radius or when consequential assumptions extend
-beyond the selected diff and direct callers, or shared validation, persisted-input
-acceptance, or supported compatibility changes.
+Read for requested blast radius, shared validation, persisted-input acceptance, or
+supported compatibility changes. Use it also for consequential assumptions beyond
+direct callers or when types, runtime values, or test coverage need closer inspection.
 
 The result identifies affected behavior and consumers, the assumptions on which
 compatibility or safety depends, and evidence sufficient to judge them. Follow
@@ -14,6 +14,18 @@ Choose evidence suited to the claim: contracts, exact source, a traced argument,
 focused checks, or running-product evidence. There is no required sequence or
 default full-system audit. Reuse valid evidence and stop when it settles the
 material obligation; a substitute proves only the properties it preserves.
+
+Where correctness depends on a type or data contract, trace what the producer
+actually emits, what is validated at the boundary, and what the consumer assumes.
+Check static type errors and runtime semantics as relevant. For example, both
+ends can agree on `int | None` while the consumer incorrectly turns an unknown
+value into zero.
+
+For a material test claim, name a plausible failure and check whether the test is
+collected, exercises the relevant mechanism, and asserts its observable result.
+A test that only checks the number of attempts can pass while a retry writes a
+duplicate record. Existing focused coverage is sufficient if it would catch the
+failure. When further proof is needed, choose the smallest faithful check.
 
 For shared validation, check affected callers and distinguish integrity rules
 from operation-specific eligibility. For persisted-input changes, establish which

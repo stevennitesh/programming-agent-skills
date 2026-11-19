@@ -1,11 +1,11 @@
 ---
 name: git-cleanup
-description: Assess and clean branches or worktrees, including retained-work integration when requested. Exclude routine commits, pushes, and active conflict resolution.
+description: Organize repository branches and worktrees, retire safely integrated or superseded refs, and integrate retained work when requested. Exclude routine commits, pushes, and active conflict resolution.
 ---
 
 # Git cleanup
 
-Reconcile the requested branches and worktrees while preserving useful work and
+Organize the requested branches and worktrees while preserving useful work and
 active ownership. Finish with evidence for what was retained, integrated, or
 removed and the resulting repository state. Use only when requested.
 
@@ -16,12 +16,15 @@ Retain uncertain candidates while completing independent, supported cleanup.
 
 ## Establish the actual state
 
+Match the inventory to the request. For a named branch after a merge, focus on
+its refs, the intended destination, and any checkout using it. For broader
+organization, inventory the branches and worktrees in scope.
+
 Identify the repository, intended remotes and target branch, local and remote
-candidate tips, PR identities where relevant, and associated worktrees. Do not
-assume the default branch's name or that a remote-tracking ref is current. Refresh
-state through the available read-only remote surface for a read-only assessment;
-fetch when mutations are authorized. State freshness limits when verification is
-unavailable.
+candidate tips, and relevant PRs. Reuse integration evidence for matching tips
+and assess distinct local and remote tips separately. Verify the target branch
+and read current remote state for a read-only assessment. Fetch when mutations
+are authorized. State freshness limits when verification is unavailable.
 
 Inspect staged, unstaged, untracked, and relevant ignored contents before removing
 a checkout. Establish whether another task, process, or person still owns writes
@@ -36,6 +39,9 @@ unrelated work to make cleanup possible.
 Establish whether its work is already integrated, superseded, still useful, or
 uncertain. Branch age, a missing upstream, and a closed or absent PR do not prove
 disposability. Bind conclusions to the observed candidate and destination tips.
+For a branch inventory, group refs safe to retire, branches still in use, and
+branches to retain because of unique work or unresolved evidence. Give short
+reasons for the branches that need to stay.
 
 When ancestry is inconclusive, histories were rewritten, or a branch has distinct
 changes whose disposition is unclear, read
@@ -68,6 +74,9 @@ parallel-implement lanes, preserve that workflow's integration and cleanup
 contract. Confirm the exact checkout path and disposition of nontracked contents;
 do not assume an archive includes ignored data. Release worktrees safely before
 deleting their checked-out branches, and preserve primary or shared checkouts.
+If the branch to retire is checked out in the current workspace, switch that
+checkout to the verified target when the task owns it and the switch preserves
+unrelated work.
 
 When synchronization is requested, update the intended local branch to the
 verified remote state without discarding local commits or unrelated changes.
@@ -84,6 +93,6 @@ identity and divergence. Distinguish remote changes from local-only results and
 unverified remote state. After an uncertain operation, inspect what happened
 before retrying.
 
-Report completed integration and removals, retained candidates with material
-reasons, preservation or synchronization limits, and decisive verification. Keep
-the report proportional to the request; no permanent inventory is required.
+Report which local and remote refs were removed or retained, any completed
+integration, material limits, and decisive verification. Use a short summary
+for routine cleanup and a grouped inventory for broader organization.
