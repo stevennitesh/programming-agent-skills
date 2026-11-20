@@ -32,9 +32,10 @@ in [Operation details](references/operations.md). Map index stages and side name
 to their real objects before using side-selection commands; `ours`, `theirs`,
 and marker labels are not statements of intent.
 
-Reconcile the affected code under accepted requirements, preserving compatible
-intent from both changes. For semantic disagreement, follow the governing
-requirement; surface consequential decisions only when no owner-held answer exists.
+When both sides change a contract, compare each side with the relevant base to
+identify new, altered, and retired behavior. Preserve compatible intent from both
+changes and follow the governing requirements where they disagree. Surface
+consequential decisions only when no owner-held answer exists.
 
 Include neighboring consumers when a changed contract affects them. Whole-side
 selection is valid when it preserves required intent. Inspect final path presence,
@@ -45,11 +46,12 @@ names, content, and modes, including changes beyond marker locations.
 Inspect manual, automatic, merge-driver, and `rerere` results as candidates.
 The resolved delta and index must represent the intended combination.
 
-Choose intermediate checks for continuation risk and required per-commit policy;
-each replay needs no automatic full suite. Verify the final combined result with
-required checks and focused evidence, reusing still-valid proof. For changed
-integration seams, prove the ordinary combined producer/consumer path; passing
-checks on each side alone do not establish integration.
+Scale intermediate checks to continuation risk and required per-commit policy.
+Verify the final combined result with required checks and focused evidence,
+reusing still-valid proof. For a changed integration seam, exercise the ordinary
+producer and consumer together with a check that would fail for a plausible wrong
+resolution. Before continuation, if relevant working-tree files differ from the
+index, verify the staged content Git will carry forward.
 
 Repair resolution-caused failures and routine local tooling problems within
 existing scope and authority, then rerun affected checks without renewed permission.

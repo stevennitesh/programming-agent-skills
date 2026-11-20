@@ -6,14 +6,17 @@ description: Investigate substantive questions or compare options through inspec
 # Research
 
 Answer a substantive question through inspected existing evidence. Choose and
-adapt sources, tools, decomposition, and depth for its intended use; a quick lookup
-needs no research workflow, fixed search quota, plan artifact, or delegation step.
+adapt sources, tools, decomposition, and depth for the intended use. Handle quick
+lookups directly.
 
 ## Frame and inspect
 
 Establish the question and decision-changing constraints, including relevant
 version, cutoff, jurisdiction, repository state, audience, and comparison criteria.
-Reuse settled context and follow consequential gaps as findings emerge.
+Reuse settled context. For broad questions, identify the parts the answer must
+cover and the uncertainties that could change it. When completeness is requested
+or claimed, define what qualifies and how coverage can be established. Use an
+authoritative inventory when it covers the relevant set.
 
 When the user or repository specifies a maintained acquisition route, use it for
 the requested evidence. If a retained copy is missing or stale, check the
@@ -32,7 +35,18 @@ guide discovery; cite the material actually inspected and state inaccessible
 originals or secondary-account limits. An official position is not independent
 proof of effectiveness.
 
-Read the relevant branch only:
+When the landscape is unfamiliar, start broadly enough to learn the terminology
+and locate relevant sources. Let each round of evidence guide the next search
+toward the uncertainty most likely to change the answer. Follow consequential
+claims back to their origin and look for later tests or corrections when relevant.
+If results keep repeating one source, change search terms or evidence channels
+when independent evidence could matter.
+
+When delegation is authorized and useful, assign distinct evidence questions.
+Ask helpers for source locations and limits. The lead checks the evidence that
+carries the conclusion and resolves material conflicts.
+
+Consult the references that apply to the decisive claims.
 
 - [Comparison and empirical evidence](references/comparison-and-empirical.md):
   options, causality, effectiveness, reliability, generalization, or bodies of studies.
@@ -47,7 +61,7 @@ Read the relevant branch only:
 - [Repository mapping](references/repository-mapping.md): definitions and methods
   through a fixed artifact/repository, or historical reasons for code.
 
-## Challenge and conclude
+## Synthesize and conclude
 
 Separate observation, inference, and premises. Resolve scope, version, population,
 method, and state differences before declaring contradiction. Seek the strongest
@@ -56,18 +70,22 @@ contested, or incentive-driven claims, pursue an independent evidence path capab
 of exposing the likely error, or report why it is unavailable. Independence is
 not a URL or reviewer quota.
 
-Weight evidence by quality, relevance, and independence. Do not manufacture dissent
-or give weak disagreement equal weight. Bounded absence is not proof of absence
-or universal agreement. Finish when important questions and credible challenges
-are addressed, decisive claims are supported or specifically limited, and further
-credible search is unlikely to change the answer. Report access/time/source limits
-as limits, not support.
+Organize the synthesis around the question. Explain which evidence carries the
+conclusion and why, weighting it by quality, relevance, and independence. Explain
+material disagreement in proportion to its support. When a judgment depends on an
+uncertain assumption, show what changes if it fails and which conclusions survive.
 
-Deliver the supported answer or recommendation, decisive citations, counterevidence,
-tradeoffs, assumptions, gaps, and what could change the conclusion. Keep citations
-adjacent and applicable to the claimed state; do not combine incompatible states.
-A conditional answer, tie, or unknown is valid. Supply a requested durable artifact;
-otherwise findings may stay inline without a permanent record or fixed template.
+Before finishing, check that each material part of the question is answered or
+explicitly unresolved. Check that each decisive citation supports the exact claim
+for the version, setting, or period stated. Limit absence and consensus claims to
+the coverage the search establishes. Stop when credible further search is
+unlikely to change the answer, or report the access, time, or evidence limit that
+prevents settling a material question.
+
+Lead with the supported answer or recommendation and connect decisive evidence,
+tradeoffs, and uncertainty to it. Keep citations adjacent to the claims they
+support. A conditional answer, tie, or unknown is valid. Supply a durable artifact
+when requested. Otherwise choose a format suited to the question.
 
 New experiments use [prototype](../prototype/SKILL.md) only within authority.
 [Shape-work](../shape-work/SKILL.md) owns unsettled meaning;

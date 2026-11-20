@@ -12,10 +12,10 @@ the apparent winner, including the current approach when relevant; do not invent
 an option quota. Separate claims about documented features, demonstrated behavior,
 and operational effectiveness. Vendor statements do not establish superiority.
 
-Recommend within the requested decision scope. Show what assumption or unresolved
-criterion would change the recommendation; use a tie or conditional answer when
-the evidence does not justify a single winner. Do not replace a user-owned
-priority with whichever criterion is easiest to measure.
+Recommend within the requested decision scope. If a plausible change in an
+assumption or criterion would change the recommendation, explain the outcomes
+under each condition. Use a tie or conditional answer when the evidence supports
+it. Keep user-owned priorities in the decision even when they are harder to measure.
 
 ## Judge observed evidence
 
@@ -31,10 +31,13 @@ one dataset, experiment, or press release. Report effect magnitude and material
 uncertainty, not statistical significance or source count as the conclusion.
 An original study supports its observations; an aggregate conclusion requires
 an appropriate synthesis rather than choosing the most favorable result.
+When confidence differs across conclusions, explain why for the affected claims.
+For instance, direct evidence for effectiveness in a study setting can coexist
+with indirect evidence for the user's setting.
 
-Use a systematic-review protocol only when requested or when claimed breadth
-requires exhaustive identification. Under that condition predefine eligibility,
-search channels/queries, screening and extraction rules, and synthesis method.
-Record actual search dates and material deviations from the predefined method;
-return or link this method record with the findings. Otherwise make a bounded
-assessment and state its coverage limitations.
+Use a systematic-review protocol when requested or when the conclusion relies on
+exhaustively identifying a body of studies. Predefine eligibility, search
+channels and queries, screening and extraction rules, and synthesis method for
+that review. Record actual search dates and material deviations and return or
+link the method record with the findings. For a bounded assessment, state its
+coverage limits.

@@ -44,6 +44,14 @@ and directory/file conflicts can span multiple paths. Inspect the whole path set
 | `rerere`, merge driver, or mergetool output | Review the reused or generated result, including already staged content. Empty conflict listings do not prove preserved intent. Repair incorrect reused resolutions narrowly within task authority; preserve unrelated records and configuration. |
 | Autostash restoration | A merge/rebase may finish before restoring local changes produces new conflicts. Inspect the remaining index, worktree, and stash evidence. Preserve recoverable data; do not repeat continuation when that operation has ended. Resolve the restoration only within task authority and report its distinct state. |
 
+### Example of a combined contract
+
+The target renames the invoice field from `total` to `amount_cents` and retires
+`total`. The replayed change adds currency to the invoice and display. A check
+for `USD 123` alone would pass on the replayed side with the obsolete field still
+present. Verify the invoice exposes `amount_cents` and `currency` with `total`
+absent, and that the ordinary display caller renders `USD 123` on that candidate.
+
 ## Stops and recovery
 
 For an incorrect recorded resolution, `git rerere forget <pathspec>` can reset

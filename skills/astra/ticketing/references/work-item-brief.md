@@ -31,8 +31,12 @@ be that outcome, while dependent implementation remains blocked.
 
 A draft may describe missing decisions or blocked work. Mark it ready only when
 its recipient can act on the stated outcome without inventing a consequential
-decision or obtaining an unresolved prerequisite. Establish required permissions
-and actual availability of predecessor results; closure alone is insufficient.
+decision or obtaining an unresolved prerequisite. Read the brief from the
+recipient's perspective. Check that they can find and access the starting inputs,
+identify binding decisions, and tell what observation would distinguish success
+from a plausible wrong result.
+
+Establish required permissions and verify that predecessor results are available.
 Configured blocking relationships remain binding even if the brief reads well.
 
 Otherwise retain a non-ready disposition and identify the missing decision,
