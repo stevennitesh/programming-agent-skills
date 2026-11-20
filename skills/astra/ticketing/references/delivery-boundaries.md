@@ -42,6 +42,12 @@ Do not defer every connection to a final integration ticket. Check each complete
 path at its earliest useful consumer; reserve final integration for properties
 that actually require the combined result.
 
+For example, tickets for guarded Atlas audit packets and display-only title edits
+can each start from an existing audited report. Both touch the atlas helper, so
+coordinate writes to that file. Give the integration owner the check that needs
+both changes. Prepare an audit packet, edit a display title, then publish the
+packet and verify that the report contains the new audit and keeps the edited title.
+
 ## Choose migration boundaries from real constraints
 
 When consumers can move together, prefer one coherent migration over compatibility

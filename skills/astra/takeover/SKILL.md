@@ -18,11 +18,20 @@ by another agent. Resolve consequential gaps before dependent work while continu
 independent authorized work.
 
 Reconcile the actual repository, worktree, base, current and published heads, and
-dirty/untracked work with the reported state. Old checks or claimed completion do
-not establish the current result. Identify writers, subprocesses, and resource
-owners. Before taking write custody, confirm the earlier writer and its mutating
-processes stopped and released it; idle, interrupted, or unavailable is not proof.
-Follow the active execution workflow's custody and recovery rules.
+dirty or untracked work with the reported state. When accounts conflict, use the
+original user direction and later corrections to settle intent. Verify which
+requested effects happened at their intended destinations. Read back the result
+of an uncertain operation before repeating it.
+
+Identify writers, subprocesses, and resource owners. Before taking write custody,
+confirm the earlier writer and its mutating processes have stopped and the
+checkout has been released. Treat idle, interrupted, or unavailable writers as
+unconfirmed until release is established. Follow the active workflow's custody
+and recovery rules. If release is unclear, preserve the inherited checkout and
+continue read-only investigation. Independent work can proceed in a separate
+checkout if the required inputs are available there and it avoids contested
+resources. If needed edits or artifacts exist only in the inherited checkout,
+identify the specific transfer or release needed before dependent work can proceed.
 
 A takeover request authorizes continuing the accepted goal within its stated
 scope. It does not independently authorize publication, history rewriting,
@@ -52,6 +61,9 @@ co-author identities into the merge commit using the forge's supported controls.
 Do not guess email addresses or use model attribution as contributor credit.
 
 ## Verify and reach the requested endpoint
+
+If all requested outcomes are already verified, report the result and finish
+there. Otherwise continue from the remaining obligations.
 
 Reproduce the inherited failure or inspect the intended workflow independently,
 using evidence suited to the affected behavior. Reuse prior evidence only while
