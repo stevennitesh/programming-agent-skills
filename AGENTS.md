@@ -5,8 +5,9 @@
 - Create the repo environment if needed: `python -m venv .venv`
 - Activate `.venv` for your shell before running Python commands.
 - Install dev/test dependencies: `python -m pip install -r requirements-dev.txt`
-- Focused pytest run for current Astra/validator contracts:
-  `python -m scripts.pytest_focused`
+- Run focused pack validator tests with `python -m scripts.pytest_focused`.
+  For a specific mechanism, pass the test file and any pytest selectors to
+  that command.
 - Full pytest suite when repository policy or broad shared impact requires it:
   `python -m pytest`
 - Pytest config: `pyproject.toml`
@@ -23,11 +24,13 @@
 ## Pointers
 
 - Purpose, source ownership, and repo invariants: `CONTEXT.md`
-- When designing or changing Astra skills: `docs/astra/design-brief.md`
+- For Astra skill changes, read the relevant part of the design brief. Start
+  with [skill design criteria](docs/astra/design-brief.md#what-earns-a-place)
+  for local edits and [composition and ownership](docs/astra/design-brief.md#composition-and-ownership)
+  when changing workflow boundaries.
 - Active plans and runbooks: `docs/plans/README.md`
 - For an explicitly requested legacy `Run Deploy Campaign on <skill>`, read
-  `docs/synthesis/methods/deploy-prompts.md`. Current Astra skill work follows
-  `docs/astra/design-brief.md` instead.
+  `docs/synthesis/methods/deploy-prompts.md`.
 - For tracker-backed work: `docs/agents/issue-tracker.md`,
   `docs/agents/triage-labels.md`
 - When domain meaning or accepted decisions matter: `docs/agents/domain.md`

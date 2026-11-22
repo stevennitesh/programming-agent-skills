@@ -6,40 +6,35 @@ description: Route subagent models alongside native Ultra delegation, including 
 # Ultra model routing
 
 Preserve the user's selected lead model, effort, and native delegation mode.
-Native orchestration owns useful assignments, parallelism, communication, and
-integration within task authority and repository constraints. Use
-[controlled-delegation](../controlled-delegation/SKILL.md) instead when controlled delegation
-with a smaller team and waiting lead is wanted. Choose one execution arrangement
-for the same work.
+Native orchestration chooses how to assign and coordinate work within task
+authority and repository constraints. This skill supplies child model routes
+and the pre-PR review sequence. Use
+[controlled-delegation](../controlled-delegation/SKILL.md) when the user wants
+one primary worker and a waiting lead.
 
 ## Route assignments
 
-Read [Shared model routing](../controlled-delegation/references/model-policy.md)
-before selecting child models and efforts, and follow its classification,
-override, and availability rules. Loading shared references does not import
-controlled team limits or waiting rules. Keep small work direct when delegation
-would add more work than it saves.
+Use [Shared model routing](../controlled-delegation/references/model-policy.md)
+to select model and effort for each coherent assignment when dispatching it.
+Keep small work direct when the handoff adds more work than it saves. Keep
+routine steps and verification with the worker when the routing policy supports
+it. Reuse workers while their route still fits. Resolve missing inputs or tooling
+at the source. Seek Astra design advice before implementation when independent
+judgment could change a decision with substantial rework at stake.
 
-Consult Astra before implementation when an open architecture or codebase design
-decision could force substantial rework. Recover missing evidence or tooling at
-its source before escalating a judgment call.
-
-Use [Native spawning](../controlled-delegation/references/native-spawning.md) for host
-controls, fresh-child context, and selection evidence. Carry the assignment's
-authority, routing, and execution rules into authorized descendants. Reuse
-suitable workers for coherent follow-ups; preserve repository custody and
-concurrency requirements.
+Follow [Native spawning](../controlled-delegation/references/native-spawning.md)
+for host controls, worker context, and selection evidence. Pass the relevant
+authority and routing rules to authorized descendants, and preserve repository
+custody and concurrency requirements.
 
 ## Review and deliver
 
-Use [change-review](../change-review/SKILL.md) for candidate assessment and repairs.
-Choose useful interim review rather than adding a review after every edit.
+Use [change-review](../change-review/SKILL.md) for candidate assessment and
+repairs. Add interim review when its answer can affect the work. Before opening
+an authorized PR, complete one independent Sol review by default. Use
+[Final review](references/final-review.md) for this gate or when the user
+requests that review method. Honor the user's requested review arrangement.
 
-Before opening an authorized PR, complete an independent Sol review by default.
-Read [Final review](references/final-review.md) for when to add an Astra review
-and how to verify corrections. Honor the user's requested review arrangement.
-
-The lead retains final acceptance. Return candidate identity, review coverage,
-required checks, and material limits. Review does not grant publication, merge,
-or deployment authority; [pr-delivery](../pr-delivery/SKILL.md) owns the requested
-delivery endpoint. Work without requested PR delivery acquires no PR-opening task.
+The lead owns final acceptance. Report the candidate, evidence, and material
+limits. Use [pr-delivery](../pr-delivery/SKILL.md) when PR delivery is authorized.
+Publication, merge, and deployment require authority for those effects.

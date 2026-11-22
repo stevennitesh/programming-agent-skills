@@ -740,7 +740,8 @@ def test_optional_comparisons_are_safe_and_analysis_can_refine_them(tmp_path: Pa
     assert '<img src=x onerror="alert(1)">' not in text
     assert '</text><script>alert(2)</script>' not in text
     assert 'Candidate &lt;script&gt;' in text
-    assert len(elements(text, "role", "img")) == 9  # Six coverage bars, map, two comparison diagrams.
+    assert len(elements(text, "role", "img")) == 8  # Six coverage bars and two comparison diagrams.
+    assert elements(text, "aria-label", "Subsystem dependency map")[0]["role"] == "group"
     assert len(elements(text, "marker-end")) == 2  # Map dependency and before diagram relationship.
 
     analysis = analysis_manifest(tmp_path, report(tmp_path))

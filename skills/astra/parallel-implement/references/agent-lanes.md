@@ -5,25 +5,42 @@ cleanup. A lane includes its checkout and the runtime resources its worker uses.
 
 ## Choose the lifecycle owner and base
 
-Use a supported host-managed worktree or the bundled helper when it can establish
-the isolation, identity, and recovery needed for the task. Preserve the lifecycle
-owner: host-managed worktrees use the host's supported inspection and removal or
-archive tools; helper lanes use [Helper lanes](helper-lanes.md). Read that reference
-before preparing, inspecting, integrating, or cleaning a helper lane. Do not pass
-host-managed or unrelated worktrees to the helper or bypass either owner's recovery.
+For new checkouts, choose a supported host-managed worktree or the bundled helper
+that can establish the isolation, identity, and recovery needed for the task.
+Use the host's inspection, removal, and archive tools for its own worktrees. Read
+[Helper lanes](helper-lanes.md) before preparing, inspecting, integrating, or
+cleaning a helper lane. Keep host-owned and unrelated checkouts outside the helper.
 
-Choose placement permitted by the host and repository. Reuse a suitable available
-lane only after establishing custody and preserving existing work. If neither
-route can establish safe isolation, preserve the scope and execute serially.
+Choose placement permitted by the host and repository. Establish custody and
+preserve existing work before assigning a reused lane to another writer. If
+neither route can establish safe isolation, preserve the scope and execute serially.
 
-Prepare from the exact integration HEAD at dispatch, including required predecessor
-changes. Do not assume a creation tool's default base is correct. Siblings selected
-together may share that base; a dependent starts from the newer integration HEAD
-after its predecessors land. Detached HEAD is valid when the lifecycle supports it.
+Prepare new checkouts from the exact integration HEAD at dispatch, including
+required predecessor changes. Verify the base returned by the creation tool.
+Siblings selected together may share that base. A dependent starts from the newer
+integration HEAD after its predecessors land. Detached HEAD is valid when the
+lifecycle supports it.
 
 Retain the returned identity, checkout, base, lifecycle owner, worker mapping, and
 resource locations. Host identifiers and helper packets are not interchangeable.
 The root coordinates lifecycle mutations and one serialized integration stream.
+
+## Continue with existing checkouts
+
+Verify each checkout's repository, path, branch or detached tip, and exact commit.
+Establish the relevant base, uncommitted work and artifacts that affect delivery,
+running writers, shared writable resources, and lifecycle owner. Record which
+changes are in scope and what evidence applies. Keep custody with the active
+writer until release.
+Use the existing lifecycle for host-managed or helper lanes and repository Git
+procedures for ordinary checkouts.
+
+Existing checkouts may have different bases. Compare their changes with the
+integration candidate. Refresh a branch when a dependency, behavior, proof, or
+repository policy requires it, preserving its existing work and original base
+identity. For separate clones, verify that the integration checkout can access
+the exact released commit or captured patch through an authorized transfer. Use
+[Recovery](recovery.md) where custody or state is uncertain.
 
 ## Establish readiness before implementation dispatch
 

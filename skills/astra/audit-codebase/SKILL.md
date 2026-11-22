@@ -1,31 +1,39 @@
 ---
 name: audit-codebase
-description: Discover evidence-backed codebase improvements using a visual map and scoped audits. Exclude pending-diff review and unrequested fixes.
+description: Discover evidence-backed codebase improvements through focused assessments or an atlas for systematic audits. Exclude pending-diff review and unrequested fixes.
 ---
 
 # Audit codebase
 
-Discover worthwhile improvements through a visual map and scoped evidence.
-Choose boundaries, hypotheses, methods, and depth for the request. Default writes
-are the managed report and invocation-owned temporary files; findings alone grant
-no product changes, revised product meaning, tracker publication, merge, release,
-or deployment authority.
-For combined analysis-and-fix requests, finish the authorized set and verification,
-recording outcomes; the read-only default does not truncate existing authority.
+Discover worthwhile improvements through source evidence. Choose boundaries,
+hypotheses, methods, and depth for the request. Atlas work can write the managed
+report and invocation-owned temporary files. Product changes, revised product
+meaning, tracker publication, merge, release, and deployment require existing
+authority. For combined analysis-and-fix requests, complete and verify the
+authorized set, recording outcomes in the atlas when used.
 
-## Select scope and investigate
+## Choose chat or an atlas
 
-Honor a scope or delegated selection already supplied, including whole-repository
-audits, without asking again. For a brief or text-only assessment, inspect the
-code directly and report in chat when that meets the request. No-write assessments
-stay in chat.
+Honor the requested output and scope. Use chat for a bounded question that a
+focused trace or check can answer and that needs no durable map or audit record.
+Give the conclusion, decisive evidence, and material limits. Keep text-only or
+no-write assessments in chat.
 
-For atlas work, use [Visual atlas](references/atlas.md) to create or resume the
-workbench. Use compact `status` and filtered `inspect` to navigate saved work.
-In guided exploration, show meaningful systems and let the user select scope and
-deeper candidates. Before investigating a subsystem for atlas publication,
-prepare the source-bound inputs with [Audit packet](references/audit-packet.md).
-The helper owns validation and publication. The agent owns judgments and evidence.
+Use the atlas for a codebase map, guided exploration across systems, a
+whole-codebase audit, or work that needs to resume with coverage, findings, and
+improvement candidates intact. Map meaningful ownership and dependencies so the
+user can navigate the codebase and track coverage over successive audits.
+
+For a new atlas, follow [Map](references/atlas.md#map). To resume an atlas, use
+[Inspect the relevant work](references/maintenance.md#inspect-the-relevant-work)
+with compact `status` and filtered `inspect`.
+
+## Investigate the selected scope
+
+Use a supplied or delegated scope directly. Before investigating a subsystem
+for atlas publication, prepare the source-bound inputs with
+[Audit packet](references/audit-packet.md). The helper owns validation and
+publication. The agent owns judgments and evidence.
 
 Trace accepted behavior, implicated owners/callers, and concrete consequences.
 Treat complexity, duplication, coordination costs, and suspected bottlenecks as
@@ -34,10 +42,11 @@ needed, and reuse valid checks. Follow shared owners far enough to establish the
 affected set before calling a problem systemic. Extra files or unfamiliar design
 alone prove no avoidable complexity; preserve justified policy and lifecycle.
 
-Use reliability, domain, design, simplification, coding practice, and performance
-as coverage prompts. [Quality questions](references/quality-questions.md) supplies
-optional detail; record actual coverage and gaps, leaving omitted lenses not
-inspected. No finding, probe, alternative, essay, or delegation quota is required.
+For systematic audits, use reliability, domain, design, simplification, coding
+practice, and performance as coverage prompts. Use
+[Quality questions](references/quality-questions.md) when a lens needs more
+detail. Record actual coverage and gaps. For bounded questions, follow the
+evidence the question needs.
 For authorized delegation, split distinct hypotheses/owners and collect attributable
 evidence and limits without duplicate investigation.
 
@@ -72,14 +81,20 @@ Use [Atlas maintenance](references/maintenance.md) for resumed or changed source
 ownership, and fix/delivery records. Inspect relevant deltas without reopening all
 history or erasing original evidence of verified work.
 
-Run `check-report` after publication and follow
-[Check and preview](references/maintenance.md#check-and-preview-the-report) for
-content versus renderer checks and the supported preview's actual result.
+After publication, follow
+[Check and preview](references/maintenance.md#check-and-preview-the-report).
 Return the report path and selectable IDs for atlas work. HTML controls
 navigate/copy selections; they never execute workflows.
 
 ## Finish the requested scope
 
-Return the strongest conclusions and limits. Complete any authorized fixes and
-verification, and report pending delivery or blockers. Further selection remains
-with the user unless supplied or delegated.
+In guided exploration, stop and hand back when the user has enough to choose
+what to inspect next. A readable map with ownership, dependencies, and coverage
+can be enough for the first choice. After an audit, show the strongest findings,
+selectable candidates, and any evidence gap that would affect the choice. Give
+the report path and relevant IDs. Continue deeper analysis when selected or
+delegated.
+
+For an already-selected whole-codebase or narrower audit, continue through the
+requested scope and make remaining coverage gaps visible. Complete authorized
+fixes and verification, and report pending delivery or blockers.

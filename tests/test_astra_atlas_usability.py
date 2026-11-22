@@ -251,6 +251,33 @@ def test_clearing_absent_label_is_a_complete_no_op(tmp_path: Path) -> None:
     assert atlas.inspect_report(repo_root=tmp_path, report=report(tmp_path), full=True)["state"] == before["state"]
 
 
+def test_rebuild_view_preserves_saved_state_and_requires_a_valid_digest(tmp_path: Path) -> None:
+    started(tmp_path)
+    path = report(tmp_path)
+    before = atlas.inspect_report(repo_root=tmp_path, report=path, full=True)
+    canonical = path.read_bytes()
+    prior_view = canonical.replace(b"Architecture map", b"Prior architecture", 1)
+    assert prior_view != canonical
+    path.write_bytes(prior_view)
+    with pytest.raises(atlas.ReportError, match="not canonical"):
+        atlas.check_report(repo_root=tmp_path, report=path)
+
+    code, result = cli(tmp_path, "rebuild-view")
+    assert code == 0 and result["rebuilt"]
+    assert result["state_sha256"] == before["state_sha256"]
+    assert atlas.inspect_report(repo_root=tmp_path, report=path, full=True)["state"] == before["state"]
+    assert atlas.check_report(repo_root=tmp_path, report=path)["valid"]
+    code, result = cli(tmp_path, "rebuild-view")
+    assert code == 0 and not result["rebuilt"]
+
+    damaged = canonical.replace(before["state_sha256"].encode(), b"0" * 64, 1)
+    assert damaged != canonical
+    path.write_bytes(damaged)
+    with pytest.raises(atlas.ReportError, match="state digest mismatch"):
+        atlas.rebuild_view(repo_root=tmp_path, report=path)
+    assert path.read_bytes() == damaged
+
+
 def test_label_history_filters_qualified_ids_and_keeps_relevant_owner_labels(tmp_path: Path) -> None:
     started(tmp_path)
     atlas.edit_presentation(repo_root=tmp_path, report=report(tmp_path), kind="subsystem", identifier="beta", title="Result delivery")

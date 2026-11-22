@@ -73,26 +73,23 @@ stages while prerequisites remain unverified.
 
 ## Non-secret completion handoff
 
-Choose the smallest return path sufficient for the blocker. A human can report
-that a named step completed without sharing its private output. When a separate
-status result is useful, emit only deliberately selected non-secret fields tied
-to the current task and target. Keep it separate from the private transcript;
-do not export raw logs and rely on redaction to make them safe. No persistent
-status file, polling loop, or callback service is required.
+Choose the smallest proof sufficient for the blocker. Prefer current, target-bound
+evidence the agent can obtain safely. If application readiness is the blocker,
+use the application's configured credential path for a minimal authorized
+check. A stored value, provider acceptance, and successful application use
+establish different facts. An exit status suffices when the command's meaning
+and bound target establish the prerequisite.
 
-Distinguish a stored value, provider acceptance, and application readiness. Use
-fresh evidence for the current prerequisite so a stale success result cannot
-unblock a later attempt. Attribute human-reported evidence as such; do not claim
-independent verification when the human's report is the available evidence.
+Constrain success and failure output before it reaches the agent. Keep private
+diagnostics and transcripts inside the private process or session. Leave
+credential files and environment dumps outside the verification path. Return
+only selected non-secret fields tied to the current task and target. Validate
+new status output with dummy inputs, including failure and cancellation. A
+success signal requires a confirmed prerequisite for the current attempt.
 
-A known consumer or status check may verify readiness within existing authority
-if its observable output is constrained to safe, non-secret results. Check its
-success and failure output before agent-visible use. Do not inspect secret file
-contents, environment dumps, private-session output, or raw credentialed-tool
-diagnostics to establish readiness. If safe verification is unavailable, leave
-the check with the human and request only the relevant non-secret result.
-
-Validate any exported status with dummy inputs, including failure and cancellation.
-An unknown or failed prerequisite must not produce a success signal. A safe status
-channel does not grant access to the private session or authorize new external
-effects; resume only work already within the task's authority.
+Use a human acknowledgement as a signal to run the check when needed. If the
+agent has no safe way to observe the prerequisite, ask for only the relevant
+non-secret observation and attribute it to the human. Continue or report a gap
+according to what that evidence establishes. Reuse existing status checks and
+task records when useful. If interrupted, retain the target, pending action,
+and verification step in the existing task record when available.

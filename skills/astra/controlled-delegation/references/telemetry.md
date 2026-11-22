@@ -1,11 +1,10 @@
 # Telemetry
 
-Read only when the user requests usage measurement or a cost/usage budget materially
-affects routing or completion.
+Read when a usage or cost budget materially affects the work, or when the user
+requests measurement or a route comparison.
 
-The primary question is whether controlled delegation reduced total cost or
-coordination work for the same accepted outcome. Fewer agents or a quieter lead
-can be useful observations, but do not by themselves establish savings.
+Measure total cost or coordination work for the same accepted outcome. Agent
+count and lead activity are inputs to that comparison.
 
 ## Measure bounded actors and runs
 
@@ -56,3 +55,12 @@ distinguish subscription/quota observations from API-equivalent price estimates.
 
 If the host cannot expose or enforce a requested hard budget boundary, state that
 constraint rather than presenting an estimate as enforcement.
+
+## Compare review routes
+
+For a requested comparison, use a small set of identical candidate snapshots
+with the same acceptance criteria. Include clean changes and defects with known
+later fixes. Keep those fixes out of the reviewers' context and verify findings
+against the candidate. Compare model or effort settings, or measure the
+incremental coverage from a focused second review. Track unique verified
+findings by severity, disproved findings, repair time, and available usage.

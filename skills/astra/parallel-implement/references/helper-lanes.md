@@ -20,13 +20,12 @@ set in one call. Status retains cleaned lanes' candidate and integration commit
 identities, rechecks integration against the current repository HEAD, and exposes
 the live checkout identity separately as `observed_lane_head`. During interrupted
 cleanup, a valid receipt supplies the removed candidate's identity and integration
-check. Invalid metadata or failed observations, including unreadable readiness
-metadata, make status fail. Absent readiness records and recorded failed health
-checks remain reportable. Dirty, active, or unintegrated work also remains
+check and retains the original run owner. Invalid metadata or failed observations,
+including unreadable readiness metadata, make status fail. Absent readiness
+records and failed health checks remain reportable. Dirty, active, or unintegrated work also remains
 reportable without being eligible for cleanup. Use a new lane name for a new
-assignment after cleanup. Existing lanes cannot be silently adopted into another
-run. An interrupted prepare remains
-visible in the inventory; inspect and recover it instead of assuming it completed.
+assignment after cleanup. The manifest binds each lane to the Git registration
+created by prepare. An interrupted prepare remains visible in the inventory.
 
 Successful preparation checks Git identity, clean state, and writable directories;
 it does not bootstrap dependencies, establish data access, or run project health
@@ -97,28 +96,24 @@ compatibility with intervening integration changes.
 ## Cleanup
 
 Establish actor quiescence and retain evidence needed for unresolved failures.
-The helper treats ignored entries as cleanup blockers; remove only artifacts whose
-ownership and disposability are established, then inspect again. Environment or
-setup artifacts are subject to the same ownership check.
+Untracked work, ignored artifacts, and index flags that can hide tracked changes
+block cleanup. Remove only artifacts whose ownership and disposability are
+established, then inspect again.
 
 Supply `cleanup --integration-head` with the full proved commit ID. The helper
 checks it before deleting runtime artifacts as well as before removing a worktree.
-This argument is required for new cleanup calls; existing lane manifests and
-supported cleanup receipts remain readable without readiness metadata or migration.
+Older lanes that lack registration evidence remain inspectable. Preserve them
+and use the repository's Git recovery workflow for any work they contain.
 
 Clean only named lanes that are clean, free of ignored artifacts, and integrated
 into the current final candidate. For named runs, supply their `--run`; optionally
 select a subset with `--completed`. Without that subset, cleanup considers the
-complete owned inventory, so establish quiescence for that set first. Before
-unregistering a lane, the helper records
-the lane's filesystem identity in its cleanup receipt when the platform exposes
-one. A residual path is eligible for automatic retry only when it is absent or
-still matches that recorded identity; a new object at the same pathname is
-preserved. Only the current receipt schema is accepted. Older or malformed
-receipts are preserved as unsupported recovery state rather than migrated or
-overwritten automatically. Partial cleanup must retain the receipt and helper
-state needed for recovery. Do not replace helper recovery with manual recursive
-deletion.
+complete owned inventory, so establish quiescence for that set first. Cleanup
+records the original checkout identity, owning run, and proved commit in a
+receipt and reuses that evidence on retry. Recovery can finish after Git
+unregisters the original lane and its path is absent or holds a verified empty
+directory. Preserve moved registrations, residual files, and older or malformed
+receipts. Use Git recovery for lanes whose ownership remains uncertain.
 
 After cleanup attempts, run cleanup verification over the complete retained
 helper-lane set, using `verify-cleanup --run` for named runs. Do not restrict final

@@ -65,8 +65,9 @@ For GitHub feedback retrieval, comments, replies, or resolution, use
 [GitHub review threads](references/github-review-threads.md).
 For other forges, preserve the same coverage, identity, technical-disposition,
 mutation-readback, and freshness obligations.
-Use [change-review](../change-review/SKILL.md) for a needed candidate assessment;
-delivery does not automatically require a separate reviewer or review swarm.
+Reuse technical review evidence that still applies to the delivery candidate.
+Use [change-review](../change-review/SKILL.md) when a technical assessment is
+needed.
 
 Carry supported corrections through the authorized scope. Replies and resolutions
 require existing authority and verified remote state; a local fix alone cannot

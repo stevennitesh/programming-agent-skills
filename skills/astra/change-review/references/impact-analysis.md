@@ -1,8 +1,8 @@
 # Impact analysis
 
-Read for requested blast radius, shared validation, persisted-input acceptance, or
-supported compatibility changes. Use it also for consequential assumptions beyond
-direct callers or when types, runtime values, or test coverage need closer inspection.
+Read for requested blast radius, changes to shared validation, persisted-input
+acceptance, or supported compatibility. Use it when a consequential assumption
+needs evidence beyond the direct callers.
 
 The result identifies affected behavior and consumers, the assumptions on which
 compatibility or safety depends, and evidence sufficient to judge them. Follow

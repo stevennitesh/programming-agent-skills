@@ -1,133 +1,80 @@
 ---
 name: parallel-implement
-description: Coordinate requested concurrent implementation with exclusive ownership, integration, and proof. Exclude parallel research and single-task coding.
+description: Coordinate and integrate requested work across active branches or worktrees in one repository. Use for new isolated checkouts or existing checkouts still in use. Exclude routine delegation and cleanup of finished branches.
 ---
 
 # Parallel implement
 
-Coordinate implementation fanout only when useful work can proceed concurrently
-without ambiguous ownership. The root owns decomposition, scheduling, integration,
-and the final composed outcome. Workers own only their assigned implementation.
-They choose techniques and local sequencing within the assigned scope and
-acceptance. The root adapts decomposition and concurrency as the work develops.
-
-Workers do not delegate further, land their own work, mutate tracker state, or
-dispatch successors. Product writes and external effects remain limited by the
-user's existing authorization.
+Use only when requested to start or coordinate work across separate checkouts
+while changes are still in flight. One lead owns the integration checkout,
+landing, and the final combined result. Keep at most one active writer per
+checkout and shared writable resource. Scheduling and implementation methods
+are adaptable.
+Use [git-cleanup](../git-cleanup/SKILL.md) when the request is to integrate or
+organize finished branches. Writes and external effects require existing authority.
 
 If the user explicitly combines this skill with
 [controlled-delegation](../controlled-delegation/SKILL.md), this skill owns concurrency,
 lane custody, integration, and parallel recovery. Apply
-[Shared model routing](../controlled-delegation/references/model-policy.md);
-controlled-delegation retains budget constraints and its final review requirement.
+[Shared model routing](../controlled-delegation/references/model-policy.md).
+Controlled-delegation retains budget constraints and its final review requirement.
 
-## 1. Admit independent work
+## Establish ownership and the integration target
 
-Establish the accepted outcome, fixed delivery scope, dependencies, and required
-proof. Tickets and a formal specification are optional.
+Establish the accepted scope, actual dependencies, and required proof. Identify
+the integration branch and pin its current revision. Preserve unrelated work in
+place and use a separate clean integration checkout when needed.
 
-Admit concurrent items only when their behavior ownership and mutable effects can
-be separated. Check shared schemas, callers, fixtures, generated files,
-configuration, package environments, databases, ports, external services, and
-other writable resources; disjoint source files alone do not establish
-independence.
+Use [Agent lanes](references/agent-lanes.md) for either starting point.
 
-Give every shared mutable resource one owner or serialize the affected work. Land
-a shared enabling change before dependent work when that preserves a coherent
-design. Do not invent boundaries or subtasks merely to occupy workers.
+- **Existing checkouts.** Identify each checkout's actual branch or detached tip,
+  base, current writer, and unresolved work. Preserve its lifecycle and custody.
+- **New checkouts.** Prepare isolated worktrees from the current integration HEAD
+  once required predecessors are present. Check that the worker can use its
+  runtime, shared inputs, and isolated writable paths before starting.
 
-If only one useful item is ready, the work is tightly coupled, or one change
-requires coordinated writes across repositories, execute serially or reslice at
-a real compatibility boundary.
+Allow concurrent writes where the affected contracts and writable resources can
+be owned independently. Check shared schemas, callers, fixtures, environments,
+data, and services. Land an enabling change first when others require its result.
+Serialize coupled work or work that cannot be isolated. For new assignments, give
+the worker the scope, acceptance, exact checkout and base, write boundaries,
+prerequisites, and proof needed. Keep tracker and landing effects with the lead.
+Read [Tracker delivery](references/tracker-delivery.md) before taking on work that
+includes authorized tracker claims or closeout.
 
-Keep a clean integration checkout at a known exact base and preserve unrelated
-work. Do not stash or commit unrelated changes to manufacture cleanliness.
+Retain each checkout's identity, lifecycle owner, base, candidate, and writer
+until verified cleanup or release. Keep helper packets with their lanes. Use the
+existing handoff or run record when interruption could lose state.
 
-When delivery includes authorized tracker claims or closeout, read
-[Tracker delivery](references/tracker-delivery.md) before dispatch.
+## Land work as checkouts are released
 
-## 2. Dispatch the ready frontier
+Inspect the actual returned diff, acceptance, and evidence. Bind it to the commit
+or captured change the lead will integrate. A helper lane returns a task-scoped
+commit and must pass its lifecycle checks before landing. Preserve the ancestry
+that helper cleanup requires. Other checkouts follow their own Git and lifecycle
+contracts.
 
-A ready item has no unmet predecessor whose outcome must first be integrated.
+Confirm the writer and its mutating processes have stopped and released the
+checkout before landing its work or transferring custody. Use
+[Recovery](references/recovery.md) for uncertain custody, dirty returns, conflicts,
+or partial operations. Integrate eligible candidates one at a time while independent
+siblings continue. Read back the target after each landing and check which
+dependencies are now satisfied. If a landing changes a sibling's contract, inputs,
+runtime, or proof assumptions, reconcile that lane against the new target and
+rerun the affected checks before it lands. Keep evidence that still applies.
 
-With concurrent writers in one repository, read
-[Agent lanes](references/agent-lanes.md) and give each worker a distinct
-isolated checkout from the current integration HEAD, using a supported host-managed
-worktree or the bundled helper under its own lifecycle contract. With one writer
-and no overlap, the root may instead grant that worker exclusive custody of the
-integration checkout. Use the lane reference's readiness checks before dispatch;
-worktree creation alone does not establish a usable implementation environment.
+## Verify the combined result and close out
 
-Bound concurrency by actual resource limits and the root's ability to inspect and
-integrate returns safely.
+Prove the accepted outcome on the actual integration candidate once the accepted
+changes are integrated and the writers have stopped. Exercise material handoffs
+through the ordinary consumer using the integrated changes. Use
+[change-review](../change-review/SKILL.md) when requested, required, or needed to
+settle a material integration risk. Use [pr-delivery](../pr-delivery/SKILL.md) for
+requested PR delivery.
 
-Each assignment carries the goal, acceptance, exact checkout and base, allowed
-writes and exclusive resources, relevant predecessor outcomes, runtime and data
-pointers, readiness results and limits, required proof, prohibited effects, and
-stopping condition. Reuse durable inputs by reference and isolate mutable outputs
-under the lane reference. Supply facts the worker cannot infer; do not assume
-inherited context.
-
-A helper-lane worker returns a task-scoped commit because landing and cleanup
-depend on its candidate identity. Host-managed and serial workers follow their
-host, repository, and delivery commit policies, returning a stable identifiable
-candidate without a universal commit requirement.
-
-Retain the item-to-worker mapping, lane identity and lifecycle owner, base,
-candidate, and resource ownership until cleanup or release is verified. Keep the
-complete packet for helper lanes; their optional run inventory can retain lane
-identities automatically. Write a separate narrative run record only when an
-established repository or active workflow convention requires a durable handoff.
-
-## 3. Integrate continuously
-
-Inspect a worker's actual returned state before accepting it, using its lifecycle
-owner's inspection and integration contract. Helper lanes require the eligibility
-checks in the lane reference before normal resume or landing. Also judge the actual
-diff, scope, acceptance, and returned proof; lifecycle state proves mechanics,
-not semantics. Integrating a released lane need not stop independent sibling work.
-
-Return item-local gaps to the same worker while its lane and context remain safe.
-For silence, interruption, dirty returns, conflicts, replacement, or uncertain
-custody, read [Recovery](references/recovery.md). Never start a competing writer
-while the previous actor may still mutate the same state.
-
-The root alone lands accepted lane work. Preserve ancestry required by the lane
-contract. After integration HEAD advances, reassess whether intervening changes
-alter a sibling's behavior owners, inputs, callers, fixtures, configuration,
-resources, or proof assumptions. If they do, return that worker to the current
-integration state and rerun affected proof before landing.
-Recheck affected readiness assumptions when dependencies, data pointers, permissions,
-or runtime configuration change.
-
-After each landing, read back the integration candidate, run only proof invalidated
-or required by that transition, and recompute the ready frontier. Serialize when
-landing order itself changes meaning.
-
-## 4. Prove and finish
-
-When all writers are quiescent and accepted items are integrated, prove the
-composed outcome on the actual integration candidate. Exercise material
-cross-item handoffs through the ordinary consumer rather than relying only on
-isolated worker tests or hand-constructed substitutes.
-
-Reuse worker evidence only while its relevant code, inputs, environment, and
-observations remain valid. Missing required proof leaves delivery incomplete.
-
-Use [change-review](../change-review/SKILL.md) when requested, required by the
-repository, or needed for a concrete unresolved shared-contract or migration
-judgment. When controlled-delegation also governs the run, its lead owns that skill's
-required final review and acceptance of the stable integrated candidate.
-
-Finish authorized tracker transitions through the tracker reference. After actor
-quiescence, clean task-created lanes or release reused lanes through their lifecycle
-owners under [Agent lanes](references/agent-lanes.md). Account for the full retained
-lane set against the proved final integration HEAD. Never force cleanup of
-uncertain, dirty, active, or unintegrated work, or include shared durable data in
-lane disposal.
-
-Complete only when the accepted outcome is integrated and proved, all writers are
-quiescent, required external state is read back, and every created or reused lane
-is accounted for. On interruption, return the actual integration candidate,
-unfinished items and actors, retained lane identities or packets, dirty state,
-proof gaps, blockers, and the next safe action.
+Finish authorized tracker transitions and verify their effects. Verify authorized
+cleanup or release of each checkout and its owned resources through its lifecycle
+owner. Preserve active, dirty, unintegrated, or uncertain work and shared data.
+Report the integration revision, decisive proof, checkout dispositions, and
+outstanding work. On interruption, retain the affected checkout and writer
+identities, proof gaps, and next safe action in the handoff.
