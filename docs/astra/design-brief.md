@@ -69,7 +69,7 @@ review evidence. A selected workflow may require more within its own scope.
 | Controlled delegation, limited support, and quiet waiting during implementation | [Controlled delegation](../../skills/astra/controlled-delegation/SKILL.md), only when requested |
 | Native Ultra delegation and its pre-PR review sequence | [Ultra model routing](../../skills/astra/ultra-model-routing/SKILL.md), only when requested |
 | Shared child-model and effort routing for both execution workflows | [Shared model routing](../../skills/astra/controlled-delegation/references/model-policy.md) |
-| Concurrent implementation scheduling, custody, and integration | [Parallel implement](../../skills/astra/parallel-implement/SKILL.md), only when requested |
+| Custody, readiness, and integration across active checkouts | [Parallel implement](../../skills/astra/parallel-implement/SKILL.md), only when requested |
 | Candidate correctness and maintainability assessment | [Change review](../../skills/astra/change-review/SKILL.md); the lead chooses direct, independent, or scoped high-assurance review |
 | PR creation, status, requested CI and hosted-review follow-through, authorized merge, and coordination of requested after-merge work | [PR delivery](../../skills/astra/pr-delivery/SKILL.md), selected for requested PR delivery rather than review-only assessment |
 | Adopting unfinished work from another PR, branch, or conversation, including custody reconciliation and contributor credit | [Takeover](../../skills/astra/takeover/SKILL.md), only when explicitly requested |
@@ -92,14 +92,13 @@ establishes an existing failure's cause; hillclimb iteratively retains measured
 improvements and confirms the final result. Choose by the deciding question,
 not a required research/experiment/optimization sequence. Specialized evidence,
 causal, and measurement references remain at those method owners.
-Audit-codebase discovers improvements through an HTML map and scoped audits. Its
-maintenance reference owns report checking and preview procedure; the root and
-visual contract route there instead of maintaining competing copies. Guided exploration
-leaves selection to the user; already-selected whole-repository scopes or delegated
-selection proceed within that authority. Coverage and source freshness support
-further selection; investigation, abstraction choices, simplification, and measured
-optimization remain matters of agent judgment. Explicit brief or no-write
-assessments can stay in chat.
+Audit-codebase uses chat for a bounded question and the HTML atlas for mapping,
+guided exploration, and systematic coverage over time. Guided exploration hands
+back once the user can choose the next scope. Already-selected or delegated work
+continues with coverage limits visible. The maintenance reference owns report
+checking and preview. Coverage and source freshness support selection;
+investigation, design choices, simplification, and measured optimization remain
+matters of agent judgment.
 Resumed atlases reconcile ownership and retain original evidence while recording
 authorized fixes, verification, deferral, and requested delivery separately.
 Changed source calls for inspecting the relevant delta; it does not reopen every
@@ -125,12 +124,12 @@ ownership. The agent chooses methods and demonstrates the requested capability.
 Requested human inspection retains a usable preview with an explicit resource
 handoff and teardown condition. Failure attribution follows evidence, including
 unresolved causes. Routine test
-execution needs no tooling workflow. Wizard prepares the smallest
-useful terminal handoff for a private or human-only step, reusing existing tools
-where suitable. Private input and session output stay with the human, while a
-deliberate non-secret result can establish the prerequisite for already-authorized
-work to resume. Test-cleanup owns supported regression protection and suite burden;
-verification-harness owns reusable agent-operated product proof routes; wizard owns
+execution needs no tooling workflow. Wizard handles authorized setup and gives
+the human only the action that requires them. Private input and session output
+stay with the human. The agent prefers a safe check of the actual prerequisite
+before resuming authorized work. Test-cleanup owns supported regression
+protection and suite burden; verification-harness owns reusable agent-operated
+product proof routes; wizard owns
 private human procedures. Select by the requested deliverable. Their similar
 evidence language does not justify a shared verification framework or required
 pipeline. All three retain explicit invocation. Wizard's existing inputs/effects
@@ -161,10 +160,10 @@ workflow, and an audit does not cancel separately authorized fixes.
 Controlled delegation may be combined with parallel-implement:
 the former retains controlled assignments and model routing; the latter owns
 concurrency, custody, and integration.
-Parallel implementation establishes task-relevant runtime and data readiness before
-dispatch, shares durable inputs by reference, and isolates mutable outputs. The
-coordinator may use supported host-managed worktrees or the bundled helper while
-preserving each lifecycle owner's integration and cleanup contract.
+Parallel implementation can start new worktrees or coordinate existing checkouts
+while their changes are still in flight. New checkouts come from the verified
+integration base with usable runtime and data access. The coordinator preserves
+each existing checkout's custody and lifecycle, and verifies the combined result.
 
 Git-cleanup owns branch and worktree disposition, including requested integration
 of worthwhile retained work. It preserves active ownership, uses evidence suited
@@ -225,12 +224,11 @@ that does not establish improved agent effectiveness.
 
 Portfolio-presentation owns a coherent, evidence-backed reading experience across
 the requested project artifacts. Analysis and evaluation contracts stay with the
-project; the agent chooses narrative, visuals, tools, and organization. Finished
-prose targets a domain-aware newcomer with roughly equal parts ASD-STE100
-Simplified Technical English and domain language. The skill owns how that
-STE-informed blend and pstack's unslop principles support concrete, natural
-writing. Numeric disagreements are traced within existing authority; unresolved
-analysis changes remain with their owner rather than becoming presentation edits.
+project. The agent chooses narrative, visuals, tools, and organization for a
+reader new to the project. The entry page explains the problem, contribution,
+and result, then links to accessible evidence. The skill owns the use of plain
+explanations, precise terminology, and concrete prose. Trace numeric disagreements
+within existing authority and route analysis changes to their owner.
 Isolated wording edits, new research, and general website construction remain
 outside its scope. Git-cleanup and portfolio-presentation require explicit requests.
 
@@ -330,7 +328,8 @@ The user selects the starting lead. Choose
 [controlled delegation](../../skills/astra/controlled-delegation/SKILL.md) for a compact
 team and waiting lead, or [native Ultra delegation](../../skills/astra/ultra-model-routing/SKILL.md)
 for native orchestration with one independent Sol review before PR opening by
-default and an Astra review for consequential changes or unresolved design risk.
+default and a focused Astra review when a concrete consequential risk or
+unresolved design question merits separate scrutiny.
 
 Both load [Shared model routing](../../skills/astra/controlled-delegation/references/model-policy.md)
 and [Native spawning](../../skills/astra/controlled-delegation/references/native-spawning.md).

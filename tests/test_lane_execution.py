@@ -41,17 +41,18 @@ def target(repo, root, packet):
     return ["--repo", str(repo), "--root", str(root), "--lane", packet["worktree"]]
 
 
-def test_existing_lane_remains_inspectable_executable_and_cleanable(tmp_path):
+def test_legacy_lane_remains_inspectable_and_preserved(tmp_path):
     repo, root, base, packet = lane(tmp_path, legacy=True)
     code, inspected = call("inspect", *target(repo, root, packet))
     assert code == 0 and inspected["readiness"]["state"] == "not-recorded"
-    code, executed = call("exec", *target(repo, root, packet), "--", sys.executable, "-c", "print('old lane')")
-    assert code == 0 and "old lane" in executed["commands"][0]["output_tail"]
-    Path(packet["runtime_root"], "readiness.json").write_text("invalid old metadata")
+    assert "predates checkout identity" in inspected["ownership_error"]
+    assert not inspected["mechanical"]["resume_or_land_eligible"]
+    code, executed = call("exec", *target(repo, root, packet), "--", sys.executable, "-V")
+    assert code == 1 and not executed["ok"]
     code, cleaned = call("cleanup", "--repo", str(repo), "--root", str(root),
                          "--completed", packet["worktree"], "--integration-head", base)
-    assert code == 0, cleaned
-    assert not Path(packet["worktree"]).exists()
+    assert code == 1 and "checkout ownership" in cleaned["preserved"][0]["reason"]
+    assert Path(packet["worktree"]).is_dir()
 
 
 def test_readiness_uses_shared_inputs_local_outputs_and_real_imports(tmp_path):
@@ -98,6 +99,28 @@ def test_failed_readiness_replaces_previous_pass_and_stops_sequence(tmp_path):
     code, result = call("ready", *target(repo, root, packet), "--timeout", "nan")
     assert code == 1 and "finite positive" in result["error"]
     assert json.loads(Path(packet["runtime_root"], "readiness.json").read_text())["ok"] is False
+
+
+@pytest.mark.parametrize("timeout_source", ["cli", "profile"])
+def test_unsupported_timeout_fails_readiness_before_launch(tmp_path, timeout_source):
+    repo, root, _, packet = lane(tmp_path)
+    runtime = Path(packet["runtime_root"])
+    sentinel = runtime / "launched.txt"
+    check = [sys.executable, "-c", f"from pathlib import Path; Path({str(sentinel)!r}).touch()"]
+    if timeout_source == "cli":
+        options = ["--timeout", "1e308"]
+    else:
+        profile = tmp_path / "profile.json"
+        profile.write_text(json.dumps({"timeout": 10**400}), encoding="utf-8")
+        options = ["--profile", str(profile)]
+
+    code, result = call("ready", *target(repo, root, packet), "--check", json.dumps(check), *options)
+
+    assert code == 1 and result["state"] == "failed", result
+    assert result["commands"] == [] and "finite positive" in result["error"]
+    assert json.loads((runtime / "readiness.json").read_text(encoding="utf-8")) == result
+    assert not (runtime / "active-command.json").exists()
+    assert not sentinel.exists()
 
 
 def test_checks_only_reuses_setup_and_cli_expands_runtime_tokens(tmp_path):
@@ -267,6 +290,37 @@ def test_exec_allows_dirty_work_and_bounds_output(tmp_path):
     assert Path(packet["worktree"], "tracked.txt").read_text() == "work in progress"
 
 
+@pytest.mark.skipif(os.name != "nt", reason="Windows waiting launcher")
+@pytest.mark.parametrize("module_source", ["worktree", "pythonpath"])
+def test_windows_launcher_isolated_from_child_python_imports(tmp_path, module_source):
+    repo, root, _, packet = lane(tmp_path)
+    worktree = Path(packet["worktree"])
+    sources = worktree if module_source == "worktree" else tmp_path
+    (sources / "json.py").write_text(f"SOURCE = {module_source!r}\n", encoding="utf-8")
+    options = ["--env", f"PYTHONPATH={sources}"] if module_source == "pythonpath" else []
+    code, result = call(
+        "exec", *target(repo, root, packet), *options,
+        "--", sys.executable, "-c",
+        f"import json, os; from pathlib import Path; assert json.SOURCE == {module_source!r}; "
+        "assert Path.cwd() == Path(os.environ['LANE_WORKTREE'])",
+    )
+
+    assert code == 0, result
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows DWORD process status")
+@pytest.mark.parametrize("status", [0xC0000005, 0xFFFFFFFF])
+def test_windows_launcher_preserves_full_child_exit_status(tmp_path, status):
+    repo, root, _, packet = lane(tmp_path)
+    code, result = call("exec", *target(repo, root, packet), "--", sys.executable, "-c",
+                        f"import os; os._exit({status - 2**32})")
+
+    assert code == 1, result
+    evidence = result["commands"][0]
+    assert evidence["returncode"] == status
+    assert evidence["state"] == "finished" and not evidence["timed_out"]
+
+
 def test_timeout_stops_launched_process_tree(tmp_path):
     repo, root, _, packet = lane(tmp_path)
     sentinel = Path(packet["runtime_root"]) / "late.txt"
@@ -306,6 +360,29 @@ def test_invalid_receipt_never_advertises_cleanup_eligibility(tmp_path):
     code, result = call("cleanup", "--repo", str(repo), "--root", str(root),
                         "--completed", packet["worktree"], "--integration-head", base)
     assert code == 1 and "invalid" in result["preserved"][0]["reason"]
+
+
+@pytest.mark.parametrize("field,value", [
+    ("format", 3.0),
+    ("integrated", 1),
+    ("authorized_at_head", "0" * 40),
+    ("lane_head", None),
+])
+def test_cleanup_receipt_rejects_invalid_original_proof(tmp_path, field, value):
+    repo, root, base, packet = lane(tmp_path)
+    write_receipt = runpy.run_path(str(HELPER))["write_cleanup_receipt"]
+    receipt = write_receipt(repo.resolve(), root.resolve(), Path(packet["worktree"]), base, base)
+    if field == "lane_head":
+        git(repo, "tag", "-a", "receipt-tag", "-m", "not a commit object", base)
+        value = git(repo, "rev-parse", "receipt-tag")
+    payload = json.loads(receipt.read_text(encoding="utf-8"))
+    payload[field] = value
+    receipt.write_text(json.dumps(payload), encoding="utf-8")
+
+    code, inspected = call("inspect", *target(repo, root, packet))
+    assert code == 0, inspected
+    assert inspected["cleanup_receipt"]["state"] == "invalid"
+    assert not inspected["mechanical"]["cleanup_eligible"]
 
 
 def test_cleanup_requires_proved_head_before_deleting_runtime(tmp_path):
@@ -471,13 +548,18 @@ def test_status_uses_receipt_candidate_during_interrupted_cleanup(tmp_path, monk
 
 
 @pytest.mark.parametrize("readiness", [
-    "missing", "failed", "corrupt", "non-object", "inaccessible", "redirected",
+    "missing", "failed", "corrupt", "non-object", "empty", "inconsistent", "inaccessible", "redirected",
 ])
 def test_status_distinguishes_unreadable_readiness_from_absent_or_failed_checks(tmp_path, monkeypatch, readiness):
     repo, root, _, packet = lane(tmp_path, named=True)
     record = Path(packet["runtime_root"], "readiness.json")
     if readiness != "missing":
-        content = {"corrupt": "invalid json", "non-object": "[]"}.get(
+        content = {
+            "corrupt": "invalid json",
+            "non-object": "[]",
+            "empty": "{}",
+            "inconsistent": '{"state":"passed","ok":false}',
+        }.get(
             readiness, '{"state":"failed","ok":false}',
         )
         record.write_text(content, encoding="utf-8")
@@ -558,7 +640,26 @@ def test_failed_prepare_inventory_is_visible_and_cannot_claim_foreign_lane(tmp_p
     code, verified = call("verify-cleanup", "--repo", str(repo), "--root", str(root),
                           "--run", "failed", "--integration-head", base)
     assert code == 1 and verified["cleanup"] == []
-    assert Path(created["worktree"]).is_dir()
+    worktree = Path(created["worktree"])
+    assert worktree.is_dir()
+
+    # Stop at the receipt-only phase, after the original manifest and checkout are gone.
+    receipt = ns["write_cleanup_receipt"](repo.resolve(), root.resolve(), worktree, base, base)
+    git(repo, "worktree", "remove", str(worktree))
+    Path(created["lane_manifest"]).unlink()
+    code, status = call("status", "--repo", str(repo), "--root", str(root), "--run", "failed")
+    assert code == 1 and "ownership" in status["lanes"][0]["error"]
+    code, verified = call("verify-cleanup", "--repo", str(repo), "--root", str(root),
+                          "--run", "failed", "--integration-head", base)
+    assert code == 1 and verified["retry_cleanup"] == []
+    code, blocked = call("cleanup", "--repo", str(repo), "--root", str(root),
+                         "--run", "failed", "--integration-head", base)
+    assert code == 1 and "ownership" in blocked["preserved"][0]["reason"]
+    assert receipt.is_file()
+    code, cleaned = call("cleanup", "--repo", str(repo), "--root", str(root),
+                         "--run", "new", "--integration-head", base)
+    assert code == 0 and cleaned["removed"] == [str(worktree)]
+    assert not receipt.exists()
 
 
 def test_residual_cleanup_rechecks_head_before_runtime_deletion(tmp_path, monkeypatch):
@@ -587,3 +688,110 @@ def test_residual_cleanup_rechecks_head_before_runtime_deletion(tmp_path, monkey
     cleaned, reason = recover(repo.resolve(), root.resolve(), worktree, base)
     assert not cleaned and "HEAD changed" in reason
     assert sentinel.read_text() == "retain"
+
+
+def test_cleanup_preserves_receipt_and_run_when_original_lane_moved(tmp_path):
+    repo, root, base, packet = lane(tmp_path, named=True)
+    worktree = Path(packet["worktree"])
+    write_receipt = runpy.run_path(str(HELPER))["write_cleanup_receipt"]
+    receipt = write_receipt(repo.resolve(), root.resolve(), worktree, base, base)
+    original_receipt = receipt.read_bytes()
+    moved = tmp_path / "moved"
+    git(repo, "worktree", "move", str(worktree), str(moved))
+
+    args = ["--repo", str(repo), "--root", str(root), "--run", "delivery"]
+    code, status = call("status", *args)
+    assert code == 1 and "moved lane" in status["lanes"][0]["error"]
+    assert status["lanes"][0]["state"] == "prepared"
+    code, verification = call("verify-cleanup", *args, "--integration-head", base)
+    assert code == 1 and verification["retry_cleanup"] == []
+    code, blocked = call("cleanup", *args, "--integration-head", base)
+    assert code == 1 and "moved lane" in blocked["preserved"][0]["reason"]
+    assert receipt.read_bytes() == original_receipt
+    assert git(moved, "rev-parse", "HEAD") == base
+
+
+def test_cleanup_does_not_record_removal_when_git_reports_moved_checkout(tmp_path, monkeypatch):
+    repo, root, base, packet = lane(tmp_path, named=True)
+    worktree = Path(packet["worktree"])
+    moved = tmp_path / "moved"
+    cleanup = runpy.run_path(str(HELPER))["cleanup"]
+    run_git = cleanup.__globals__["git"]
+
+    def move_at_removal(checkout, *args, **kwargs):
+        if args[-3:] == ("worktree", "remove", str(worktree)):
+            git(repo, "worktree", "move", str(worktree), str(moved))
+        return run_git(checkout, *args, **kwargs)
+
+    monkeypatch.setitem(cleanup.__globals__, "git", move_at_removal)
+    code, blocked = cleanup(Namespace(
+        repo=str(repo), root=str(root), run="delivery", completed=[], integration_head=base,
+    ))
+    assert code == 1 and not blocked["removed"]
+    assert "moved lane" in blocked["preserved"][0]["error"]
+    assert Path(packet["cleanup_receipt"]).is_file() and moved.is_dir()
+    code, verified = call("verify-cleanup", "--repo", str(repo), "--root", str(root),
+                          "--run", "delivery", "--integration-head", base)
+    assert code == 1 and not verified["finish_clean"], verified
+
+
+def test_cleanup_rechecks_integration_head_after_final_status(tmp_path, monkeypatch):
+    repo, root, base, packet = lane(tmp_path)
+    worktree = Path(packet["worktree"])
+    git(worktree, "commit", "--allow-empty", "-m", "candidate")
+    candidate = git(worktree, "rev-parse", "HEAD")
+    git(repo, "merge", "--ff-only", candidate)
+    cleanup = runpy.run_path(str(HELPER))["cleanup"]
+    status = cleanup.__globals__["worktree_status"]
+    observations = 0
+
+    def drift_on_final_status(checkout, **kwargs):
+        nonlocal observations
+        result = status(checkout, **kwargs)
+        observations += 1
+        if observations == 2:
+            git(repo, "switch", "--detach", base)
+        return result
+
+    def reject_removal(*_args, **_kwargs):
+        pytest.fail("cleanup attempted removal against a stale integration HEAD")
+
+    monkeypatch.setitem(cleanup.__globals__, "worktree_status", drift_on_final_status)
+    monkeypatch.setitem(cleanup.__globals__, "remove_worktree", reject_removal)
+    code, blocked = cleanup(Namespace(
+        repo=str(repo), root=str(root), completed=[str(worktree)], integration_head=candidate,
+    ))
+    assert observations == 2 and git(repo, "rev-parse", "HEAD") == base
+    assert code == 1 and not blocked["removed"]
+    assert worktree.is_dir() and Path(packet["cleanup_receipt"]).is_file()
+
+
+def test_residual_cleanup_rechecks_identity_after_registration_lookup(tmp_path, monkeypatch):
+    repo, root, base, packet = lane(tmp_path)
+    worktree = Path(packet["worktree"])
+    original = tmp_path / "original"
+    ns = runpy.run_path(str(HELPER))
+    receipt = ns["write_cleanup_receipt"](repo.resolve(), root.resolve(), worktree, base, base)
+    worktree.rename(original)
+    git(repo, "worktree", "prune", "--expire=now")
+    original.rename(worktree)
+    recover = ns["recover_unregistered_lane"]
+    cleaned, reason = recover(repo.resolve(), root.resolve(), worktree, base)
+    assert not cleaned and "contains files" in reason
+    for child in worktree.iterdir():
+        child.unlink()
+
+    def registration_lookup(checkout):
+        registered = ns["registered_worktrees"](checkout)
+        worktree.rename(original)
+        worktree.mkdir()
+        return registered
+
+    def reject_deletion(*_args, **_kwargs):
+        pytest.fail("recovery attempted to delete the replacement checkout")
+
+    monkeypatch.setitem(recover.__globals__, "registered_worktrees", registration_lookup)
+    monkeypatch.setitem(recover.__globals__, "remove_with_retry", reject_deletion)
+    cleaned, reason = recover(repo.resolve(), root.resolve(), worktree, base)
+    assert not cleaned and "does not match residual path" in reason
+    assert worktree.is_dir() and original.is_dir() and receipt.is_file()

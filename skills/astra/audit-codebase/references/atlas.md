@@ -1,8 +1,8 @@
 # Visual atlas
 
-Use by default for codebase improvement, mapping, and guided exploration, or when
-continuing an existing current-format workbench. An explicitly requested brief or
-text-only assessment may stay in chat; a no-write assessment creates no report.
+Use when the [skill's output and scope rules](../SKILL.md#choose-chat-or-an-atlas)
+select an atlas. The map supports guided exploration and tracks coverage across
+successive audits of the entire codebase.
 
 The helper is [atlas.py](../scripts/atlas.py). Use its current `--help` and
 subcommand help for exact CLI syntax. The helper writes report/state format 6 and
@@ -11,9 +11,8 @@ new map for an older report.
 Immutable source snapshots and evidence are stored once by content ID inside the
 self-contained HTML. Inspection and expandable history resolve those references;
 no sidecar database or previous-format adapter is needed.
-Read [Atlas maintenance](maintenance.md) when resuming a report, reconciling
-structural changes, recording authorized implementation and delivery, or checking
-and previewing the report.
+Use [Atlas maintenance](maintenance.md) when resuming a report, reconciling
+ownership changes, or recording authorized fixes and delivery.
 
 ## Purpose
 
@@ -103,10 +102,9 @@ establish that unavailable dependency behavior was inspected. State that coverag
 limit; the helper does not initialize submodules or materialize missing files.
 Gitlink checkouts must resolve beneath the requested repository root.
 
-Show the map and stop for user selection unless the request already selects an
-audit scope or delegates that selection. For a whole-repository audit, continue
-through the mapped subsystems and make coverage limits visible. A mapped subsystem
-is not audited.
+Show which subsystems are mapped and which have audit records.
+[Check and preview the map](maintenance.md#check-and-preview-the-report), then
+apply the [handoff rule](../SKILL.md#finish-the-requested-scope).
 
 ## Audit one selected subsystem
 
@@ -115,16 +113,9 @@ snapshot. Trace enough entry paths, callers, dependencies, interfaces, proof sea
 and history to settle the actual hypotheses. Put the meaningful trace in a summary;
 structured detail is optional.
 
-Use these six lenses as coverage prompts:
-
-- reliability;
-- domain;
-- design;
-- simplification;
-- coding practice; and
-- performance.
-
-Record examined lenses as `complete`, `evidence gap`, or `not applicable`.
+Use the [coverage prompts](../SKILL.md#investigate-the-selected-scope) when they
+fit the selected audit. Record examined lenses as `complete`, `evidence gap`,
+or `not applicable`.
 Complete assessments cite evidence or finding IDs; gaps and non-applicability
 need a reason. Omitted lenses remain `not inspected`. Neither a full ledger nor
 six essays are prerequisites for publishing a useful scoped audit.
@@ -134,9 +125,8 @@ candidate must point to at least one admitted defect or opportunity. Give each
 candidate one qualitative strength: `strong`, `worth exploring`, or
 `speculative`.
 
-Publish the updated report. Continue through an already-selected or delegated
-audit scope; otherwise stop for user selection. An audit request alone does not
-select candidates for deeper analysis.
+Publish the updated report with evidence limits and selectable candidates. Apply
+the [handoff rule](../SKILL.md#finish-the-requested-scope) before expanding scope.
 
 ## Analyze one selected candidate
 
@@ -179,7 +169,8 @@ local JavaScript are allowed; remote assets and network requests are not.
 The rendered workbench should provide:
 
 - a top-level coverage/status summary;
-- a visual system/subsystem dependency map;
+- an early, keyboard-accessible system/subsystem dependency map with legible
+  nodes and an independently scrollable viewport when the map is large;
 - separate, clearly labeled audit coverage, analysis, evidence, and work states;
 - searchable subsystem/finding/candidate cards;
 - six-lens coverage visualization;
@@ -234,10 +225,6 @@ Freshness markers can update without revalidating semantic judgment.
 A changed source badge means the prior judgment may be stale; it does not erase or
 silently renew that judgment.
 Source observations retain per-path fingerprints for changed-path inspection.
-
-Run `check-report` for canonical state, relationship integrity, ownership coverage,
-HTML anchors, IDs, and selection commands. Its static result reports current
-ownership and source changes separately and does not establish visual verification.
 
 After a failed or uncertain write, inspect the current report before retrying.
 Never bypass source identity, report-digest, writer-lock, or read-back checks.

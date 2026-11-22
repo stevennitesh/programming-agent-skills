@@ -84,6 +84,37 @@ def prepare(repo: Path, root: Path, base: str, name: str) -> tuple[subprocess.Co
     )
 
 
+def remove_args(worktree: Path) -> tuple[str, ...]:
+    command = ("worktree", "remove", str(worktree))
+    if "astra" in HELPER.parts:
+        return ("-c", "status.showUntrackedFiles=all", *command)
+    return command
+
+
+@pytest.fixture
+def guarded_cleanup(helper_pack, monkeypatch):
+    cleanup_lane = runpy.run_path(str(HELPER))["cleanup"]
+
+    def unexpected_removal(*_args):
+        pytest.fail("cleanup attempted to remove a protected fixture worktree")
+
+    monkeypatch.setitem(cleanup_lane.__globals__, "remove_worktree", unexpected_removal)
+    return cleanup_lane
+
+
+def replace_checkout(repo: Path, root: Path, worktree: Path, base: str) -> Path:
+    assert worktree.parent == root.resolve()
+    original = root.parent.resolve() / "original-lane"
+    git(repo, "worktree", "move", str(worktree), str(original))
+    git(repo, "worktree", "add", "--detach", str(worktree), base)
+    assert git(worktree, "rev-parse", "HEAD") == base
+    assert git(worktree, "status", "--porcelain", "--untracked-files=all") == ""
+    assert git(worktree, "rev-parse", "--absolute-git-dir") != git(
+        original, "rev-parse", "--absolute-git-dir",
+    )
+    return original
+
+
 @pytest.mark.parametrize("helper_pack", ["astra"], indirect=True)
 def test_pending_cleanup_cannot_resume_but_remains_cleanup_eligible(tmp_path: Path) -> None:
     repo, base = repository(tmp_path)
@@ -127,7 +158,7 @@ def test_prepare_creates_exact_base_and_isolated_temp_environment(
     worktree = Path(str(prepared["worktree"]))
     assert git(worktree, "rev-parse", "HEAD") == base
     assert git(worktree, "status", "--porcelain") == ""
-    assert prepared["schema_version"] == 1
+    assert prepared["schema_version"] == (2 if "astra" in HELPER.parts else 1)
     assert prepared["repository"] == str(repo.resolve())
     for field in (
         "runtime_root",
@@ -198,7 +229,7 @@ def test_inspect_and_cleanup_block_ignored_artifacts(
     assert result.returncode == 0, inspected
     assert inspected["manifest"] == {
         "valid": True,
-        "schema_version": 1,
+        "schema_version": 2 if "astra" in HELPER.parts else 1,
         "error": None,
     }
     assert inspected["registered"] is True
@@ -322,6 +353,95 @@ def test_prepare_reuses_only_the_clean_expected_base(tmp_path: Path) -> None:
     dirty_result, dirty = prepare(repo, lane_root, base, "reused")
     assert dirty_result.returncode == 1
     assert "not clean" in str(dirty["error"])
+
+
+@pytest.mark.parametrize("helper_pack", ["astra"], indirect=True)
+@pytest.mark.parametrize("hidden_by", ["untracked-setting", "assume-unchanged"])
+def test_hidden_changes_block_reuse_and_cleanup(tmp_path: Path, guarded_cleanup, hidden_by: str) -> None:
+    repo, base = repository(tmp_path)
+    lane_root = tmp_path / "lanes"
+    result, prepared = prepare(repo, lane_root, base, "hidden")
+    assert result.returncode == 0, prepared
+    worktree = Path(str(prepared["worktree"]))
+    if hidden_by == "untracked-setting":
+        changed = worktree / "worker.txt"
+        git(worktree, "config", "--local", "status.showUntrackedFiles", "no")
+        inspect_code, clean, reason, error = 0, False, "not clean", "not clean"
+    else:
+        changed = worktree / "tracked.txt"
+        git(worktree, "update-index", "--assume-unchanged", changed.name)
+        inspect_code, clean, reason, error = 1, None, "uncertain", "Git index flags can hide changes"
+    changed.write_text("preserve me\n", encoding="utf-8")
+    assert git(worktree, "status", "--porcelain") == ""
+
+    result, inspected = helper(
+        "inspect", "--repo", str(repo), "--root", str(lane_root), "--lane", str(worktree),
+    )
+    assert result.returncode == inspect_code, inspected
+    assert inspected["clean"] is clean
+    assert inspected["mechanical"]["resume_or_land_eligible"] is False
+    assert inspected["mechanical"]["cleanup_eligible"] is False
+
+    result, blocked = prepare(repo, lane_root, base, "hidden")
+    assert result.returncode == 1
+    assert error in str(blocked["error"])
+
+    code, blocked = guarded_cleanup(
+        Namespace(
+            repo=str(repo), root=str(lane_root),
+            integration_head=base, completed=[str(worktree)],
+        )
+    )
+    assert code == 1
+    assert blocked["preserved"][0]["reason"] == reason
+    if hidden_by == "assume-unchanged":
+        assert error in blocked["preserved"][0]["error"]
+    assert changed.read_text(encoding="utf-8") == "preserve me\n"
+    assert not Path(str(prepared["cleanup_receipt"])).exists()
+
+
+@pytest.mark.parametrize("helper_pack", ["astra"], indirect=True)
+@pytest.mark.parametrize("with_receipt", [False, True], ids=["without-receipt", "with-receipt"])
+def test_same_head_replacement_cannot_inherit_lane_state(tmp_path: Path, with_receipt: bool) -> None:
+    repo, base = repository(tmp_path)
+    lane_root = tmp_path / "lanes"
+    result, prepared = prepare(repo, lane_root, base, "replaced")
+    assert result.returncode == 0, prepared
+    worktree = Path(str(prepared["worktree"]))
+    receipt = Path(str(prepared["cleanup_receipt"]))
+    manifest = Path(str(prepared["lane_manifest"]))
+    manifest_bytes = manifest.read_bytes()
+    receipt_bytes = None
+    if with_receipt:
+        runpy.run_path(str(HELPER))["write_cleanup_receipt"](
+            repo.resolve(), lane_root.resolve(), worktree, base, base,
+        )
+        receipt_bytes = receipt.read_bytes()
+
+    replace_checkout(repo, lane_root, worktree, base)
+
+    result, blocked = prepare(repo, lane_root, base, "replaced")
+    assert result.returncode == 1, blocked
+
+    lane_args = ("--repo", str(repo), "--root", str(lane_root), "--lane", str(worktree))
+    result, blocked = helper("exec", *lane_args, "--", sys.executable, "-c", "pass")
+    assert result.returncode == 1
+    assert "cannot execute" in str(blocked["error"])
+
+    _, inspected = helper("inspect", *lane_args)
+    assert inspected["registered"] is True
+    assert "registration" in inspected["ownership_error"]
+    assert inspected["mechanical"]["resume_or_land_eligible"] is False
+    assert inspected["mechanical"]["cleanup_eligible"] is False
+    result, verified = helper("verify-cleanup", *lane_args, "--integration-head", base)
+    assert result.returncode == 1
+    assert verified["lanes"][0]["required_action"] == "preserve-and-report"
+    assert verified["cleanup"] == verified["retry_cleanup"] == []
+    assert manifest.read_bytes() == manifest_bytes
+    if receipt_bytes is None:
+        assert not receipt.exists()
+    else:
+        assert receipt.read_bytes() == receipt_bytes
 
 
 def test_prepare_rejects_ignored_artifacts_in_a_reused_lane(
@@ -606,6 +726,40 @@ def test_prepare_blocks_wrong_base_and_unregistered_target(tmp_path: Path) -> No
     assert "not a registered worktree" in str(blocked["error"])
 
 
+@pytest.mark.parametrize("helper_pack", ["astra"], indirect=True)
+@pytest.mark.parametrize(
+    ("naming_args", "error"),
+    [
+        pytest.param(("--name", "ticket."), "must not end", id="trailing-dot"),
+        pytest.param(("--name", "ticket.cleanup.json"), "reserved cleanup receipt suffix", id="receipt-suffix"),
+        pytest.param(
+            ("--name", "CoN.txt"), "reserved Windows device name", id="device-lane",
+            marks=pytest.mark.skipif(os.name != "nt", reason="Windows device name"),
+        ),
+        pytest.param(
+            ("--name", "ticket", "--run", "LpT1"), "invalid run name", id="device-run",
+            marks=pytest.mark.skipif(os.name != "nt", reason="Windows device name"),
+        ),
+    ],
+)
+def test_prepare_rejects_reserved_name_before_mutation(
+    tmp_path: Path, naming_args: tuple[str, ...], error: str,
+) -> None:
+    repo, base = repository(tmp_path)
+    lane_root = tmp_path / "lanes"
+    worktrees = git(repo, "worktree", "list", "--porcelain")
+
+    result, blocked = helper(
+        "prepare", "--repo", str(repo), "--root", str(lane_root), "--base", base, *naming_args,
+    )
+
+    assert result.returncode == 1, blocked
+    assert blocked["ok"] is False
+    assert error in str(blocked["error"])
+    assert not lane_root.exists()
+    assert git(repo, "worktree", "list", "--porcelain") == worktrees
+
+
 def test_prepare_reports_worktree_creation_failure(
     tmp_path: Path, monkeypatch,
 ) -> None:
@@ -644,12 +798,13 @@ def test_prepare_rollback_preserves_state_until_worktree_removal_is_confirmed(
     original_git = rollback.__globals__["git"]
 
     def fail_remove(checkout, *args, check=True):
-        if args[:3] == ("worktree", "remove", str(worktree)):
+        if args == remove_args(worktree):
             return subprocess.CompletedProcess(args, 1, "", "worktree locked")
         return original_git(checkout, *args, check=check)
 
     monkeypatch.setitem(rollback.__globals__, "git", fail_remove)
-    blocked = rollback(repo, lane_root, worktree, base, "rollback")
+    binding = packet if "astra" in HELPER.parts else "rollback"
+    blocked = rollback(repo, lane_root, worktree, base, binding)
 
     assert blocked is not None
     assert "worktree removal failed: worktree locked" in blocked
@@ -662,7 +817,7 @@ def test_prepare_rollback_preserves_state_until_worktree_removal_is_confirmed(
     }
 
     monkeypatch.setitem(rollback.__globals__, "git", original_git)
-    assert rollback(repo, lane_root, worktree, base, "rollback") is None
+    assert rollback(repo, lane_root, worktree, base, binding) is None
     assert not worktree.exists()
     assert not state.exists()
 
@@ -684,7 +839,8 @@ def test_prepare_rollback_preserves_ignored_artifacts(
 
     namespace = runpy.run_path(str(HELPER))
     blocked = namespace["rollback_created_lane"](
-        repo.resolve(), lane_root.resolve(), worktree, base, "rollback-ignored"
+        repo.resolve(), lane_root.resolve(), worktree, base,
+        packet if "astra" in HELPER.parts else "rollback-ignored",
     )
 
     assert blocked == "new lane preserved because rollback is not exact-base and clean"
@@ -708,7 +864,7 @@ def test_cleanup_reports_partial_failure_and_continues_named_lanes(
     original_git = cleanup.__globals__["git"]
 
     def fail_first_remove(checkout, *args, check=True):
-        if args[:3] == ("worktree", "remove", str(worktrees[0])):
+        if args == remove_args(worktrees[0]):
             return subprocess.CompletedProcess(args, 1, "", "worktree locked")
         return original_git(checkout, *args, check=check)
 
@@ -765,7 +921,7 @@ def test_cleanup_reports_removed_when_git_unregisters_before_error(
     original_git = cleanup.__globals__["git"]
 
     def remove_then_error(checkout, *args, check=True):
-        if args[:3] == ("worktree", "remove", str(worktree)):
+        if args == remove_args(worktree):
             removed = original_git(checkout, *args, check=check)
             assert removed.returncode == 0
             return subprocess.CompletedProcess(args, 1, "", "late filesystem error")
@@ -800,7 +956,7 @@ def test_cleanup_reports_unregistered_residual_path_after_remove_error(
     original_git = cleanup.__globals__["git"]
 
     def remove_then_leave_path(checkout, *args, check=True):
-        if args[:3] == ("worktree", "remove", str(worktree)):
+        if args == remove_args(worktree):
             removed = original_git(checkout, *args, check=check)
             assert removed.returncode == 0
             worktree.mkdir()
@@ -862,8 +1018,10 @@ def test_cleanup_reports_unregistered_residual_path_after_remove_error(
 
     receipt_payload["repository"] = str(repo)
     receipt.write_text(json.dumps(receipt_payload), encoding="utf-8")
+    check_name = "is_reparse_point" if "astra" in HELPER.parts else "tree_has_reparse_point"
+    original_reparse_check = cleanup.__globals__[check_name]
     monkeypatch.setitem(
-        cleanup.__globals__, "tree_has_reparse_point", lambda _path: True
+        cleanup.__globals__, check_name, lambda path: path == worktree or original_reparse_check(path)
     )
     code, blocked = cleanup(arguments)
     assert code == 1
@@ -872,9 +1030,7 @@ def test_cleanup_reports_unregistered_residual_path_after_remove_error(
     )
     assert worktree.exists()
 
-    monkeypatch.setitem(
-        cleanup.__globals__, "tree_has_reparse_point", lambda _path: False
-    )
+    monkeypatch.setitem(cleanup.__globals__, check_name, original_reparse_check)
     code, blocked = cleanup(arguments)
     assert code == 1
     assert blocked["preserved"][0]["reason"] == (
@@ -972,7 +1128,7 @@ def test_cleanup_preserves_git_uncertainty(tmp_path: Path, monkeypatch) -> None:
     original_git = cleanup.__globals__["git"]
 
     def fail_status(checkout, *args, check=True):
-        if checkout == worktree and args[:2] == ("status", "--porcelain"):
+        if checkout == worktree and args[:1] == ("status",) and "--porcelain" in args:
             return subprocess.CompletedProcess(args, 1, "", "status denied")
         return original_git(checkout, *args, check=check)
 
@@ -1185,7 +1341,9 @@ def test_cleanup_receipt_records_worktree_identity_when_available(
     )
     payload = json.loads(receipt.read_text(encoding="utf-8"))
 
-    assert payload["format"] == 2
+    assert payload["format"] == (3 if "astra" in HELPER.parts else 2)
+    if "astra" in HELPER.parts:
+        assert payload["run"] is None
     assert payload["authorized_at_head"] == base
     expected = namespace["path_identity"](worktree)
     assert payload["worktree_identity"] == expected
@@ -1272,6 +1430,71 @@ def test_cleanup_rechecks_repository_identity_before_unregistering(
     assert blocked["preserved"][0]["reason"] == "cleanup identity changed"
     assert worktree.exists()
     assert Path(str(packet["cleanup_receipt"])).is_file()
+
+
+@pytest.mark.parametrize("helper_pack", ["astra"], indirect=True)
+def test_cleanup_rechecks_checkout_identity_after_final_status(
+    tmp_path: Path, monkeypatch, guarded_cleanup,
+) -> None:
+    repo, base = repository(tmp_path)
+    lane_root = tmp_path / "lanes"
+    result, prepared = prepare(repo, lane_root, base, "late-replacement")
+    assert result.returncode == 0, prepared
+    worktree = Path(str(prepared["worktree"]))
+    receipt = Path(str(prepared["cleanup_receipt"]))
+    original_status = guarded_cleanup.__globals__["worktree_status"]
+    status_reads = 0
+    original = None
+    receipt_bytes = None
+
+    def replace_after_final_status(checkout, *, check=True):
+        nonlocal status_reads, original, receipt_bytes
+        status = original_status(checkout, check=check)
+        if checkout == worktree:
+            status_reads += 1
+            if status_reads == 2:
+                receipt_bytes = receipt.read_bytes()
+                original = replace_checkout(repo, lane_root, worktree, base)
+        return status
+
+    monkeypatch.setitem(guarded_cleanup.__globals__, "worktree_status", replace_after_final_status)
+    code, blocked = guarded_cleanup(
+        Namespace(
+            repo=str(repo), root=str(lane_root),
+            integration_head=base, completed=[str(worktree)],
+        )
+    )
+    assert code == 1
+    assert blocked["preserved"][0]["reason"] == "cleanup identity changed"
+    assert blocked["removed"] == []
+    assert original is not None and original.is_dir()
+    assert worktree.is_dir()
+    assert receipt_bytes is not None and receipt.read_bytes() == receipt_bytes
+
+
+@pytest.mark.parametrize("helper_pack", ["astra"], indirect=True)
+@pytest.mark.parametrize("metadata", ["lane_manifest", "cleanup_receipt"])
+def test_inspect_reports_invalid_utf8_metadata(tmp_path: Path, metadata: str) -> None:
+    repo, base = repository(tmp_path)
+    lane_root = tmp_path / "lanes"
+    result, prepared = prepare(repo, lane_root, base, "bad-encoding")
+    assert result.returncode == 0, prepared
+    worktree = Path(str(prepared["worktree"]))
+    Path(str(prepared[metadata])).write_bytes(b"\xff")
+
+    result, inspected = helper(
+        "inspect", "--repo", str(repo), "--root", str(lane_root), "--lane", str(worktree),
+    )
+    if metadata == "lane_manifest":
+        assert result.returncode == 1, inspected
+        assert inspected["manifest"]["valid"] is False
+        assert "unreadable" in inspected["manifest"]["error"]
+    else:
+        assert result.returncode == 0, inspected
+        assert inspected["cleanup_receipt"]["state"] == "invalid"
+        assert "unreadable" in inspected["cleanup_receipt"]["error"]
+    assert inspected["mechanical"]["resume_or_land_eligible"] is False
+    assert inspected["mechanical"]["cleanup_eligible"] is False
 
 
 def test_verify_cleanup_accounts_for_every_explicit_lane(
@@ -1373,6 +1596,26 @@ def test_verify_cleanup_requires_lane_inventory_and_exact_commit_id(
     )
     assert result.returncode == 1
     assert blocked["head_matches"] is False
+
+
+@pytest.mark.parametrize("helper_pack", ["astra"], indirect=True)
+def test_verify_cleanup_rejects_annotated_tag_object_id(tmp_path: Path) -> None:
+    repo, base = repository(tmp_path)
+    lane_root = tmp_path / "lanes"
+    lane_root.mkdir()
+    git(repo, "tag", "-a", "proved", "-m", "tag at the proved head")
+    tag = git(repo, "rev-parse", "proved")
+    assert tag != base
+    assert git(repo, "rev-parse", "proved^{commit}") == base
+
+    result, blocked = helper(
+        "verify-cleanup", "--repo", str(repo), "--root", str(lane_root),
+        "--lane", str(lane_root / "complete"), "--integration-head", tag,
+    )
+
+    assert result.returncode == 1, blocked
+    assert blocked["ok"] is False
+    assert "commit" in str(blocked["error"])
 
 
 def test_git_does_not_override_safe_directory_failures(

@@ -111,7 +111,7 @@ covers updates, custom targets, migration and recovery.
 | Adopt and finish another actor's PR, branch, or agent work while preserving intent, custody, and contributor credit | [$takeover](skills/astra/takeover/SKILL.md) | Request explicitly |
 | Remove low-value tests; consolidate, organize, and streamline useful coverage | [$test-cleanup](skills/astra/test-cleanup/SKILL.md) | Request explicitly |
 | Assess or reconcile tracked work, or turn clear ideas into bounded tickets | [$ticketing](skills/astra/ticketing/SKILL.md) | Request explicitly |
-| Implement concurrently with separate ownership and clear dependencies | [$parallel-implement](skills/astra/parallel-implement/SKILL.md) | Request explicitly |
+| Coordinate active branches or worktrees and verify the combined result | [$parallel-implement](skills/astra/parallel-implement/SKILL.md) | Request explicitly |
 | Delegate through one primary worker and limited support while the lead retains decisions and acceptance | [$controlled-delegation](skills/astra/controlled-delegation/SKILL.md) | Request explicitly |
 | Route subagent models alongside native Ultra and review before PR delivery | [$ultra-model-routing](skills/astra/ultra-model-routing/SKILL.md) | Request explicitly |
 | Resolve an active Git merge or rebase conflict | [$resolving-merge-conflicts](skills/astra/resolving-merge-conflicts/SKILL.md) | Automatic when relevant |

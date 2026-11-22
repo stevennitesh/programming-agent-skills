@@ -79,5 +79,5 @@ independent work, and report a consequential block. Stronger effort cannot repla
 evidence or authorization.
 
 These are operating defaults, not a quality ranking or savings result. Use
-[Telemetry](telemetry.md) when measurement is requested or a budget materially
-affects the work.
+[Telemetry](telemetry.md) for requested route comparisons or usage measurement,
+or when a budget materially affects the work.

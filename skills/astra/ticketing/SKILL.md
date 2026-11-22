@@ -74,8 +74,8 @@ delivery-changing commitment an owner and cross-ticket proof to its first consum
 
 Check missing commitments, duplicates, cycles, unknown blockers, and a truthful
 starting set. Show potential parallel work without fixed waves or worker counts;
-[parallel-implement](../parallel-implement/SKILL.md) owns live independence,
-scheduling, custody, execution, and parent closeout when requested.
+[parallel-implement](../parallel-implement/SKILL.md) owns checkout custody,
+integration, and parent closeout when delivery spans active checkouts.
 
 ## Publish only authorized effects and return
 

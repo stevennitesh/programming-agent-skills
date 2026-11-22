@@ -5,61 +5,59 @@ description: Execute coding through controlled delegation with one primary worke
 
 # Controlled delegation
 
-Deliver the accepted outcome through controlled delegation. Preserve the user's
-selected lead, including Ultra; the lead owns scope, consequential decisions,
-and final acceptance. The worker owns implementation methods within its assignment.
+Use controlled delegation when one primary worker can own a coherent change
+end to end and the lead can wait between decisions and acceptance. Keep small
+tasks direct when a handoff adds more work than it saves. When the arrangement
+is open, [native Ultra delegation](../ultra-model-routing/SKILL.md) suits work
+that benefits from adaptive orchestration across independent threads. Preserve
+the user's selected lead and arrangement, and follow
+[Shared model routing](references/model-policy.md).
 
-Choose this arrangement or [native Ultra delegation](../ultra-model-routing/SKILL.md)
-for the same work. Both use [Shared model routing](references/model-policy.md);
-loading that reference does not select an execution workflow.
+## Give the worker one outcome
 
-## Assign a compact team
+Give one brief with the accepted outcome, scope, constraints, relevant sources,
+candidate or base, write ownership, and required evidence. The worker chooses
+the local design, tools, sequence, and checks, and resolves in-scope failures and
+cleanup. The lead owns changes to the accepted outcome, consequential design
+choices that cross the assignment's boundaries, and final acceptance. Route
+unsettled product meaning to [shape-work](../shape-work/SKILL.md) and consequential
+ownership or interface choices to [codebase-design](../codebase-design/SKILL.md)
+when needed.
 
-Default to one primary worker and at most one active supporting agent. Routine
-help, architecture advice, and delegated review share the support slot. Reuse
-useful contexts rather than accumulating helpers or starting nested teams.
-The lead can review directly when sufficient; an author cannot provide independent
-review of its own candidate.
-
-Keep trivial work direct when delegation would add more work than it saves.
-Before handing off, settle the behavior, preservation requirements, and decision
-boundaries the assignment needs. Use [shape-work](../shape-work/SKILL.md) for
-unsettled product or domain meaning and [codebase-design](../codebase-design/SKILL.md)
-for a consequential unresolved ownership or interface choice. Neither is a
-mandatory implementation phase.
-
-Read [Worker assignment](references/worker-assignment.md) for the brief, support
-dispatch, write custody, and return. Use [Planned delivery](references/planned-delivery.md)
-only when phases or checkpoints help; a phase need not return custody to the lead.
+Default to one primary worker and at most one active supporting agent. If
+support is useful, the lead can authorize the worker to dispatch that slot in
+the brief. Use [Worker assignment](references/worker-assignment.md) for support,
+caller migrations, or a change of write custody. Use
+[Planned delivery](references/planned-delivery.md) when an interim decision or
+review can prevent meaningful rework.
 
 When explicitly combined with [parallel-implement](../parallel-implement/SKILL.md),
-that workflow owns team arrangement, lanes, concurrency, integration, and recovery.
-Shared routing and final acceptance still apply.
+that workflow owns checkout scheduling, custody, concurrent writes, integration,
+and recovery. Agreed staffing and budget limits and controlled final review
+still apply.
 
-## Wait, then accept the result
+## Wait for a decision or a stable result
 
-While implementation is worker-owned, use the host's longest practical event-driven
-wait. Re-engage for a consequential question, changed requirements, failure,
-checkpoint, reviewable return, or user input. Do not poll or inspect evolving work
-to fill the wait. Answer the needed question without reconstructing the worker's
-investigation.
+Use the host's event-driven wait while the worker owns implementation.
+Re-engage for user steering, a consequential decision, a blocker the worker
+cannot resolve within scope, a chosen checkpoint, or a reviewable return.
+Answer the decision and leave implementation with the worker when possible.
+Use [Recovery](references/recovery.md) when custody or safe continuation is
+uncertain.
 
-Inspect the mutable checkout only after custody is released and worker-owned
-writers have stopped. Idle or interrupted status alone is not release.
-Read [Recovery](references/recovery.md) when work cannot continue safely.
+Default to one stable return. The worker reports candidate identity, decisive
+checks, and open issues or limits. The worker stops its writers and subprocesses
+and explicitly releases custody before the lead inspects the mutable checkout.
 
-Assess the stable result with [change-review](../change-review/SKILL.md), including
-its impact branch for changed shared validation, persisted-input acceptance, or
-compatibility. Return corrections to a suitable worker and retain still-valid
-evidence. Shared-validation repairs require distinguishing regression coverage;
-reuse existing tests when they already distinguish the changed behavior.
-This workflow adds no fixed review-round count.
+Assess the stable result with [change-review](../change-review/SKILL.md).
+Use its impact guidance for shared validation, persisted-input acceptance, or
+compatibility. Shared-validation changes need regression coverage that
+distinguishes the changed behavior. Review directly when sufficient and use an
+independent reviewer when needed. Return corrections to a suitable worker with
+renewed custody and reuse evidence that still applies.
 
-Finish when the reviewed candidate satisfies the complete accepted outcome and
-required verification, required findings are resolved, and material risk has an
-authorized disposition. Missing required proof remains incomplete. Continue
-authorized repairs; report the result, decisive checks, and remaining limits.
-Review does not grant publication, merge, or deployment authority.
-
-Read [Telemetry](references/telemetry.md) only for requested measurement or a
-material budget; a smaller team does not by itself establish savings.
+Finish when the reviewed candidate satisfies the accepted outcome and required
+verification, required findings are resolved, and material risks have
+authorized dispositions. Continue authorized repairs and report remaining limits.
+Publication, merge, and deployment require their own authority. Read
+[Telemetry](references/telemetry.md) for requested measurement or a material budget.

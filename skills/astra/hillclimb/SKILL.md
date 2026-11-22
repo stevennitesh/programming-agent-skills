@@ -5,70 +5,59 @@ description: Optimize a measurable outcome through comparable experiments. Exclu
 
 # Hillclimb
 
-Iteratively improve a measurable outcome while preserving accepted behavior.
-A measured win updates the retained candidate, not necessarily task completion.
-Use [prototype](../prototype/SKILL.md) for one bounded empirical uncertainty and
+Improve a measurable outcome while preserving accepted behavior. Use
+[prototype](../prototype/SKILL.md) to resolve a feasibility question and
 [diagnosing-bugs](../diagnosing-bugs/SKILL.md) for an unexplained causal failure.
-Optimization authorizes bounded reversible local experiments, not external spend,
-live-system effects, publication, or deployment beyond existing authority.
+Run reversible local experiments within scope. External spend, live-system
+effects, publication, and deployment require existing authority.
 
-## Define the objective and valid comparison
+## Make a comparable measurement
 
-Establish the metric/unit, useful workload, preserved behavior, target or budget,
-and keep criterion before evaluating candidates. Include noise and material
-secondary costs. Do not silently trade correctness, quality, or another accepted
-objective for a better score. Use a finite proportionate local stopping rule when
-none is supplied; ask only about unresolved owner-held tradeoffs or external cost.
+Identify the metric the user cares about, a representative workload, and the
+behavior and material costs to preserve. Compare the baseline and candidate on
+equivalent useful work. Check the outputs separately from the metric and preserve
+existing correctness and quality requirements. A quick comparison can establish
+a clear gain. For a query-count optimization, count the calls and check that
+the same records come back.
 
-Measure the real useful work and verify output independently of the metric.
-Preserve baseline identity/conditions and distinguish pre-existing failures from
-regressions; do not weaken required checks. Read
-[Measurement integrity](references/measurement-integrity.md) when variation,
-adaptive selection, proxy measurements, harness changes, or regression thresholds
-affect retention or final confirmation.
+Read [Measurement integrity](references/measurement-integrity.md) when noise
+or repeated tuning could change which candidate you keep, when a proxy or
+broader claim needs confirmation, when the benchmark changes, or when adding a
+regression threshold. Repair ordinary measurement problems within scope. A
+material change to the measurement requires rerunning both versions.
 
-Repair ordinary benchmark, setup, instrument, or isolation problems within scope
-and budget. Verify intended work remains measured. A materially changed ruler
-requires remeasuring both baseline and candidate; its score correction is not a
-system improvement. A difficult causal failure may need diagnosis, not every
-ordinary harness repair.
+## Choose and retain experiments
 
-## Search and retain supported candidates
+Choose the experiments most likely to change what you keep. Try a promising
+change directly, profile, vary parameters, or test a combination as the evidence
+warrants. Compare each candidate you would keep with the current best and
+verify the required behavior. Measure changes together before claiming a
+combined gain. Attribute the result to the measured combination unless the
+evidence isolates a component's contribution. Get the user's decision for
+unresolved tradeoffs between accepted requirements.
 
-Choose profiling, coordinated edits, parameter search, ablations, or another
-useful method; no one-change-at-a-time rule is required. Keep attempts identifiable
-and separable from the retained candidate and unrelated work. Exploratory attempts
-may lose. Before promotion, compare with the current best under equivalent
-conditions and apply the keep rule and required behavior checks. A combined gain
-does not prove each component caused it.
-
-Do not stack unmeasured changes onto the retained candidate or report a plausible
-mechanism as a measured win. Equivalent performance may justify simplicity without
-being a numerical gain. For substantial runs, retain baseline/current-best,
-conditions, meaningful attempts, evidence, and remaining budget to resume without
-repeating failures, using existing records and no fixed log format. A combination
-of earlier attempts is a new candidate. A plateau may change
-the search, not accepted success criteria.
+Keep experiments distinguishable from the retained candidate and unrelated
+work. For a longer search, record the baseline and current best, conditions,
+useful attempts, evidence, and remaining effort so the work can resume. Reuse
+existing notes when available.
 
 ## Confirm and finish
 
-Apply the user’s stopping condition. A threshold or tolerance can qualify a
-candidate while the search remains open. If the user supplied no stopping
-condition, finish when the target is confirmed, the agreed effort is exhausted,
-or no worthwhile supported hypothesis remains. Stop dependent experiments when
-an unresolved measurement or authority blocker prevents progress. Reserve effort
-for final confirmation. Compare the integrated retained result with
-the original baseline under the final valid method; isolated gains need not compose.
-Apply Measurement integrity's fresh-run/held-out rules when tuning could bias
-selection, preserving frozen evaluation authority.
+Honor the user's target, budget, and stopping conditions. For a narrow task
+with no further search requested, one useful confirmed gain can suffice. Stop
+when further experiments are unlikely to change the decision or exceed the
+scope. Surface unresolved measurement or authority blockers when they prevent
+a sound comparison.
 
-If confirmation fails, return to the last qualifying candidate or baseline. If
-restoration risks unrelated work, preserve and identify the unresolved state.
-Retain proportionate regression protection when later changes could erase a material
-gain; preserve representative workload, valid outputs, and baseline conditions at
-the existing test/benchmark owner. Clean up only experiment-owned work.
+Report the final retained result against the original baseline under the final
+valid method. Reuse sufficient evidence for the exact final candidate. For a
+noisy or repeatedly tuned result, apply the reference's fresh-run and held-out
+rules as applicable. If confirmation fails, return to a still-supported
+candidate or the baseline. Preserve and report any state whose restoration
+would risk unrelated work. Keep regression protection at the existing
+benchmark or test owner when a material gain could otherwise be lost.
 
-Return the final comparison, retained mechanisms, correctness/quality checks,
-variability, evidence limits, material harness repairs, and stopping reason.
-No improvement is valid; failed measurement is not evidence of no improvement.
-Do not claim a global optimum or extrapolate beyond measured conditions.
+For quick work, report the comparison, the behavior check, and material limits.
+For a longer search, also summarize what was kept, relevant variability or
+benchmark repairs, and why the search ended. Report inconclusive evidence or a
+comparison that found no useful gain plainly. Clean up only experiment-owned work.

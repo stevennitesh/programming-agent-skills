@@ -21,9 +21,12 @@ untracked content. An empty selection means there is no change to review.
 Capture mutable inputs or hold review custody, bind evidence to that candidate,
 and recheck identity before concluding. If it moves, identify what needs re-review.
 
-Read [Finding standards](references/finding-standards.md) for admission, priority,
-missing evidence, and requested gate decisions. Unrelated baseline-improvement
-discovery belongs to [audit-codebase](../audit-codebase/SKILL.md).
+A finding identifies a supported obligation and a problem the candidate
+introduces, worsens, or leaves unsatisfied. Give the reachable trigger, evidence,
+consequence, and proportionate correction or proof request. Use
+[Finding standards](references/finding-standards.md) when admission, priority,
+or required proof is unclear, or for a formal gate. Use
+[audit-codebase](../audit-codebase/SKILL.md) for issues independent of the candidate.
 
 ## Review the change in the codebase
 
@@ -46,9 +49,9 @@ user requirements and the active model policy; size alone does not require
 delegation. The lead retains final acceptance.
 
 Read [Impact analysis](references/impact-analysis.md) for requested blast radius,
-shared validation, persisted-input acceptance, or supported compatibility changes.
-Use it also for consequential assumptions beyond direct callers or when types,
-runtime values, or test coverage need closer inspection.
+changes to shared validation, persisted-input acceptance, or supported
+compatibility. Use it when a consequential assumption needs evidence beyond
+the direct callers.
 
 Read [Review feedback](references/review-feedback.md) for supplied findings,
 repair reviews, or a requested bounded review-and-repair loop.
@@ -61,3 +64,6 @@ material coverage, verification, and limits using the caller's schema or a conci
 readable format. If none qualify, say "No actionable findings" while making any
 incomplete required coverage explicit. Keep optional suggestions separate.
 Include a gate verdict only when requested or required.
+
+For authorized [PR delivery](../pr-delivery/SKILL.md), hand off the reviewed
+candidate, decisive checks, and unresolved findings or coverage limits.

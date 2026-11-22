@@ -19,43 +19,53 @@ A read-only audit returns findings; cleanup authorizes supported test edits
 without approval for each one. Routine local completion checks do not invoke this
 full workflow. Run-only requests and ordinary feature coverage stay with their work.
 
+For a small cleanup, start with the affected tests and the closest retained
+coverage. Trace the behavior they protect, make the targeted edits, and run
+the affected tests. Follow shared fixtures, runner configuration, or supported
+consumers when they could change what should be kept or verified.
+
 For a suite-wide purge or large deletion batch, read
 [Bulk test pruning](references/bulk-pruning.md). Its shared rubric, deletion
 review, exact edits, and measurements supplement this method only for that scope.
 
 ## Establish what the tests protect
 
-Inspect implementation, accepted requirements, test configuration, and relevant
-consumers/history. Local callers can miss supported external consumers. Tests
-and current implementation are evidence, not sole authority for intended behavior.
-Respect the established project scope: do not invent support or hardening
-requirements, or retire existing protections because the project is personal.
+Use the implementation and accepted requirements to identify the contract.
+Consult configuration, consumers, or history when they could change the decision.
+Account for supported external consumers. Preserve established requirements,
+including existing protections in personal projects.
 
-Establish a relevant baseline where feasible; reuse results while code, inputs,
-dependencies, and environment remain applicable. Distinguish supported-behavior
-failures, stale expectations, and execution limits. Failure, slowness, flakiness,
-or a skip alone is never a retirement reason.
+Use a baseline when it helps distinguish an existing failure, stale expectation,
+or execution limit. Reuse results whose inputs and conditions still apply.
+Failure, slowness, flakiness, or a skip alone is never a retirement reason.
 
 ## Keep the protection; remove the burden
 
-For each candidate ask: **What plausible future regression would this catch, and
-what supported behavior or ongoing constraint would it affect?** Investigate
-uncertainty; retain unresolved tests while continuing independent cleanup.
-No per-test ledger or deletion quota is needed for ordinary cleanup.
+For each candidate ask **what plausible regression in supported behavior it
+could catch**. Call a case redundant only when a retained case would fail for
+the same regression at the relevant boundary. Keep unresolved cases while
+continuing independent cleanup. Group removals that share a reason.
 
 - Remove completed-edit checks with no continuing requirement. Retire old-behavior
   tests only when that behavior is demonstrably unsupported.
 - Prefer observable results, calculations, state transitions, errors, recovery,
   and effects. Rewrite incidental implementation coupling where useful; focused
   internal tests can still efficiently protect meaningful logic.
+- Remove tautological assertions whose outcome is guaranteed by the test setup
+  or whose expected result simply repeats the computation the test claims to
+  verify. A check that only reads back a stub's configured value is one
+  example. Remove the whole case when it exercises no other continuing
+  obligation. Where the behavior still needs coverage, check an independently
+  determined result, effect, or relationship, such as retry idempotence.
 - Judge source checks, snapshots, mocks, and negative assertions by their protected
-  contract. An exact export name or absence of writes can be meaningful; asserting
-  only a mock's configured result is not product coverage. Narrow oversized
-  snapshots to their contract instead of updating them merely to silence failure.
-- Consolidate only when retained cases still catch distinct failures. Shared lines
-  or code paths do not prove redundancy across unit/integration boundaries. Use
-  parameterization or small helpers where useful; keep scenarios identifiable,
-  independently runnable, and diagnosable rather than combining unrelated cases.
+  contract. An exact export name or absence of writes can be meaningful. Narrow
+  oversized snapshots to the relevant contract.
+- Prune a matrix by the regressions its cases distinguish. Keep a representative
+  case for each distinct failure, input boundary, or state transition. Where a
+  shared parser rejects input before platform-specific logic, repeat a case per
+  platform only if that adds coverage. Keep wiring, platform behavior, or
+  interactions that can fail independently. Use parameterization or small
+  helpers where useful, keeping each retained scenario identifiable and runnable.
 - Use repository conventions for names, grouping, and fixture placement. Keep
   fixtures at the narrowest useful shared scope; impose no new taxonomy. Reconcile
   collection, imports, and CI selectors after moves or renames.
@@ -76,19 +86,17 @@ bugs or support decisions and continue unaffected cleanup.
 
 ## Finish with proportionate evidence
 
-Run affected tests and required checks; broaden for shared fixtures, discovery,
-configuration, or unresolved impact. Confirm retained cases are collected and
-exercise intended behavior. Reconcile scenarios after moves, renames, or
-parameterization so changed identities do not conceal loss. Reuse still-valid
-evidence rather than repeating settled checks.
+Run affected tests and required checks. When removals, moves, renames, or
+parameterization change test identities, verify that the runner still collects
+the intended retained scenarios. Broaden checks when shared fixtures, discovery,
+configuration, or unresolved impact could affect other tests. Reuse still-valid
+evidence.
 
 For a consequential rewrite with unclear fault sensitivity, use a safe temporary
 fault or another discriminating check when practical. Isolate it, restore the
 exact prior state, and prevent real external effects or data damage. No mutation
 campaign is required; disclose unproved sensitivity.
 
-Report scope, removals and reasons, consolidation/organization, retained protection,
-checks/results, and unresolved or unrun work. Runtime claims need comparable
-measurements; maintainability can justify cleanup without a speedup. Group similar
-changes and distinguish targeted from full-suite validation. No permanent report
-or guidance update is required unless requested.
+For a small cleanup, report what changed, what protection remains, and the
+checks and material limits. For a broader cleanup, group removals by reason and
+state the scope verified. Runtime claims need comparable measurements.

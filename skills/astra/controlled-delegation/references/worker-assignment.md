@@ -1,10 +1,8 @@
 # Worker assignment
 
-Use before transferring implementation custody. Supply the accepted scope,
-acceptance, sources, effects, and return context under
-[Native spawning](native-spawning.md). The worker chooses techniques, tools, local
-design, and sequencing within those boundaries; routine reversible choices need
-no lead approval.
+Use the relevant branch when an assignment involves migration, support, or
+changing write custody. Follow [Native spawning](native-spawning.md) for host
+controls and the context needed by a fresh worker.
 
 ## Preserve the transition obligations
 
@@ -21,12 +19,13 @@ a separate phase or unrelated repository sweep.
 
 ## Use one support slot
 
-The lead dispatches the shared support slot or explicitly grants the primary
-worker access within its scope and budget. Identify the dispatcher and existing
-agent handle to prevent duplicate helpers. Otherwise the worker requests support
-from the lead. Supporting agents do not spawn descendants; finish or reuse the
-current assignment before another occupies the slot. Explicit parallel execution
-uses its coordinator's dispatch and team rules instead.
+If support is useful, name who can dispatch it. The lead can authorize the
+worker to use the slot at assignment time with a defined scope and budget.
+Within that authority the worker chooses when to use it. Otherwise route a
+support request to the lead. Reuse a suitable existing agent or finish the
+active support assignment before starting another. Supporting agents have no
+delegation authority. In combined parallel work, follow the checkout
+coordinator's scheduling within the agreed staffing and budget limits.
 
 A support assignment identifies the question or settled production rule, source
 material, observable result, and completion boundary. Return concise findings
@@ -43,10 +42,7 @@ not a second implementation writer. Before the lead accesses the mutable checkou
 the worker stops its writers and subprocesses and explicitly releases custody.
 Status alone does not establish release.
 
-Return candidate identity, material changes, decisive checks, unresolved obligations,
-limits, and custody state. Ask for a lead decision when accepted meaning,
-architecture, scope, or a significant unforeseen constraint requires it; state
-the evidence and recommendation, continuing independent work when possible.
-Send questions, chosen checkpoints, failures, and completion rather than timed
-narration. For follow-ups, retain useful worker context and send only changed
-requirements, findings, candidate identity, and renewed custody.
+For a decision or blocker that needs the lead, send the evidence, the decision
+needed, and a recommendation. Continue independent work within scope. For
+corrections, reuse suitable worker context and send the changed requirements or
+findings, candidate identity, and renewed custody.

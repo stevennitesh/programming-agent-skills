@@ -5,85 +5,54 @@ description: Guide a human through terminal steps requiring private input or hum
 
 # Wizard
 
-Prepare the smallest useful terminal handoff for a requested private or human-only
-step. Real secrets and private-session input/output stay with the human. Define
-the non-secret evidence needed to unblock already-authorized work.
+Handle the authorized work around a private or human-only step. Keep secrets
+and private-session input and output with the human.
 
-## Separate the human step from agent work
+## Prepare the step and its check
 
-Identify the step requiring private input, the human's active identity, dashboard
-or physical interaction, or another action the agent should not execute/observe.
-Complete authorized non-private preparation yourself. Reuse an established login,
-credential-entry tool, or procedure; one instruction may suffice. Add a script
-only when guidance, validation, or recovery earns it.
+Identify the exact blocker, intended target, and the action that needs the
+human. Do the authorized setup and ordinary repairs yourself. Use safe
+observations to establish current state when they can spare the human a step
+and still satisfy the requested outcome.
 
-Recover the settled outcome, target, and consequential choices from current
-sources. Do not turn an unresolved product/effect decision into an interactive
-prompt. Inspect schemas, commands, and consumers without reading existing secrets
-or asking for credentials in chat. A surrounding task plan is unnecessary for a
-well-defined private prerequisite.
+Choose the verification before handing off. Prefer an existing read-only
+status check or a minimal authorized operation through the actual consumer.
+Match the evidence to the blocker and intended account, project, or environment.
+Use [Non-secret completion handoff](references/inputs-and-effects.md#non-secret-completion-handoff)
+to decide what the check can safely expose to the agent.
 
-## Prepare a clear terminal interaction
+## Hand off the human action
 
-Use a suitable host/repository shell and established artifact location; disposable
-files follow local scratch conventions. Make necessary scoped setup repairs, such
-as an ignore rule for the intended secret file, without changing unrelated
-configuration or adding infrastructure merely to host the procedure.
+Reuse an established login, credential-entry tool, or other suitable procedure.
+Check the entry point in the intended shell or app and resolve relevant target
+and permission prerequisites through safe checks. Give the human the exact
+action, its target or effect, and what happens next. A familiar login can take
+one instruction. Include cancellation or retry guidance when it affects the
+outcome.
 
-Tell the human what they need, where to obtain it, the intended target/effect,
-next action, completion evidence, and cancel/retry path. Display no secret values.
-Keep prompts focused on human decisions and actions. For captured values,
-persistence, external tools/effects, or exported completion status, read
-[Inputs, effects, and recovery](references/inputs-and-effects.md). That reference
-owns secure input, destination checks, consequential-effect confirmation, safe
-persistence/retry, and non-secret handoff.
+Add a script when it materially helps with validation, persistence, or recovery.
+For custom input capture, secret storage, consequential effects, or new status
+output, use the applicable branches of
+[Inputs, effects, and recovery](references/inputs-and-effects.md). Exercise
+authored entry points and material failure and cancellation paths with dummy
+values or isolated targets. Repair scoped defects and report any material check
+you could not exercise.
 
-Distinguish success, failure, cancellation, EOF, blocked prerequisites, and
-unverified effects. Stop dependent stages until their prerequisites hold.
+When launch is requested, verify that the host provides a human-visible session
+with private input and output. Keep secrets out of launch arguments and
+environment overrides. Keep the session outside agent observation, recording,
+and polling. If private launch cannot be verified, give the exact action for
+the human to run privately. Use the authority already granted for each effect.
 
-## Check and repair without private input
+## Verify and resume
 
-Check the exact command or script entry point in the shell and version the human
-will use. When permissions affect behavior, verify the prerequisite with a safe
-check that leaves the real target untouched. State any shell or privilege
-condition that could not be exercised.
+When the request is to author a procedure, deliver the checked instructions or
+script. In a broader task, continue independent work while the human acts.
+Use a safe completion signal to run the planned check when needed. A brief
+“done” suffices when you need the human to signal. Reuse a fresh result that
+already establishes the prerequisite.
 
-Check syntax and material safety/completion branches: cancellation/EOF, command
-and persistence failure, target confirmation, uncertain outcomes, and exported
-status where applicable. Use dummy values, stubs, or isolated local targets;
-never obtain real credentials, open private dashboards, or mutate real external
-state for testing. Dummy-secret checks do not prove external tools handle real
-secrets safely.
-
-Repair ordinary script/setup defects within scope and rerun affected checks
-without renewed permission. The procedure must guide the human without exposing
-private input to the agent, give material failures an operator-visible outcome,
-and prevent exported status from reporting success after a failed prerequisite
-or leaking dummy secrets. No fixed test suite is required.
-
-## Deliver or privately launch
-
-Authoring grants no new installation, commit, publication, or external-effect
-authority, and does not authorize private stages through agent-visible tools.
-
-When launch is requested, verify the host provides a human-visible session whose
-input/output the agent cannot observe. A visible window or masked prompt does
-not prove separation. Pass no secret in launch arguments/environment; never read,
-poll, record, or capture the private session. If separation is unavailable, return
-the exact run command instead of using an agent-attached terminal.
-
-Return any script path, exact command, material effects, checks, launch status,
-and the non-secret result the human should report. Delivery/launch does not
-establish that the human procedure succeeded.
-
-## Hand back control when the prerequisite is established
-
-Use the reference's non-secret handoff rules to distinguish prepared procedure,
-human-reported completion, and verified prerequisite. Match fresh evidence to the
-actual blocker; storing a credential alone does not prove application readiness.
-Never request private transcripts or secret values to close the gap.
-
-Authoring-only work ends with the checked procedure and run instructions. During
-broader authorized work, continue independent tasks while the human acts, then
-resume dependent work once the prerequisite is established to the required level.
-Otherwise report the specific manual step or verification gap.
+If the human alone can observe the outcome, ask for the specific non-secret
+fact that can establish the prerequisite. Keep human-reported completion and
+independent verification distinct. Resume the authorized dependent work once
+the evidence satisfies the blocker. Otherwise report the exact remaining gap.

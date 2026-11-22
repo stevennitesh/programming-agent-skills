@@ -22,7 +22,7 @@ syntax are insufficient. These patterns identify candidates, not deletion rules:
 | Candidate | Evidence for removal | Protection that can justify keeping or rewriting it |
 | --- | --- | --- |
 | Type, constant, or trivial getter checks | The check only restates a compile-time guarantee or the same literal, with no runtime obligation | Runtime validation of untrusted input, serialization, external formats, or an auth policy expressed as a mapping |
-| Mock-call mirrors | Assertions restate the test's own setup or incidental private call sequence | Protocol translation, ordering, cancellation, retries, or preventing duplicate external actions |
+| Tautologies or mock-call mirrors | Assertions restate their setup, repeat the computation they claim to verify, or mirror an incidental private call sequence | Protocol translation, ordering, cancellation, retries, or preventing duplicate external actions |
 | Basic DOM or smoke checks | They repeat framework behavior or another retained check without a distinct failure | Application wiring, accessibility behavior, packaging, compiler output, or an actual dependency regression |
 | Timers and performance assertions | A sleep or machine-speed threshold has no continuing contract and adds no distinct protection | Deterministic expiry, debounce, race, cancellation, or a documented performance/dependency guard |
 | Repeated table cases or snapshots | Retained cases catch the same fault without losing a boundary or outcome | Distinct invalid inputs, platforms, permissions, recovery paths, and state transitions |

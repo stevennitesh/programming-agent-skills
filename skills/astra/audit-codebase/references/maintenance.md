@@ -5,6 +5,12 @@ or checking and previewing the report.
 The helper owns deterministic reconciliation and publication; the agent judges
 ownership, changed conclusions, adequate proof, and the requested delivery scope.
 
+If a trusted report in the current format needs an updated renderer, run
+`rebuild-view --repo-root <repo> --report <report.html>`. It validates the
+embedded state and regenerates the HTML through guarded publication. Audit
+records, history, and source observations stay as saved. Check the rebuilt report
+with `check-report`; use `refresh` when you need current source observations.
+
 Use [Prepared work and verification](workflow.md) for stage preparation, atomic
 batch publication, narrow follow-up findings, passing-check carry-forward, and
 gap dispositions. These replace repeated mechanics without prescribing the
@@ -209,9 +215,10 @@ finding outcomes and must collectively cover the candidate's analyzed scope.
 
 ## Check and preview the report
 
-`check-report` is read-only. It validates canonical state, relationships, anchors,
-IDs, and copyable selection commands. It reports current ownership coverage and
-freshness separately: a valid report can contain changed evidence or map drift.
+After publication, run `check-report`. This read-only check validates canonical
+state, relationships, anchors, IDs, and copyable selection commands. It reports
+current ownership coverage and freshness separately: a valid report can contain
+changed evidence or map drift.
 It never claims to have visually inspected the report.
 Its response includes freshness for subsystems, candidates, findings, and outcome
 proof, with observations for changed records. Unchanged observations are omitted;

@@ -5,7 +5,6 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import math
 import os
 import re
 import shutil
@@ -21,9 +20,11 @@ from typing import Any, Callable
 
 
 LANE_NAME = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]{0,79}")
+WINDOWS_DEVICE_NAME = re.compile(r"CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9]", re.IGNORECASE)
 COMMIT_ID = re.compile(r"(?:[0-9a-f]{40}|[0-9a-f]{64})")
-CLEANUP_RECEIPT_FORMAT = 2
-LANE_SCHEMA_VERSION = 1
+REGISTRATION_MARKER = "parallel-implement-id"
+CLEANUP_RECEIPT_FORMAT = 3
+LANE_SCHEMA_VERSION = 2
 TRANSIENT_WINDOWS_ERRORS = {5, 32}
 RETRY_DELAYS = (0.25, 0.5, 1.0, 2.0)
 
@@ -56,6 +57,28 @@ def git(checkout: Path, *args: str, check: bool = True) -> subprocess.CompletedP
     return result
 
 
+def worktree_status(checkout: Path, *, check: bool = True) -> subprocess.CompletedProcess[str]:
+    return git(checkout, "status", "--porcelain", "--untracked-files=all", check=check)
+
+
+def hidden_tracked_path(checkout: Path) -> str | None:
+    index = git(checkout, "ls-files", "-v", "-z")
+    for entry in index.stdout.split("\0"):
+        if not entry:
+            continue
+        flag, path = entry[0], entry[2:]
+        # A missing skip-worktree entry is normal in a sparse checkout.
+        if flag.islower() or (flag == "S" and path_present(checkout / path)):
+            return path
+    return None
+
+
+def valid_name(name: str) -> bool:
+    return LANE_NAME.fullmatch(name) is not None and (
+        os.name != "nt" or not WINDOWS_DEVICE_NAME.fullmatch(name.partition(".")[0])
+    )
+
+
 def contained(path: Path, root: Path) -> bool:
     try:
         path.relative_to(root)
@@ -86,6 +109,66 @@ def path_identity(path: Path) -> dict[str, int] | None:
     if inode <= 0:
         return None
     return {"device": device, "inode": inode}
+
+
+def valid_lane_binding(payload: dict[str, Any]) -> bool:
+    registration_id = payload.get("registration_id")
+    if not isinstance(registration_id, str) or not re.fullmatch(r"[0-9a-f]{32}", registration_id):
+        return False
+    marker = payload.get("registration_marker")
+    if not isinstance(marker, str) or not Path(marker).is_absolute() or Path(marker).name != REGISTRATION_MARKER:
+        return False
+    run_name = payload.get("run")
+    if "run" not in payload or (run_name is not None and (
+        not isinstance(run_name, str) or not LANE_NAME.fullmatch(run_name)
+    )):
+        return False
+    identity = payload.get("worktree_identity")
+    return "worktree_identity" in payload and (identity is None or (
+        isinstance(identity, dict)
+        and set(identity) == {"device", "inode"}
+        and all(type(value) is int for value in identity.values())
+        and identity["inode"] > 0
+    ))
+
+
+def registration_marker(worktree: Path) -> Path:
+    git_file = worktree / ".git"
+    if is_reparse_point(git_file) or not git_file.is_file():
+        raise LaneError("lane does not have a linked worktree Git file")
+    admin = Path(git(worktree, "rev-parse", "--absolute-git-dir").stdout.removesuffix("\n"))
+    if not admin.is_absolute() or is_reparse_point(admin) or not admin.is_dir():
+        raise LaneError("lane Git registration directory is invalid")
+    backlink = admin / "gitdir"
+    if is_reparse_point(backlink) or not backlink.is_file():
+        raise LaneError("lane Git registration backlink is invalid")
+    registered_path = (admin / backlink.read_text(encoding="utf-8").removesuffix("\n")).resolve()
+    if registered_path != git_file:
+        raise LaneError("lane Git registration points to another checkout")
+    return admin / REGISTRATION_MARKER
+
+
+def read_registration_id(marker: Path) -> str:
+    if is_reparse_point(marker) or not marker.is_file():
+        raise LaneError("lane Git registration marker is invalid")
+    value = marker.read_text(encoding="ascii")
+    if not re.fullmatch(r"[0-9a-f]{32}\n", value):
+        raise LaneError("lane Git registration marker is invalid")
+    return value.removesuffix("\n")
+
+
+def registration_error(worktree: Path, evidence: dict[str, Any]) -> str | None:
+    if evidence.get("schema_version") == 1:
+        return "lane predates checkout identity tracking"
+    try:
+        marker = registration_marker(worktree)
+        if marker != Path(evidence["registration_marker"]) or read_registration_id(marker) != evidence["registration_id"]:
+            return "Git registration does not match the prepared lane"
+        if path_identity(worktree) != evidence["worktree_identity"]:
+            return "checkout identity does not match the prepared lane"
+    except (LaneError, OSError, ValueError) as error:
+        return f"lane Git registration could not be verified: {error}"
+    return None
 
 
 def repository_root(value: str) -> Path:
@@ -159,10 +242,7 @@ def cleanup_receipt(root: Path, name: str) -> Path:
 
 
 def lane_manifest(root: Path, name: str) -> Path:
-    manifest = (lane_state(root, name) / "lane.json").resolve()
-    if not contained(manifest, root):
-        raise LaneError("lane manifest path escapes the configured root")
-    return manifest
+    return lane_state(root, name) / "lane.json"
 
 
 def state_paths(root: Path, name: str) -> tuple[Path, Path, Path, Path, Path]:
@@ -215,21 +295,6 @@ def manifest_payload(
     }
 
 
-def write_lane_manifest(root: Path, name: str, payload: dict[str, Any]) -> Path:
-    manifest = lane_manifest(root, name)
-    temporary = manifest.with_name(f"{manifest.name}.tmp")
-    try:
-        temporary.write_text(
-            json.dumps(payload, indent=2, sort_keys=True) + "\n",
-            encoding="utf-8",
-        )
-        temporary.replace(manifest)
-    finally:
-        temporary.unlink(missing_ok=True)
-    return manifest
-
-
-
 def read_lane_manifest(
     repo: Path, root: Path, worktree: Path
 ) -> tuple[dict[str, Any] | None, str | None]:
@@ -242,7 +307,7 @@ def read_lane_manifest(
         if not manifest.is_file():
             return None, "lane manifest is not a regular file"
         payload = json.loads(manifest.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError):
+    except (OSError, ValueError):
         return None, "lane manifest is unreadable"
     expected_paths = {
         "repository": str(repo),
@@ -255,12 +320,15 @@ def read_lane_manifest(
         "lane_manifest": str(manifest),
         "cleanup_receipt": str(cleanup_receipt(root, worktree.name)),
     }
-    if not isinstance(payload, dict) or payload.get("schema_version") != LANE_SCHEMA_VERSION:
+    if (not isinstance(payload, dict) or type(payload.get("schema_version")) is not int
+            or payload["schema_version"] not in (1, LANE_SCHEMA_VERSION)):
         return None, "lane manifest schema is invalid"
     if any(payload.get(key) != value for key, value in expected_paths.items()):
         return None, "lane manifest does not match the requested lane"
     if not isinstance(payload.get("base"), str) or not COMMIT_ID.fullmatch(payload["base"]):
         return None, "lane manifest has invalid base evidence"
+    if payload["schema_version"] == LANE_SCHEMA_VERSION and not valid_lane_binding(payload):
+        return None, "lane manifest has invalid checkout or run identity"
     return payload, None
 
 
@@ -275,8 +343,14 @@ def write_cleanup_receipt(
     state = lane_state(root, worktree.name)
     if not state.is_dir():
         raise LaneError("lane state is missing")
+    manifest, error = read_lane_manifest(repo, root, worktree)
+    if manifest is None:
+        raise LaneError(str(error))
+    if error := registration_error(worktree, manifest):
+        raise LaneError(error)
     receipt = cleanup_receipt(root, worktree.name)
-    temporary = receipt.with_name(f"{receipt.name}.tmp")
+    if path_present(receipt):
+        raise LaneError("cleanup receipt already exists")
     payload = {
         "format": CLEANUP_RECEIPT_FORMAT,
         "repository": str(repo),
@@ -285,18 +359,14 @@ def write_cleanup_receipt(
         "lane": worktree.name,
         "lane_head": lane_head,
         "authorized_at_head": authorized_at_head,
-        "worktree_identity": path_identity(worktree),
+        "worktree_identity": manifest["worktree_identity"],
+        "registration_id": manifest["registration_id"],
+        "registration_marker": manifest["registration_marker"],
+        "run": manifest["run"],
         "clean": True,
         "integrated": True,
     }
-    try:
-        with temporary.open("w", encoding="utf-8", newline="\n") as handle:
-            handle.write(json.dumps(payload, indent=2, sort_keys=True) + "\n")
-            handle.flush()
-            os.fsync(handle.fileno())
-        temporary.replace(receipt)
-    finally:
-        temporary.unlink(missing_ok=True)
+    write_json(receipt, payload)
     observed, reason = read_cleanup_receipt(repo, root, worktree)
     if observed is None:
         raise LaneError(f"cleanup receipt read-back failed: {reason}")
@@ -318,20 +388,21 @@ def read_cleanup_receipt(
         if not receipt.is_file():
             return None, "cleanup receipt is not a regular file"
         payload = json.loads(receipt.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError):
+    except (OSError, ValueError):
         return None, "cleanup receipt is unreadable"
-    if not isinstance(payload, dict) or payload.get("format") != CLEANUP_RECEIPT_FORMAT:
+    if (not isinstance(payload, dict) or type(payload.get("format")) is not int
+            or payload["format"] != CLEANUP_RECEIPT_FORMAT):
         return None, "cleanup receipt format is invalid"
     expected = {
         "repository": str(repo),
         "root": str(root),
         "worktree": str(worktree),
         "lane": worktree.name,
-        "clean": True,
-        "integrated": True,
     }
     if any(payload.get(key) != value for key, value in expected.items()):
         return None, "cleanup receipt does not match the requested lane"
+    if payload.get("clean") is not True or payload.get("integrated") is not True:
+        return None, "cleanup receipt has invalid cleanup proof"
     if not all(
         isinstance(payload.get(key), str)
         and COMMIT_ID.fullmatch(payload[key])
@@ -339,18 +410,8 @@ def read_cleanup_receipt(
     ):
         return None, "cleanup receipt has invalid commit evidence"
 
-    if "worktree_identity" not in payload:
-        return None, "cleanup receipt is missing worktree identity"
-    identity = payload["worktree_identity"]
-    if identity is not None:
-        if (
-            not isinstance(identity, dict)
-            or set(identity) != {"device", "inode"}
-            or not all(isinstance(identity.get(key), int) for key in ("device", "inode"))
-            or identity["inode"] <= 0
-        ):
-            return None, "cleanup receipt has invalid worktree identity"
-    payload["worktree_identity"] = identity
+    if not valid_lane_binding(payload):
+        return None, "cleanup receipt has invalid checkout or run identity"
     return payload, None
 
 
@@ -518,21 +579,29 @@ def finish_lane_cleanup(root: Path, worktree: Path) -> dict[str, Any] | None:
 
 
 
-def remove_worktree(repo: Path, worktree: Path) -> tuple[bool, dict[str, Any]]:
-    result = git(repo, "worktree", "remove", str(worktree), check=False)
+def remove_worktree(
+    repo: Path, worktree: Path, binding: dict[str, Any]
+) -> tuple[bool, dict[str, Any]]:
+    result = git(
+        repo, "-c", "status.showUntrackedFiles=all", "worktree", "remove", str(worktree),
+        check=False,
+    )
     try:
         registered = worktree in registered_worktrees(repo)
         present = path_present(worktree)
     except (LaneError, OSError):
         registered = None
         present = True
+    removed = registered is False and not present
+    ownership_error = None
+    if removed:
+        removed, ownership_error = residual_identity_check(worktree, binding)
     evidence = {
         "phase": "worktree removal",
         "path": str(worktree),
         "error": (
-            command_error(result)
-            if result.returncode != 0
-            else "worktree removal read-back incomplete"
+            ownership_error
+            or (command_error(result) if result.returncode != 0 else "worktree removal read-back incomplete")
         ),
         "errno": None,
         "winerror": None,
@@ -542,22 +611,29 @@ def remove_worktree(repo: Path, worktree: Path) -> tuple[bool, dict[str, Any]]:
         ),
         "path_state": "present" if present else "missing",
     }
-    return registered is False and not present, evidence
+    return removed, evidence
 
 
 def rollback_created_lane(
-    repo: Path, root: Path, worktree: Path, base: str, name: str
+    repo: Path, root: Path, worktree: Path, base: str, binding: dict[str, Any]
 ) -> str | None:
     head = git(worktree, "rev-parse", "HEAD", check=False)
-    status = git(worktree, "status", "--porcelain", check=False)
+    status = worktree_status(worktree, check=False)
     ignored, ignored_error = ignored_entries(worktree)
     if head.returncode != 0 or status.returncode != 0 or ignored_error:
         return "new lane preserved because rollback state is uncertain"
     if head.stdout.strip() != base or status.stdout.strip() or ignored:
         return "new lane preserved because rollback is not exact-base and clean"
+    try:
+        if hidden_tracked_path(worktree) is not None:
+            return "new lane preserved because Git can hide tracked changes"
+    except (LaneError, OSError):
+        return "new lane preserved because rollback state is uncertain"
 
-    state = lane_state(root, name)
-    removed, evidence = remove_worktree(repo, worktree)
+    state = lane_state(root, worktree.name)
+    if registration_error(worktree, binding) is not None:
+        return "new lane preserved because its identity is uncertain"
+    removed, evidence = remove_worktree(repo, worktree, binding)
     if not removed:
         return (
             "new lane preserved because worktree removal failed: "
@@ -595,7 +671,7 @@ def write_json(path: Path, payload: dict[str, Any]) -> None:
 def run_inventory(
     repo: Path, root: Path, name: str, *, create: bool = False
 ) -> tuple[Path, dict[str, Any]]:
-    if not LANE_NAME.fullmatch(name):
+    if not valid_name(name):
         raise LaneError("invalid run name")
     directory = root / ".runs"
     if path_present(directory) and is_reparse_point(directory):
@@ -623,7 +699,7 @@ def run_inventory(
                 or item.get("worktree") != str(root / lane)
                 or not isinstance(item.get("base"), str)
                 or not COMMIT_ID.fullmatch(item["base"])
-                or item.get("state") not in {"preparing", "prepared", "cleaned"}):
+                or item.get("state") not in ("preparing", "prepared", "cleaned")):
             raise LaneError("run inventory contains invalid lane evidence")
         if item["state"] == "cleaned" and not all(
             isinstance(item.get(key), str) and COMMIT_ID.fullmatch(item[key])
@@ -646,9 +722,10 @@ def select_lanes(args: argparse.Namespace, repo: Path, root: Path, values: list[
 
 
 def run_ownership_blocker(args: argparse.Namespace, snapshot: dict[str, Any]) -> dict[str, str] | None:
-    manifest = snapshot["manifest"]
-    if manifest and manifest.get("run") != getattr(args, "run", None):
-        return {"reason": "lane run ownership does not match; supply its --run"}
+    run_name = getattr(args, "run", None)
+    for record in (snapshot["manifest"], snapshot["receipt"]):
+        if record is not None and record.get("run") != run_name:
+            return {"reason": "lane run ownership does not match; supply its --run"}
     return None
 
 
@@ -679,10 +756,16 @@ def completed_in_run(args: argparse.Namespace, repo: Path, root: Path, lane: Pat
 
 
 def prepare(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
-    repo = repository_root(args.repo)
-    root = lane_root(args.root, repo, create=True)
     if not LANE_NAME.fullmatch(args.name):
         raise LaneError("--name must contain only letters, digits, dot, dash, or underscore")
+    if not valid_name(args.name):
+        raise LaneError("--name is a reserved Windows device name")
+    if args.name.casefold().endswith((".", ".cleanup.json")):
+        raise LaneError("--name must not end with a dot or a reserved cleanup receipt suffix")
+    if getattr(args, "run", None) is not None and not valid_name(args.run):
+        raise LaneError("invalid run name")
+    repo = repository_root(args.repo)
+    root = lane_root(args.root, repo, create=True)
     base = resolve_base(repo, args.base)
     worktree = lexical_absolute(root / args.name)
     if worktree.parent != root:
@@ -706,6 +789,8 @@ def prepare(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
         manifest, manifest_error = read_lane_manifest(repo, root, worktree)
         if manifest is None:
             raise LaneError(f"registered lane manifest is invalid: {manifest_error}")
+        if error := registration_error(worktree, manifest):
+            raise LaneError(error)
         if manifest["base"] != base:
             raise LaneError(
                 f"registered lane base {manifest['base']} does not match requested base {base}"
@@ -739,18 +824,35 @@ def prepare(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
         if result.returncode != 0:
             raise LaneError(f"worktree creation failed: {command_error(result)}")
 
+    binding: dict[str, Any] | None = None
     try:
+        if not reused:
+            identity = path_identity(worktree)
+            registration_id = uuid.uuid4().hex
+            registration_file = registration_marker(worktree)
+            with registration_file.open("x", encoding="ascii", newline="\n") as marker:
+                marker.write(registration_id + "\n")
+                marker.flush()
+                os.fsync(marker.fileno())
+            binding = {
+                "worktree_identity": identity,
+                "registration_id": registration_id,
+                "registration_marker": str(registration_file),
+                "run": getattr(args, "run", None),
+            }
         head = git(worktree, "rev-parse", "HEAD").stdout.strip()
         if head != base:
             raise LaneError(f"worktree HEAD {head} does not match requested base {base}")
-        if git(worktree, "status", "--porcelain").stdout.strip():
+        if worktree_status(worktree).stdout.strip():
             raise LaneError("worktree is not clean")
+        if hidden := hidden_tracked_path(worktree):
+            raise LaneError(f"Git index flags can hide changes to {hidden}")
         runtime_root, temp_root, cache_root, pytest_basetemp, pytest_cache = (
             state_paths(root, args.name)
         )
         for path in (worktree, runtime_root, temp_root, cache_root, pytest_basetemp, pytest_cache):
             probe_directory(path)
-        if git(worktree, "status", "--porcelain").stdout.strip():
+        if worktree_status(worktree).stdout.strip():
             raise LaneError("worktree probe did not restore a clean checkout")
         ignored, ignored_error = ignored_entries(worktree)
         if ignored_error:
@@ -759,29 +861,32 @@ def prepare(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
             raise LaneError(
                 "worktree has ignored artifacts: " + ", ".join(ignored)
             )
-        manifest = manifest_payload(
-            repo,
-            root,
-            worktree,
-            base,
-            runtime_root,
-            temp_root,
-            cache_root,
-            pytest_basetemp,
-            pytest_cache,
-        )
-        if getattr(args, "run", None):
-            manifest["run"] = args.run
-        if not reused:
-            write_lane_manifest(root, args.name, manifest)
+        if binding is not None:
+            if error := registration_error(worktree, binding):
+                raise LaneError(error)
+            manifest = manifest_payload(
+                repo,
+                root,
+                worktree,
+                base,
+                runtime_root,
+                temp_root,
+                cache_root,
+                pytest_basetemp,
+                pytest_cache,
+            )
+            manifest.update(binding)
+            write_json(Path(manifest["lane_manifest"]), manifest)
         if inventory_path:
             inventory["lanes"][args.name]["state"] = "prepared"
             write_json(inventory_path, inventory)
         return 0, {"ok": True, "reused": reused, **manifest}
-    except (LaneError, OSError) as error:
+    except (LaneError, OSError, ValueError) as error:
         if reused:
             raise
-        rollback_error = rollback_created_lane(repo, root, worktree, base, args.name)
+        if binding is None:
+            raise LaneError(f"{error}; new lane preserved because its identity is uncertain") from error
+        rollback_error = rollback_created_lane(repo, root, worktree, base, binding)
         if rollback_error:
             raise LaneError(f"{error}; {rollback_error}") from error
         raise LaneError(str(error)) from error
@@ -791,10 +896,13 @@ def prepare(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
 def residual_identity_check(
     worktree: Path, receipt: dict[str, Any]
 ) -> tuple[bool, str | None]:
-    if not path_present(worktree):
-        return True, None
     try:
-        if tree_has_reparse_point(worktree):
+        marker = Path(receipt["registration_marker"])
+        if path_present(marker) and read_registration_id(marker) == receipt["registration_id"]:
+            return False, "original Git registration still exists; check for a moved lane"
+        if not path_present(worktree):
+            return True, None
+        if is_reparse_point(worktree):
             return False, "unregistered residual path contains a reparse point"
         expected = receipt.get("worktree_identity")
         if expected is None:
@@ -804,7 +912,9 @@ def residual_identity_check(
             return False, "residual path identity is unavailable"
         if observed != expected:
             return False, "cleanup receipt worktree identity does not match residual path"
-    except OSError as error:
+        if next(worktree.iterdir(), None) is not None:
+            return False, "unregistered residual path contains files; preserve it for inspection"
+    except (LaneError, OSError, ValueError) as error:
         return False, f"unregistered residual path inspection failed: {error}"
     return True, None
 
@@ -832,17 +942,26 @@ def recover_unregistered_lane(
         return False, "cleanup receipt integration is uncertain"
     if not snapshot["residual_identity_ok"]:
         return False, snapshot["residual_identity_error"]
+    if worktree in registered_worktrees(repo):
+        return False, "worktree registration changed before residual cleanup"
     if git(repo, "rev-parse", "HEAD").stdout.strip() != repo_head:
         return False, "repository HEAD changed before residual cleanup"
-
+    identity_ok, identity_error = residual_identity_check(worktree, snapshot["receipt"])
+    if not identity_ok:
+        return False, identity_error
     if snapshot["present"] is True:
-        failure = remove_tree(
+        failure = remove_with_retry(
             worktree,
+            Path.rmdir,
             phase="unregistered residual path cleanup",
-            receipt_authorized=True,
+            receipt_authorized=False,
         )
         if failure:
             return False, json.dumps(failure, sort_keys=True)
+    if path_present(worktree):
+        return False, "residual path appeared or remained during cleanup"
+    if git(repo, "rev-parse", "HEAD").stdout.strip() != repo_head:
+        return False, "repository HEAD changed during residual cleanup"
 
     if args is not None:
         mark_run_cleaned(args, repo, root, worktree, snapshot["receipt"]["lane_head"], repo_head)
@@ -888,6 +1007,11 @@ def integration_state(repo: Path, commit: str | None, repo_head: str) -> bool | 
         check=False,
     )
     return True if result.returncode == 0 else False if result.returncode == 1 else None
+
+
+def is_commit_object(repo: Path, object_id: str) -> bool:
+    result = git(repo, "cat-file", "-t", object_id, check=False)
+    return result.returncode == 0 and result.stdout.strip() == "commit"
 
 
 def directory_inventory(path: Path) -> dict[str, Any]:
@@ -942,6 +1066,18 @@ def observe_lane(
 
     manifest, manifest_error = read_lane_manifest(repo, root, worktree)
     receipt, receipt_error = read_cleanup_receipt(repo, root, worktree)
+    if manifest is not None and receipt is not None and any(
+        manifest.get(key) != receipt[key]
+        for key in ("registration_id", "registration_marker", "worktree_identity", "run")
+    ):
+        receipt, receipt_error = None, "cleanup receipt does not match the lane manifest"
+    if receipt is not None and receipt["lane_head"] != repo_head and not is_commit_object(repo, receipt["lane_head"]):
+        receipt, receipt_error = None, "cleanup receipt lane HEAD does not identify a commit object"
+    if receipt is not None and receipt["authorized_at_head"] != repo_head:
+        authorized_head = receipt["authorized_at_head"]
+        if (not is_commit_object(repo, authorized_head)
+                or integration_state(repo, receipt["lane_head"], authorized_head) is not True):
+            receipt, receipt_error = None, "cleanup receipt original integration proof is unavailable or invalid"
     runtime, runtime_valid = runtime_inventory(manifest)
 
     try:
@@ -963,12 +1099,22 @@ def observe_lane(
     status_error: str | None = None
     ignored: list[str] | None = None
     ignored_error: str | None = None
+    ownership_error: str | None = None
     if registered and present and path_error is None:
+        if manifest is not None:
+            ownership_error = registration_error(worktree, manifest)
         head = git(worktree, "rev-parse", "HEAD", check=False)
-        status = git(worktree, "status", "--porcelain", check=False)
+        status = worktree_status(worktree, check=False)
         if head.returncode == 0 and status.returncode == 0:
             lane_head = head.stdout.strip()
             clean = not status.stdout.strip()
+            if clean:
+                try:
+                    if hidden := hidden_tracked_path(worktree):
+                        raise LaneError(f"Git index flags can hide changes to {hidden}")
+                except (LaneError, OSError) as error:
+                    clean = None
+                    status_error = str(error)
         else:
             status_error = command_error(head if head.returncode else status)
         ignored, ignored_error = ignored_entries(worktree)
@@ -1005,6 +1151,7 @@ def observe_lane(
         "path_error": path_error,
         "manifest": manifest,
         "manifest_error": manifest_error,
+        "ownership_error": ownership_error,
         "receipt": receipt,
         "receipt_error": receipt_error,
         "receipt_state": receipt_state,
@@ -1022,6 +1169,7 @@ def observe_lane(
         "resume_or_land_eligible": (
             mechanically_clean
             and manifest is not None
+            and ownership_error is None
             and receipt_state == "absent"
             and runtime_valid
             and not command_active
@@ -1076,6 +1224,10 @@ def cleanup_blocker(snapshot: dict[str, Any]) -> dict[str, Any] | None:
             "reason": "lane manifest invalid",
             "error": str(snapshot["manifest_error"]),
         }
+    if snapshot["ownership_error"]:
+        return {"reason": "lane checkout ownership is unverified", "error": snapshot["ownership_error"]}
+    if snapshot["receipt"] is not None and snapshot["receipt"]["lane_head"] != snapshot["lane_head"]:
+        return {"reason": "lane HEAD changed after cleanup was authorized"}
     return None
 
 
@@ -1116,6 +1268,7 @@ def inspect_lane(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
             else "uncertain"
         ),
         "lane_head": snapshot["lane_head"],
+        "ownership_error": snapshot["ownership_error"],
         "clean": snapshot["clean"],
         "integrated": snapshot["integrated"],
         "status_error": snapshot["status_error"],
@@ -1184,17 +1337,13 @@ def cleanup(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
             continue
 
         state = lane_state(root, worktree.name)
+        receipt = snapshot["receipt"]
         try:
-            write_cleanup_receipt(
-                repo,
-                root,
-                worktree,
-                snapshot["lane_head"],
-                repo_head,
-            )
-            receipt, receipt_error = read_cleanup_receipt(repo, root, worktree)
             if receipt is None:
-                raise LaneError(str(receipt_error))
+                write_cleanup_receipt(repo, root, worktree, snapshot["lane_head"], repo_head)
+                receipt, receipt_error = read_cleanup_receipt(repo, root, worktree)
+                if receipt is None:
+                    raise LaneError(str(receipt_error))
         except (LaneError, OSError) as error:
             preserved.append(
                 {
@@ -1205,7 +1354,8 @@ def cleanup(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
             )
             continue
 
-        if git(repo, "rev-parse", "HEAD").stdout.strip() != expected_head:
+        if (git(repo, "rev-parse", "HEAD").stdout.strip() != expected_head
+                or registration_error(worktree, receipt) is not None):
             preserved.append({"worktree": str(worktree), "reason": "cleanup identity changed"})
             continue
         payload_failure = remove_runtime_payload(root, worktree)
@@ -1240,22 +1390,15 @@ def cleanup(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
             if current_head
             else None
         )
-        try:
-            identity_matches = (
-                current is not None
-                and current["present"] is True
-                and path_identity(worktree) == receipt["worktree_identity"]
-            )
-        except (LaneError, OSError):
-            identity_matches = False
-
         if (
             current_head != repo_head
             or current is None
             or cleanup_blocker(current) is not None
             or current["registered"] is not True
             or current["lane_head"] != snapshot["lane_head"]
-            or not identity_matches
+            or current["receipt"] != receipt
+            or git(repo, "rev-parse", "HEAD").stdout.strip() != expected_head
+            or registration_error(worktree, receipt) is not None
         ):
             preserved.append(
                 {
@@ -1276,7 +1419,7 @@ def cleanup(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
             )
             continue
 
-        worktree_removed, evidence = remove_worktree(repo, worktree)
+        worktree_removed, evidence = remove_worktree(repo, worktree, receipt)
         if not worktree_removed:
             preserved.append(
                 {
@@ -1288,6 +1431,9 @@ def cleanup(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
             )
             continue
 
+        if git(repo, "rev-parse", "HEAD").stdout.strip() != expected_head:
+            preserved.append({"worktree": str(worktree), "reason": "integration HEAD changed after worktree removal"})
+            continue
         mark_run_cleaned(args, repo, root, worktree, snapshot["lane_head"], repo_head)
         failure = finish_lane_cleanup(root, worktree)
         if failure:
@@ -1325,6 +1471,8 @@ def verify_cleanup(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
         raise LaneError("--integration-head must be a full commit ID")
 
     expected_head = resolve_base(repo, args.integration_head)
+    if expected_head != args.integration_head:
+        raise LaneError("--integration-head must identify the exact commit object")
     initial_head = git(repo, "rev-parse", "HEAD").stdout.strip()
     head_matches = initial_head == expected_head
     registered = registered_worktrees(repo)
@@ -1365,7 +1513,10 @@ def verify_cleanup(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
             else:
                 reason = blocker.get("error") or blocker["reason"]
         elif not finish_clean:
-            if snapshot["cleanup_eligible"] and not run_ownership_blocker(args, snapshot):
+            blocker = run_ownership_blocker(args, snapshot)
+            if blocker:
+                reason = blocker["reason"]
+            elif snapshot["cleanup_eligible"]:
                 action = "retry-cleanup"
                 retry_paths.append(str(worktree))
             else:
@@ -1450,7 +1601,7 @@ def status_run(args: argparse.Namespace) -> tuple[int, dict[str, Any]]:
                 if item["state"] == "cleaned" else snapshot["integrated"]
             )
             errors = [snapshot[key] for key in (
-                "path_error", "status_error", "ignored_error", "residual_identity_error",
+                "path_error", "status_error", "ignored_error", "residual_identity_error", "ownership_error",
             ) if snapshot[key]]
             missing_manifest_expected = (
                 not snapshot["registered"]
@@ -1501,7 +1652,10 @@ def readiness_record(root: Path, lane: Path) -> dict[str, Any]:
         if is_reparse_point(path):
             return {"state": "unreadable"}
         result = json.loads(path.read_text(encoding="utf-8"))
-        if not isinstance(result, dict):
+        if not isinstance(result, dict) or not (
+            (result.get("state") == "passed" and result.get("ok") is True)
+            or (result.get("state") in ("failed", "checking") and result.get("ok") is False)
+        ):
             return {"state": "unreadable"}
         return {"state": "recorded", "last_result": result, "freshness_unverified": True}
     except (OSError, ValueError):
@@ -1515,6 +1669,7 @@ def execution_lane(args: argparse.Namespace) -> tuple[Path, Path, Path, dict[str
     snapshot = observe_lane(repo, root, lane, git(repo, "rev-parse", "HEAD").stdout.strip())
     if (not snapshot["registered"] or snapshot["present"] is not True
             or snapshot["path_error"] or snapshot["status_error"]
+            or snapshot["ownership_error"]
             or snapshot["manifest"] is None or not snapshot["runtime_valid"]
             or snapshot["receipt_state"] != "absent" or snapshot["command_active"]):
         raise LaneError("lane cannot execute commands: inspect its lifecycle/runtime state first")
@@ -1590,8 +1745,11 @@ def execution_profile(args: argparse.Namespace, manifest: dict[str, Any]) -> dic
             raise LaneError(f"profile {field} commands must be nonempty string arrays")
         profile[field] = commands
     timeout = args.timeout if args.timeout is not None else profile.get("timeout", 300)
-    if isinstance(timeout, bool) or not isinstance(timeout, (int, float)) or not math.isfinite(timeout) or timeout <= 0:
-        raise LaneError("timeout must be a finite positive number of seconds")
+    # Compare without coercing arbitrary JSON integers to float. The platform wait
+    # limit also keeps the Windows subprocess wait below its reserved infinite value.
+    if (isinstance(timeout, bool) or not isinstance(timeout, (int, float))
+            or not 0 < timeout <= threading.TIMEOUT_MAX):
+        raise LaneError(f"timeout must be a finite positive number of seconds up to {threading.TIMEOUT_MAX}")
     profile["timeout"] = timeout
 
     for field in ("env", "inputs", "outputs"):
@@ -1748,9 +1906,16 @@ def execute_command(manifest: dict[str, Any], command: list[str], env: dict[str,
         launch = command
         if os.name == "nt":
             job = WindowsJob()
-            # The wrapper waits for input, so no user command can start before job assignment.
-            wrapper = "import json,subprocess,sys; args=json.loads(sys.stdin.buffer.readline()); sys.exit(subprocess.call(args,stdin=subprocess.DEVNULL))"
-            launch = [sys.executable, "-c", wrapper]
+            # Isolate the interpreter while it waits for job assignment. The requested
+            # command inherits the supplied cwd and environment.
+            wrapper = """
+import json, subprocess, sys
+args = json.loads(sys.stdin.buffer.readline())
+status = subprocess.call(args, stdin=subprocess.DEVNULL)
+# SystemExit takes a signed int. Windows interprets its bits as a DWORD.
+sys.exit(status if status < 2**31 else status - 2**32)
+"""
+            launch = [sys.executable, "-I", "-S", "-c", wrapper]
         process = subprocess.Popen(
             launch, cwd=manifest["worktree"], env=env, stdin=subprocess.PIPE if job else subprocess.DEVNULL,
             stdout=subprocess.PIPE, stderr=subprocess.STDOUT,

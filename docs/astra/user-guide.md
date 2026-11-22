@@ -23,7 +23,7 @@ Examples:
 - Adopt and finish another actor's unfinished work with an explicit [takeover](../../skills/astra/takeover/SKILL.md) request.
 - Clean up a stale test suite with [test-cleanup](../../skills/astra/test-cleanup/SKILL.md).
 - Maintain repository guidance with [context-hygiene](../../skills/astra/context-hygiene/SKILL.md).
-- Coordinate requested concurrent work with [parallel-implement](../../skills/astra/parallel-implement/SKILL.md).
+- Coordinate and integrate work across active checkouts with [parallel-implement](../../skills/astra/parallel-implement/SKILL.md).
 
 For one matching request and one realistic near-miss per skill, see the
 [selection examples](selection-examples.md). A review request does not authorize
@@ -36,7 +36,7 @@ existing authorization to determine what work can proceed.
 | --- | --- | --- |
 | Retire, consolidate, organize, or streamline a selected test suite | [$test-cleanup](../../skills/astra/test-cleanup/SKILL.md) | Less maintenance/execution burden with meaningful regression protection retained |
 | Improve reusable tools for agents to exercise real product interfaces | [$verification-harness](../../skills/astra/verification-harness/SKILL.md) | Demonstrated tooling, usage instructions, and honest coverage/resource limits |
-| Complete a private or human-only prerequisite | [$wizard](../../skills/astra/wizard/SKILL.md) | A checked human procedure and sufficient non-secret evidence to resume |
+| Complete a private or human-only prerequisite | [$wizard](../../skills/astra/wizard/SKILL.md) | Agent-handled setup, the human step, and a safe check to resume |
 
 All three require an explicit request. Running tests or adding feature coverage
 stays with the implementation; its local completion check does not invoke a full
@@ -52,8 +52,8 @@ agent-visible; wizard private-session input/output remains with the human.
 | What existing sources establish | [$research](../../skills/astra/research/SKILL.md) | Inspected sources and a supported synthesis |
 | Whether a bounded approach or interaction works | [$prototype](../../skills/astra/prototype/SKILL.md) | A faithful new observation and its limits |
 | Why an existing failure occurs | [$diagnosing-bugs](../../skills/astra/diagnosing-bugs/SKILL.md) | A supported causal mechanism, with a verified repair when requested |
-| Whether repeated changes improve a metric | [$hillclimb](../../skills/astra/hillclimb/SKILL.md) | Comparable improvements and final confirmation under a bounded stopping rule |
-| Where worthwhile codebase improvements exist | [$audit-codebase](../../skills/astra/audit-codebase/SKILL.md) | A visual map, scoped findings, and selectable candidates |
+| Improve a measurable outcome | [$hillclimb](../../skills/astra/hillclimb/SKILL.md) | A before-and-after comparison and behavior check, with deeper measurement when the claim needs it |
+| Where worthwhile codebase improvements exist | [$audit-codebase](../../skills/astra/audit-codebase/SKILL.md) | A focused answer in chat, or an atlas for mapping, guided exploration, and whole-codebase audit coverage |
 
 Choose by the question, not the number of runs. A prototype may need several
 attempts; that does not make it an optimization loop. Descriptive dataset profiling
@@ -133,12 +133,11 @@ still come from the user and repository.
 ## Present demonstrated project work
 
 Use [$portfolio-presentation](../../skills/astra/portfolio-presentation/SKILL.md)
-when the requested outcome is a coherent presentation across project artifacts:
-for example, `Make this project's README, report, and charts clear for recruiters
-using the existing evidence`. The work preserves contribution credit, scientific
-meaning, and material limitations while checking the rendered reading experience.
-It does not commission new experiments or publication. A single wording edit
-stays direct; new investigation or evaluation retains its own scope and authority.
+to present the project to someone new to it, from a focused README pass to a
+coherent story across the README, report, and charts. The entry page explains the
+problem, contribution, and result and links directly to evidence. Check the
+reading path with the intended reader's access. Publication, experiments, and
+analysis changes require their own authority. A single wording edit stays direct.
 
 ## Example: settle retry behavior before implementation
 
@@ -184,8 +183,8 @@ Choose one execution arrangement for the same work:
 
 | You want | Invoke | Execution and review |
 | --- | --- | --- |
-| A compact team and less lead activity | [$controlled-delegation](../../skills/astra/controlled-delegation/SKILL.md) | One primary worker and one shared support slot by default; the lead waits during implementation and accepts the result. Review is proportionate. |
-| Native Ultra delegation | [$ultra-model-routing](../../skills/astra/ultra-model-routing/SKILL.md) | Native orchestration chooses the team. An independent Sol review precedes authorized PR opening, with an Astra review added for consequential changes or unresolved design risk. |
+| One worker owning a coherent change | [$controlled-delegation](../../skills/astra/controlled-delegation/SKILL.md) | A primary worker chooses how to deliver the change, with one optional support slot. The lead waits for consequential decisions, blockers, or final acceptance. |
+| Native Ultra delegation with child model routing | [$ultra-model-routing](../../skills/astra/ultra-model-routing/SKILL.md) | An independent Sol review precedes authorized PR opening. Add a focused Astra review for a concrete consequential risk or unresolved design question that merits separate scrutiny. |
 
 Both preserve the selected lead and follow
 [Shared model routing](../../skills/astra/controlled-delegation/references/model-policy.md),
@@ -194,8 +193,8 @@ A bounded assignment still needs substantive judgment when its rules are unsettl
 The controlled support slot covers routine help, architecture advice, or review;
 an implementation helper cannot independently review its own candidate.
 
-Add parallel-implement only when parallel execution is requested; it owns lanes,
-concurrency, integration, and recovery. Other skills supply their conditional
-responsibility, without adding a shaping, ticketing, or PR pipeline to ordinary
-delegation. Source edits do not install skills or runtime configuration, and savings
-need comparable whole-task evidence.
+Add parallel-implement when requested to coordinate work across active checkouts.
+It owns worktree custody, integration, and recovery. Other skills supply their
+conditional responsibility, without adding a shaping, ticketing, or PR pipeline
+to ordinary delegation. Source edits do not install skills or runtime
+configuration, and savings need comparable whole-task evidence.

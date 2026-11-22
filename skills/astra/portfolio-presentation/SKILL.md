@@ -1,6 +1,6 @@
 ---
 name: portfolio-presentation
-description: Present a project's demonstrated work coherently for recruiters or external reviewers. Exclude isolated wording edits, new research, and generic site building.
+description: Present demonstrated project work for first-time visitors, hiring managers, and external reviewers. Exclude isolated wording edits, new research, and generic site building.
 ---
 
 # Portfolio presentation
@@ -44,20 +44,22 @@ performance alone does not establish outcomes from acting on predictions.
 
 ## Write for the intended reader
 
-Aim for roughly 50% ASD-STE100 Simplified Technical English and 50% precise domain
-language in finished prose: a balance of explanation and terminology, not a
-word-count quota or sentence pattern. Default to a domain-aware reader new to
-the project; adapt to the requested audience.
+Assume the reader is new to the project. In the opening, explain the problem,
+what the author built or investigated, and what works or what the evidence
+shows. Link directly to the clearest demo, figure, or result. Make the main
+claim understandable before asking readers to install tools or read code.
 
-Domain familiarity does not imply statistical or machine-learning familiarity.
-Explain consequential metrics through the question they answer and supported
-inferences; retain precision and accessible supporting detail.
+Use plain explanations and precise domain terms that help the reader understand
+the work. Define local names and unfamiliar abbreviations at first use. Explain
+important metrics through the question they answer, the population they describe,
+and the inference they support. Use clear sentences, active verbs, and consistent
+terms informed by [ASD-STE100](https://www.asd-ste100.org/about_STE.html).
 
-Use [ASD-STE100](https://www.asd-ste100.org/about_STE.html)-informed explanations:
-clear complete sentences, active verbs, unambiguous actors/references, consistent
-meanings, and precise technical terms. Explain local names and unfamiliar
-abbreviations without reteaching the field. This blend claims no full conformity
-to STE rules or dictionary.
+Give readers a path from the opening to the detail they need. A hiring manager
+should be able to find the author's scope, a consequential decision or tradeoff,
+and evidence of the result. A curious visitor can start with the clearest
+example or finding. Put material limits next to the claims they qualify and link
+to supporting methods or implementation where useful.
 
 Apply pstack's [Unslop](https://github.com/cursor/plugins/blob/main/pstack/skills/unslop/SKILL.md)
 intent directly: concrete actions, constraints, tradeoffs, and observed results
@@ -68,10 +70,11 @@ experience or emotion. No separate editing workflow is required.
 
 ## Make the requested artifacts agree
 
-Use a clear entry point and route to supporting detail without imposing a document
-tree. Keep claims, numbers, terminology, and status consistent across in-scope
-READMEs, reports, charts, resume material, or websites while preserving each
-artifact's purpose.
+Keep a focused README pass on the entry page and the evidence it relies on.
+When the story spans multiple artifacts or a material claim needs reconciliation,
+compare the relevant surfaces. Keep claims, numbers, terminology, and status
+consistent across in-scope READMEs, reports, charts, resume material, or websites
+while preserving each artifact's purpose.
 
 Trace decisive numbers/visuals to current sources, reconciling units, labels,
 denominators, cohorts, time windows, baselines, and evaluation stage. Investigate
@@ -97,13 +100,15 @@ viewer constraints and access to the supporting evidence.
 
 ## Verify the reader's experience
 
-Inspect requested rendered surfaces using an available preview/renderer. Check
-the reading path, chart/text agreement, legibility, links, and layout at relevant
-presentation sizes.
-The reader should find the question, author contribution, main finding, limits,
-and supporting evidence without unexplained local jargon or filler. Use available
-reader feedback when useful. Source text or a successful build alone does not
-establish appearance; fix presentation defects and report uninspected surfaces.
+Start at the rendered entry page with the access an intended reader has. Check
+whether a first-time visitor can find the problem, author contribution, main
+result, and its material limits. Follow the main evidence link and verify that
+the destination supports the claim. For a focused README pass, this check and
+the affected layout may be enough. When the presentation spans artifacts, check
+the relevant rendered surfaces, chart/text agreement, links, and legibility at
+the presentation sizes that matter. Use reader feedback when useful. Fix
+presentation defects in scope and identify surfaces whose rendering or access
+could not be checked.
 
 Deliver the artifacts, material changes, checked surfaces, and evidence/rendering
 limits. Broader research, product work, and publication retain their own authority.
